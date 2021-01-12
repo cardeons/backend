@@ -82,5 +82,5 @@ test:
 production:
   <<: *default
   database: cardeons_backend_production
-  username: cardeons_backend
-  password: <%= ENV['CARDEONS_BACKEND_DATABASE_PASSWORD'] %>
+  # username: cardeons_backend
+  # password: 
