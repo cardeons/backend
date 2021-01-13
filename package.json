@@ -6,10 +6,32 @@
     "@rails/activestorage": "^6.0.0",
     "@rails/ujs": "^6.0.0",
     "@rails/webpacker": "5.2.1",
+    "jquery": "^3.5.1",
     "turbolinks": "^5.2.0"
   },
-  "version": "0.1.0",
+  "husky": {
+    "hooks": {
+      "pre-commit": "git-format-staged -f 'prettier --ignore-unknown --stdin --stdin-filepath \"{}\"' ."
+    }
+  },
+  "scripts": {
+    "precommit": "lint-staged"
+  },
+  "lint-staged": {
+    "app/**/*.{js,es6,jsx,scss,css}": [
+      "./node_modules/prettier/bin/prettier.js --trailing-comma --single-quote es5 --write",
+      "git add"
+    ],
+    "{app,test}/**/*.rb": [
+      "bundle exec rubocop -a",
+      "git add"
+    ]
+  },
   "devDependencies": {
+    "git-format-staged": "^2.1.1",
+    "husky": "^4.3.7",
+    "lint-staged": "^10.5.3",
+    "prettier": "2.2.1",
     "webpack-dev-server": "^3.11.1"
   }
 }

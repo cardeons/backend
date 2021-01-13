@@ -82,5 +82,5 @@ test:
 production:
   <<: *default
   database: cardeons_backend_production
-  # username: cardeons_backend
-  # password: 
+  username: cardeons_backend
+  password:

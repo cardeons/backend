@@ -1,0 +1,43 @@
+Layout/LineLength:
+  Max: 200
+  AutoCorrect: true
+
+Metrics/LineLength:
+  Max: 200
+  AutoCorrect: true
+
+Style/Documentation:
+  Enabled: false
+
+Style/ClassAndModuleChildren:
+  Enabled: false
+
+Layout/EndOfLine:
+  EnforcedStyle: lf
+
+AllCops:
+  NewCops: enable
+
+Metrics/AbcSize:
+  Enabled: false
+
+Metrics/MethodLength:
+  Max: 50
+
+Metrics/BlockNesting:
+  Max: 4
+
+Metrics/BlockLength:
+  Max: 140
+
+Metrics/ClassLength:
+  Max: 200
+
+Metrics/CyclomaticComplexity:
+  Max: 10
+
+Metrics/PerceivedComplexity:
+  Max: 10
+
+Style/GuardClause:
+  Enabled: false
