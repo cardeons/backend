@@ -1,24 +1,19 @@
-# README
+# Cardeons
 
-This README would normally document whatever steps are necessary to get the
-application up and running.
+To do:
 
-Things you may want to cover:
+- npm i
 
-- Ruby version
+- bundle i
 
-- System dependencies
+- create databases
 
-- Configuration
+- db:migrate
 
-- Database creation
+## Backend: 
 
-- Database initialization
+https://fierce-springs-89185.herokuapp.com
 
-- How to run the test suite
+## Frontend: 
 
-- Services (job queues, cache servers, search engines, etc.)
-
-- Deployment instructions
-
-- ...
+https://cranky-morse-1fdbb5.netlify.app/
