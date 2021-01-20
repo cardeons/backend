@@ -10,7 +10,6 @@ class SessionsController < ApplicationController
                 logged_in: true,
                 user: user
             }
-        end
         else
             render json: {
                 status: 401
