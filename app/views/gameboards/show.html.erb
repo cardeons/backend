@@ -1,0 +1,39 @@
+<p id="notice"><%= notice %></p>
+
+<p>
+  <strong>Current state:</strong>
+  <%= @gameboard.current_state %>
+</p>
+
+<p>
+  <strong>Player atk:</strong>
+  <%= @gameboard.player_atk %>
+</p>
+
+<p>
+  <strong>Monster atk:</strong>
+  <%= @gameboard.monster_atk %>
+</p>
+
+<p>
+  <strong>Asked help:</strong>
+  <%= @gameboard.asked_help %>
+</p>
+
+<p>
+  <strong>Success:</strong>
+  <%= @gameboard.success %>
+</p>
+
+<p>
+  <strong>Can flee:</strong>
+  <%= @gameboard.can_flee %>
+</p>
+
+<p>
+  <strong>Shared reward:</strong>
+  <%= @gameboard.shared_reward %>
+</p>
+
+<%= link_to 'Edit', edit_gameboard_path(@gameboard) %> |
+<%= link_to 'Back', gameboards_path %>

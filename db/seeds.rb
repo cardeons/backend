@@ -6,3 +6,5 @@
 #
 #   movies = Movie.create([{ name: 'Star Wars' }, { name: 'Lord of the Rings' }])
 #   Character.create(name: 'Luke', movie: movies.first)
+
+Monstercard.create(title: 'Test', description: '1 Test Karte', image: 'testurl', action: 'throwawayoneitem')
