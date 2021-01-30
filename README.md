@@ -13,6 +13,18 @@ To do:
 
 - db:migrate
 
+
+sudo service postgresql start
+sudo -u postgres  psql
+
+CREATE USER cardeons_backend
+CREATE DATABASE cardeons_backend_development OWNER cardeons_backend
+CREATE DATABASE cardeons_backend_test OWNER cardeons_backend
+
+
+
+
+
 ## Backend: 
 
 https://fierce-springs-89185.herokuapp.com
