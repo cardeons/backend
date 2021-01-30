@@ -1,0 +1,2 @@
+class Monstercard < Card
+end

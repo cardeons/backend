@@ -1,0 +1,2 @@
+class Levelcard < Card
+end

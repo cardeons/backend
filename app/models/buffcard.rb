@@ -1,0 +1,2 @@
+class Buffcard < Card
+end
