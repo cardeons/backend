@@ -7,9 +7,9 @@ To do:
 - bundle i
 
 - create databases
-  -sudo -u postgres psql
-  -create databases (cardeons_backend_test, cardeons_backend_development, cardeons_backend_production)
-  -create user (cardeons_backend)
+  - sudo -u postgres psql
+  - create databases (cardeons_backend_test, cardeons_backend_development, cardeons_backend_production)
+  - create user (cardeons_backend)
 
 - db:migrate
 
