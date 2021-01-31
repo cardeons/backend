@@ -34,8 +34,8 @@ Happy Coding😘
 
 ## Backend: 
 
-https://fierce-springs-89185.herokuapp.com
+https://cardeons-develop.herokuapp.com/
 
 ## Frontend: 
 
-https://cranky-morse-1fdbb5.netlify.app/
+https://cardeons-develop.netlify.app/
