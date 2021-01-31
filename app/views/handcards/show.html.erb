@@ -1,0 +1,14 @@
+<p id="notice"><%= notice %></p>
+
+<p>
+  <strong>Ingamedeck:</strong>
+  <%= @handcard.ingamedeck_id %>
+</p>
+
+<p>
+  <strong>Player:</strong>
+  <%= @handcard.player_id %>
+</p>
+
+<%= link_to 'Edit', edit_handcard_path(@handcard) %> |
+<%= link_to 'Back', handcards_path %>

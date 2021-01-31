@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_01_30_192201) do
+ActiveRecord::Schema.define(version: 2021_01_31_134535) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -51,6 +51,60 @@ ActiveRecord::Schema.define(version: 2021_01_30_192201) do
     t.datetime "updated_at", precision: 6, null: false
   end
 
+  create_table "handcards", force: :cascade do |t|
+    t.bigint "player_id", null: false
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["player_id"], name: "index_handcards_on_player_id"
+  end
+
+  create_table "ingamedecks", force: :cascade do |t|
+    t.bigint "card_id", null: false
+    t.bigint "gameboard_id", null: false
+    t.string "cardable_type"
+    t.bigint "cardable_id"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["card_id"], name: "index_ingamedecks_on_card_id"
+    t.index ["cardable_type", "cardable_id"], name: "index_ingamedecks_on_cardable"
+    t.index ["gameboard_id"], name: "index_ingamedecks_on_gameboard_id"
+  end
+
+  create_table "inventories", force: :cascade do |t|
+    t.bigint "player_id", null: false
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["player_id"], name: "index_inventories_on_player_id"
+  end
+
+  create_table "monsterones", force: :cascade do |t|
+    t.bigint "player_id", null: false
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["player_id"], name: "index_monsterones_on_player_id"
+  end
+
+  create_table "monsterthrees", force: :cascade do |t|
+    t.bigint "player_id", null: false
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["player_id"], name: "index_monsterthrees_on_player_id"
+  end
+
+  create_table "monstertwos", force: :cascade do |t|
+    t.bigint "player_id", null: false
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["player_id"], name: "index_monstertwos_on_player_id"
+  end
+
+  create_table "playercurses", force: :cascade do |t|
+    t.bigint "player_id", null: false
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["player_id"], name: "index_playercurses_on_player_id"
+  end
+
   create_table "players", force: :cascade do |t|
     t.string "name"
     t.string "avatar"
@@ -70,5 +124,13 @@ ActiveRecord::Schema.define(version: 2021_01_30_192201) do
     t.datetime "updated_at", precision: 6, null: false
   end
 
+  add_foreign_key "handcards", "players"
+  add_foreign_key "ingamedecks", "cards"
+  add_foreign_key "ingamedecks", "gameboards"
+  add_foreign_key "inventories", "players"
+  add_foreign_key "monsterones", "players"
+  add_foreign_key "monsterthrees", "players"
+  add_foreign_key "monstertwos", "players"
+  add_foreign_key "playercurses", "players"
   add_foreign_key "players", "gameboards"
 end

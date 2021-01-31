@@ -1,7 +1,7 @@
 # Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
 
 one:
-  card_id: 
+  id: 1
   title: MyString
   description: MyString
   image: MyString
@@ -22,7 +22,7 @@ one:
   level_amount: 1
 
 two:
-  card_id: 
+  id: 2
   title: MyString
   description: MyString
   image: MyString

@@ -6,7 +6,8 @@ one:
   level: 1
   attack: 1
   is_cursed: false
-  belongs_to: 
+  gameboard: 1
+  # belongs_to: 
 
 two:
   name: MyString
@@ -14,4 +15,5 @@ two:
   level: 1
   attack: 1
   is_cursed: false
-  belongs_to: 
+  gameboard: 1
+  # belongs_to: 

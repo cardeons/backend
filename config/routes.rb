@@ -1,6 +1,13 @@
 # frozen_string_literal: true
 
 Rails.application.routes.draw do
+  resources :monsterthrees
+  resources :monstertwos
+  resources :monsterones
+  resources :playercurses
+  resources :handcards
+  resources :inventories
+  resources :ingamedecks
   resources :players
   resources :gameboards
   resources :cards

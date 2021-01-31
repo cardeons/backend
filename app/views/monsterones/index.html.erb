@@ -1,0 +1,29 @@
+<p id="notice"><%= notice %></p>
+
+<h1>Monsterones</h1>
+
+<table>
+  <thead>
+    <tr>
+      <th>Ingamedeck</th>
+      <th>Player</th>
+      <th colspan="3"></th>
+    </tr>
+  </thead>
+
+  <tbody>
+    <% @monsterones.each do |monsterone| %>
+      <tr>
+        <td><%= monsterone.ingamedeck_id %></td>
+        <td><%= monsterone.player_id %></td>
+        <td><%= link_to 'Show', monsterone %></td>
+        <td><%= link_to 'Edit', edit_monsterone_path(monsterone) %></td>
+        <td><%= link_to 'Destroy', monsterone, method: :delete, data: { confirm: 'Are you sure?' } %></td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+
+<br>
+
+<%= link_to 'New Monsterone', new_monsterone_path %>

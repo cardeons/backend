@@ -1,0 +1,2 @@
+module MonsteronesHelper
+end

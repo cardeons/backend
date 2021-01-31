@@ -1,1 +1,1 @@
-json.partial! "cards/card", card: @card
+json.partial! "cards/card", card: @card 
