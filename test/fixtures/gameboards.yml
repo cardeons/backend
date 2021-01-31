@@ -1,0 +1,19 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  current_state: MyString
+  player_atk: 1
+  monster_atk: 1
+  asked_help: false
+  success: false
+  can_flee: false
+  shared_reward: 1
+
+two:
+  current_state: MyString
+  player_atk: 1
+  monster_atk: 1
+  asked_help: false
+  success: false
+  can_flee: false
+  shared_reward: 1

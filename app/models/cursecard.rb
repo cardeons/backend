@@ -1,0 +1,2 @@
+class Cursecard < Card
+end

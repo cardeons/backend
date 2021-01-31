@@ -1,0 +1,2 @@
+class Bosscard < Card
+end

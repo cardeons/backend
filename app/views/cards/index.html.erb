@@ -1,0 +1,63 @@
+<p id="notice"><%= notice %></p>
+
+<h1>Cards</h1>
+
+<table>
+  <thead>
+    <tr>
+      <th>Card</th>
+      <th>Title</th>
+      <th>Description</th>
+      <th>Image</th>
+      <th>Action</th>
+      <th>Draw chance</th>
+      <th>Level</th>
+      <th>Element</th>
+      <th>Bad things</th>
+      <th>Rewards treasure</th>
+      <th>Good against</th>
+      <th>Bad against</th>
+      <th>Good against value</th>
+      <th>Bad against value</th>
+      <th>Element modifier</th>
+      <th>Atk points</th>
+      <th>Item category</th>
+      <th>Has combination</th>
+      <th>Level amount</th>
+      <th colspan="3"></th>
+    </tr>
+  </thead>
+
+  <tbody>
+    <% @cards.each do |card| %>
+      <tr>
+        <td><%= card.id %></td>
+        <td><%= card.title %></td>
+        <td><%= card.description %></td>
+        <td><%= card.image %></td>
+        <td><%= card.action %></td>
+        <td><%= card.draw_chance %></td>
+        <td><%= card.level %></td>
+        <td><%= card.element %></td>
+        <td><%= card.bad_things %></td>
+        <td><%= card.rewards_treasure %></td>
+        <td><%= card.good_against %></td>
+        <td><%= card.bad_against %></td>
+        <td><%= card.good_against_value %></td>
+        <td><%= card.bad_against_value %></td>
+        <td><%= card.element_modifier %></td>
+        <td><%= card.atk_points %></td>
+        <td><%= card.item_category %></td>
+        <td><%= card.has_combination %></td>
+        <td><%= card.level_amount %></td>
+        <td><%= link_to 'Show', card %></td>
+        <td><%= link_to 'Edit', edit_card_path(card) %></td>
+        <td><%= link_to 'Destroy', card, method: :delete, data: { confirm: 'Are you sure?' } %></td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+
+<br>
+
+<%= link_to 'New Card', new_card_path %>

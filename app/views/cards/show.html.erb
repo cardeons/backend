@@ -1,0 +1,99 @@
+<p id="notice"><%= notice %></p>
+
+<p>
+  <strong>Card:</strong>
+  <%= @card.id %>
+</p>
+
+<p>
+  <strong>Title:</strong>
+  <%= @card.title %>
+</p>
+
+<p>
+  <strong>Description:</strong>
+  <%= @card.description %>
+</p>
+
+<p>
+  <strong>Image:</strong>
+  <%= @card.image %>
+</p>
+
+<p>
+  <strong>Action:</strong>
+  <%= @card.action %>
+</p>
+
+<p>
+  <strong>Draw chance:</strong>
+  <%= @card.draw_chance %>
+</p>
+
+<p>
+  <strong>Level:</strong>
+  <%= @card.level %>
+</p>
+
+<p>
+  <strong>Element:</strong>
+  <%= @card.element %>
+</p>
+
+<p>
+  <strong>Bad things:</strong>
+  <%= @card.bad_things %>
+</p>
+
+<p>
+  <strong>Rewards treasure:</strong>
+  <%= @card.rewards_treasure %>
+</p>
+
+<p>
+  <strong>Good against:</strong>
+  <%= @card.good_against %>
+</p>
+
+<p>
+  <strong>Bad against:</strong>
+  <%= @card.bad_against %>
+</p>
+
+<p>
+  <strong>Good against value:</strong>
+  <%= @card.good_against_value %>
+</p>
+
+<p>
+  <strong>Bad against value:</strong>
+  <%= @card.bad_against_value %>
+</p>
+
+<p>
+  <strong>Element modifier:</strong>
+  <%= @card.element_modifier %>
+</p>
+
+<p>
+  <strong>Atk points:</strong>
+  <%= @card.atk_points %>
+</p>
+
+<p>
+  <strong>Item category:</strong>
+  <%= @card.item_category %>
+</p>
+
+<p>
+  <strong>Has combination:</strong>
+  <%= @card.has_combination %>
+</p>
+
+<p>
+  <strong>Level amount:</strong>
+  <%= @card.level_amount %>
+</p>
+
+<%= link_to 'Edit', edit_card_path(@card) %> |
+<%= link_to 'Back', cards_path %>

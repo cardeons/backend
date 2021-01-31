@@ -1,0 +1,2 @@
+module GameboardsHelper
+end

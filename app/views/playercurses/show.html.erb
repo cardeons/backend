@@ -1,0 +1,14 @@
+<p id="notice"><%= notice %></p>
+
+<p>
+  <strong>Ingamedeck:</strong>
+  <%= @playercurse.ingamedeck_id %>
+</p>
+
+<p>
+  <strong>Player:</strong>
+  <%= @playercurse.player_id %>
+</p>
+
+<%= link_to 'Edit', edit_playercurse_path(@playercurse) %> |
+<%= link_to 'Back', playercurses_path %>

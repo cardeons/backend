@@ -1,0 +1,2 @@
+module MonsterthreesHelper
+end

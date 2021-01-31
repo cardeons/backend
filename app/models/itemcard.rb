@@ -1,0 +1,2 @@
+class Itemcard < Card
+end

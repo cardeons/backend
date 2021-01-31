@@ -1,0 +1,112 @@
+<%= form_with(model: card) do |form| %>
+  <% if card.errors.any? %>
+    <div id="error_explanation">
+      <h2><%= pluralize(card.errors.count, "error") %> prohibited this card from being saved:</h2>
+
+      <ul>
+        <% card.errors.each do |error| %>
+          <li><%= error.full_message %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div class="field">
+    <%= form.label :id %>
+    <%= form.text_field :id %>
+  </div>
+
+  <div class="field">
+    <%= form.label :title %>
+    <%= form.text_field :title %>
+  </div>
+
+  <div class="field">
+    <%= form.label :description %>
+    <%= form.text_field :description %>
+  </div>
+
+  <div class="field">
+    <%= form.label :image %>
+    <%= form.text_field :image %>
+  </div>
+
+  <div class="field">
+    <%= form.label :action %>
+    <%= form.text_field :action %>
+  </div>
+
+  <div class="field">
+    <%= form.label :draw_chance %>
+    <%= form.number_field :draw_chance %>
+  </div>
+
+  <div class="field">
+    <%= form.label :level %>
+    <%= form.number_field :level %>
+  </div>
+
+  <div class="field">
+    <%= form.label :element %>
+    <%= form.text_field :element %>
+  </div>
+
+  <div class="field">
+    <%= form.label :bad_things %>
+    <%= form.text_field :bad_things %>
+  </div>
+
+  <div class="field">
+    <%= form.label :rewards_treasure %>
+    <%= form.text_field :rewards_treasure %>
+  </div>
+
+  <div class="field">
+    <%= form.label :good_against %>
+    <%= form.text_field :good_against %>
+  </div>
+
+  <div class="field">
+    <%= form.label :bad_against %>
+    <%= form.text_field :bad_against %>
+  </div>
+
+  <div class="field">
+    <%= form.label :good_against_value %>
+    <%= form.number_field :good_against_value %>
+  </div>
+
+  <div class="field">
+    <%= form.label :bad_against_value %>
+    <%= form.number_field :bad_against_value %>
+  </div>
+
+  <div class="field">
+    <%= form.label :element_modifier %>
+    <%= form.number_field :element_modifier %>
+  </div>
+
+  <div class="field">
+    <%= form.label :atk_points %>
+    <%= form.number_field :atk_points %>
+  </div>
+
+  <div class="field">
+    <%= form.label :item_category %>
+    <%= form.text_field :item_category %>
+  </div>
+
+  <div class="field">
+    <%= form.label :has_combination %>
+    <%= form.number_field :has_combination %>
+  </div>
+
+  <div class="field">
+    <%= form.label :level_amount %>
+    <%= form.number_field :level_amount %>
+  </div>
+
+  <div class="actions">
+    <%= form.submit %>
+  </div>
+<% end %>

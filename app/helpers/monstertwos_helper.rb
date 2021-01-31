@@ -1,0 +1,2 @@
+module MonstertwosHelper
+end
