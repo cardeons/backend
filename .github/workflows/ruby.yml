@@ -54,12 +54,10 @@ jobs:
         PGUSER: postgres
         PGPASSWORD: postgres
         RAILS_ENV: test
-      run: |
-        bin/rails db:setup
+      run: bin/rails db:setup
 
     - name: Install PostgreSQL client
-      run: |
-        sudo apt-get -yqq install libpq-dev
+      run: sudo apt-get -yqq install libpq-dev
 
     - name: Run Tests
       env:
@@ -67,9 +65,7 @@ jobs:
         PGUSER: postgres
         PGPASSWORD: postgres
         RAILS_ENV: test
-      run: |
-        bundle exec rake test
-        bundle exec rake test:system
+      run: bundle exec rake test
 
       
     # - name: Connect to PostgreSQL
