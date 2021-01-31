@@ -34,24 +34,12 @@ jobs:
 
 
     steps:
-    - uses: actions/checkout@v2
-    - name: Set up Ruby
-    # To automatically get bug fixes and new Ruby versions for ruby/setup-ruby,
-    # change this to (see https://github.com/ruby/setup-ruby#versioning):
-    # uses: ruby/setup-ruby@v1
-      uses: ruby/setup-ruby@473e4d8fe5dd94ee328fdfca9f8c9c7afc9dae5e
+    - uses: actions/checkout@v1
+    - name: Set up Ruby 3.0
+      uses: actions/setup-ruby@v1
       with:
-        ruby-version: ${{ matrix.ruby-version }}
-        bundler-cache: true # runs 'bundle install' and caches installed gems automatically
-    - name: Build App
-      env:
-        PGHOST: localhost
-        PGUSER: postgres
-        PGPASSWORD: postgres
-        RAILS_ENV: test
-      run: rails db:setup
-
-    - name: Install PostgreSQL client
+        ruby-version: 3.0
+    - name: Build and test with Rake
       env:
         PGHOST: 127.0.0.1
         PGUSER: postgres
@@ -63,7 +51,7 @@ jobs:
         bundle exec rails db:create
         bundle exec rails db:migrate
         bundle exec rails test:system
-      
+        
     # - name: Connect to PostgreSQL
     #   # Runs a script that creates a PostgreSQL client, populates
     #   # the client with data, and retrieves data
