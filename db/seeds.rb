@@ -7,10 +7,10 @@
 #   movies = Movie.create([{ name: 'Star Wars' }, { name: 'Lord of the Rings' }])
 #   Character.create(name: 'Luke', movie: movies.first)
 
+User.create(email: 'daniela-dottolo@gmx.at', password: 'hahasosecret123')
 
-
-Monstercard.create(id: 1, title: 'U Bahn', description: 'nimmt die U Bahn +3 auf deinen Roll', image: 'testurl', action: 'throwawayoneitem')
-Cursecard.create(id: 2, title: 'lil vayne', description: 'do not feed', image: 'testurl', action: 'throwawayoneitem')
+# Monstercard.create(id: 1, title: 'U Bahn', description: 'nimmt die U Bahn +3 auf deinen Roll', image: 'testurl', action: 'throwawayoneitem')
+# Cursecard.create(id: 2, title: 'lil vayne', description: 'do not feed', image: 'testurl', action: 'throwawayoneitem')
 # Monstercard.create(id: 3, title: '', description: '1 Test Karte', image: 'testurl', action: 'throwawayoneitem')
 # Monstercard.create(id: 4, title: 'Test', description: '1 Test Karte', image: 'testurl', action: 'throwawayoneitem')
 # Monstercard.create(id: 5, title: 'Test', description: '1 Test Karte', image: 'testurl', action: 'throwawayoneitem')
@@ -19,12 +19,12 @@ Cursecard.create(id: 2, title: 'lil vayne', description: 'do not feed', image: '
 # Levelcard.create(id: 8, title: 'Test', description: '1 Test Karte', image: 'testurl', action: 'throwawayoneitem')
 # Buffcard.create(id: 9, title: 'Test', description: '1 Test Karte', image: 'testurl', action: 'throwawayoneitem')
 
-Gameboard.create(id: 1, current_state: 'fight', player_atk: 5)
+# Gameboard.create(id: 1, current_state: 'fight', player_atk: 5)
 
-Player.create(id: 1, name: 'Gustav', gameboard_id: 1)
-Handcard.create(id: 1, player_id: 1)
-Ingamedeck.create(id:1,  gameboard_id:1, card_id:1, cardable_id:1, cardable_type: 'Handcard')
-Ingamedeck.create(id:2,  gameboard_id:1, card_id:2,  cardable_id:1, cardable_type: 'Handcard')
+# Player.create(id: 1, name: 'Gustav', gameboard_id: 1)
+# Handcard.create(id: 1, player_id: 1)
+# Ingamedeck.create(id:1,  gameboard_id:1, card_id:1, cardable_id:1, cardable_type: 'Handcard')
+# Ingamedeck.create(id:2,  gameboard_id:1, card_id:2,  cardable_id:1, cardable_type: 'Handcard')
 
 
 # Player.create(id: 2, name: 'Thomas', gameboard_id: 1)

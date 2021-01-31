@@ -25,6 +25,8 @@ gem 'redis', '~> 4.0'
 # gem 'bcrypt', '~> 3.1.7'
 gem 'dotenv-rails'
 
+gem 'jwt'
+
 
 
 gem 'devise'
