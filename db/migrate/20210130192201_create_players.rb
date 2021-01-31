@@ -6,7 +6,7 @@ class CreatePlayers < ActiveRecord::Migration[6.1]
       t.integer :level
       t.integer :attack
       t.boolean :is_cursed
-      t.gameboard :belongs_to
+      t.references :gameboard, index: true, null: false, foreign_key: true
 
       t.timestamps
     end

@@ -10,22 +10,10 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_01_30_185140) do
+ActiveRecord::Schema.define(version: 2021_01_30_192201) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
-
-  create_table "authentications", force: :cascade do |t|
-    t.string "email", default: "", null: false
-    t.string "encrypted_password", default: "", null: false
-    t.string "reset_password_token"
-    t.datetime "reset_password_sent_at"
-    t.datetime "remember_created_at"
-    t.datetime "created_at", precision: 6, null: false
-    t.datetime "updated_at", precision: 6, null: false
-    t.index ["email"], name: "index_authentications_on_email", unique: true
-    t.index ["reset_password_token"], name: "index_authentications_on_reset_password_token", unique: true
-  end
 
   create_table "cards", force: :cascade do |t|
     t.string "title"
@@ -51,6 +39,30 @@ ActiveRecord::Schema.define(version: 2021_01_30_185140) do
     t.string "type"
   end
 
+  create_table "gameboards", force: :cascade do |t|
+    t.string "current_state"
+    t.integer "player_atk"
+    t.integer "monster_atk"
+    t.boolean "asked_help"
+    t.boolean "success"
+    t.boolean "can_flee"
+    t.integer "shared_reward"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+  end
+
+  create_table "players", force: :cascade do |t|
+    t.string "name"
+    t.string "avatar"
+    t.integer "level"
+    t.integer "attack"
+    t.boolean "is_cursed"
+    t.bigint "gameboard_id", null: false
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["gameboard_id"], name: "index_players_on_gameboard_id"
+  end
+
   create_table "users", force: :cascade do |t|
     t.string "email"
     t.string "password_digest"
@@ -58,4 +70,5 @@ ActiveRecord::Schema.define(version: 2021_01_30_185140) do
     t.datetime "updated_at", precision: 6, null: false
   end
 
+  add_foreign_key "players", "gameboards"
 end
