@@ -1,20 +1,26 @@
 class SessionsController < ApplicationController
-    include CurrentUserConcern
+    # include CurrentUserConcern
 
     def create
-        #params kommen vom Frontend
-        user = User.find_by(email: params["user"]["email"]).try(:authenticate, params["user"]["password"])
+        #params kommen später vom Frontend
+        user = User.create(email: 'daniela-dottolo@gmx.at', password: 'hahasosecret123')
 
+
+        # user.valid? später einbauen, wenn alles in der db steht!
         if user
             session[:user_id] = user.id
+            token = encode_token({user_id: user.id})
+
             render json: {
                 status: :created,
                 logged_in: true,
-                user: user
+                user: user,
+                token: token
             }
         else
             render json: {
-                status: 401
+                status: 401,
+                error: 'Invalid username or password'
             }
         end
     end
@@ -23,7 +29,8 @@ class SessionsController < ApplicationController
         if @current_user
             render json: {
                 logged_in: true,
-                user: @current_user
+                user: @current_user,
+                token: token
             }
         else
             render json: {
