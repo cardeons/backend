@@ -8,5 +8,5 @@ class MonsterthreeTest < ActiveSupport::TestCase
   test "should not save monster without player id" do
     assert_not @monsterthree.save, "Saved monster three without player"
   end
-  
+
 end
