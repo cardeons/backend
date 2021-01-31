@@ -21,22 +21,17 @@ jobs:
       matrix:
         ruby-version: ['3.0']
 
-    # Service containers to run with `container-job`
+
     services:
-      # Label used to access the service container
-      postgres:
-        # Docker Hub image
-        image: postgres
-        # Provide the password for postgres
-        env:
-          POSTGRES_USER: postgres
-          POSTGRES_PASSWORD: postgres 
-        # Set health checks to wait until postgres has started
+      db:
+        image: postgres:11
+        ports: ['5432:5432']
         options: >-
           --health-cmd pg_isready
           --health-interval 10s
           --health-timeout 5s
           --health-retries 5
+
 
     steps:
     - uses: actions/checkout@v2
@@ -57,16 +52,17 @@ jobs:
       run: rails db:setup
 
     - name: Install PostgreSQL client
-      run: sudo apt-get -yqq install libpq-dev
-
-    - name: Run Tests
       env:
-        PGHOST: localhost
+        PGHOST: 127.0.0.1
         PGUSER: postgres
-        PGPASSWORD: postgres
         RAILS_ENV: test
-      run: bundle exec rake test
-
+      run: |
+        sudo apt-get -yqq install libpq-dev
+        gem install bundler
+        bundle install --jobs 4 --retry 3
+        bundle exec rails db:create
+        bundle exec rails db:migrate
+        bundle exec rails test:system
       
     # - name: Connect to PostgreSQL
     #   # Runs a script that creates a PostgreSQL client, populates
