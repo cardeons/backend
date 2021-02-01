@@ -82,6 +82,7 @@
         "element":"Element der Karte",
         "element_modifier":"um wie viel besser wenn Monster das gleiche Element hat wie die Karte",
         "atk_points": "wie viel Attacke gibt es dem Monster dazu",
+        "has_combination":"id von mit wem eine Kombination?",
         "type":"Itemcard"
     },
     "levelkarte": {
@@ -90,7 +91,6 @@
         "image": "Bildurl der Karte",
         "action": "Funktion die ausgeführt wird, wenn die Karte eingesetzt wird",
         "level_amount":"wie viele Levels steigt er durch die Karte auf?",
-        "has_combination":"id von mit wem eine Kombination?",
         "type":"Levelcard"
     }
 }
