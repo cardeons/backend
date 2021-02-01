@@ -1,0 +1,27 @@
+<%= form_with(model: graveyard) do |form| %>
+  <% if graveyard.errors.any? %>
+    <div id="error_explanation">
+      <h2><%= pluralize(graveyard.errors.count, "error") %> prohibited this graveyard from being saved:</h2>
+
+      <ul>
+        <% graveyard.errors.each do |error| %>
+          <li><%= error.full_message %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div class="field">
+    <%= form.label :gameboard_id %>
+    <%= form.text_field :gameboard_id %>
+  </div>
+
+  <div class="field">
+    <%= form.label :ingamedeck_id %>
+    <%= form.text_field :ingamedeck_id %>
+  </div>
+
+  <div class="actions">
+    <%= form.submit %>
+  </div>
+<% end %>

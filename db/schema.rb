@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_02_01_085759) do
+ActiveRecord::Schema.define(version: 2021_02_01_140204) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -51,6 +51,15 @@ ActiveRecord::Schema.define(version: 2021_02_01_085759) do
     t.datetime "updated_at", precision: 6, null: false
   end
 
+  create_table "graveyards", force: :cascade do |t|
+    t.bigint "gameboard_id", null: false
+    t.bigint "ingamedeck_id", null: false
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["gameboard_id"], name: "index_graveyards_on_gameboard_id"
+    t.index ["ingamedeck_id"], name: "index_graveyards_on_ingamedeck_id"
+  end
+
   create_table "handcards", force: :cascade do |t|
     t.bigint "player_id", null: false
     t.datetime "created_at", precision: 6, null: false
@@ -68,6 +77,15 @@ ActiveRecord::Schema.define(version: 2021_02_01_085759) do
     t.index ["card_id"], name: "index_ingamedecks_on_card_id"
     t.index ["cardable_type", "cardable_id"], name: "index_ingamedecks_on_cardable"
     t.index ["gameboard_id"], name: "index_ingamedecks_on_gameboard_id"
+  end
+
+  create_table "interceptcards", force: :cascade do |t|
+    t.bigint "gameboard_id", null: false
+    t.bigint "ingamedeck_id", null: false
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["gameboard_id"], name: "index_interceptcards_on_gameboard_id"
+    t.index ["ingamedeck_id"], name: "index_interceptcards_on_ingamedeck_id"
   end
 
   create_table "inventories", force: :cascade do |t|
@@ -125,9 +143,13 @@ ActiveRecord::Schema.define(version: 2021_02_01_085759) do
     t.string "name"
   end
 
+  add_foreign_key "graveyards", "gameboards"
+  add_foreign_key "graveyards", "ingamedecks"
   add_foreign_key "handcards", "players"
   add_foreign_key "ingamedecks", "cards"
   add_foreign_key "ingamedecks", "gameboards"
+  add_foreign_key "interceptcards", "gameboards"
+  add_foreign_key "interceptcards", "ingamedecks"
   add_foreign_key "inventories", "players"
   add_foreign_key "monsterones", "players"
   add_foreign_key "monsterthrees", "players"

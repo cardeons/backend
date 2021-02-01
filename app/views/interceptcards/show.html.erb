@@ -1,0 +1,14 @@
+<p id="notice"><%= notice %></p>
+
+<p>
+  <strong>Gameboard:</strong>
+  <%= @interceptcard.gameboard_id %>
+</p>
+
+<p>
+  <strong>Ingamedeck:</strong>
+  <%= @interceptcard.ingamedeck_id %>
+</p>
+
+<%= link_to 'Edit', edit_interceptcard_path(@interceptcard) %> |
+<%= link_to 'Back', interceptcards_path %>
