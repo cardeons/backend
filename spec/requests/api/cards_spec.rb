@@ -1,10 +1,10 @@
 require 'swagger_helper'
 
 RSpec.describe 'api/cards', type: :request do
-    describe 'Users' do
+    describe 'Cards' do
         path '/cards.json' do
-          get 'list all the users' do
-            tags 'User'
+          get 'list all the cards' do
+            tags 'Cards'
             produces 'application/json'
     
             response(200, 'successful') do

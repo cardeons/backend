@@ -8,13 +8,13 @@ class RegistrationsController < ApplicationController
             password: registration_input['password'],
             password_confirmation: registration_input['password_confirmation']
         )
-        user_frontent = {"id": user.id,"email": user.email,"created_at": user.created_at,"updated_at": user.updated_at,"name": user.name}
-
+        
         if user.save
+            user_frontend = {"id": user.id,"email": user.email,"created_at": user.created_at,"updated_at": user.updated_at,"name": user.name}
             session[:user_id] = user.id
             render json: {
                 status: :created,
-                user: user_frontent
+                user: user_frontend
             }
         else
             render :json => { :errors => user.errors.as_json }, :status => 420
