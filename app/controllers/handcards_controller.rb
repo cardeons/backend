@@ -1,5 +1,7 @@
+# frozen_string_literal: true
+
 class HandcardsController < ApplicationController
-  before_action :set_handcard, only: [:show, :edit, :update, :destroy]
+  before_action :set_handcard, only: %i[show edit update destroy]
 
   # GET /handcards
   # GET /handcards.json
@@ -9,8 +11,7 @@ class HandcardsController < ApplicationController
 
   # GET /handcards/1
   # GET /handcards/1.json
-  def show
-  end
+  def show; end
 
   # GET /handcards/new
   def new
@@ -18,8 +19,7 @@ class HandcardsController < ApplicationController
   end
 
   # GET /handcards/1/edit
-  def edit
-  end
+  def edit; end
 
   # POST /handcards
   # POST /handcards.json
@@ -62,13 +62,14 @@ class HandcardsController < ApplicationController
   end
 
   private
-    # Use callbacks to share common setup or constraints between actions.
-    def set_handcard
-      @handcard = Handcard.find(params[:id])
-    end
 
-    # Only allow a list of trusted parameters through.
-    def handcard_params
-      params.require(:handcard).permit(:ingamedeck_id, :player_id)
-    end
+  # Use callbacks to share common setup or constraints between actions.
+  def set_handcard
+    @handcard = Handcard.find(params[:id])
+  end
+
+  # Only allow a list of trusted parameters through.
+  def handcard_params
+    params.require(:handcard).permit(:ingamedeck_id, :player_id)
+  end
 end

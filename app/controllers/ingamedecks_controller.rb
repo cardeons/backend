@@ -1,5 +1,7 @@
+# frozen_string_literal: true
+
 class IngamedecksController < ApplicationController
-  before_action :set_ingamedeck, only: [:show, :edit, :update, :destroy]
+  before_action :set_ingamedeck, only: %i[show edit update destroy]
 
   # GET /ingamedecks
   # GET /ingamedecks.json
@@ -9,8 +11,7 @@ class IngamedecksController < ApplicationController
 
   # GET /ingamedecks/1
   # GET /ingamedecks/1.json
-  def show
-  end
+  def show; end
 
   # GET /ingamedecks/new
   def new
@@ -18,8 +19,7 @@ class IngamedecksController < ApplicationController
   end
 
   # GET /ingamedecks/1/edit
-  def edit
-  end
+  def edit; end
 
   # POST /ingamedecks
   # POST /ingamedecks.json
@@ -62,13 +62,14 @@ class IngamedecksController < ApplicationController
   end
 
   private
-    # Use callbacks to share common setup or constraints between actions.
-    def set_ingamedeck
-      @ingamedeck = Ingamedeck.find(params[:id])
-    end
 
-    # Only allow a list of trusted parameters through.
-    def ingamedeck_params
-      params.require(:ingamedeck).permit(:card_id, :gameboard_id)
-    end
+  # Use callbacks to share common setup or constraints between actions.
+  def set_ingamedeck
+    @ingamedeck = Ingamedeck.find(params[:id])
+  end
+
+  # Only allow a list of trusted parameters through.
+  def ingamedeck_params
+    params.require(:ingamedeck).permit(:card_id, :gameboard_id)
+  end
 end

@@ -1,1 +1,3 @@
-json.partial! "playercurses/playercurse", playercurse: @playercurse
+# frozen_string_literal: true
+
+json.partial! 'playercurses/playercurse', playercurse: @playercurse

@@ -31,8 +31,8 @@ RSpec.configure do |config|
             }
           }
         },
-        {          
-        url: 'https://cardeons-develop.herokuapp.com/',
+        {
+          url: 'https://cardeons-develop.herokuapp.com/'
         }
       ]
     }

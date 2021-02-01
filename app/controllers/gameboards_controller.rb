@@ -1,5 +1,7 @@
+# frozen_string_literal: true
+
 class GameboardsController < ApplicationController
-  before_action :set_gameboard, only: [:show, :edit, :update, :destroy]
+  before_action :set_gameboard, only: %i[show edit update destroy]
 
   # GET /gameboards
   # GET /gameboards.json
@@ -9,8 +11,7 @@ class GameboardsController < ApplicationController
 
   # GET /gameboards/1
   # GET /gameboards/1.json
-  def show
-  end
+  def show; end
 
   # GET /gameboards/new
   def new
@@ -18,8 +19,7 @@ class GameboardsController < ApplicationController
   end
 
   # GET /gameboards/1/edit
-  def edit
-  end
+  def edit; end
 
   # POST /gameboards
   # POST /gameboards.json
@@ -62,13 +62,14 @@ class GameboardsController < ApplicationController
   end
 
   private
-    # Use callbacks to share common setup or constraints between actions.
-    def set_gameboard
-      @gameboard = Gameboard.find(params[:id])
-    end
 
-    # Only allow a list of trusted parameters through.
-    def gameboard_params
-      params.require(:gameboard).permit(:current_state, :player_atk, :monster_atk, :asked_help, :success, :can_flee, :shared_reward)
-    end
+  # Use callbacks to share common setup or constraints between actions.
+  def set_gameboard
+    @gameboard = Gameboard.find(params[:id])
+  end
+
+  # Only allow a list of trusted parameters through.
+  def gameboard_params
+    params.require(:gameboard).permit(:current_state, :player_atk, :monster_atk, :asked_help, :success, :can_flee, :shared_reward)
+  end
 end

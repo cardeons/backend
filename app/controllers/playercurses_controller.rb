@@ -1,5 +1,7 @@
+# frozen_string_literal: true
+
 class PlayercursesController < ApplicationController
-  before_action :set_playercurse, only: [:show, :edit, :update, :destroy]
+  before_action :set_playercurse, only: %i[show edit update destroy]
 
   # GET /playercurses
   # GET /playercurses.json
@@ -9,8 +11,7 @@ class PlayercursesController < ApplicationController
 
   # GET /playercurses/1
   # GET /playercurses/1.json
-  def show
-  end
+  def show; end
 
   # GET /playercurses/new
   def new
@@ -18,8 +19,7 @@ class PlayercursesController < ApplicationController
   end
 
   # GET /playercurses/1/edit
-  def edit
-  end
+  def edit; end
 
   # POST /playercurses
   # POST /playercurses.json
@@ -62,13 +62,14 @@ class PlayercursesController < ApplicationController
   end
 
   private
-    # Use callbacks to share common setup or constraints between actions.
-    def set_playercurse
-      @playercurse = Playercurse.find(params[:id])
-    end
 
-    # Only allow a list of trusted parameters through.
-    def playercurse_params
-      params.require(:playercurse).permit(:ingamedeck_id, :player_id)
-    end
+  # Use callbacks to share common setup or constraints between actions.
+  def set_playercurse
+    @playercurse = Playercurse.find(params[:id])
+  end
+
+  # Only allow a list of trusted parameters through.
+  def playercurse_params
+    params.require(:playercurse).permit(:ingamedeck_id, :player_id)
+  end
 end
