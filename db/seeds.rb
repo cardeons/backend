@@ -4,19 +4,97 @@
 
 User.create(email: 'daniela-dottolo@gmx.at', password: 'hahasosecret123')
 
-Monstercard.create(id: 1, title: 'Sir Bear', description: 'A very serious bear with a beard.', image: '/public/monster/bear.png', action: "lose_item_head", draw_chance: 10, level: 3, element: 'earth', bad_things: 'Oh no, you disrespected the Sir! Lose your headpiece.', rewards_treasure: 1, good_against: 'fire', bad_against: 'air', good_against_value: 3, bad_against_value: 1, element_modifier: 2, atk_points: 6, level_amount: 1)
-Monstercard.create(id: 3, title: 'Catfish', description: 'HA! You got catfished.', image: '/public/monster/catfish.png', action: "lose_level", draw_chance: 5, level: 10, element: 'water', bad_things: 'Getting catfished, really? You should know better. Lose one level.', rewards_treasure: 2, good_against: 'fire', bad_against: 'earth', good_against_value: 3, bad_against_value: 1, element_modifier: 2, atk_points: 14, level_amount: 2)
+Monstercard.create(id: 1, 
+    title: 'Sir Bear', 
+    description: 'A very serious bear with a beard.', 
+    image: '/public/monster/bear.png', 
+    action: "lose_item_head", 
+    draw_chance: 10, 
+    level: 3, 
+    element: 'earth', 
+    bad_things: 'Oh no, you disrespected the Sir! Lose your headpiece.', 
+    rewards_treasure: 1, 
+    good_against: 'fire', 
+    bad_against: 'air', 
+    good_against_value: 3, 
+    bad_against_value: 1, 
+    atk_points: 6, 
+    level_amount: 1
+)
 
-Cursecard.create(id: 2, title: 'very bad curse', description: 'This curse is very bad. Actually, it is so bad that this curse will stick to you and weaken your fighting ability as long as you do not find a way to remove it', image: '', action: 'lose_atk_points', draw_chance: 4, atk_points: -1)
+Monstercard.create(id: 3, 
+    title: 'Catfish', 
+    description: 'HA! You got catfished.', 
+    image: '/public/monster/catfish.png', 
+    action: "lose_level", 
+    draw_chance: 5, 
+    level: 10, 
+    element: 'water', 
+    bad_things: 'Getting catfished, really? You should know better. Lose one level.', 
+    rewards_treasure: 2, 
+    good_against: 'fire', 
+    bad_against: 'earth', 
+    good_against_value: 3, 
+    bad_against_value: 1, 
+    atk_points: 14, 
+    level_amount: 2
+)
+
+Cursecard.create(id: 2, 
+    title: 'very bad curse', 
+    description: 'This curse is very bad. Actually, it is so bad that this curse will stick to you and weaken your fighting ability as long as you do not find a way to remove it',
+    image: '', 
+    action: 'lose_atk_points', 
+    draw_chance: 4, 
+    atk_points: -1
+)
 
 
-Itemcard.create(id: 4, title: 'Helmet of Doom', description: 'This is the helmet of doom', image: '/public/item/helmet.png', action: 'plus_one', draw_chance: 13, good_against: "fire", good_against_value: 2, atk_points: 2, item_category: "head", has_combination: false)
-Itemcard.create(id: 5, title: 'The things to get things out of the toilet', description: 'Disgusting. If I was you, I would not touch it.', image: '/public/item/poempel.png', action: 'plus_one', draw_chance: 14, atk_points: 2, item_category: "hand_one", has_combination: false)
-Itemcard.create(id: 6, title: 'Hermes shoes', description: 'Damn, those are some nice shoes! Hopefully hermes does not mind you took them..', image: '/public/item/shoes.png', action: 'plus_3', draw_chance: 5, good_against: "earth", good_against_value: 3, atk_points: 4, item_category: "shoes", has_combination: false)
+Itemcard.create(id: 4, 
+    title: 'Helmet of Doom', 
+    description: 'This is the helmet of doom', 
+    image: '/public/item/helmet.png', 
+    action: 'plus_one', 
+    draw_chance: 13, 
+    element: "fire", 
+    element_modifier: 2, 
+    atk_points: 2, 
+    item_category: "head", 
+    has_combination: false
+)
+
+Itemcard.create(id: 5, 
+    title: 'The things to get things out of the toilet', 
+    description: 'Disgusting. If I was you, I would not touch it.', 
+    image: '/public/item/poempel.png', 
+    action: 'plus_one', 
+    draw_chance: 14, 
+    atk_points: 2, 
+    item_category: "hand_one", 
+    has_combination: false
+)
+Itemcard.create(id: 6, 
+    title: 'Hermes shoes', 
+    description: 'Damn, those are some nice shoes! Hopefully hermes does not mind you took them..', 
+    image: '/public/item/shoes.png', 
+    action: 'plus_3', 
+    draw_chance: 5, 
+    element: "earth", 
+    element_modifier: 3, 
+    atk_points: 4, 
+    item_category: "shoes", 
+    has_combination: false
+)
 
 Levelcard.create(id: 8, title: 'Level up!', description: 'Get one level', image: '', action: 'level_up')
 
-Buffcard.create(id: 9, title: 'Buffing yourself up, eh?', description: 'You are getting stronger and stronger. Gain 2 extra attack points', image: '', action: 'gain_atk', atk_points: 2)
+Buffcard.create(id: 9, 
+    title: 'Buffing yourself up, eh?', 
+    description: 'You are getting stronger and stronger. Gain 2 extra attack points', 
+    image: '', 
+    action: 'gain_atk', 
+    atk_points: 2
+)
 
 Gameboard.create(id: 1, current_state: 'fight', player_atk: 5)
 
