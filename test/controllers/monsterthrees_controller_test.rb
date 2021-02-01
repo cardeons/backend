@@ -1,9 +1,9 @@
 require "test_helper"
 
 class MonsterthreesControllerTest < ActionDispatch::IntegrationTest
-  setup do
-    @monsterthree = monsterthrees(:one)
-  end
+  # setup do
+  #   @monsterthree = monsterthrees(:one)
+  # end
 
   # test "should get index" do
   #   get monsterthrees_url
