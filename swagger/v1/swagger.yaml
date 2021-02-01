@@ -131,6 +131,8 @@ paths:
                           type: string
                         title:
                           type: string
+                        type:
+                          type: string
                         description:
                           type: string
                         image:

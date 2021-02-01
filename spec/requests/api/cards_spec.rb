@@ -17,6 +17,7 @@ RSpec.describe 'api/cards', type: :request do
                            properties: {
                              id: {type: :string},
                              title: {type: :string},
+                             type: {type: :string},
                              description: {type: :string},
                              image: {type: :string},
                              action: {type: :string},
