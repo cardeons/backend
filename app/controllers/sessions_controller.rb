@@ -22,10 +22,11 @@ class SessionsController < ApplicationController
                 token: token
             }
         else
-            render json: {
-                status: 401,
-                error: 'Invalid username or password'
-            }
+            # render json: {
+            #     status: 401,
+            #     error: 'Invalid username or password'
+            # }
+            render :json => { :errors => 'Invalid username or password' }, :status => 401
         end
     end
 
