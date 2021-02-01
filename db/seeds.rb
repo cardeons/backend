@@ -86,6 +86,14 @@ Itemcard.create(id: 6,
     has_combination: false
 )
 
+
+# Adds cards to inventory of user1
+User.find(1).cards<<(Cards.find(1))
+User.find(1).cards<<(Cards.find(2))
+User.find(1).cards<<(Cards.find(3))
+User.find(1).cards<<(Cards.find(4))
+
+
 Levelcard.create(id: 8, title: 'Level up!', description: 'Get one level', image: '', action: 'level_up')
 
 Buffcard.create(id: 9, 
