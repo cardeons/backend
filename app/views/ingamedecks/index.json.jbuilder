@@ -1,1 +1,3 @@
-json.array! @ingamedecks, partial: "ingamedecks/ingamedeck", as: :ingamedeck
+# frozen_string_literal: true
+
+json.array! @ingamedecks, partial: 'ingamedecks/ingamedeck', as: :ingamedeck

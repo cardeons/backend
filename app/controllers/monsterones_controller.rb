@@ -1,5 +1,7 @@
+# frozen_string_literal: true
+
 class MonsteronesController < ApplicationController
-  before_action :set_monsterone, only: [:show, :edit, :update, :destroy]
+  before_action :set_monsterone, only: %i[show edit update destroy]
 
   # GET /monsterones
   # GET /monsterones.json
@@ -9,8 +11,7 @@ class MonsteronesController < ApplicationController
 
   # GET /monsterones/1
   # GET /monsterones/1.json
-  def show
-  end
+  def show; end
 
   # GET /monsterones/new
   def new
@@ -18,8 +19,7 @@ class MonsteronesController < ApplicationController
   end
 
   # GET /monsterones/1/edit
-  def edit
-  end
+  def edit; end
 
   # POST /monsterones
   # POST /monsterones.json
@@ -62,13 +62,14 @@ class MonsteronesController < ApplicationController
   end
 
   private
-    # Use callbacks to share common setup or constraints between actions.
-    def set_monsterone
-      @monsterone = Monsterone.find(params[:id])
-    end
 
-    # Only allow a list of trusted parameters through.
-    def monsterone_params
-      params.require(:monsterone).permit(:ingamedeck_id, :player_id)
-    end
+  # Use callbacks to share common setup or constraints between actions.
+  def set_monsterone
+    @monsterone = Monsterone.find(params[:id])
+  end
+
+  # Only allow a list of trusted parameters through.
+  def monsterone_params
+    params.require(:monsterone).permit(:ingamedeck_id, :player_id)
+  end
 end

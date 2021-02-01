@@ -1,5 +1,7 @@
+# frozen_string_literal: true
+
 class InterceptcardsController < ApplicationController
-  before_action :set_interceptcard, only: [:show, :edit, :update, :destroy]
+  before_action :set_interceptcard, only: %i[show edit update destroy]
 
   # GET /interceptcards
   # GET /interceptcards.json
@@ -9,8 +11,7 @@ class InterceptcardsController < ApplicationController
 
   # GET /interceptcards/1
   # GET /interceptcards/1.json
-  def show
-  end
+  def show; end
 
   # GET /interceptcards/new
   def new
@@ -18,8 +19,7 @@ class InterceptcardsController < ApplicationController
   end
 
   # GET /interceptcards/1/edit
-  def edit
-  end
+  def edit; end
 
   # POST /interceptcards
   # POST /interceptcards.json
@@ -62,13 +62,14 @@ class InterceptcardsController < ApplicationController
   end
 
   private
-    # Use callbacks to share common setup or constraints between actions.
-    def set_interceptcard
-      @interceptcard = Interceptcard.find(params[:id])
-    end
 
-    # Only allow a list of trusted parameters through.
-    def interceptcard_params
-      params.require(:interceptcard).permit(:gameboard_id, :ingamedeck_id)
-    end
+  # Use callbacks to share common setup or constraints between actions.
+  def set_interceptcard
+    @interceptcard = Interceptcard.find(params[:id])
+  end
+
+  # Only allow a list of trusted parameters through.
+  def interceptcard_params
+    params.require(:interceptcard).permit(:gameboard_id, :ingamedeck_id)
+  end
 end

@@ -27,8 +27,6 @@ gem 'dotenv-rails'
 
 gem 'jwt'
 
-
-
 gem 'devise'
 
 gem 'rubocop', require: false
@@ -56,12 +54,12 @@ group :development do
   gem 'listen', '~> 3.3'
   gem 'rack-mini-profiler', '~> 2.0'
   # Spring speeds up development by keeping your application running in the background. Read more: https://github.com/rails/spring
-  gem 'spring'
   gem 'guard'
   gem 'guard-livereload', '~> 2.5', require: false
   gem 'rack-livereload'
   gem 'rspec-rails'
   gem 'rswag-specs'
+  gem 'spring'
 end
 
 group :test do
@@ -76,4 +74,4 @@ end
 gem 'tzinfo-data', platforms: %i[mingw mswin x64_mingw jruby]
 
 gem 'bcrypt', '~> 3.1', '>= 3.1.16'
-gem "rack-cors", :require => 'rack/cors'
+gem 'rack-cors', require: 'rack/cors'

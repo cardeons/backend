@@ -1,5 +1,7 @@
+# frozen_string_literal: true
+
 class InventoriesController < ApplicationController
-  before_action :set_inventory, only: [:show, :edit, :update, :destroy]
+  before_action :set_inventory, only: %i[show edit update destroy]
 
   # GET /inventories
   # GET /inventories.json
@@ -9,8 +11,7 @@ class InventoriesController < ApplicationController
 
   # GET /inventories/1
   # GET /inventories/1.json
-  def show
-  end
+  def show; end
 
   # GET /inventories/new
   def new
@@ -18,8 +19,7 @@ class InventoriesController < ApplicationController
   end
 
   # GET /inventories/1/edit
-  def edit
-  end
+  def edit; end
 
   # POST /inventories
   # POST /inventories.json
@@ -62,13 +62,14 @@ class InventoriesController < ApplicationController
   end
 
   private
-    # Use callbacks to share common setup or constraints between actions.
-    def set_inventory
-      @inventory = Inventory.find(params[:id])
-    end
 
-    # Only allow a list of trusted parameters through.
-    def inventory_params
-      params.require(:inventory).permit(:ingamedeck_id, :player_id)
-    end
+  # Use callbacks to share common setup or constraints between actions.
+  def set_inventory
+    @inventory = Inventory.find(params[:id])
+  end
+
+  # Only allow a list of trusted parameters through.
+  def inventory_params
+    params.require(:inventory).permit(:ingamedeck_id, :player_id)
+  end
 end

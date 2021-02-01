@@ -1,5 +1,7 @@
+# frozen_string_literal: true
+
 class GraveyardsController < ApplicationController
-  before_action :set_graveyard, only: [:show, :edit, :update, :destroy]
+  before_action :set_graveyard, only: %i[show edit update destroy]
 
   # GET /graveyards
   # GET /graveyards.json
@@ -9,8 +11,7 @@ class GraveyardsController < ApplicationController
 
   # GET /graveyards/1
   # GET /graveyards/1.json
-  def show
-  end
+  def show; end
 
   # GET /graveyards/new
   def new
@@ -18,8 +19,7 @@ class GraveyardsController < ApplicationController
   end
 
   # GET /graveyards/1/edit
-  def edit
-  end
+  def edit; end
 
   # POST /graveyards
   # POST /graveyards.json
@@ -62,13 +62,14 @@ class GraveyardsController < ApplicationController
   end
 
   private
-    # Use callbacks to share common setup or constraints between actions.
-    def set_graveyard
-      @graveyard = Graveyard.find(params[:id])
-    end
 
-    # Only allow a list of trusted parameters through.
-    def graveyard_params
-      params.require(:graveyard).permit(:gameboard_id, :ingamedeck_id)
-    end
+  # Use callbacks to share common setup or constraints between actions.
+  def set_graveyard
+    @graveyard = Graveyard.find(params[:id])
+  end
+
+  # Only allow a list of trusted parameters through.
+  def graveyard_params
+    params.require(:graveyard).permit(:gameboard_id, :ingamedeck_id)
+  end
 end
