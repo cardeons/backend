@@ -2,7 +2,7 @@
 # This file should contain all the record creation needed to seed the database with its default values.
 # The data can then be loaded with the bin/rails db:seed command (or created alongside the database with db:setup).
 
-User.create(email: 'daniela-dottolo@gmx.at', password: 'hahasosecret123')
+User.create(email: 'daniela-dottolo@gmx.at', password: 'hahasosecret123', name: "lol", password_confirmation: 'hahasosecret123')
 
 Monstercard.create(id: 1, 
     title: 'Sir Bear', 
@@ -88,10 +88,10 @@ Itemcard.create(id: 6,
 
 
 # Adds cards to inventory of user1
-User.find(1).cards<<(Cards.find(1))
-User.find(1).cards<<(Cards.find(2))
-User.find(1).cards<<(Cards.find(3))
-User.find(1).cards<<(Cards.find(4))
+User.find(1).cards<<(Card.find(1))
+User.find(1).cards<<(Card.find(2))
+User.find(1).cards<<(Card.find(3))
+User.find(1).cards<<(Card.find(4))
 
 
 Levelcard.create(id: 8, title: 'Level up!', description: 'Get one level', image: '', action: 'level_up')
