@@ -39,6 +39,11 @@ ActiveRecord::Schema.define(version: 2021_02_01_140204) do
     t.string "type"
   end
 
+  create_table "cards_users", id: false, force: :cascade do |t|
+    t.bigint "user_id", null: false
+    t.bigint "card_id", null: false
+  end
+
   create_table "gameboards", force: :cascade do |t|
     t.string "current_state"
     t.integer "player_atk"
