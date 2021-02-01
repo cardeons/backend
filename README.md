@@ -24,6 +24,8 @@ To do:
 Happy Coding😘
 
 
+Reset DB: rake db:migrate:reset #runs db:drop db:create db:migrate
+
 
 
 
