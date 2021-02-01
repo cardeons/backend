@@ -9,9 +9,8 @@ To do:
 - create databases
 
   -sudo service postgresql start
+  
   -sudo -u postgres  psql
-
-  -CREATE USER cardeons_backend
   
   -CREATE DATABASE cardeons_backend_development
   
