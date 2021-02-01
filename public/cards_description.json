@@ -90,6 +90,7 @@
         "image": "Bildurl der Karte",
         "action": "Funktion die ausgeführt wird, wenn die Karte eingesetzt wird",
         "level_amount":"wie viele Levels steigt er durch die Karte auf?",
+        "has_combination":"id von mit wem eine Kombination?",
         "type":"Levelcard"
     }
 }
