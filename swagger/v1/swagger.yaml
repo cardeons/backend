@@ -4,11 +4,116 @@ info:
   title: API V1
   version: v1
 paths:
-  "/cards.json":
+  "/users.json":
     get:
       summary: list all the users
       tags:
       - User
+      responses:
+        '200':
+          description: successful
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    id:
+                      type: integer
+                    name:
+                      type: string
+                    email:
+                      type: string
+                  required:
+                  - id
+                  - name
+                  - email
+  "/users/{id}.json":
+    get:
+      summary: show user
+      tags:
+      - User
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: successful
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: integer
+                  name:
+                    type: string
+                  email:
+                    type: string
+                required:
+                - id
+                - name
+                - email
+  "/registrations":
+    post:
+      summary: Creates a user
+      tags:
+      - User
+      parameters: []
+      responses:
+        '201':
+          description: user created
+        '422':
+          description: password can't be blank, name can't exist, e-mail can't exist
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                email:
+                  type: string
+                password:
+                  type: string
+                password_confirmation:
+                  type: string
+              required:
+              - name
+              - email
+              - password
+  "/sessions":
+    post:
+      summary: Logs in a user
+      tags:
+      - User
+      parameters: []
+      responses:
+        '200':
+          description: user logged in
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                password:
+                  type: string
+              required:
+              - email
+              - password
+  "/cards.json":
+    get:
+      summary: list all the cards
+      tags:
+      - Cards
       responses:
         '200':
           description: successful
