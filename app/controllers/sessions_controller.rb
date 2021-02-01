@@ -3,8 +3,13 @@ class SessionsController < ApplicationController
 
     def create
         #params kommen später vom Frontend
-        user = User.create(email: 'daniela-dottolo@gmx.at', password: 'hahasosecret123')
+        registration_input = request.raw_post()
+        registration_input = JSON.parse(registration_input)
 
+        user = User.find_by(email: registration_input['email']).try(:authenticate, registration_input['password'])
+
+        registration_input = request.raw_post()
+        registration_input = JSON.parse(registration_input)
 
         # user.valid? später einbauen, wenn alles in der db steht!
         if user
