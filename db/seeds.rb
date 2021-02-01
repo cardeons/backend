@@ -1,33 +1,42 @@
 # frozen_string_literal: true
 # This file should contain all the record creation needed to seed the database with its default values.
 # The data can then be loaded with the bin/rails db:seed command (or created alongside the database with db:setup).
-#
-# Examples:
-#
-#   movies = Movie.create([{ name: 'Star Wars' }, { name: 'Lord of the Rings' }])
-#   Character.create(name: 'Luke', movie: movies.first)
 
 User.create(email: 'daniela-dottolo@gmx.at', password: 'hahasosecret123')
 
-# Monstercard.create(id: 1, title: 'U Bahn', description: 'nimmt die U Bahn +3 auf deinen Roll', image: 'testurl', action: 'throwawayoneitem')
-# Cursecard.create(id: 2, title: 'lil vayne', description: 'do not feed', image: 'testurl', action: 'throwawayoneitem')
-# Monstercard.create(id: 3, title: '', description: '1 Test Karte', image: 'testurl', action: 'throwawayoneitem')
-# Monstercard.create(id: 4, title: 'Test', description: '1 Test Karte', image: 'testurl', action: 'throwawayoneitem')
-# Monstercard.create(id: 5, title: 'Test', description: '1 Test Karte', image: 'testurl', action: 'throwawayoneitem')
-# Bosscard.create(id: 6, title: 'Test', description: '1 Test Karte', image: 'testurl', action: 'throwawayoneitem')
-# Monstercard.create(id: 7, title: 'Test', description: '1 Test Karte', image: 'testurl', action: 'throwawayoneitem')
-# Levelcard.create(id: 8, title: 'Test', description: '1 Test Karte', image: 'testurl', action: 'throwawayoneitem')
-# Buffcard.create(id: 9, title: 'Test', description: '1 Test Karte', image: 'testurl', action: 'throwawayoneitem')
+Monstercard.create(id: 1, title: 'Sir Bear', description: 'A very serious bear with a beard.', image: '/public/monster/bear.png', action: "lose_item_head", draw_chance: 10, level: 3, element: 'earth', bad_things: 'Oh no, you disrespected the Sir! Lose your headpiece.', rewards_treasure: 1, good_against: 'fire', bad_against: 'air', good_against_value: 3, bad_against_value: 1, element_modifier: 2, atk_points: 6, level_amount: 1)
+Monstercard.create(id: 3, title: 'Catfish', description: 'HA! You got catfished.', image: '/public/monster/catfish.png', action: "lose_level", draw_chance: 5, level: 10, element: 'water', bad_things: 'Getting catfished, really? You should know better. Lose one level.', rewards_treasure: 2, good_against: 'fire', bad_against: 'earth', good_against_value: 3, bad_against_value: 1, element_modifier: 2, atk_points: 14, level_amount: 2)
 
-# Gameboard.create(id: 1, current_state: 'fight', player_atk: 5)
-
-# Player.create(id: 1, name: 'Gustav', gameboard_id: 1)
-# Handcard.create(id: 1, player_id: 1)
-# Ingamedeck.create(id:1,  gameboard_id:1, card_id:1, cardable_id:1, cardable_type: 'Handcard')
-# Ingamedeck.create(id:2,  gameboard_id:1, card_id:2,  cardable_id:1, cardable_type: 'Handcard')
+Cursecard.create(id: 2, title: 'very bad curse', description: 'This curse is very bad. Actually, it is so bad that this curse will stick to you and weaken your fighting ability as long as you do not find a way to remove it', image: '', action: 'lose_atk_points', draw_chance: 4, atk_points: -1)
 
 
-# Player.create(id: 2, name: 'Thomas', gameboard_id: 1)
+Itemcard.create(id: 4, title: 'Helmet of Doom', description: 'This is the helmet of doom', image: '/public/item/helmet.png', action: 'plus_one', draw_chance: 13, good_against: "fire", good_against_value: 2, atk_points: 2, item_category: "head", has_combination: false)
+Itemcard.create(id: 5, title: 'The things to get things out of the toilet', description: 'Disgusting. If I was you, I would not touch it.', image: '/public/item/poempel.png', action: 'plus_one', draw_chance: 14, atk_points: 2, item_category: "hand_one", has_combination: false)
+Itemcard.create(id: 6, title: 'Hermes shoes', description: 'Damn, those are some nice shoes! Hopefully hermes does not mind you took them..', image: '/public/item/shoes.png', action: 'plus_3', draw_chance: 5, good_against: "earth", good_against_value: 3, atk_points: 4, item_category: "shoes", has_combination: false)
+
+Levelcard.create(id: 8, title: 'Level up!', description: 'Get one level', image: '', action: 'level_up')
+
+Buffcard.create(id: 9, title: 'Buffing yourself up, eh?', description: 'You are getting stronger and stronger. Gain 2 extra attack points', image: '', action: 'gain_atk', atk_points: 2)
+
+Gameboard.create(id: 1, current_state: 'fight', player_atk: 5)
+
+Player.create(id: 1, name: 'Gustav', gameboard_id: 1)
+Player.create(id: 2, name: 'Thomas', gameboard_id: 1)
+Player.create(id: 3, name: 'Lorenz', gameboard_id: 1)
+Player.create(id: 4, name: 'Maja', gameboard_id: 1)
+
+Handcard.create(id: 1, player_id: 1)
+Ingamedeck.create(id:1,  gameboard_id:1, card_id:1, cardable_id:1, cardable_type: 'Handcard')
+Ingamedeck.create(id:2,  gameboard_id:1, card_id:3,  cardable_id:1, cardable_type: 'Handcard')
+Ingamedeck.create(id:3,  gameboard_id:1, card_id:5, cardable_id:1, cardable_type: 'Handcard')
+Ingamedeck.create(id:4,  gameboard_id:1, card_id:2,  cardable_id:1, cardable_type: 'Handcard')
+
+Inventory.create(id: 1, player_id: 1)
+Ingamedeck.create(id:5,  gameboard_id:1, card_id:6, cardable_id:1, cardable_type: 'Inventory')
+
+Playercurse.create(id: 1, player_id: 1)
+Ingamedeck.create(id:6,  gameboard_id:1, card_id:2, cardable_id:1, cardable_type: 'Playercurse')
+
 
 
 # Playerdeckmonstertwo.create(id: 12, player_id: 1)
