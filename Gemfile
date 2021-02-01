@@ -36,6 +36,8 @@ gem 'rubocop', require: false
 # Use Active Storage variant
 # gem 'image_processing', '~> 1.2'
 
+gem 'rswag'
+
 # Reduces boot times through caching; required in config/boot.rb
 gem 'bootsnap', '>= 1.4.4', require: false
 
@@ -56,6 +58,8 @@ group :development do
   gem 'guard'
   gem 'guard-livereload', '~> 2.5', require: false
   gem 'rack-livereload'
+  gem 'rspec-rails'
+  gem 'rswag-specs'
 end
 
 group :test do
