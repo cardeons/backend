@@ -1,0 +1,2 @@
+class GameSocketController < ApplicationController
+end
