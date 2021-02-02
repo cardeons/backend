@@ -2,9 +2,9 @@ Layout/LineLength:
   Max: 200
   AutoCorrect: true
 
-Metrics/LineLength:
-  Max: 200
-  AutoCorrect: true
+# Metrics/LineLength:
+#   Max: 200
+#   AutoCorrect: true  
 
 Style/Documentation:
   Enabled: false
@@ -41,3 +41,6 @@ Metrics/PerceivedComplexity:
 
 Style/GuardClause:
   Enabled: false
+
+AllCops:
+  SuggestExtensions: false
