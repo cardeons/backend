@@ -18,7 +18,6 @@ Rails.application.routes.draw do
   resources :cards
   resources :users_cards
   get '/users/:id/inventory', to: 'users#show_cards'
-  # post :inventory, to: 'users_cards#show'
   # For details on the DSL available within this file, see https://guides.rubyonrails.org/routing.html
   resources :sessions, only: [:create]
   resources :registrations, only: [:create]
