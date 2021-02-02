@@ -42,7 +42,7 @@ Monstercard.create(id: 3,
 Cursecard.create(id: 2,
                  title: 'very bad curse',
                  description: 'This curse is very bad. Actually, it is so bad that this curse will stick to you and weaken your fighting ability as long as you do not find a way to remove it',
-                 image: '',
+                 image: 'path',
                  action: 'lose_atk_points',
                  draw_chance: 4,
                  atk_points: -1)
