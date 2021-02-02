@@ -8,4 +8,5 @@ class Player < ApplicationRecord
   has_one :monstertwo, dependent: :destroy
   has_one :monsterthree, dependent: :destroy
   has_one :playercurse, dependent: :destroy
+  belongs_to :user
 end
