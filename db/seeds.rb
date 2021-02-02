@@ -100,7 +100,7 @@ Buffcard.create(id: 9,
 
 Gameboard.create(id: 1, current_state: 'fight', player_atk: 5)
 
-Player.create(id: 1, name: 'Gustav', gameboard_id: 1, user_id: 1)
+# Player.create(id: 1, name: 'Gustav', gameboard_id: 1, user_id: 1)
 Player.create(id: 2, name: 'Thomas', gameboard_id: 1, user_id: 2)
 Player.create(id: 3, name: 'Lorenz', gameboard_id: 1, user_id: 3)
 Player.create(id: 4, name: 'Maja', gameboard_id: 1, user_id: 4)
