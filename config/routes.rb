@@ -23,5 +23,8 @@ Rails.application.routes.draw do
   resources :registrations, only: [:create]
   # delete :logout, to: "sessions#logout"
   get :logged_in, to: 'application#authorized'
+  get '/drawdoorcard', to: 'gamemethods#draw_doorcard'
+  get '/drawtreasurecard', to: 'gamemethods#draw_treasurecard'
+  get '/drawhandcards/:id/:gameboard_id', to: 'gamemethods#draw_handcards'
   root 'welcome#index'
 end
