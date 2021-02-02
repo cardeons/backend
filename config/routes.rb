@@ -24,7 +24,9 @@ Rails.application.routes.draw do
   # delete :logout, to: "sessions#logout"
   get :logged_in, to: 'application#authorized'
   get '/drawdoorcard', to: 'gamemethods#draw_doorcard'
+  get '/canflee', to: 'gamemethods#canFlee?'
   get '/drawtreasurecard', to: 'gamemethods#draw_treasurecard'
   get '/drawhandcards/:id/:gameboard_id', to: 'gamemethods#draw_handcards'
+  get '/attack/:monsterid/:playerid', to: 'gamemethods#attack'
   root 'welcome#index'
 end
