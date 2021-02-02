@@ -5,15 +5,11 @@ class GamesocketChannel < ApplicationCable::Channel
 
     awaiting_players = "awaiting_players"
 
-
-    puts "inside subscribed gamesocket"
-
-
     # access current user with current_user
     puts current_user
 
+    ##search for gameboard with open lobby
     unless gameboard = Gameboard.find_by(current_state: awaiting_players)
-      puts "inside unless"
       gameboard = Gameboard.create(current_state: awaiting_players)
     end
 
@@ -27,27 +23,32 @@ class GamesocketChannel < ApplicationCable::Channel
 
 
     # puts gameboard
-    puts gameboard.players
+    # puts gameboard.players
 
 
-    if gameboard.players.count == 4
+    lobbyisfull = false
+
+
+    if gameboard.players.count > 3 
         gameboard.current_state = "started"
-        gameboard.current_user = gameboard.players.first
+        ### add who is allowed to play
+        # gameboard.current_user = gameboard.players.first
         gameboard.save
+        lobbyisfull = true
     end
 
 
-    stream_from Gameboard.find(gameboard.id)
+    @gameboard = Gameboard.find(gameboard.id)
+    stream_for @gameboard
 
-    stream_from Player.find(player.id)
+    broadcast_to(@gameboard, "new Player conected to the gameboard id: #{@gameboard.id}")
+    broadcast_to(@gameboard, "players in lobby: #{@gameboard.players.count}")
 
-    broadcast_to(gameboard, "you are now getting updates to your gameboard")
-
-    broadcast_to(player, "you are now getting updates to your player")
-    # stream_from 'gamesocket_channel_xxx'
-    # for reference
-    # stream_from "game_channel_#{params[:room]}"
-    @gameboard = gameboard
+    # if lobby is full tell other players
+    if lobbyisfull
+      broadcast_to(@gameboard, "Lobby is full start with game")
+      broadcast_to(@gameboard, {action:"init", gameboard:@gameboard.players})
+    end
 
   end
 

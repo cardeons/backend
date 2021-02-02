@@ -7,8 +7,8 @@ module ApplicationCable
     def connect
       self.current_user = find_verified_user
       puts "-----------------------------"
-      puts current_user.email
       puts "found current User"
+      puts current_user.email
     end
 
     private
