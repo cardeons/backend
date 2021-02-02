@@ -5,21 +5,14 @@ require 'swagger_helper'
 RSpec.describe 'Inventory API', type: :request do
   fixtures :users
   before { @user = users(:mando) }
-  path '/inventory' do
-    post 'list all the users' do
+  path '/users/{id}/inventory.json' do
+    get 'list all cards of user' do
       tags 'Inventory'
 
       consumes 'application/json'
       produces 'application/json'
 
-      parameter name: :user,
-                in: :body,
-                schema: {
-                  type: :object,
-                  properties: {
-                    id: { type: :integer }
-                  }, required: %w[id]
-                }
+      parameter name: 'id', in: :path, type: :string
 
       response(200, 'successful') do
         schema type: :array,
@@ -55,7 +48,7 @@ RSpec.describe 'Inventory API', type: :request do
                          updated_at: { type: :string },
                          url: { type: :string }
                        },
-                       required: %w[id type attributes]
+                       required: %w[id]
                      }
                    }
                  }

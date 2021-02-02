@@ -109,12 +109,17 @@ paths:
               required:
               - email
               - password
-  "/inventory":
-    post:
-      summary: list all the users
+  "/users/{id}/inventory.json":
+    get:
+      summary: list all cards of user
       tags:
       - Inventory
-      parameters: []
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
       responses:
         '200':
           description: successful
@@ -178,18 +183,6 @@ paths:
                             type: string
                         required:
                         - id
-                        - type
-                        - attributes
-      requestBody:
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                id:
-                  type: integer
-              required:
-              - id
   "/cards.json":
     get:
       summary: list all the cards

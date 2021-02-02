@@ -13,9 +13,21 @@ class UsersCardsController < ApplicationController
     xd = request.raw_post
     card_input = JSON.parse(xd)
     id = card_input['id']
+    obj = {"card1" => 100}
 
     user_cards = User.find(id).cards
+    i = 1
+    user_cards.each do |user_card|
+      type = user_card.type
+      card_num = "card"+i.to_s
+      type_num = "type"+i.to_s
+      obj[card_num] = user_card
+      obj[type_num] = type
 
+      user_card["type"] = type
+      user_card = user_card.to_json
+      i = i+1
+    end
     json_response(user_cards)
 
     # render :json => { :errors => user.errors.as_json }, :status => 420
