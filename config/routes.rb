@@ -26,5 +26,7 @@ Rails.application.routes.draw do
   get '/drawdoorcard', to: 'gamemethods#draw_doorcard'
   get '/drawtreasurecard', to: 'gamemethods#draw_treasurecard'
   get '/drawhandcards/:id/:gameboard_id', to: 'gamemethods#draw_handcards'
+  get '/equip/:player_id/:gameboard_id/:type/:deck_id', to: 'equip#index'
+
   root 'welcome#index'
 end

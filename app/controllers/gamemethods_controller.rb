@@ -98,6 +98,8 @@ class GamemethodsController < ApplicationController
     itemcards = Itemcard.all
     levelcards = Levelcard.all
 
+    # TODO check if player has cards from inventory
+
     allcards = []
 
     cursecards.each do |card|

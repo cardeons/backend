@@ -3,6 +3,13 @@
 # This file should contain all the record creation needed to seed the database with its default values.
 # The data can then be loaded with the bin/rails db:seed command (or created alongside the database with db:setup).
 
+ActiveRecord::Base.connection.tables.each do |table|
+    result = ActiveRecord::Base.connection.execute("SELECT id FROM #{table} ORDER BY id DESC LIMIT 1") rescue ( puts "Warning: not procesing table #{table}. Id is missing?" ; next )
+    ai_val = result.any? ? result.first['id'].to_i + 1 : 1
+    puts "Resetting auto increment ID for #{table} to #{ai_val}"
+    ActiveRecord::Base.connection.execute("ALTER SEQUENCE #{table}_id_seq RESTART WITH #{ai_val}")
+  end
+
 User.create(email: 'daniela-dottolo@gmx.at', password: 'hahasosecret123', name: 'lol', password_confirmation: 'hahasosecret123')
 User.create(email: 'hallo@hallo.at', password: '235', name: 'lul', password_confirmation: '235')
 User.create(email: 'fjeorfje@gmx.at', password: 'dfergt', name: 'lel', password_confirmation: 'dfergt')
@@ -117,6 +124,9 @@ Ingamedeck.create(id: 5, gameboard_id: 1, card_id: 6, cardable_id: 1, cardable_t
 Playercurse.create(id: 1, player_id: 1)
 Ingamedeck.create(id: 6, gameboard_id: 1, card_id: 2, cardable_id: 1, cardable_type: 'Playercurse')
 
+Monsterone.create(id: 1, player_id: 1)
+Ingamedeck.create(id: 7, gameboard_id: 1, card_id: 4, cardable_id: 1, cardable_type: 'Monsterone')
+Ingamedeck.create(id: 8, gameboard_id: 1, card_id: 5, cardable_id: 1, cardable_type: 'Monsterone')
 # Playerdeckmonstertwo.create(id: 12, player_id: 1)
 # Playerdeckmonsterthree.create(id: 13, player_id: 1)
 # Playerdeckcursecard.create(id: 15, player_id: 2)
