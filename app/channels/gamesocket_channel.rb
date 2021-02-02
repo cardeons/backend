@@ -41,8 +41,40 @@ class GamesocketChannel < ApplicationCable::Channel
     broadcast_to(@gameboard, "new Player conected to the gameboard id: #{@gameboard.id}")
     broadcast_to(@gameboard, "players in lobby: #{@gameboard.players.count}")
 
+
+    PlayerChannel.broadcast_to( @gameboard.players.first.user, "only one should get this this user should be: #{@gameboard.players.first.user} " )
+
+
     # if lobby is full tell other players
     if lobbyisfull
+
+        players = @gameboard.players
+
+
+        # much to do
+        players.each do |player|
+          handcard = Handcard.create(player_id: player.id)
+          Ingamedeck.new(gameboard_id: @gameboard.id, card_id: 1, cardable_id: handcard.id, cardable_type: 'Handcard').save!
+          Ingamedeck.new(gameboard_id: @gameboard.id, card_id: 2, cardable_id: handcard.id, cardable_type: 'Handcard').save!
+
+          # player.handcard.cards << (Card.find(1))
+          # player.handcard.cards << (Card.find(2))
+          puts "--------------------"
+          puts player.handcard.cards
+
+          # broadcast_to(@gameboard, "player.handcard.cards")
+
+  
+          # broadcast_to(@gameboard, player.handcard.cards)
+          
+          PlayerChannel.broadcast_to(player.user, player.handcard.cards )
+        end
+
+
+
+
+
+
       broadcast_to(@gameboard, 'Lobby is full start with game')
       broadcast_to(@gameboard, { action: 'init', gameboard: @gameboard.players })
     end
