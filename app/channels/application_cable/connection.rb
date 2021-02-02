@@ -6,8 +6,8 @@ module ApplicationCable
 
     def connect
       self.current_user = find_verified_user
-      puts "-----------------------------"
-      puts "found current User"
+      puts '-----------------------------'
+      puts 'found current User'
       puts current_user.email
     end
 
@@ -18,7 +18,6 @@ module ApplicationCable
       request.headers['Authorization']
     end
 
-  
     def decoded_token
       if auth_header
         token = auth_header.split[1]
@@ -30,22 +29,21 @@ module ApplicationCable
         end
       end
     end
-  
+
     def logged_in_user
       if decoded_token
         user_id = decoded_token[0]['user_id']
         User.find_by(id: user_id)
       end
     end
-  
 
     def find_verified_user
       if logged_in_user
         verified_user
       else
         # reject_unauthorized_connection
-        puts "-------------------------------------------"
-        puts "could not find user defaults to id 1 now"
+        puts '-------------------------------------------'
+        puts 'could not find user defaults to id 1 now'
         verified_user = User.find(1)
       end
     end
