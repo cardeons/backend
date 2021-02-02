@@ -71,4 +71,45 @@ class GamemethodsController < ApplicationController
       end
     end
   end
+
+  def canFlee?
+    render json: rand(6) > 3
+  end
+
+  def attack(monsterslot = 3, monsterid = params[:monsterid], playerid = params[:playerid])
+    monstercards = Player.find(playerid).monsterthree.cards
+
+    case monsterslot
+    when 1
+      monstercards = Player.find(playerid).monsterone.cards
+    when 2
+      monstercards = Player.find(playerid).monstertwos.cards
+    end
+
+    playeratkpts = 0
+
+    monstercards.each do |card|
+      playeratkpts += card.atk_points
+    end
+
+    monsteratkpts = Monstercard.find(monsterid).atk_points
+
+    playerwin = playeratkpts > monsteratkpts
+
+    if playerwin
+    # broadcast: start interceptionface
+    else
+      # broadcast: flee or use cards!
+    end
+
+    render json:
+    {
+      player_id: playerid,
+      monster_id: monsterid,
+      playermonster: monstercards,
+      totalplayeratk: playeratkpts,
+      monsteratk: monsteratkpts,
+      playerwin: playerwin
+    }
+  end
 end
