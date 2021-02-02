@@ -16,7 +16,9 @@ class GamesocketChannel < ApplicationCable::Channel
 
     player = Player.new(gameboard_id: gameboard.id)
 
-    player.save
+
+    player.user = current_user
+    player.save!
 
     # #add user to player
 
