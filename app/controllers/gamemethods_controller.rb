@@ -7,30 +7,9 @@ class GamemethodsController < ApplicationController
     bosscards = Bosscard.all
 
     allcards = []
-
-    cursecards.each do |card|
-      x = card.draw_chance
-      while x.positive?
-        allcards.push card
-        x -= 1
-      end
-    end
-
-    monstercards.each do |card|
-      x = card.draw_chance
-      while x.positive?
-        allcards.push card
-        x -= 1
-      end
-    end
-
-    bosscards.each do |card|
-      x = card.draw_chance
-      while x.positive?
-        allcards.push card
-        x -= 1
-      end
-    end
+    addCardsToArray(allcards, cursecards)
+    addCardsToArray(allcards, monstercards)
+    addCardsToArray(allcards, bosscards)
 
     randomcard = allcards[rand(allcards.length)]
 
@@ -45,46 +24,11 @@ class GamemethodsController < ApplicationController
     levelcards = Levelcard.all
 
     allcards = []
-
-    cursecards.each do |card|
-      x = card.draw_chance
-      while x.positive?
-        allcards.push card
-        x -= 1
-      end
-    end
-
-    monstercards.each do |card|
-      x = card.draw_chance
-      while x.positive?
-        allcards.push card
-        x -= 1
-      end
-    end
-
-    buffcards.each do |card|
-      x = card.draw_chance
-      while x.positive?
-        allcards.push card
-        x -= 1
-      end
-    end
-
-    itemcards.each do |card|
-      x = card.draw_chance
-      while x.positive?
-        allcards.push card
-        x -= 1
-      end
-    end
-
-    levelcards.each do |card|
-      x = card.draw_chance
-      while x.positive?
-        allcards.push card
-        x -= 1
-      end
-    end
+    addCardsToArray(allcards, cursecards)
+    addCardsToArray(allcards, monstercards)
+    addCardsToArray(allcards, buffcards)
+    addCardsToArray(allcards, itemcards)
+    addCardsToArray(allcards, levelcards)
 
     randomcard = allcards[rand(allcards.length)]
 
@@ -99,57 +43,32 @@ class GamemethodsController < ApplicationController
     levelcards = Levelcard.all
 
     allcards = []
-
-    cursecards.each do |card|
-      x = card.draw_chance
-      while x.positive?
-        allcards.push card.id
-        x -= 1
-      end
-    end
-
-    monstercards.each do |card|
-      x = card.draw_chance
-      while x.positive?
-        allcards.push card.id
-        x -= 1
-      end
-    end
-
-    buffcards.each do |card|
-      x = card.draw_chance
-      while x.positive?
-        allcards.push card.id
-        x -= 1
-      end
-    end
-
-    itemcards.each do |card|
-      x = card.draw_chance
-      while x.positive?
-        allcards.push card.id
-        x -= 1
-      end
-    end
-
-    levelcards.each do |card|
-      x = card.draw_chance
-      while x.positive?
-        allcards.push card.id
-        x -= 1
-      end
-    end
+    addCardsToArray(allcards, cursecards)
+    addCardsToArray(allcards, monstercards)
+    addCardsToArray(allcards, buffcards)
+    addCardsToArray(allcards, itemcards)
+    addCardsToArray(allcards, levelcards)
 
     handcard = Player.find(params[:id]).handcard
 
     Ingamedeck.where(cardable_type: 'Handcard', cardable_id: handcard.id).delete_all
-
-    Ingamedeck.create(gameboard_id: params[:gameboard_id], card_id: allcards[rand(allcards.length)], cardable_id: handcard.id, cardable_type: 'Handcard')
-    Ingamedeck.create(gameboard_id: params[:gameboard_id], card_id: allcards[rand(allcards.length)], cardable_id: handcard.id, cardable_type: 'Handcard')
-    Ingamedeck.create(gameboard_id: params[:gameboard_id], card_id: allcards[rand(allcards.length)], cardable_id: handcard.id, cardable_type: 'Handcard')
-    Ingamedeck.create(gameboard_id: params[:gameboard_id], card_id: allcards[rand(allcards.length)], cardable_id: handcard.id, cardable_type: 'Handcard')
-    Ingamedeck.create(gameboard_id: params[:gameboard_id], card_id: allcards[rand(allcards.length)], cardable_id: handcard.id, cardable_type: 'Handcard')
+    x = 5
+    # die x variable ändern je nachdem wie viele Karten Spieler mit ins Game nimmt :)
+    while x.positive?
+      Ingamedeck.create(gameboard_id: params[:gameboard_id], card_id: allcards[rand(allcards.length)], cardable_id: handcard.id, cardable_type: 'Handcard')
+      x -= 1
+    end
 
     render json: { card: handcard.cards }, status: 200
+  end
+
+  def addCardsToArray(arr, cards)
+    cards.each do |card|
+      x = card.draw_chance
+      while x.positive?
+        arr.push card.id
+        x -= 1
+      end
+    end
   end
 end
