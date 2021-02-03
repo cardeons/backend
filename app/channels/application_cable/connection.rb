@@ -15,6 +15,7 @@ module ApplicationCable
 
     def auth_header
       { Authorization: 'Bearer <token>' }
+
       request.headers['Authorization']
     end
 
