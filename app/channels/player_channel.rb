@@ -3,9 +3,7 @@
 class PlayerChannel < ApplicationCable::Channel
   def subscribed
     stream_for current_user
-    broadcast_to(current_user, "you are now getting updates to yourself #{current_user.email}")
-
-    puts current_user
+    broadcast_to(current_user, { type: 'DEBUG', params: { message: "you are now subscribed to the player Channel #{current_user.email}" } })
   end
 
   def unsubscribed

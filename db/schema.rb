@@ -12,7 +12,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20_210_202_122_552) do
+ActiveRecord::Schema.define(version: 20_210_202_181_658) do
   # These are extensions that must be enabled in order to support this database
   enable_extension 'plpgsql'
 
@@ -55,6 +55,8 @@ ActiveRecord::Schema.define(version: 20_210_202_122_552) do
     t.integer 'shared_reward'
     t.datetime 'created_at', precision: 6, null: false
     t.datetime 'updated_at', precision: 6, null: false
+    t.bigint 'current_player'
+    t.index ['current_player'], name: 'index_gameboards_on_current_player'
   end
 
   create_table 'graveyards', force: :cascade do |t|
@@ -151,6 +153,7 @@ ActiveRecord::Schema.define(version: 20_210_202_122_552) do
     t.string 'name'
   end
 
+  add_foreign_key 'gameboards', 'players', column: 'current_player'
   add_foreign_key 'graveyards', 'gameboards'
   add_foreign_key 'graveyards', 'ingamedecks'
   add_foreign_key 'handcards', 'players'
