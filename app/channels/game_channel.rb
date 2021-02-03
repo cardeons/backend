@@ -14,7 +14,7 @@ class GameChannel < ApplicationCable::Channel
 
     broadcast_to(@gameboard, { type: BOARD_UPDATE, params: Gameboard.broadcast_gameBoard(@gameboard) })
   end
- 
+
   def play_card(params)
     # add actions!
 
