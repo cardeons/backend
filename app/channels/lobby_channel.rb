@@ -6,13 +6,12 @@ class LobbyChannel < ApplicationCable::Channel
   LOBBY = 'lobby'
 
   def subscribed
-
     # access current user with current_user
     puts current_user
 
     # check if there is not a player with this user
     ## read find or create by for simpler solution
-    if Player.exists?(:user_id =>  current_user.id)
+    if Player.find_by(user_id: current_user.id)
       # transmit {type: "error", params:{message: "user is already playing in #{player.gameboard_id}"}}
       Player.find_by(current_user.id).delete_all
       # reject
@@ -20,21 +19,17 @@ class LobbyChannel < ApplicationCable::Channel
 
     # search for gameboard with open lobby
     gameboard = Gameboard.find_by(current_state: LOBBY)
-    unless gameboard
-      gameboard = Gameboard.create(current_state: LOBBY)
-    end
+    gameboard ||= Gameboard.create(current_state: LOBBY)
 
     # create new player
     player = Player.create(gameboard_id: gameboard.id, user: current_user)
 
     handcard = Handcard.create(player_id: player.id) unless player.handcard
-    
+
     # add monsterone to handcard of player
     # TODO: add monstertwo and three
 
-    if params[:monsterone]
-    Ingamedeck.create(card_id: params[:monsterone], gameboard: gameboard, cardable: handcard)
-    end
+    Ingamedeck.create(card_id: params[:monsterone], gameboard: gameboard, cardable: handcard) if params[:monsterone]
 
     lobbyisfull = false
 
@@ -44,7 +39,6 @@ class LobbyChannel < ApplicationCable::Channel
       # gameboard.save
 
       ### add add the starting user
-      gameboard.update_attributes(:current_player => gameboard.players.first, :current_state => 'started')
       lobbyisfull = true
     end
 
