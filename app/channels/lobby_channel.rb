@@ -11,18 +11,20 @@ class LobbyChannel < ApplicationCable::Channel
 
     # check if there is not a player with this user
     ## read find or create by for simpler solution
-    if Player.find_by(:user_id => current_user.id)
-      # transmit {type: "error", params:{message: "user is already playing in #{player.gameboard_id}"}}
-      Player.find_by(:user_id => current_user.id).destroy
-      # reject
-    end
+    # if Player.find_by(user_id: current_user.id)
+    #   # transmit {type: "error", params:{message: "user is already playing in #{player.gameboard_id}"}}
+    #   player = Player.find_by(user_id: current_user.id)
+    #   Gameboard.find(player.gameboard_id).destroy
+    #   createNewTestGame
+    #   # reject
+    # end
 
     # search for gameboard with open lobby
     gameboard = Gameboard.find_by(current_state: LOBBY)
     gameboard ||= Gameboard.create(current_state: LOBBY)
 
     # create new player
-    player = Player.create(gameboard_id: gameboard.id, user: current_user)
+    player = Player.create(name: current_user.name, gameboard_id: gameboard.id, user: current_user)
 
     handcard = Handcard.create(player_id: player.id) unless player.handcard
 
@@ -55,6 +57,9 @@ class LobbyChannel < ApplicationCable::Channel
 
       Gameboard.initialize_game_board(@gameboard)
       broadcast_to(@gameboard, { type: 'START_GAME', params: { game_id: @gameboard.id } })
+
+      # TODO: Remove after testing i guesss
+      createNewTestGame
     end
   end
 
@@ -63,6 +68,18 @@ class LobbyChannel < ApplicationCable::Channel
   end
 
   private
+
+  def createNewTestGame
+    gameboard_test = Gameboard.create(current_state: 'lobby', player_atk: 5)
+    x = rand(1..1_000_000)
+    u1 = User.create(email: "#{x}2@2.at", password: '2', name: "#{x}2", password_confirmation: '2')
+    u2 = User.create(email: "#{x}3@3.at", password: '3', name: "#{x}3", password_confirmation: '3')
+    u3 = User.create(email: "#{x}4@4.at", password: '4', name: "#{x}4", password_confirmation: '4')
+
+    player1 = Player.create(name: "#{x}2", gameboard: gameboard_test, user: u1)
+    player2 = Player.create(name: "#{x}3", gameboard: gameboard_test, user: u2)
+    player3 = Player.create(name: "#{x}4", gameboard: gameboard_test, user: u3)
+  end
 
   def deliver_error_message(e)
     broadcast_to(@gameboard, { type: 'error', params: { message: e } })

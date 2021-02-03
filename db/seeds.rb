@@ -7,6 +7,18 @@ u1 = User.create!(email: 'daniela-dottolo@gmx.at', password: 'hahasosecret123', 
 u2 = User.create!(email: 'hallo@hallo.at', password: '235', name: 'lul', password_confirmation: '235')
 u3 = User.create!(email: 'fjeorfje@gmx.at', password: 'dfergt', name: 'lel', password_confirmation: 'dfergt')
 u4 = User.create!(email: 'ferjfrekpo@gmx.at', password: 'z6gtfr4', name: 'lawl', password_confirmation: 'z6gtfr4')
+u5 = User.create!(email: '2@2.at', password: '2', name: '2', password_confirmation: '2')
+u6 = User.create!(email: '3@3.at', password: '3', name: '3', password_confirmation: '3')
+u7 = User.create!(email: '4@4.at', password: '4', name: '4', password_confirmation: '4')
+u8 = User.create!(email: '5@5.at', password: '5', name: '5', password_confirmation: '5')
+u9 = User.create!(email: '1@1.at', password: '1', name: '1', password_confirmation: '1')
+
+
+gameboard_test = Gameboard.create!(current_state: 'lobby', player_atk: 5)
+
+player5 = Player.create!(name: 'Gustav', gameboard: gameboard_test, user: u3)
+player6 = Player.create!(name: 'Thomas', gameboard: gameboard_test, user: u2)
+player7 = Player.create!(name: 'Lorenz', gameboard: gameboard_test, user: u4)
 
 bear = Monstercard.create!(
   title: 'Sir Bear',
@@ -29,7 +41,7 @@ bear = Monstercard.create!(
 startmonster1 = Monstercard.create!(
   title: 'Startmonster 1',
   description: 'starting',
-  image: '/monster/bear.png',
+  image: '/monster/baer.png',
   action: 'lose_item_head',
   draw_chance: 33,
   level: 1,
@@ -179,27 +191,27 @@ buffcard = Buffcard.create!(
   atk_points: 2
 )
 
-gameboard = Gameboard.create!(current_state: 'fight', player_atk: 5)
+# gameboard = Gameboard.create!(current_state: 'fight', player_atk: 5)
 
-player1 = Player.create!(name: 'Gustav', gameboard: gameboard, user: u1)
-player2 = Player.create!(name: 'Thomas', gameboard: gameboard, user: u2)
-player3 = Player.create!(name: 'Lorenz', gameboard: gameboard, user: u3)
-player4 = Player.create!(name: 'Maja', gameboard: gameboard, user: u4)
+# player1 = Player.create!(name: 'Gustav', gameboard: gameboard, user: u1)
+# player2 = Player.create!(name: 'Thomas', gameboard: gameboard, user: u2)
+# player3 = Player.create!(name: 'Lorenz', gameboard: gameboard, user: u3)
+# player4 = Player.create!(name: 'Maja', gameboard: gameboard, user: u4)
 
-player1handcard = Handcard.create!(player: player1)
-p1h1 = Ingamedeck.create!(gameboard: gameboard, card: bear, cardable: player1handcard)
-p1h2 = Ingamedeck.create!(gameboard: gameboard, card: catfish, cardable: player1handcard)
-p1h3 = Ingamedeck.create!(gameboard: gameboard, card: item2,  cardable: player1handcard)
-p1h4 = Ingamedeck.create!(gameboard: gameboard, card: curse,  cardable: player1handcard)
+# player1handcard = Handcard.create!(player: player1)
+# p1h1 = Ingamedeck.create!(gameboard: gameboard, card: bear, cardable: player1handcard)
+# p1h2 = Ingamedeck.create!(gameboard: gameboard, card: catfish, cardable: player1handcard)
+# p1h3 = Ingamedeck.create!(gameboard: gameboard, card: item2,  cardable: player1handcard)
+# p1h4 = Ingamedeck.create!(gameboard: gameboard, card: curse,  cardable: player1handcard)
 
-player1inventory = Inventory.create!(player: player1)
-p1i1 = Ingamedeck.create!(gameboard: gameboard, card: item3, cardable: player1inventory)
-player1curse = Playercurse.create!(player: player1)
-p1c1 = Ingamedeck.create!(gameboard: gameboard, card: curse, cardable: player1curse)
+# player1inventory = Inventory.create!(player: player1)
+# p1i1 = Ingamedeck.create!(gameboard: gameboard, card: item3, cardable: player1inventory)
+# player1curse = Playercurse.create!(player: player1)
+# p1c1 = Ingamedeck.create!(gameboard: gameboard, card: curse, cardable: player1curse)
 
-player1monsterone = Monsterone.create!(player: player1)
-p1m1 = Ingamedeck.create!(gameboard: gameboard, card: bear, cardable: player1monsterone)
-p1m2 = Ingamedeck.create!(gameboard: gameboard, card: item1, cardable: player1monsterone)
+# player1monsterone = Monsterone.create!(player: player1)
+# p1m1 = Ingamedeck.create!(gameboard: gameboard, card: bear, cardable: player1monsterone)
+# p1m2 = Ingamedeck.create!(gameboard: gameboard, card: item1, cardable: player1monsterone)
 # p1m3 = Ingamedeck.create!(gameboard: gameboard, card: item2, cardable: player1monsterone)
 # p1m4 = Ingamedeck.create!(gameboard: gameboard, card: item3, cardable: player1monsterone)
 # p1m5 = Ingamedeck.create!(gameboard: gameboard, card: bear, cardable: player1monsterone)
