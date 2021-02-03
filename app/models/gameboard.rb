@@ -8,7 +8,7 @@ class Gameboard < ApplicationRecord
   # has_many :cards, through: :ingame_cards
 
   def self.initialize_game_board(gameboard)
-    gameboard.update_attributes(:current_player => gameboard.players.first, :current_state => 'started')
+    gameboard.update(current_player: gameboard.players.first, current_state: 'started')
 
     gameboard.players.each do |player|
       Player.draw_five_cards(player)
