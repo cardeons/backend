@@ -110,6 +110,7 @@ class GamemethodsController < ApplicationController
       playermonster: monstercards1,
       playermonster2: monstercards2,
       playermonster3: monstercards3,
+
       totalplayeratk: playeratkpts,
       monsteratk: monsteratkpts,
       playerwin: playerwin

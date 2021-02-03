@@ -45,7 +45,8 @@ catfish = Monstercard.create!(
 curse = Cursecard.create!(
                  title: 'very bad curse',
                  description: 'This curse is very bad. Actually, it is so bad that this curse will stick to you and weaken your fighting ability as long as you do not find a way to remove it',
-                 image: 'path',
+                 image: '/',
+
                  action: 'lose_atk_points',
                  draw_chance: 4,
                  atk_points: -1)
@@ -138,3 +139,4 @@ p1c1 = Ingamedeck.create!(gameboard: gameboard, card: curse, cardable: player1cu
 
 # Playerdeckcursecard.create!(id: 10, player_id: 1)
 # Playerdeckmonsterone.create!(id: 11, player_id: 1)
+
