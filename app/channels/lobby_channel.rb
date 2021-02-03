@@ -13,7 +13,7 @@ class LobbyChannel < ApplicationCable::Channel
     ## read find or create by for simpler solution
     if Player.find_by(:user_id => current_user.id)
       # transmit {type: "error", params:{message: "user is already playing in #{player.gameboard_id}"}}
-      Player.find_by(:user_id => current_user.id).destroy_all
+      Player.find_by(:user_id => current_user.id).destroy
       # reject
     end
 
