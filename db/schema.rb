@@ -11,6 +11,7 @@
 # It's strongly recommended that you check this file into your version control system.
 
 
+
 ActiveRecord::Schema.define(version: 2021_02_02_181658) do
 
 
@@ -46,6 +47,7 @@ ActiveRecord::Schema.define(version: 2021_02_02_181658) do
     t.bigint "card_id", null: false
   end
 
+
   create_table "gameboards", force: :cascade do |t|
     t.string "current_state"
     t.integer "player_atk"
@@ -58,6 +60,7 @@ ActiveRecord::Schema.define(version: 2021_02_02_181658) do
     t.datetime "updated_at", precision: 6, null: false
     t.bigint "current_player"
     t.index ["current_player"], name: "index_gameboards_on_current_player"
+
   end
 
   create_table "graveyards", force: :cascade do |t|
@@ -145,7 +148,6 @@ ActiveRecord::Schema.define(version: 2021_02_02_181658) do
     t.bigint 'user_id', null: false
     t.index ['gameboard_id'], name: 'index_players_on_gameboard_id'
     t.index ['user_id'], name: 'index_players_on_user_id'
-
   end
 
   create_table "users", force: :cascade do |t|
@@ -155,6 +157,7 @@ ActiveRecord::Schema.define(version: 2021_02_02_181658) do
     t.datetime "updated_at", precision: 6, null: false
     t.string "name"
   end
+
 
   add_foreign_key "gameboards", "players", column: "current_player"
   add_foreign_key "graveyards", "gameboards"
@@ -171,5 +174,4 @@ ActiveRecord::Schema.define(version: 2021_02_02_181658) do
   add_foreign_key "playercurses", "players"
   add_foreign_key "players", "gameboards"
   add_foreign_key "players", "users"
-
 end

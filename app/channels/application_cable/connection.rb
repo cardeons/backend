@@ -14,7 +14,8 @@ module ApplicationCable
     private
 
     def auth_header
-      # { Authorization: 'Bearer <token>' }
+      { Authorization: 'Bearer <token>' }
+
       request.headers['Authorization']
     end
 
@@ -43,8 +44,8 @@ module ApplicationCable
       else
         # reject_unauthorized_connection
         puts '-------------------------------------------'
-        puts 'could not find user defaults to random now'
-        verified_user = User.find(rand(1..5))
+        puts 'could not find user creates a new one now'
+        verified_user = User.find(rand(1..User.all.count))
       end
     end
   end

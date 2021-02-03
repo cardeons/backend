@@ -116,6 +116,7 @@ class GamemethodsController < ApplicationController
 
     handcard = Player.find(params[:id]).handcard
 
+
     # Ingamedeck.where(cardable_type: 'Handcard', cardable_id: handcard.id).delete_all
 
     #TODO draw lvl one card if no Inventory cards
@@ -143,6 +144,7 @@ class GamemethodsController < ApplicationController
   def canFlee?
     render json: rand(6) > 3
   end
+
 
   def attack(monsterid = params[:monsterid], playerid = params[:playerid])
     monstercards1 = Player.find(playerid).monsterone.cards
@@ -175,6 +177,7 @@ class GamemethodsController < ApplicationController
     {
       player_id: playerid,
       monster_id: monsterid,
+
       playermonster: monstercards1,
       playermonster2: monstercards2,
       playermonster3: monstercards3,

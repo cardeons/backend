@@ -181,6 +181,7 @@ p1h2 = Ingamedeck.create!(gameboard: gameboard, card: catfish,  cardable: player
 p1h3 = Ingamedeck.create!(gameboard: gameboard, card: item2,  cardable: player1handcard)
 p1h4 = Ingamedeck.create!(gameboard: gameboard, card: curse,  cardable: player1handcard)
 
+
 player1inventory = Inventory.create!(player: player1)
 p1i1 = Ingamedeck.create!( gameboard: gameboard, card: item3, cardable: player1inventory)
 player1curse = Playercurse.create!(player: player1)
