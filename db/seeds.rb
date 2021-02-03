@@ -119,6 +119,14 @@ p1i1 = Ingamedeck.create!( gameboard: gameboard, card: item3, cardable: player1i
 player1curse = Playercurse.create!(player: player1)
 p1c1 = Ingamedeck.create!(gameboard: gameboard, card: curse, cardable: player1curse)
 
+player1monsterone = Monsterone.create!(player: player1)
+p1m1 = Ingamedeck.create!(gameboard: gameboard, card: bear, cardable: player1monsterone)
+p1m2 = Ingamedeck.create!(gameboard: gameboard, card: item1, cardable: player1monsterone)
+# p1m3 = Ingamedeck.create!(gameboard: gameboard, card: item2, cardable: player1monsterone)
+# p1m4 = Ingamedeck.create!(gameboard: gameboard, card: item3, cardable: player1monsterone)
+# p1m5 = Ingamedeck.create!(gameboard: gameboard, card: bear, cardable: player1monsterone)
+
+
 # Playerdeckmonstertwo.create!(id: 12, player_id: 1)
 # Playerdeckmonsterthree.create!(id: 13, player_id: 1)
 # Playerdeckcursecard.create!(id: 15, player_id: 2)
