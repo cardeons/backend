@@ -76,20 +76,21 @@ class GamemethodsController < ApplicationController
     render json: rand(6) > 3
   end
 
-  def attack(monsterslot = 3, monsterid = params[:monsterid], playerid = params[:playerid])
-    monstercards = Player.find(playerid).monsterthree.cards
+  def attack(monsterid = params[:monsterid], playerid = params[:playerid])
+    monstercards1 = Player.find(playerid).monsterone.cards
+    monstercards2 = Player.find(playerid).monstertwo.cards
+    monstercards3 = Player.find(playerid).monsterthree.cards
+    
+    temparr = []
 
-    case monsterslot
-    when 1
-      monstercards = Player.find(playerid).monsterone.cards
-    when 2
-      monstercards = Player.find(playerid).monstertwos.cards
-    end
+    addAtkPts(temparr, monstercards1)
+    addAtkPts(temparr, monstercards2)
+    addAtkPts(temparr, monstercards3)
 
     playeratkpts = 0
 
-    monstercards.each do |card|
-      playeratkpts += card.atk_points
+    temparr.each do |item|
+      playeratkpts += item
     end
 
     monsteratkpts = Monstercard.find(monsterid).atk_points
@@ -106,10 +107,19 @@ class GamemethodsController < ApplicationController
     {
       player_id: playerid,
       monster_id: monsterid,
-      playermonster: monstercards,
+      playermonster: monstercards1,
+      playermonster2: monstercards2,
+      playermonster3: monstercards3,
+
       totalplayeratk: playeratkpts,
       monsteratk: monsteratkpts,
       playerwin: playerwin
     }
+  end
+
+  def addAtkPts(atk, cards) 
+    cards.each do |card|
+      atk.push(card.atk_points)
+    end
   end
 end

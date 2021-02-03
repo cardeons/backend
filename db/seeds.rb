@@ -3,12 +3,12 @@
 # This file should contain all the record creation needed to seed the database with its default values.
 # The data can then be loaded with the bin/rails db:seed command (or created alongside the database with db:setup).
 
-User.create(email: 'daniela-dottolo@gmx.at', password: 'hahasosecret123', name: 'lol', password_confirmation: 'hahasosecret123')
-User.create(email: 'hallo@hallo.at', password: '235', name: 'lul', password_confirmation: '235')
-User.create(email: 'fjeorfje@gmx.at', password: 'dfergt', name: 'lel', password_confirmation: 'dfergt')
-User.create(email: 'ferjfrekpo@gmx.at', password: 'z6gtfr4', name: 'lawl', password_confirmation: 'z6gtfr4')
+u1 = User.create!(email: 'daniela-dottolo@gmx.at', password: 'hahasosecret123', name: 'lol', password_confirmation: 'hahasosecret123')
+u2 = User.create!(email: 'hallo@hallo.at', password: '235', name: 'lul', password_confirmation: '235')
+u3 = User.create!(email: 'fjeorfje@gmx.at', password: 'dfergt', name: 'lel', password_confirmation: 'dfergt')
+u4 = User.create!(email: 'ferjfrekpo@gmx.at', password: 'z6gtfr4', name: 'lawl', password_confirmation: 'z6gtfr4')
 
-Monstercard.create(id: 1,
+bear = Monstercard.create!(
                    title: 'Sir Bear',
                    description: 'A very serious bear with a beard.',
                    image: '/monster/bear.png',
@@ -25,7 +25,7 @@ Monstercard.create(id: 1,
                    atk_points: 6,
                    level_amount: 1)
 
-Monstercard.create(id: 3,
+catfish = Monstercard.create!(
                    title: 'Catfish',
                    description: 'HA! You got catfished.',
                    image: '/monster/catfish.png',
@@ -42,15 +42,16 @@ Monstercard.create(id: 3,
                    atk_points: 14,
                    level_amount: 2)
 
-Cursecard.create(id: 2,
+curse = Cursecard.create!(
                  title: 'very bad curse',
                  description: 'This curse is very bad. Actually, it is so bad that this curse will stick to you and weaken your fighting ability as long as you do not find a way to remove it',
                  image: '/',
+
                  action: 'lose_atk_points',
                  draw_chance: 4,
                  atk_points: -1)
 
-Itemcard.create(id: 4,
+item1 = Itemcard.create!(
                 title: 'Helmet of Doom',
                 description: 'This is the helmet of doom',
                 image: '/item/helmet.png',
@@ -62,16 +63,18 @@ Itemcard.create(id: 4,
                 item_category: 'head',
                 has_combination: false)
 
-Itemcard.create(id: 5,
+item2 = Itemcard.create!(
                 title: 'The things to get things out of the toilet',
                 description: 'Disgusting. If I was you, I would not touch it.',
                 image: '/item/poempel.png',
                 action: 'plus_one',
                 draw_chance: 14,
+                element: 'fire',
+                element_modifier: 2,
                 atk_points: 2,
                 item_category: 'hand_one',
                 has_combination: false)
-Itemcard.create(id: 6,
+item3 = Itemcard.create!(
                 title: 'Hermes shoes',
                 description: 'Damn, those are some nice shoes! Hopefully hermes does not mind you took them..',
                 image: '/item/shoes.png',
@@ -89,50 +92,51 @@ User.find(1).cards << (Card.find(2))
 User.find(1).cards << (Card.find(3))
 User.find(1).cards << (Card.find(4))
 
-Levelcard.create(id: 8, title: 'Level up!', description: 'Get one level', image: '', action: 'level_up')
+levelcard = Levelcard.create!(title: 'Level up!', draw_chance: 1, description: 'Get one level', image: '/', action: 'level_up')
 
-Buffcard.create(id: 9,
+buffcard = Buffcard.create!(
+                draw_chance: 1,
                 title: 'Buffing yourself up, eh?',
                 description: 'You are getting stronger and stronger. Gain 2 extra attack points',
-                image: '',
+                image: '/',
                 action: 'gain_atk',
                 atk_points: 2)
 
-Gameboard.create(id: 1, current_state: 'fight', player_atk: 5)
+gameboard = Gameboard.create!(current_state: 'fight', player_atk: 5)
 
-# Player.create(id: 1, name: 'Gustav', gameboard_id: 1, user_id: 1)
-# Player.create(id: 2, name: 'Thomas', gameboard_id: 1, user_id: 2)
-# Player.create(id: 3, name: 'Lorenz', gameboard_id: 1, user_id: 3)
-# Player.create(id: 4, name: 'Maja', gameboard_id: 1, user_id: 4)
+player1 = Player.create!(name: 'Gustav', gameboard: gameboard, user: u1)
+player2 = Player.create!(name: 'Thomas', gameboard: gameboard, user: u2)
+player3 = Player.create!(name: 'Lorenz', gameboard: gameboard, user: u3)
+player4 = Player.create!(name: 'Maja', gameboard: gameboard, user: u4)
 
-Handcard.create(id: 1, player_id: 1)
-Ingamedeck.create(id: 1,  gameboard_id: 1, card_id: 1, cardable_id: 1, cardable_type: 'Handcard')
-Ingamedeck.create(id: 2,  gameboard_id: 1, card_id: 3, cardable_id: 1, cardable_type: 'Handcard')
-Ingamedeck.create(id: 3,  gameboard_id: 1, card_id: 5, cardable_id: 1, cardable_type: 'Handcard')
-Ingamedeck.create(id: 4,  gameboard_id: 1, card_id: 2, cardable_id: 1, cardable_type: 'Handcard')
+player1handcard = Handcard.create!(player: player1)
+p1h1 = Ingamedeck.create!(gameboard: gameboard, card: bear, cardable: player1handcard)
+p1h2 = Ingamedeck.create!(gameboard: gameboard, card: catfish,  cardable: player1handcard)
+p1h3 = Ingamedeck.create!(gameboard: gameboard, card: item2,  cardable: player1handcard)
+p1h4 = Ingamedeck.create!(gameboard: gameboard, card: curse,  cardable: player1handcard)
 
-Inventory.create(id: 1, player_id: 1)
-Ingamedeck.create(id: 5, gameboard_id: 1, card_id: 6, cardable_id: 1, cardable_type: 'Inventory')
+player1inventory = Inventory.create!(player: player1)
+p1i1 = Ingamedeck.create!( gameboard: gameboard, card: item3, cardable: player1inventory)
+player1curse = Playercurse.create!(player: player1)
+p1c1 = Ingamedeck.create!(gameboard: gameboard, card: curse, cardable: player1curse)
 
-Playercurse.create(id: 1, player_id: 1)
-Ingamedeck.create(id: 6, gameboard_id: 1, card_id: 2, cardable_id: 1, cardable_type: 'Playercurse')
+# Playerdeckmonstertwo.create!(id: 12, player_id: 1)
+# Playerdeckmonsterthree.create!(id: 13, player_id: 1)
+# Playerdeckcursecard.create!(id: 15, player_id: 2)
+# Playerdeckmonsterone.create!(id: 16, player_id: 2)
+# Playerdeckmonstertwo.create!(id: 17, player_id: 2)
+# Playerdeckmonsterthree.create!(id: 18, player_id: 2)
 
-# Playerdeckmonstertwo.create(id: 12, player_id: 1)
-# Playerdeckmonsterthree.create(id: 13, player_id: 1)
-# Playerdeckcursecard.create(id: 15, player_id: 2)
-# Playerdeckmonsterone.create(id: 16, player_id: 2)
-# Playerdeckmonstertwo.create(id: 17, player_id: 2)
-# Playerdeckmonsterthree.create(id: 18, player_id: 2)
+# Inventory.create!(id: 1, ingamedeck_id: 2, player_id: 1)
+# Inventory.create!(id: 2, ingamedeck_id: 2, player_id: 2)
 
-# Inventory.create(id: 1, ingamedeck_id: 2, player_id: 1)
-# Inventory.create(id: 2, ingamedeck_id: 2, player_id: 2)
+# Handcard.create!(id: 3, ingamedeck_id: 2, player_id: 1)
+# Ingamedeck.create!(id:3, playerdeck_id:1, gameboard_id:1, card_id:2)
+# Ingamedeck.create!(id:3, playerdeck_id:1, gameboard_id:1, card_id:1)
+# Ingamedeck.create!(id:1, playerdeck_id:2, gameboard_id:1, card_id:1)
+# Ingamedeck.create!(id:4, playerdeck_id:2, gameboard_id:1, card_id:2)
+# Ingamedeck.create!(id:5, playerdeck_id:2, gameboard_id:1, card_id:1)
 
-# Handcard.create(id: 3, ingamedeck_id: 2, player_id: 1)
-# Ingamedeck.create(id:3, playerdeck_id:1, gameboard_id:1, card_id:2)
-# Ingamedeck.create(id:3, playerdeck_id:1, gameboard_id:1, card_id:1)
-# Ingamedeck.create(id:1, playerdeck_id:2, gameboard_id:1, card_id:1)
-# Ingamedeck.create(id:4, playerdeck_id:2, gameboard_id:1, card_id:2)
-# Ingamedeck.create(id:5, playerdeck_id:2, gameboard_id:1, card_id:1)
+# Playerdeckcursecard.create!(id: 10, player_id: 1)
+# Playerdeckmonsterone.create!(id: 11, player_id: 1)
 
-# Playerdeckcursecard.create(id: 10, player_id: 1)
-# Playerdeckmonsterone.create(id: 11, player_id: 1)
