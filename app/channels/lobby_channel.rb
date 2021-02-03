@@ -11,10 +11,10 @@ class LobbyChannel < ApplicationCable::Channel
 
     # check if there is not a player with this user
     ## read find or create by for simpler solution
-    if player = Player.find(user_id: current_user.id)
-      # transmit {type: "error", params:{message: "user is already playing in #{player.gameboard_id}"}}
-      reject
-    end
+    # if player = Player.find(user_id: current_user.id)
+    #   # transmit {type: "error", params:{message: "user is already playing in #{player.gameboard_id}"}}
+    #   reject
+    # end
 
     # search for gameboard with open lobby
     unless gameboard = Gameboard.find_by(current_state: awaiting_players)
