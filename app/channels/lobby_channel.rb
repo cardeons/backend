@@ -7,10 +7,7 @@ class LobbyChannel < ApplicationCable::Channel
     # access current user with current_user
     puts current_user
 
-    # #search for gameboard with open lobby
-    unless gameboard = Gameboard.find_by(current_state: awaiting_players)
-      gameboard = Gameboard.create(current_state: awaiting_players)
-    end
+
 
     #check if there is not a player with this user
     ## read find or create by for simpler solution
@@ -19,10 +16,22 @@ class LobbyChannel < ApplicationCable::Channel
       reject
     end
 
+    #search for gameboard with open lobby
+    unless gameboard = Gameboard.find_by(current_state: awaiting_players)
+          gameboard = Gameboard.create(current_state: awaiting_players)
+    end
+
+    if player.inventory
+
     #create new player
     player = Player.new(gameboard_id: gameboard.id)
     player.user = current_user
     player.save!
+
+
+
+    monsterone = Monsterone.create(player_id: player.id) unless player.monsterone
+    Ingamedeck.create(card_id: params[:monsterone], gameboard: gameboard, cardable: monsterone)
 
     lobbyisfull = false
 
@@ -48,7 +57,7 @@ class LobbyChannel < ApplicationCable::Channel
       # Lobby is full tell players to start the game
       broadcast_to(@gameboard, {type: "DEBUG" , params: {message: 'Lobby is full start with game subscribe to Player and GameChannel'}})
 
-      Gameboard.init(@gameboard)
+      Gameboard.initialize_gameBoard(@gameboard)
       broadcast_to(@gameboard, { type: 'START_GAME', params:{ game_id: @gameboard.id }})
     end
 
