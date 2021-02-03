@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_02_02_181658) do
+ActiveRecord::Schema.define(version: 2021_02_03_182027) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -42,6 +42,13 @@ ActiveRecord::Schema.define(version: 2021_02_02_181658) do
   create_table "cards_users", id: false, force: :cascade do |t|
     t.bigint "user_id", null: false
     t.bigint "card_id", null: false
+  end
+
+  create_table "centercards", force: :cascade do |t|
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.bigint "gameboard_id", null: false
+    t.index ["gameboard_id"], name: "index_centercards_on_gameboard_id"
   end
 
   create_table "gameboards", force: :cascade do |t|
@@ -152,6 +159,7 @@ ActiveRecord::Schema.define(version: 2021_02_02_181658) do
     t.string "name"
   end
 
+  add_foreign_key "centercards", "gameboards"
   add_foreign_key "gameboards", "players", column: "current_player"
   add_foreign_key "graveyards", "gameboards"
   add_foreign_key "graveyards", "ingamedecks"

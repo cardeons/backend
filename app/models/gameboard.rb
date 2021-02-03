@@ -1,17 +1,27 @@
 # frozen_string_literal: true
+require 'pp'
 
 class Gameboard < ApplicationRecord
   has_many :players, dependent: :destroy
   has_many :ingamedeck, dependent: :destroy
   has_one :player, foreign_key: 'current_player'
+  has_one :centercard
 
   # has_many :cards, through: :ingame_cards
 
   def self.initialize_game_board(gameboard)
-    gameboard.update(current_player: gameboard.players.first, current_state: 'started')
+    gameboard.update(current_player: gameboard.players.last.id, current_state: 'started')
+    # Gameboard.find(gameboard.id).save
 
     gameboard.players.each do |player|
-      Player.draw_five_cards(player)
+      # Player.draw_five_cards(player)
+
+      unless player.handcard
+        Handcard.create(player_id: player.id)
+      end
+
+      Handcard.draw_handcards(player.id, gameboard)
+
     end
 
   end
@@ -20,9 +30,6 @@ class Gameboard < ApplicationRecord
     players_array = []
 
     gameboard.players.each do |player|
-      puts player
-      puts player.inventory
-
       # ##only for debug
       # TODO: remove later
       Inventory.create(player_id: player.id) unless player.inventory
