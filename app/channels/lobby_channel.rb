@@ -30,8 +30,8 @@ class LobbyChannel < ApplicationCable::Channel
 
 
 
-    monsterone = Monsterone.create(player_id: player.id) unless player.monsterone
-    Ingamedeck.create(card_id: params[:monsterone], gameboard: gameboard, cardable: monsterone)
+    handcard = Handcard.create(player_id: player.id) unless player.monsterone
+    Ingamedeck.create(card_id: params[:monsterone], gameboard: gameboard, cardable: handcard)
 
     lobbyisfull = false
 
