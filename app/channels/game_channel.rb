@@ -23,31 +23,31 @@ class GameChannel < ApplicationCable::Channel
     paramsObject = JSON.parse params
     puts paramsObject
 
-    broadcast_to(@gameboard, {type: DEBUG ,params: { message:"You just used play_card with ", params: {paramsObject}}})
+    broadcast_to(@gameboard, {type: DEBUG ,params: { message:"You just used play_card with ", params: paramsObject}})
     
 
     case paramsObject.to
     when "Inventory"
-      broadcast_to(@gameboard, {type: DEBUG ,params: { message:"Player #{current_user.email} just played to inventory"})
+      broadcast_to(@gameboard, {type: DEBUG ,params: { message:"Player #{current_user.email} just played to inventory"}})
       current_card = Ingamedeck.find_by('id=?', paramsObject.unique_id)
       current_card.update_attribute(:cardable_type, "Inventory")
     when "Monsterone"
-      broadcast_to(@gameboard, {type: DEBUG ,params: { message:"Player #{current_user.email} just played to monsterone"})
+      broadcast_to(@gameboard, {type: DEBUG ,params: { message:"Player #{current_user.email} just played to monsterone"}})
       current_card = Ingamedeck.find_by('id=?', paramsObject.unique_id)
       current_card.update_attribute(:cardable_type, "Monsterone")
     when "Monstertwo"
-      broadcast_to(@gameboard, {type: DEBUG ,params: { message:"Player #{current_user.email} just played to monstertwo"})
+      broadcast_to(@gameboard, {type: DEBUG ,params: { message:"Player #{current_user.email} just played to monstertwo"}})
       current_card = Ingamedeck.find_by('id=?', paramsObject.unique_id)
       current_card.update_attribute(:cardable_type, "Monstertwo")
     when "Monsterthree"
-      broadcast_to(@gameboard, {type: DEBUG ,params: { message:"Player #{current_user.email} just played to monsterthree"})
+      broadcast_to(@gameboard, {type: DEBUG ,params: { message:"Player #{current_user.email} just played to monsterthree"}})
       current_card = Ingamedeck.find_by('id=?', paramsObject.unique_id)
       current_card.update_attribute(:cardable_type, "Monsterthree")
     when "center"
-      broadcast_to(@gameboard, {type: DEBUG ,params: { message:"Player #{current_user.email} just played to center"})
+      broadcast_to(@gameboard, {type: DEBUG ,params: { message:"Player #{current_user.email} just played to center"}})
       #TODO currently not implemented
     else
-      broadcast_to(@gameboard, {type: ERROR ,params: { message:"Player #{current_user.email} just played to something i dont know"})
+      broadcast_to(@gameboard, {type: ERROR ,params: { message:"Player #{current_user.email} just played to something i dont know"}})
     end
     
     broadcast_to(@gameboard, {type: BOARD_UPDATE, params: Gameboard.broadcast_gameBoard(@gameboard)})
