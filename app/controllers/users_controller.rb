@@ -13,6 +13,12 @@ class UsersController < ApplicationController
   # GET /users/1.json
   def show; end
 
+  # GET /users/user/1
+  # GET /users/1.json
+  def show_cards
+    @user_cards = User.find(params[:id]).cards
+  end
+
   # GET /users/new
   def new
     @user = User.new
@@ -71,5 +77,10 @@ class UsersController < ApplicationController
   # Only allow a list of trusted parameters through.
   def user_params
     params.fetch(:user, {})
+  end
+
+  def user_card_params
+    params.require(:user_card).permit(:card_id, :title, :type, :description, :image, :action, :draw_chance, :level, :element, :bad_things, :rewards_treasure, :good_against, :bad_against,
+                                      :good_against_value, :bad_against_value, :element_modifier, :atk_points, :item_category, :has_combination, :level_amount)
   end
 end
