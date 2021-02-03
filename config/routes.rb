@@ -30,5 +30,6 @@ Rails.application.routes.draw do
   get '/drawhandcards/:id/:gameboard_id', to: 'gamemethods#draw_handcards'
   get '/attack/:monsterid/:playerid', to: 'gamemethods#attack'
   get '/equip_monster/:player_id/:gameboard_id/:deck_id/:monsterslot', to: 'gamemethods#equip_monster'
+  get '/drawlvlone', to: 'gamemethods#draw_random_lvl_one'
   root 'welcome#index'
 end

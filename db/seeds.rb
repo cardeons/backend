@@ -25,6 +25,72 @@ bear = Monstercard.create!(
                    atk_points: 6,
                    level_amount: 1)
 
+startmonster1 = Monstercard.create!(
+                    title: 'Startmonster 1',
+                    description: 'starting',
+                    image: '/monster/bear.png',
+                    action: 'lose_item_head',
+                    draw_chance: 33,
+                    level: 1,
+                    element: 'fire',
+                    bad_things: 'Oh no, you disrespected the Sir! Lose your headpiece.',
+                    rewards_treasure: 1,
+                    good_against: 'air',
+                    bad_against: 'water',
+                    good_against_value: 3,
+                    bad_against_value: 1,
+                    atk_points: 6,
+                    level_amount: 1)
+startmonster2 = Monstercard.create!(
+                    title: 'Startmonster 2',
+                    description: 'starting',
+                    image: '/monster/bear.png',
+                    action: 'lose_item_head',
+                    draw_chance: 33,
+                    level: 1,
+                    element: 'earth',
+                    bad_things: 'Oh no, you disrespected the Sir! Lose your headpiece.',
+                    rewards_treasure: 1,
+                    good_against: 'water',
+                    bad_against: 'air',
+                    good_against_value: 3,
+                    bad_against_value: 1,
+                    atk_points: 6,
+                    level_amount: 1)
+startmonster3 = Monstercard.create!(
+                    title: 'Startmonster 3',
+                    description: 'starting',
+                    image: '/monster/bear.png',
+                    action: 'lose_item_head',
+                    draw_chance: 33,
+                    level: 1,
+                    element: 'water',
+                    bad_things: 'Oh no, you disrespected the Sir! Lose your headpiece.',
+                    rewards_treasure: 1,
+                    good_against: 'fire',
+                    bad_against: 'earth',
+                    good_against_value: 3,
+                    bad_against_value: 1,
+                    atk_points: 6,
+                    level_amount: 1)
+
+startmonster4 = Monstercard.create!(
+                    title: 'Startmonster 4',
+                    description: 'starting',
+                    image: '/monster/bear.png',
+                    action: 'lose_item_head',
+                    draw_chance: 33,
+                    level: 1,
+                    element: 'air',
+                    bad_things: 'Oh no, you disrespected the Sir! Lose your headpiece.',
+                    rewards_treasure: 1,
+                    good_against: 'earth',
+                    bad_against: 'fire',
+                    good_against_value: 3,
+                    bad_against_value: 1,
+                    atk_points: 6,
+                    level_amount: 1)
+
 catfish = Monstercard.create!(
                    title: 'Catfish',
                    description: 'HA! You got catfished.',

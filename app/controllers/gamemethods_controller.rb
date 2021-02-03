@@ -27,7 +27,7 @@ class GamemethodsController < ApplicationController
     unless deck_card.nil?
       card = Card.find_by("id=?", deck_card.card_id)
 
-    #TODO validieren
+      #TODO validieren
       cardtype = card.type
 
       # there already are 5 items, you can't put any mor (6 because the monster itself is in this table)
@@ -58,6 +58,12 @@ class GamemethodsController < ApplicationController
     player_atk = monster_to_equip.cards.sum(:atk_points)
     render json: { card_to_add: card, result: error_message, akt_points: player_atk, player_cards: monster_to_equip.cards }, status: 200
 
+  end
+
+  def draw_random_lvl_one
+    monstercards = Monstercard.all.where("level=?", 1).pluck(:id).sample
+
+    render json: { card: Monstercard.find(monstercards) }, status: 200
   end
 
   def draw_doorcard
@@ -110,9 +116,12 @@ class GamemethodsController < ApplicationController
 
     handcard = Player.find(params[:id]).handcard
 
-    Ingamedeck.where(cardable_type: 'Handcard', cardable_id: handcard.id).delete_all
+    # Ingamedeck.where(cardable_type: 'Handcard', cardable_id: handcard.id).delete_all
+
+    #TODO draw lvl one card if no Inventory cards
+    #TODO die x variable ändern je nachdem wie viele Karten Spieler mit ins Game nimmt :)
+    #TODO bei keiner mitgenommenen Karte random lvl one als monsterone, ansonsten Handkarten
     x = 5
-    # die x variable ändern je nachdem wie viele Karten Spieler mit ins Game nimmt :)
     while x.positive?
       Ingamedeck.create(gameboard_id: params[:gameboard_id], card_id: allcards[rand(allcards.length)], cardable_id: handcard.id, cardable_type: 'Handcard')
       x -= 1
