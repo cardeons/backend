@@ -11,9 +11,9 @@ class LobbyChannel < ApplicationCable::Channel
 
     # check if there is not a player with this user
     ## read find or create by for simpler solution
-    if Player.find_by(user_id: current_user.id)
+    if Player.find_by(:user_id => current_user.id)
       # transmit {type: "error", params:{message: "user is already playing in #{player.gameboard_id}"}}
-      Player.find_by(current_user.id).delete_all
+      Player.find_by(:user_id => current_user.id).destroy_all
       # reject
     end
 
