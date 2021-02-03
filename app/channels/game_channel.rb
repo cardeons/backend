@@ -12,7 +12,7 @@ class GameChannel < ApplicationCable::Channel
 
     broadcast_to(@gameboard, { type: DEBUG, params: { message: "you are now subscribed to the game_channel #{@gameboard.id}" } })
 
-    broadcast_to(@gameboard, { type: BOARD_UPDATE, params: Gameboard.broadcast_gameBoard(@gameboard) })
+    broadcast_to(@gameboard, { type: BOARD_UPDATE, params: Gameboard.broadcast_game_board(@gameboard) })
   end
 
   def play_card(params)
@@ -47,7 +47,7 @@ class GameChannel < ApplicationCable::Channel
       broadcast_to(@gameboard, { type: ERROR, params: { message: "Player #{current_user.email} just played to something i dont know" } })
     end
 
-    broadcast_to(@gameboard, { type: BOARD_UPDATE, params: Gameboard.broadcast_gameBoard(@gameboard) })
+    broadcast_to(@gameboard, { type: BOARD_UPDATE, params: Gameboard.broadcast_game_board(@gameboard) })
   end
 
   def unsubscribed

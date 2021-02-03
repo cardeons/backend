@@ -7,7 +7,7 @@ class Gameboard < ApplicationRecord
 
   # has_many :cards, through: :ingame_cards
 
-  def self.initialize_gameBoard(gameboard)
+  def self.initialize_game_board(gameboard)
     gameboard.current_player = gameboard.players.first
     gameboard.current_state = 'playing'
     # TODO: add first monster?
@@ -19,8 +19,8 @@ class Gameboard < ApplicationRecord
     gameboard.save!
   end
 
-  def self.broadcast_gameBoard(gameboard)
-    playersArray = []
+  def self.broadcast_game_board(gameboard)
+    players_array = []
 
     gameboard.players.each do |player|
       puts player
@@ -38,7 +38,7 @@ class Gameboard < ApplicationRecord
 
       Monsterthree.create(player_id: player.id) unless player.monsterthree
 
-      playersArray.push({ name: player.name, player_id: player.id, inventory: player.inventory.cards, handcard: player.handcard.cards.count, monsterthree: player.monsterone.cards, monstertwo: player.monstertwo.cards,
+      players_array.push({ name: player.name, player_id: player.id, inventory: player.inventory.cards, handcard: player.handcard.cards.count, monsterone: player.monsterone.cards, monstertwo: player.monstertwo.cards,
                           monsterthree: player.monsterthree.cards })
     end
 

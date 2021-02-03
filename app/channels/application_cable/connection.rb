@@ -45,6 +45,7 @@ module ApplicationCable
         # reject_unauthorized_connection
         puts '-------------------------------------------'
         puts 'could not find user creates a new one now'
+        # TODO: reject conecttion
         verified_user = User.find(rand(1..User.all.count))
       end
     end

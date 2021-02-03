@@ -3,39 +3,48 @@
 class LobbyChannel < ApplicationCable::Channel
   rescue_from Exception, with: :deliver_error_message
 
+  LOBBY = 'lobby'
+
   def subscribed
-    awaiting_players = 'awaiting_players'
 
     # access current user with current_user
     puts current_user
 
     # check if there is not a player with this user
     ## read find or create by for simpler solution
-    # if player = Player.find(user_id: current_user.id)
-    #   # transmit {type: "error", params:{message: "user is already playing in #{player.gameboard_id}"}}
-    #   reject
-    # end
+    if Player.exists?(:user_id =>  current_user.id)
+      # transmit {type: "error", params:{message: "user is already playing in #{player.gameboard_id}"}}
+      Player.find_by(current_user.id).delete_all
+      # reject
+    end
 
     # search for gameboard with open lobby
-    unless gameboard = Gameboard.find_by(current_state: awaiting_players)
-      gameboard = Gameboard.create(current_state: awaiting_players)
+    gameboard = Gameboard.find_by(current_state: LOBBY)
+    unless gameboard
+      gameboard = Gameboard.create(current_state: LOBBY)
     end
 
     # create new player
-    player = Player.new(gameboard_id: gameboard.id)
-    player.user = current_user
-    player.save!
+    player = Player.create(gameboard_id: gameboard.id, user: current_user)
 
     handcard = Handcard.create(player_id: player.id) unless player.handcard
+    
+    # add monsterone to handcard of player
+    # TODO: add monstertwo and three
+
+    if params[:monsterone]
     Ingamedeck.create(card_id: params[:monsterone], gameboard: gameboard, cardable: handcard)
+    end
 
     lobbyisfull = false
 
     if gameboard.players.count > 3
-      gameboard.current_state = 'started'
+      # gameboard.current_state = 'started'
+      # gameboard.current_player = gameboard.players.first
+      # gameboard.save
+
       ### add add the starting user
-      gameboard.current_player = gameboard.players.first
-      gameboard.save
+      gameboard.update_attributes(:current_player => gameboard.players.first, :current_state => 'started')
       lobbyisfull = true
     end
 
@@ -50,7 +59,7 @@ class LobbyChannel < ApplicationCable::Channel
       # Lobby is full tell players to start the game
       broadcast_to(@gameboard, { type: 'DEBUG', params: { message: 'Lobby is full start with game subscribe to Player and GameChannel' } })
 
-      Gameboard.initialize_gameBoard(@gameboard)
+      Gameboard.initialize_game_board(@gameboard)
       broadcast_to(@gameboard, { type: 'START_GAME', params: { game_id: @gameboard.id } })
     end
   end
