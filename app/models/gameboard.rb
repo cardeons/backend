@@ -38,7 +38,7 @@ class Gameboard < ApplicationRecord
 
       Monsterthree.create(player_id: player.id) unless player.monsterthree
 
-      playersArray.push({ name: player.name, player_id: player.id ,inventory: player.inventory.cards, handcard: player.handcard.cards.count, monsterthree: player.monsterone.cards, monstertwo: player.monstertwo.cards,
+      playersArray.push({ name: player.name, player_id: player.id, inventory: player.inventory.cards, handcard: player.handcard.cards.count, monsterthree: player.monsterone.cards, monstertwo: player.monstertwo.cards,
                           monsterthree: player.monsterthree.cards })
     end
 
@@ -48,6 +48,5 @@ class Gameboard < ApplicationRecord
       # needs more info
       gameboard: gameboard
     }
-
   end
 end

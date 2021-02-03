@@ -20,5 +20,4 @@ class Player < ApplicationRecord
     Ingamedeck.new(gameboard_id: player.gameboard_id, card_id: 1, cardable_id: handcard.id, cardable_type: 'Handcard').save!
     Ingamedeck.new(gameboard_id: player.gameboard_id, card_id: 2, cardable_id: handcard.id, cardable_type: 'Handcard').save!
   end
-
 end
