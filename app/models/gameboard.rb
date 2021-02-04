@@ -28,6 +28,7 @@ class Gameboard < ApplicationRecord
     gameboard = Gameboard.find(gameboard.id)
 
     Centercard.create(gameboard_id: gameboard.id)
+    Graveyard.create(gameboard_id: gameboard.id)
 
     gameboard.players.each do |player|
       # ##only for debug
@@ -46,17 +47,17 @@ class Gameboard < ApplicationRecord
 
       monsters = []
 
-      if player.monsterone.ingamedecks && player.monsterone.ingamedecks.first
+      if player.monsterone.ingamedecks&.first
         monsters.push(
           renderUserMonsters(player, 'Monsterone')
         )
       end
-      if player.monstertwo.ingamedecks && player.monstertwo.ingamedecks.first
+      if player.monstertwo.ingamedecks&.first
         monsters.push(
           renderUserMonsters(player, 'Monstertwo')
         )
       end
-      if player.monsterthree.ingamedecks && player.monsterthree.ingamedecks.first
+      if player.monsterthree.ingamedecks&.first
         monsters.push(
           renderUserMonsters(player, 'Monsterthree')
         )
@@ -106,7 +107,7 @@ class Gameboard < ApplicationRecord
 
     output = []
 
-    if monster.ingamedecks && monster.ingamedecks.first
+    if monster.ingamedecks&.first
       unique_monster_id = -1
       monster_id = -1
       monster.ingamedecks do |ingamedeck|
@@ -127,7 +128,7 @@ class Gameboard < ApplicationRecord
   end
 
   def self.renderCardFromId(id)
-    if Ingamedeck.find_by("id = ?", id)
+    if Ingamedeck.find_by('id = ?', id)
       card = Ingamedeck.find(id)
       { unique_card_id: card.id, card_id: card.card_id }
     end
@@ -145,7 +146,6 @@ class Gameboard < ApplicationRecord
       rewards_treasure: gameboard.rewards_treasure
     }
   end
-
 
   def self.get_next_player(gameboard)
     gameboard = Gameboard.find(gameboard.id)
@@ -171,7 +171,7 @@ class Gameboard < ApplicationRecord
     gameboard.current_player = next_player.id
     gameboard.save!
   end
-    
+
   def self.draw_doorcard(gameboard)
     cursecards = Cursecard.all
     monstercards = Monstercard.all
@@ -183,7 +183,27 @@ class Gameboard < ApplicationRecord
     # addCardsToArray(allcards, bosscards)
 
     randomcard = allcards[rand(allcards.length)]
-    
-    gameboard.update(centercard: randomcard.id)
+
+    centercard = Centercard.find_by('gameboard_id = ?', gameboard.id)
+
+    centercard.ingamedecks.each do |ingamedeck|
+      ingamedeck.update(cardable: Graveyard.find_by('gameboard_id = ?', gameboard.id))
+    end
+
+    ingamecard = Ingamedeck.create(gameboard: gameboard, card_id: randomcard, cardable: Centercard.find_by('gameboard_id = ?', gameboard.id))
+
+    gameboard.update(centercard: Centercard.find_by('gameboard_id = ?', gameboard.id), rewards_treasure: Card.find_by('id = ?', randomcard).rewards_treasure)
+
+    renderCardId(gameboard.centercard.ingamedecks)
+  end
+
+  def self.addCardsToArray(arr, cards)
+    cards.each do |card|
+      x = card.draw_chance
+      while x.positive?
+        arr.push card.id
+        x -= 1
+      end
+    end
   end
 end
