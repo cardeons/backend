@@ -155,7 +155,19 @@ class Gameboard < ApplicationRecord
     # addCardsToArray(allcards, bosscards)
 
     randomcard = allcards[rand(allcards.length)]
+    ingamecard = Ingamedeck.create(gameboard: gameboard, card_id: randomcard, cardable: Centercard.find_by("gameboard_id = ?", gameboard.id))
     
-    gameboard.update(centercard: randomcard.id)
+    gameboard.update(centercard: Centercard.find_by("gameboard_id = ?", gameboard.id))
+
+    renderCardId(gameboard.centercard.ingamedecks)
+  end
+  def self.addCardsToArray(arr, cards)
+    cards.each do |card|
+      x = card.draw_chance
+      while x.positive?
+        arr.push card.id
+        x -= 1
+      end
+    end
   end
 end
