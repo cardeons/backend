@@ -139,47 +139,6 @@ class GamemethodsController < ApplicationController
     render json: rand(6) > 3
   end
 
-  def attack(monsterid = params[:monsterid], playerid = params[:playerid])
-    monstercards1 = Player.find(playerid).monsterone.cards
-    monstercards2 = Player.find(playerid).monstertwo.cards
-    monstercards3 = Player.find(playerid).monsterthree.cards
-
-    temparr = []
-
-    addAtkPts(temparr, monstercards1)
-    addAtkPts(temparr, monstercards2)
-    addAtkPts(temparr, monstercards3)
-
-    playeratkpts = 0
-
-    temparr.each do |item|
-      playeratkpts += item
-    end
-
-    monsteratkpts = Monstercard.find(monsterid).atk_points
-
-    playerwin = playeratkpts > monsteratkpts
-
-    if playerwin
-    # broadcast: start interceptionface
-    else
-      # broadcast: flee or use cards!
-    end
-
-    render json:
-    {
-      player_id: playerid,
-      monster_id: monsterid,
-
-      playermonster: monstercards1,
-      playermonster2: monstercards2,
-      playermonster3: monstercards3,
-
-      totalplayeratk: playeratkpts,
-      monsteratk: monsteratkpts,
-      playerwin: playerwin
-    }
-  end
 
   def addAtkPts(atk, cards)
     cards.each do |card|

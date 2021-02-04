@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+require "pp"
 
 class GameChannel < ApplicationCable::Channel
   rescue_from Exception, with: :deliver_error_message
@@ -54,14 +55,25 @@ class GameChannel < ApplicationCable::Channel
     # Any cleanup needed when channel is unsubscribed
   end
 
-  def equip_monster
-    result = Monstercard.equip_monster()
+  def equip_monster(params)
+
+    # pp params
+    result = Monstercard.equip_monster(params)
+    pp result.type
     broadcast_to(@gameboard, { type: result.type, params: { message: result.message } })
+  end
+
+  def attack(params)
+    # pp params
+    # centercard = @gameboard.centercard.
+    result = Gameboard.attack(centercard, current_player)
+    # output = Gameboard.broadcast_game_board(@gameboard)
+    # broadcast_to(@gameboard, { type: "GAMEBOARD_UPDATE", params: { message: result, gameboard: output }})
   end
 
   private
 
   def deliver_error_message(_e)
-    broadcast_to(@gameboard)
+    broadcast_to(@gameboard, _e)
   end
 end

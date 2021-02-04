@@ -158,5 +158,31 @@ class Gameboard < ApplicationRecord
     
     gameboard.update(centercard: randomcard.id)
   end
-  
+
+  def self.attack(monster, params)
+
+    monsterid = params["monster_id"]
+    playerid = params["player_id"]
+
+    monstercards1 = Player.find(playerid).monsterone.cards.sum(:atk_points)
+    monstercards2 = Player.find(playerid).monstertwo.cards.sum(:atk_points)
+    monstercards3 = Player.find(playerid).monsterthree.cards.sum(:atk_points)
+
+    playeratkpoints = monstercards1 + monstercards2 + monstercards3 + Player.find(playerid).level
+
+    monsteratkpts = Monstercard.find_by("id=?", monsterid).atk_points
+
+    playerwin = playeratkpoints > monsteratkpts
+
+    if playerwin
+      message = "SUCCESS"
+    puts "playerwin"
+    else
+      message = "FAIL"
+      # broadcast: flee or use cards!
+      puts "monsterwin"
+    end
+
+    message
+  end 
 end
