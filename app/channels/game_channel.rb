@@ -56,11 +56,19 @@ class GameChannel < ApplicationCable::Channel
   end
 
   def equip_monster(params)
-
     # pp params
-    result = Monstercard.equip_monster(params)
-    pp result.type
-    broadcast_to(@gameboard, { type: result.type, params: { message: result.message } })
+    player = Player.find_by('user_id = ?', current_user.id)
+    result = Monstercard.equip_monster(params, player)
+    pp result[:type]
+
+    updated_board = Gameboard.broadcast_game_board(@gameboard)
+    broadcast_to(@gameboard, { type: result[:type], message: result[:message], params: updated_board  })
+
+    pp player.monsterone.ingamedecks
+    pp player
+    # pp player.monstertwo.ingamedecks
+    # pp player.monsterthree.ingamedecks
+
   end
 
   def attack()
