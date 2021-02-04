@@ -1,8 +1,5 @@
-{
-  action: ''
-  
-}
 #lobby_channel
+ANTWORT
 {
   type: 'START_GAME',
   params: {
@@ -11,173 +8,128 @@
 }
 
 #playerchannel
+ANTWORT
 {
-  player_id:integer ,
-  handcard: [
-    {
-      card_id: integer,
-      unique_card_id: integer
-    }
-  ]
+  type : "HANDCARD_UPDATE",
+  params:
+  {  
+    handcard: [
+      {
+        card_id: integer,
+        unique_card_id: integer
+      }
+    ]    
+  }
 }
 
+ANTWORT
 #gameboardchannel
 {
-  gameboard: {
-    gameboard_id: integer,
-    current_player: player_id,
-    center_card: card_id,
-    player_atk: integer,
-    monster_atk: integer,
-    success: bool,
-    can_flee: bool,
-    asked_help: bool,
-    shared_reward: int,
-    helping_player: nil
-  },
-  players: [{
-    player_id: ,
-    name: ,
-    level: ,
-    attack: ,
-    handcard: integer,
-    inventory: [
-      {
-        card_id: int,
-        unique_card_id: int
-      }
-    ],
-    playercurse: [
-      {
-        card_id: int,
-        unique_card_id: int
-      }
-    ],
-    monsters: [
-      { 
-        card_id: ,
-        unique_card_id: ,
-        items: [
-          {
-            card_id: ,
-            unique_card_id: ,
-          }
-        ]
-      }
-    ]
-  }]
+  type : "BOARD_UPDATE",
+  params:{
+    gameboard: {
+      gameboard_id: integer,
+      current_player: player_id,
+      center_card: card_id,
+      player_atk: integer,
+      monster_atk: integer,
+      success: bool,
+      can_flee: bool,
+      asked_help: bool,
+      shared_reward: int,
+      helping_player: nil
+    },
+    players: [{
+      player_id: ,
+      name: ,
+      level: ,
+      attack: ,
+      handcard: integer,
+      inventory: [
+        {
+          card_id: int,
+          unique_card_id: int
+        }
+      ],
+      playercurse: [
+        {
+          card_id: int,
+          unique_card_id: int
+        }
+      ],
+      monsters: [
+        { 
+          card_id: ,
+          unique_card_id: ,
+          items: [
+            {
+              card_id: ,
+              unique_card_id: ,
+            }
+          ]
+        }
+      ]
+    }]
+  }
+}
+
+
+PLAYER Channel response
+{
+  type: ERROR,
+  params:
+  {
+    message: "error msg...."
+  }
+}
+
+
+Gameboard Channel response
+{
+  type: "GAME_LOG",
+  params:
+  {
+    date: ISOSTRING,
+    message: "game log"
+  }
 }
 
 
 #FROM FRONTEND
-#ANFRAGE
+#ANFRAGE move monster or items to player
 {
   action: "move_card",
-  to: "",
-  unique_card_id: 
-  #from und to soll folgendes sein: "inventory", "handcards", "monsterone", "monstertwo", "monsterthree", "center"
+  unique_card_id:  int
+  to: "inventory" | "player_monster"
 }
 
 #ANTWORT
 {
-  gameboard: {
-    gameboard_id: integer,
-    current_player: player_id,
-    center_card: card_id,
-    player_atk: integer,
-    monster_atk: integer,
-    success: bool,
-    can_flee: bool,
-    asked_help: bool,
-    shared_reward: int,
-    helping_player: nil
-  },
-  players: [{
-    player_id: ,
-    name: ,
-    level: ,
-    attack: ,
-    handcard: integer,
-    inventory: [
-      {
-        card_id: int,
-        unique_card_id: int
-      }
-    ],
-    playercurse: [
-      {
-        card_id: int,
-        unique_card_id: int
-      }
-    ],
-    monsters: [
-      { 
-        card_id: ,
-        unique_card_id: ,
-        items: [
-          {
-            card_id: ,
-            unique_card_id: ,
-          }
-        ]
-      }
-    ]
-  }]
+  #GAMEBOARD WIE IMMER
 }
 
-#ANFRAGE
+#ANFRAGE equip monster
 {
-  action: "curse_player",
-  to: ,
-  unique_card_id: 
-  #to ist die id des anderen Spielers, der verflucht wird
+  action: "equip_monster",
+  unique_monster_id:  int
+  unique_equip_id:  int
 }
 
 #ANTWORT
 {
-  gameboard: {
-    gameboard_id: integer,
-    current_player: player_id,
-    center_card: card_id,
-    player_atk: integer,
-    monster_atk: integer,
-    success: bool,
-    can_flee: bool,
-    asked_help: bool,
-    shared_reward: int,
-    helping_player: nil
-  },
-  players: [{
-    player_id: ,
-    name: ,
-    level: ,
-    attack: ,
-    handcard: integer,
-    inventory: [
-      {
-        card_id: int,
-        unique_card_id: int
-      }
-    ],
-    playercurse: [
-      {
-        card_id: int,
-        unique_card_id: int
-      }
-    ],
-    monsters: [
-      { 
-        card_id: ,
-        unique_card_id: ,
-        items: [
-          {
-            card_id: ,
-            unique_card_id: ,
-          }
-        ]
-      }
-    ]
-  }]
+  #GAMEBOARD WIE IMMER
+}
+
+
+#ANFRAGE decide between play_monster or draw_door_card
+{
+  action: "play_monster",
+  unique_card_id:  int
+}
+
+#ANTWORT
+{
+  #GAMEBOARD WIE IMMER
 }
 
 #ANFRAGE
@@ -187,20 +139,24 @@
 
 #ANTWORT
 {
-  gameboard: {
-      gameboard_id: integer,
-      current_player: player_id,
-      center_card: card_id, #updatet
-      player_atk: integer,
-      monster_atk: integer,
-      success: false,
-      rewards_treasure: 0,
-      can_flee: true/false,
-      asked_help: false,
-      shared_reward: int,
-      helping_player: player_id
-    }
+  #GAMEBOARD WIE IMMER
 }
+
+
+
+<!-- #ANFRAGE
+{
+  action: "curse_player",
+  to: 1,
+  unique_card_id: 4
+  #to ist die id des anderen Players, der verflucht wird
+} -->
+
+<!-- #ANTWORT
+{
+  #GAMEBOARD WIE IMMER
+} -->
+
 
 #ANFRAGE
 {
@@ -208,101 +164,85 @@
 }
 #ANTWORT
 {
-  gameboard: {
-      gameboard_id: integer,
-      current_player: player_id,
-      center_card: card_id,
-      player_atk: integer,
-      monster_atk: integer,
-      success: false,
-      rewards_treasure: 0,
-      can_flee: true/false,
-      asked_help: false,
-      shared_reward: int,
-      helping_player: player_id
-    }
-}
-{
-  action: "intercept",
-  unique_card_id:
-  to: 
-  #to - monster oder fighting player
-}
-#Antwort
-{
-  gameboard: {
-      gameboard_id: integer,
-      current_player: player_id,
-      center_card: card_id,
-      player_atk: integer, #updatet
-      monster_atk: integer, #updatet
-      success: bool,
-      can_flee: bool,
-      asked_help: true,
-      shared_reward: int,
-      helping_player: player_id
-    },
-    interceptcards: [
-      {
-        card_id: int,
-        unique_card_id: int
-      }
-    ]
-  }
-}
-
-#ANFRAGE
-{
-  action: "help",
-  helping_player: ,
-  is_helping: ?,
+   type: 'FLEE',
+   params: 
+   { 
+     flee: boolean,
+     value: int
+    } 
 }
 
 #ANTWORT
 {
-  gameboard: {
-      gameboard_id: integer,
-      current_player: player_id,
-      center_card: card_id,
-      player_atk: integer,
-      monster_atk: integer,
-      success: bool,
-      can_flee: bool,
-      asked_help: true,
-      shared_reward: int,
-      helping_player: player_id
-    }
-  }
+  #GAMEBOARD WIE IMMER
+}
+
+
+#ANFRAGE 
+{
+  action: "intercept",
+  unique_card_id: 1,
+  to: 'center_card' | 'current_player'
+}
+#Antwort
+{
+  GAMEBOARD WIE OBEN
+}
+
+
+
+#ANFRAGE
+{
+  action: "help_call",
+  helping_player_id: 1,
+  helping_shared_rewards: 1,
+}
+
+#ANTWORT im PLAYER CHANNEL oder wies dir lieber is
+{
+   type: 'ASK_FOR_HELP',
+   params: 
+   { 
+     player_id: 1,
+     player_name: "gustav"
+    helping_shared_rewards: 1,
+    }  
 }
 
 #ANFRAGE
+  {
+  action: "answer_help_call",
+  params:{
+    help: boolean
+    }
+  }
+
+#Antwort
+  {
+    GAMEBOARD WIE OBEN
+  }
+
+
+
+
+#ANFRAGE
+#kein player möchte nicht in den kampf eingreifen
 {
   action: "no_interception",
 }
 
 #ANTWORT 
 {
-  gameboard: {
-      gameboard_id: integer,
-      current_player: next_player_id,
-      center_card: card_id,
-      player_atk: integer,
-      monster_atk: integer,
-      success: true,
-      rewards_treasure: 4,
-      can_flee: bool,
-      asked_help: false,
-      shared_reward: int,
-      helping_player: player_id
-    }
+    GAMEBOARD WIE OBEN
 }
-#playerchannel
+
+
+#playerchannel draw Cards from Rewards
 {
-  player_id:integer ,
-  handcard: [
-    {
-      card_id: integer,
-      unique_card_id: integer
-    }
-  ]
+   type: 'REWARDS',
+   params: 
+   { 
+     player_id: 1,
+     handcards: []
+    }  
 }
