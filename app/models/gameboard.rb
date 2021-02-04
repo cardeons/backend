@@ -28,6 +28,7 @@ class Gameboard < ApplicationRecord
     gameboard = Gameboard.find(gameboard.id)
 
     Centercard.create(gameboard_id: gameboard.id)
+    Graveyard.create(gameboard_id: gameboard.id)
 
     gameboard.players.each do |player|
       # ##only for debug
@@ -155,6 +156,13 @@ class Gameboard < ApplicationRecord
     # addCardsToArray(allcards, bosscards)
 
     randomcard = allcards[rand(allcards.length)]
+
+    centercard = Centercard.find_by("gameboard_id = ?", gameboard.id)
+
+    centercard.ingamedecks.each do |ingamedeck|
+      ingamedeck.update(cardable: Graveyard.find_by("gameboard_id = ?", gameboard.id))
+    end
+
     ingamecard = Ingamedeck.create(gameboard: gameboard, card_id: randomcard, cardable: Centercard.find_by("gameboard_id = ?", gameboard.id))
     
     gameboard.update(centercard: Centercard.find_by("gameboard_id = ?", gameboard.id))
