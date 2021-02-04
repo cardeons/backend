@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class LobbyChannel < ApplicationCable::Channel
-  rescue_from Exception, with: :deliver_error_message
+  # rescue_from Exception, with: :deliver_error_message
 
   LOBBY = 'lobby'
 
@@ -48,7 +48,7 @@ class LobbyChannel < ApplicationCable::Channel
     @gameboard = gameboard
 
     stream_for @gameboard
-
+    
     broadcast_to(@gameboard, { type: 'DEBUG', params: { message: "new Player#{current_user.email} conected to the gameboard id: #{@gameboard.id} players in lobby #{@gameboard.players.count}" } })
 
     if lobbyisfull

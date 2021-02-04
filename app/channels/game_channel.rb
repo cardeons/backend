@@ -50,6 +50,33 @@ class GameChannel < ApplicationCable::Channel
     broadcast_to(@gameboard, { type: BOARD_UPDATE, params: Gameboard.broadcast_game_board(@gameboard) })
   end
 
+  def move_card(params)
+    unique_card_id = params['unique_card_id']
+    to = params['to']
+    player = current_user.player
+    case to
+    when 'inventory'
+      Ingamedeck.find_by("id = ?", unique_card_id).update(cardable: player.inventory)
+    when 'player_monster'
+      if player.monsterone.cards.length < 1
+        Ingamedeck.find_by("id = ?", unique_card_id).update(cardable: player.monsterone)
+      elsif player.monstertwo.cards.length < 1
+        Ingamedeck.find_by("id = ?", unique_card_id).update(cardable: player.monstertwo)
+      elsif player.monsterthree.length < 1
+        Ingamedeck.find_by("id = ?", unique_card_id).update(cardable: player.monstertwo)
+      else
+        broadcast_to(@gameboard, { type: DEBUG, params: { message: "All monsterslots are full" } })
+        PlayerChanel.broadcast_to(player,  { type: ERROR, params: { message: "All monsterslots are full!" } })
+      end
+    end
+
+
+    gameboard = Gameboard.find(@gameboard.id)
+
+    PlayerChannel.broadcast_to(current_user, { type: 'HANDCARD_UPDATE', params: { handcards: Gameboard.renderCardId(player.handcard.ingamedecks) } })
+    broadcast_to(@gameboard, { type: BOARD_UPDATE, params: Gameboard.broadcast_game_board(gameboard) })
+  end
+
   def unsubscribed
     # Any cleanup needed when channel is unsubscribed
   end
@@ -57,6 +84,6 @@ class GameChannel < ApplicationCable::Channel
   private
 
   def deliver_error_message(_e)
-    broadcast_to(@gameboard)
+    broadcast_to(@gameboard, _e)
   end
 end
