@@ -192,7 +192,7 @@ class Gameboard < ApplicationRecord
 
     ingamecard = Ingamedeck.create(gameboard: gameboard, card_id: randomcard, cardable: Centercard.find_by('gameboard_id = ?', gameboard.id))
 
-    gameboard.update(centercard: Centercard.find_by('gameboard_id = ?', gameboard.id))
+    gameboard.update(centercard: Centercard.find_by('gameboard_id = ?', gameboard.id), rewards_treasure: Card.find_by('id = ?', randomcard).rewards_treasure)
 
     renderCardId(gameboard.centercard.ingamedecks)
   end
