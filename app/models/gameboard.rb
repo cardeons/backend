@@ -13,6 +13,8 @@ class Gameboard < ApplicationRecord
   def self.initialize_game_board(gameboard)
     gameboard.update(current_player: gameboard.players.last.id, current_state: 'started')
     # Gameboard.find(gameboard.id).save
+    Centercard.create(gameboard_id: gameboard.id)
+    Graveyard.create!(gameboard_id: gameboard.id)
 
     gameboard.players.each do |player|
       # Player.draw_five_cards(player)
@@ -27,8 +29,7 @@ class Gameboard < ApplicationRecord
 
     gameboard = Gameboard.find(gameboard.id)
 
-    Centercard.create(gameboard_id: gameboard.id)
-    Graveyard.create(gameboard_id: gameboard.id)
+
 
     gameboard.players.each do |player|
       # ##only for debug
@@ -67,13 +68,13 @@ class Gameboard < ApplicationRecord
                            handcard: player.handcard.cards.count, monsters: monsters, playercurse: renderCardId(player.playercurse.ingamedecks), user_id: player.user.id })
     end
 
-    # pp '##########################################################'
-    # pp output = { # add center
-    #   # graveyard: gameboard.graveyard,
-    #   players: players_array,
-    #   # needs more info
-    #   gameboard: renderGameboard(gameboard)
-    # }
+    pp 'ggggggggggggggggggggggggggggggggggg'
+    pp output = { # add center
+      # graveyard: gameboard.graveyard,
+      players: players_array,
+      # needs more info
+      gameboard: renderGameboard(gameboard)
+    }
 
     output = { # add center
       # graveyard: gameboard.graveyard,
@@ -107,10 +108,20 @@ class Gameboard < ApplicationRecord
 
     output = []
 
-    if monster.ingamedecks&.first
-      unique_monster_id = -1
-      monster_id = -1
-      monster.ingamedecks do |ingamedeck|
+    pp "***********************************************++"
+    # pp monster.ingamedecks.first
+
+    if monster.ingamedecks.count > 0
+      unique_monster_id = monster.ingamedecks[0].id
+      monster_id = monster.ingamedecks[0].card_id
+
+      monster.ingamedecks.each do |ingamedeck|
+
+        pp "********************************************-----"
+        pp monster.ingamedecks
+        pp ingamedeck.card
+        pp ingamedeck.card.type
+
         if ingamedeck.card.type == 'Monstercard'
           unique_monster_id = ingamedeck.id
           monster_id = ingamedeck.card_id
@@ -128,6 +139,10 @@ class Gameboard < ApplicationRecord
   end
 
   def self.renderCardFromId(id)
+
+    pp "**************************"
+    pp id
+
     if Ingamedeck.find_by('id = ?', id)
       card = Ingamedeck.find(id)
       { unique_card_id: card.id, card_id: card.card_id }
@@ -135,10 +150,21 @@ class Gameboard < ApplicationRecord
   end
 
   def self.renderGameboard(gameboard)
+
+    pp gameboard
+    pp gameboard.centercard
+    pp gameboard.centercard.ingamedecks
+
+    if gameboard.centercard.ingamedecks.any?
+      centercard = gameboard.centercard.ingamedecks.first.id
+    else 
+      centercard = []
+    end
+
     {
       gameboard_id: gameboard.id,
       current_player: gameboard.current_player,
-      center_card: renderCardFromId(gameboard.centercard.ingamedecks.first.id),
+      center_card: centercard,
       interceptcards: [],
       player_atk: gameboard.player_atk,
       monster_atk: gameboard.monster_atk,
