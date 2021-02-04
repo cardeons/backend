@@ -19,6 +19,8 @@ player5 = Player.create!(name: 'Gustav', gameboard: gameboard_test, user: u3)
 player6 = Player.create!(name: 'Thomas', gameboard: gameboard_test, user: u2)
 player7 = Player.create!(name: 'Lorenz', gameboard: gameboard_test, user: u4)
 
+
+
 bear = Monstercard.create!(
   title: 'Sir Bear',
   description: 'A very serious bear with a beard.',
@@ -189,6 +191,12 @@ buffcard = Buffcard.create!(
   action: 'gain_atk',
   atk_points: 2
 )
+
+player5monsterone = Monsterone.create(player: player5)
+player5m1 = Ingamedeck.create(gameboard: gameboard_test, card: bear, cardable: player5monsterone)
+
+player5inventory = Inventory.create(player: player5)
+player5i = Ingamedeck.create(gameboard: gameboard_test, card: item3, cardable: player5inventory)
 
 # gameboard = Gameboard.create!(current_state: 'fight', player_atk: 5)
 

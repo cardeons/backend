@@ -10,6 +10,5 @@ class AddDefaultValueToLevelAttribute < ActiveRecord::Migration[6.1]
     change_column_default :players, :level, nil
     change_column_default :players, :attack, nil
     change_column_default :players, :is_cursed, nil
-
   end
   end
