@@ -1,5 +1,6 @@
 # frozen_string_literal: true
-require "pp"
+
+require 'pp'
 
 module ApplicationCable
   class Connection < ActionCable::Connection::Base
@@ -25,11 +26,9 @@ module ApplicationCable
       token = request.headers[:HTTP_SEC_WEBSOCKET_PROTOCOL].split(' ').last
       decoded_token = decoded_token(token)
 
-
       puts '-----------------------'
       puts decoded_token
       puts decoded_token[0]['user_id']
-
 
       if (current_user = User.find(decoded_token[0]['user_id']))
         pp current_user
@@ -38,7 +37,6 @@ module ApplicationCable
         reject_unauthorized_connection
       end
     end
-
 
     # def auth_header
     #   { Authorization: 'Bearer <token>' }
