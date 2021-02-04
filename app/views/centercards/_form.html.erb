@@ -1,0 +1,17 @@
+<%= form_with(model: centercard) do |form| %>
+  <% if centercard.errors.any? %>
+    <div id="error_explanation">
+      <h2><%= pluralize(centercard.errors.count, "error") %> prohibited this centercard from being saved:</h2>
+
+      <ul>
+        <% centercard.errors.each do |error| %>
+          <li><%= error.full_message %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div class="actions">
+    <%= form.submit %>
+  </div>
+<% end %>
