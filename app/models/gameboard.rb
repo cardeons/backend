@@ -20,6 +20,8 @@ class Gameboard < ApplicationRecord
       Handcard.create(player_id: player.id) unless player.handcard
       Handcard.draw_handcards(player.id, gameboard)
     end
+    Centercard.create(gameboard_id: gameboard.id)
+    Graveyard.create(gameboard_id: gameboard.id)
   end
 
   def self.broadcast_game_board(gameboard)
@@ -27,8 +29,6 @@ class Gameboard < ApplicationRecord
 
     gameboard = Gameboard.find(gameboard.id)
 
-    Centercard.create(gameboard_id: gameboard.id)
-    Graveyard.create(gameboard_id: gameboard.id)
 
     gameboard.players.each do |player|
       # ##only for debug
@@ -195,7 +195,7 @@ class Gameboard < ApplicationRecord
 
     gameboard.update(centercard: Centercard.find_by('gameboard_id = ?', gameboard.id), rewards_treasure: Card.find_by('id = ?', randomcard).rewards_treasure)
 
-    renderCardId(gameboard.centercard.ingamedecks)
+    gameboard.centercard.cards.first.name
   end
 
   def self.addCardsToArray(arr, cards)
@@ -210,12 +210,21 @@ class Gameboard < ApplicationRecord
 
   def self.flee(gameboard)
     roll = rand(1..6)
+    output = {}
     if roll > 4
       gameboard.update(can_flee: true)
+      output = {
+        flee: true,
+        value: roll
+      }
     else
       gameboard.update(can_flee: false)
+      output = {
+        flee: false,
+        value: roll
+      }
     end
 
-    roll
+    output
   end
 end
