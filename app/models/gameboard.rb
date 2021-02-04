@@ -139,6 +139,7 @@ class Gameboard < ApplicationRecord
       gameboard_id: gameboard.id,
       current_player: gameboard.current_player,
       center_card: renderCardFromId(gameboard.centercard.id),
+      interceptcards: [],
       player_atk: gameboard.player_atk,
       monster_atk: gameboard.monster_atk,
       success: gameboard.success,
