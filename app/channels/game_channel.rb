@@ -55,6 +55,20 @@ class GameChannel < ApplicationCable::Channel
     broadcast_to(@gameboard, {type: GAME_LOG, params: {date: Time.new, message: msg}})
   end
 
+  def equip_monster(params)
+
+    # pp params
+    result = Monstercard.equip_monster(params)
+    pp result.type
+    broadcast_to(@gameboard, { type: result.type, params: { message: result.message } })
+  end
+
+  def attack()
+    result = Gameboard.attack(@gameboard)
+    updated_board = Gameboard.broadcast_game_board(@gameboard)
+    broadcast_to(@gameboard, { type: BOARD_UPDATE, params: updated_board })  
+  end
+
   def play_card(params)
     # add actions!
 
