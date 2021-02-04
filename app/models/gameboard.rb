@@ -282,4 +282,27 @@ class Gameboard < ApplicationRecord
 
     message
   end 
+
+
+
+  def self.reset_all_game_boards()
+    Ingamedeck.all.where(cardable_type: "Centercard").destroy_all
+
+    Gameboard.all.each do |gameboard|
+      gameboard.update(center_card)
+      
+    
+      player_id_current = gameboard.current_player
+
+      current_player = Player.find(user_id_current)
+
+      current_player.handcard.ingamedecks.destroy_all
+      current_player.inventory.ingamedecks.destroy_all
+      Handcard.draw_handcards(player.id, gameboard)
+
+      updated_board = Gameboard.broadcast_game_board(gameboard)
+      Gameboard.broadcast_to(gameboard, { type: "BOARD_UPDATE", params: updated_board })        
+    end
+    
+  end
 end
