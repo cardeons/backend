@@ -288,20 +288,25 @@ class Gameboard < ApplicationRecord
   def self.reset_all_game_boards()
     Ingamedeck.all.where(cardable_type: "Centercard").destroy_all
 
-    Gameboard.all.each do |gameboard|
-      gameboard.update(center_card)
-      
+    Gameboard.all.each do |gameboard|    
     
       player_id_current = gameboard.current_player
 
-      current_player = Player.find(user_id_current)
 
-      current_player.handcard.ingamedecks.destroy_all
-      current_player.inventory.ingamedecks.destroy_all
-      Handcard.draw_handcards(player.id, gameboard)
+      if player_id_current
+      current_player = Player.find(player_id_current)
+      current_player.handcard.ingamedecks.delete_all
+      current_player.inventory.ingamedecks.delete_all
+      current_player.monsterone.ingamedecks.delete_all
+      current_player.monstertwo.ingamedecks.delete_all
+      current_player.monsterthree.ingamedecks.delete_all
 
-      updated_board = Gameboard.broadcast_game_board(gameboard)
-      Gameboard.broadcast_to(gameboard, { type: "BOARD_UPDATE", params: updated_board })        
+      Handcard.draw_handcards(current_player.id, gameboard)
+
+      # updated_board = Gameboard.broadcast_game_board(gameboard)
+      # GameChannel.broadcast_to(gameboard, { type: "BOARD_UPDATE", params: updated_board })     
+      # PlayerChannel.broadcast_to(current_player.user, { type: 'HANDCARD_UPDATE', params: { handcards: Gameboard.renderCardId(current_player.handcard.ingamedecks) } })
+    end
     end
     
   end
