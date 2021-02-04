@@ -42,7 +42,7 @@ bear = Monstercard.create!(
 startmonster1 = Monstercard.create!(
   title: 'Startmonster 1',
   description: 'starting',
-  image: '/monster/baer.png',
+  image: '/monster/bear.png',
   action: 'lose_item_head',
   draw_chance: 33,
   level: 1,

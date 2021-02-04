@@ -54,6 +54,11 @@ class GameChannel < ApplicationCable::Channel
     # Any cleanup needed when channel is unsubscribed
   end
 
+  def equip_monster
+    result = Monstercard.equip_monster()
+    broadcast_to(@gameboard, { type: result.type, params: { message: result.message } })
+  end
+
   private
 
   def deliver_error_message(_e)

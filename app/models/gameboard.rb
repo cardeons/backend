@@ -158,4 +158,5 @@ class Gameboard < ApplicationRecord
     
     gameboard.update(centercard: randomcard.id)
   end
+  
 end
