@@ -34,6 +34,20 @@ class GameChannel < ApplicationCable::Channel
     broadcast_to(@gameboard, { type: BOARD_UPDATE, params: updated_board })
   end
 
+  def play_monster(params)
+    centercard = Centercard.find_by('gameboard_id = ?', @gameboard.id)
+
+    centercard.ingamedecks.each do |ingamedeck|
+      ingamedeck.update(cardable: Graveyard.find_by('gameboard_id = ?', @gameboard.id))
+    end
+    Ingamedeck.find_by("id=?", params["unique_card_id"]).update(cardable: Centercard.find_by('gameboard_id = ?', @gameboard.id))
+    @gameboard.update(centercard: Centercard.find_by('gameboard_id = ?', @gameboard.id))
+    updated_board = Gameboard.broadcast_game_board(@gameboard)
+    broadcast_to(@gameboard, { type: BOARD_UPDATE, params: updated_board })  
+    player = Player.find_by('user_id = ?', current_user.id)
+    PlayerChannel.broadcast_to(current_user, { type: 'HANDCARD_UPDATE', params: { handcards: Gameboard.renderCardId(player.handcard.ingamedecks) } })
+  end
+
   def play_card(params)
     # add actions!
 

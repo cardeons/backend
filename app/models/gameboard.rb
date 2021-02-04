@@ -67,13 +67,13 @@ class Gameboard < ApplicationRecord
                            handcard: player.handcard.cards.count, monsters: monsters, playercurse: renderCardId(player.playercurse.ingamedecks), user_id: player.user.id })
     end
 
-    pp '##########################################################'
-    pp output = { # add center
-      # graveyard: gameboard.graveyard,
-      players: players_array,
-      # needs more info
-      gameboard: renderGameboard(gameboard)
-    }
+    # pp '##########################################################'
+    # pp output = { # add center
+    #   # graveyard: gameboard.graveyard,
+    #   players: players_array,
+    #   # needs more info
+    #   gameboard: renderGameboard(gameboard)
+    # }
 
     output = { # add center
       # graveyard: gameboard.graveyard,
@@ -138,7 +138,7 @@ class Gameboard < ApplicationRecord
     {
       gameboard_id: gameboard.id,
       current_player: gameboard.current_player,
-      center_card: renderCardFromId(gameboard.centercard.id),
+      center_card: renderCardFromId(gameboard.centercard.ingamedecks.first.id),
       interceptcards: [],
       player_atk: gameboard.player_atk,
       monster_atk: gameboard.monster_atk,
