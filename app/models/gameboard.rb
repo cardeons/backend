@@ -64,7 +64,7 @@ class Gameboard < ApplicationRecord
       end
 
       players_array.push({ name: player.name, player_id: player.id, inventory: renderCardId(player.inventory.ingamedecks), level: player.level, attack: player.attack,
-                           handcard: player.handcard.cards.count, monsters: monsters, playercurse: renderCardId(player.playercurse.ingamedecks) })
+                           handcard: player.handcard.cards.count, monsters: monsters, playercurse: renderCardId(player.playercurse.ingamedecks), user_id: player.user.id })
     end
 
     pp '##########################################################'
@@ -142,8 +142,34 @@ class Gameboard < ApplicationRecord
       player_atk: gameboard.player_atk,
       monster_atk: gameboard.monster_atk,
       success: gameboard.success,
-      can_flee: gameboard.can_flee
+      can_flee: gameboard.can_flee,
+      rewards_treasure: gameboard.rewards_treasure
     }
+  end
+
+  def self.get_next_player(gameboard)
+    gameboard = Gameboard.find(gameboard.id)
+    players = gameboard.players
+    current_player = gameboard.current_player
+    count = gameboard.players.count
+
+    #search for the index player with this index 
+    index_of_player = players.find_index{ |player| player.id == current_player}
+
+    #index of gameboard.players
+    index_of_next_player = index_of_player + 1
+    
+    #if index is bigger than player count start with first player
+    if index_of_next_player > count -1
+      index_of_next_player = 0
+    end
+
+    #get the next Player from array of players
+    next_player = gameboard.players[index_of_next_player]
+
+    # save it to gameboard
+    gameboard.current_player = next_player.id
+    gameboard.save!
   end
 
   def self.draw_doorcard(gameboard)
