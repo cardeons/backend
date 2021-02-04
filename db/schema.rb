@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_02_04_100820) do
+ActiveRecord::Schema.define(version: 2021_02_04_114432) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -62,16 +62,15 @@ ActiveRecord::Schema.define(version: 2021_02_04_100820) do
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
     t.bigint "current_player"
+    t.integer "rewards_treasure", default: 0
     t.index ["current_player"], name: "index_gameboards_on_current_player"
   end
 
   create_table "graveyards", force: :cascade do |t|
     t.bigint "gameboard_id", null: false
-    t.bigint "ingamedeck_id", null: false
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
     t.index ["gameboard_id"], name: "index_graveyards_on_gameboard_id"
-    t.index ["ingamedeck_id"], name: "index_graveyards_on_ingamedeck_id"
   end
 
   create_table "handcards", force: :cascade do |t|
@@ -162,7 +161,6 @@ ActiveRecord::Schema.define(version: 2021_02_04_100820) do
   add_foreign_key "centercards", "gameboards"
   add_foreign_key "gameboards", "players", column: "current_player"
   add_foreign_key "graveyards", "gameboards"
-  add_foreign_key "graveyards", "ingamedecks"
   add_foreign_key "handcards", "players"
   add_foreign_key "ingamedecks", "cards"
   add_foreign_key "ingamedecks", "gameboards"

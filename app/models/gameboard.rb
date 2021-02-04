@@ -28,6 +28,7 @@ class Gameboard < ApplicationRecord
     gameboard = Gameboard.find(gameboard.id)
 
     Centercard.create(gameboard_id: gameboard.id)
+    Graveyard.create(gameboard_id: gameboard.id)
 
     gameboard.players.each do |player|
       # ##only for debug
@@ -46,17 +47,17 @@ class Gameboard < ApplicationRecord
 
       monsters = []
 
-      if player.monsterone.ingamedecks && player.monsterone.ingamedecks.first
+      if player.monsterone.ingamedecks&.first
         monsters.push(
           renderUserMonsters(player, 'Monsterone')
         )
       end
-      if player.monstertwo.ingamedecks && player.monstertwo.ingamedecks.first
+      if player.monstertwo.ingamedecks&.first
         monsters.push(
           renderUserMonsters(player, 'Monstertwo')
         )
       end
-      if player.monsterthree.ingamedecks && player.monsterthree.ingamedecks.first
+      if player.monsterthree.ingamedecks&.first
         monsters.push(
           renderUserMonsters(player, 'Monsterthree')
         )
@@ -106,7 +107,7 @@ class Gameboard < ApplicationRecord
 
     output = []
 
-    if monster.ingamedecks && monster.ingamedecks.first
+    if monster.ingamedecks&.first
       unique_monster_id = -1
       monster_id = -1
       monster.ingamedecks do |ingamedeck|
@@ -127,7 +128,7 @@ class Gameboard < ApplicationRecord
   end
 
   def self.renderCardFromId(id)
-    if Ingamedeck.find_by("id = ?", id)
+    if Ingamedeck.find_by('id = ?', id)
       card = Ingamedeck.find(id)
       { unique_card_id: card.id, card_id: card.card_id }
     end
@@ -138,12 +139,40 @@ class Gameboard < ApplicationRecord
       gameboard_id: gameboard.id,
       current_player: gameboard.current_player,
       center_card: renderCardFromId(gameboard.centercard.id),
+      interceptcards: [],
       player_atk: gameboard.player_atk,
       monster_atk: gameboard.monster_atk,
       success: gameboard.success,
-      can_flee: gameboard.can_flee
+      can_flee: gameboard.can_flee,
+      rewards_treasure: gameboard.rewards_treasure
     }
   end
+
+  def self.get_next_player(gameboard)
+    gameboard = Gameboard.find(gameboard.id)
+    players = gameboard.players
+    current_player = gameboard.current_player
+    count = gameboard.players.count
+
+    #search for the index player with this index 
+    index_of_player = players.find_index{ |player| player.id == current_player}
+
+    #index of gameboard.players
+    index_of_next_player = index_of_player + 1
+    
+    #if index is bigger than player count start with first player
+    if index_of_next_player > count -1
+      index_of_next_player = 0
+    end
+
+    #get the next Player from array of players
+    next_player = gameboard.players[index_of_next_player]
+
+    # save it to gameboard
+    gameboard.current_player = next_player.id
+    gameboard.save!
+  end
+
   def self.draw_doorcard(gameboard)
     cursecards = Cursecard.all
     monstercards = Monstercard.all
@@ -155,7 +184,38 @@ class Gameboard < ApplicationRecord
     # addCardsToArray(allcards, bosscards)
 
     randomcard = allcards[rand(allcards.length)]
-    
-    gameboard.update(centercard: randomcard.id)
+
+    centercard = Centercard.find_by('gameboard_id = ?', gameboard.id)
+
+    centercard.ingamedecks.each do |ingamedeck|
+      ingamedeck.update(cardable: Graveyard.find_by('gameboard_id = ?', gameboard.id))
+    end
+
+    ingamecard = Ingamedeck.create(gameboard: gameboard, card_id: randomcard, cardable: Centercard.find_by('gameboard_id = ?', gameboard.id))
+
+    gameboard.update(centercard: Centercard.find_by('gameboard_id = ?', gameboard.id), rewards_treasure: Card.find_by('id = ?', randomcard).rewards_treasure)
+
+    renderCardId(gameboard.centercard.ingamedecks)
+  end
+
+  def self.addCardsToArray(arr, cards)
+    cards.each do |card|
+      x = card.draw_chance
+      while x.positive?
+        arr.push card.id
+        x -= 1
+      end
+    end
+  end
+
+  def self.flee(gameboard)
+    roll = rand(1..6)
+    if roll > 4
+      gameboard.update(can_flee: true)
+    else
+      gameboard.update(can_flee: false)
+    end
+
+    roll
   end
 end
