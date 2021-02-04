@@ -173,7 +173,7 @@ class Gameboard < ApplicationRecord
     gameboard.save!
   end
 
-  def self.draw_doorcard(gameboard)
+  def self.draw_door_card(gameboard)
     cursecards = Cursecard.all
     monstercards = Monstercard.all
     bosscards = Bosscard.all
@@ -195,7 +195,7 @@ class Gameboard < ApplicationRecord
 
     gameboard.update(centercard: Centercard.find_by('gameboard_id = ?', gameboard.id), rewards_treasure: Card.find_by('id = ?', randomcard).rewards_treasure)
 
-    renderCardId(gameboard.centercard.ingamedecks)
+    gameboard.centercard.cards.first.title
   end
 
   def self.addCardsToArray(arr, cards)

@@ -48,6 +48,13 @@ class GameChannel < ApplicationCable::Channel
     PlayerChannel.broadcast_to(current_user, { type: 'HANDCARD_UPDATE', params: { handcards: Gameboard.renderCardId(player.handcard.ingamedecks) } })
   end
 
+  def draw_door_card()
+    name = Gameboard.draw_door_card(@gameboard);
+    broadcast_to(@gameboard, { type: BOARD_UPDATE, params: Gameboard.broadcast_game_board(@gameboard) })
+    msg = "#{Player.find_by("gameboard_id = ?",@gameboard.id).name} has drawn #{name}"
+    broadcast_to(@gameboard, {type: GAME_LOG, params: {date: Time.new, message: msg}})
+  end
+
   def play_card(params)
     # add actions!
 
