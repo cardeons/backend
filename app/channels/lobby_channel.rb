@@ -82,6 +82,6 @@ class LobbyChannel < ApplicationCable::Channel
   end
 
   def deliver_error_message(e)
-    broadcast_to(@gameboard, { type: 'error', params: { message: e } })
+    broadcast_to(@gameboard, { type: 'ERROR', params: { message: e } })
   end
 end

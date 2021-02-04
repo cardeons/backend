@@ -1,6 +1,8 @@
-class Centercard < ApplicationRecord
-    has_many :ingamedecks, as: :cardable
-    has_many :cards, through: :ingamedecks
+# frozen_string_literal: true
 
-    belongs_to :gameboard
+class Centercard < ApplicationRecord
+  has_many :ingamedecks, as: :cardable
+  has_many :cards, through: :ingamedecks
+
+  belongs_to :gameboard
 end

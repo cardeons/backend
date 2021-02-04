@@ -1,5 +1,7 @@
+# frozen_string_literal: true
+
 class CentercardsController < ApplicationController
-  before_action :set_centercard, only: [:show, :edit, :update, :destroy]
+  before_action :set_centercard, only: %i[show edit update destroy]
 
   # GET /centercards
   # GET /centercards.json
@@ -9,8 +11,7 @@ class CentercardsController < ApplicationController
 
   # GET /centercards/1
   # GET /centercards/1.json
-  def show
-  end
+  def show; end
 
   # GET /centercards/new
   def new
@@ -18,8 +19,7 @@ class CentercardsController < ApplicationController
   end
 
   # GET /centercards/1/edit
-  def edit
-  end
+  def edit; end
 
   # POST /centercards
   # POST /centercards.json
@@ -62,13 +62,14 @@ class CentercardsController < ApplicationController
   end
 
   private
-    # Use callbacks to share common setup or constraints between actions.
-    def set_centercard
-      @centercard = Centercard.find(params[:id])
-    end
 
-    # Only allow a list of trusted parameters through.
-    def centercard_params
-      params.fetch(:centercard, {})
-    end
+  # Use callbacks to share common setup or constraints between actions.
+  def set_centercard
+    @centercard = Centercard.find(params[:id])
+  end
+
+  # Only allow a list of trusted parameters through.
+  def centercard_params
+    params.fetch(:centercard, {})
+  end
 end
