@@ -207,4 +207,15 @@ class Gameboard < ApplicationRecord
       end
     end
   end
+
+  def self.flee(gameboard)
+    roll = rand(1..6)
+    if roll > 4
+      gameboard.update(can_flee: true)
+    else
+      gameboard.update(can_flee: false)
+    end
+
+    roll
+  end
 end
