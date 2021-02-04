@@ -5,6 +5,8 @@ class GameChannel < ApplicationCable::Channel
   BOARD_UPDATE = 'BOARD_UPDATE'
   DEBUG = 'DEBUG'
   ERROR = 'ERROR'
+  FLEE = 'FLEE'
+  GAME_LOG = 'GAME_LOG'
 
   def subscribed
     @gameboard = current_user.player.gameboard
@@ -13,6 +15,23 @@ class GameChannel < ApplicationCable::Channel
     broadcast_to(@gameboard, { type: DEBUG, params: { message: "you are now subscribed to the game_channel #{@gameboard.id}" } })
 
     broadcast_to(@gameboard, { type: BOARD_UPDATE, params: Gameboard.broadcast_game_board(@gameboard) })
+  end
+
+  def flee()
+    output = Gameboard.flee(@gameboard);
+    broadcast_to(@gameboard, {type: FLEE, params: output})
+    msg=""
+    name = current_user.name
+    if output["flee"] = true
+      msg = "Nice! #{name} rolled #{output["value"]}, #{name} managed to escape :)"
+    else
+      msg = "Oh no! #{name} only rolled #{output["value"]}. That's a fine mess!"
+    end
+
+    log = {date: Time.new, message: msg}
+    broadcast_to(@gameboard, {type: GAME_LOG, params: log})
+    updated_board = Gameboard.broadcast_game_board(@gameboard)
+    broadcast_to(@gameboard, { type: BOARD_UPDATE, params: updated_board })
   end
 
   def play_card(params)
