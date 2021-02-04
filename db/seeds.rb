@@ -182,32 +182,6 @@ User.find(1).cards << (Card.find(4))
 levelcard = Levelcard.create!(title: 'Level up!', draw_chance: 1, description: 'Get one level', image: '/', action: 'level_up')
 
 buffcard = Buffcard.create!(
-<<<<<<< HEAD
-                draw_chance: 1,
-                title: 'Buffing yourself up, eh?',
-                description: 'You are getting stronger and stronger. Gain 2 extra attack points',
-                image: '/',
-                action: 'gain_atk',
-                atk_points: 2)
-
-gameboard = Gameboard.create!(current_state: 'fight', player_atk: 5)
-
-player1 = Player.create!(name: 'Gustav', gameboard: gameboard, user: u1)
-player2 = Player.create!(name: 'Thomas', gameboard: gameboard, user: u2)
-player3 = Player.create!(name: 'Lorenz', gameboard: gameboard, user: u3)
-player4 = Player.create!(name: 'Maja', gameboard: gameboard, user: u4)
-
-player1handcard = Handcard.create!(player: player1)
-p1h1 = Ingamedeck.create!(gameboard: gameboard, card: bear, cardable: player1handcard)
-p1h2 = Ingamedeck.create!(gameboard: gameboard, card: catfish,  cardable: player1handcard)
-p1h3 = Ingamedeck.create!(gameboard: gameboard, card: item2,  cardable: player1handcard)
-p1h4 = Ingamedeck.create!(gameboard: gameboard, card: curse,  cardable: player1handcard)
-
-player1inventory = Inventory.create!(player: player1)
-p1i1 = Ingamedeck.create!( gameboard: gameboard, card: item3, cardable: player1inventory)
-player1curse = Playercurse.create!(player: player1)
-p1c1 = Ingamedeck.create!(gameboard: gameboard, card: curse, cardable: player1curse)
-=======
   draw_chance: 1,
   title: 'Buffing yourself up, eh?',
   description: 'You are getting stronger and stronger. Gain 2 extra attack points',
@@ -240,7 +214,6 @@ p1c1 = Ingamedeck.create!(gameboard: gameboard, card: curse, cardable: player1cu
 # p1m3 = Ingamedeck.create!(gameboard: gameboard, card: item2, cardable: player1monsterone)
 # p1m4 = Ingamedeck.create!(gameboard: gameboard, card: item3, cardable: player1monsterone)
 # p1m5 = Ingamedeck.create!(gameboard: gameboard, card: bear, cardable: player1monsterone)
->>>>>>> a94d09ef85b44fdecfd6ad49b3b2595840d1e967
 
 # Playerdeckmonstertwo.create!(id: 12, player_id: 1)
 # Playerdeckmonsterthree.create!(id: 13, player_id: 1)

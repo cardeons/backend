@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_02_04_100820) do
+ActiveRecord::Schema.define(version: 2021_02_04_114432) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -37,23 +37,6 @@ ActiveRecord::Schema.define(version: 2021_02_04_100820) do
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
     t.string "type"
-<<<<<<< HEAD
-  end
-
-  create_table "cards_users", id: false, force: :cascade do |t|
-    t.bigint "user_id", null: false
-    t.bigint "card_id", null: false
-  end
-
-  create_table "gameboards", force: :cascade do |t|
-    t.string "current_state"
-    t.integer "player_atk"
-    t.integer "monster_atk"
-    t.boolean "asked_help"
-    t.boolean "success"
-    t.boolean "can_flee"
-    t.integer "shared_reward"
-=======
   end
 
   create_table "cards_users", id: false, force: :cascade do |t|
@@ -76,20 +59,18 @@ ActiveRecord::Schema.define(version: 2021_02_04_100820) do
     t.boolean "success", default: false
     t.boolean "can_flee", default: false
     t.integer "shared_reward", default: 0
->>>>>>> a94d09ef85b44fdecfd6ad49b3b2595840d1e967
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
     t.bigint "current_player"
+    t.integer "rewards_treasure", default: 0
     t.index ["current_player"], name: "index_gameboards_on_current_player"
   end
 
   create_table "graveyards", force: :cascade do |t|
     t.bigint "gameboard_id", null: false
-    t.bigint "ingamedeck_id", null: false
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
     t.index ["gameboard_id"], name: "index_graveyards_on_gameboard_id"
-    t.index ["ingamedeck_id"], name: "index_graveyards_on_ingamedeck_id"
   end
 
   create_table "handcards", force: :cascade do |t|
@@ -158,15 +139,9 @@ ActiveRecord::Schema.define(version: 2021_02_04_100820) do
   create_table "players", force: :cascade do |t|
     t.string "name"
     t.string "avatar"
-<<<<<<< HEAD
-    t.integer "level"
-    t.integer "attack"
-    t.boolean "is_cursed"
-=======
     t.integer "level", default: 1
     t.integer "attack", default: 1
     t.boolean "is_cursed", default: false
->>>>>>> a94d09ef85b44fdecfd6ad49b3b2595840d1e967
     t.bigint "gameboard_id", null: false
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
@@ -183,13 +158,9 @@ ActiveRecord::Schema.define(version: 2021_02_04_100820) do
     t.string "name"
   end
 
-<<<<<<< HEAD
-=======
   add_foreign_key "centercards", "gameboards"
->>>>>>> a94d09ef85b44fdecfd6ad49b3b2595840d1e967
   add_foreign_key "gameboards", "players", column: "current_player"
   add_foreign_key "graveyards", "gameboards"
-  add_foreign_key "graveyards", "ingamedecks"
   add_foreign_key "handcards", "players"
   add_foreign_key "ingamedecks", "cards"
   add_foreign_key "ingamedecks", "gameboards"
