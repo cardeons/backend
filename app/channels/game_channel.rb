@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class GameChannel < ApplicationCable::Channel
-  rescue_from Exception, with: :deliver_error_message
+  # rescue_from Exception, with: :deliver_error_message
   BOARD_UPDATE = 'BOARD_UPDATE'
   DEBUG = 'DEBUG'
   ERROR = 'ERROR'
@@ -107,28 +107,51 @@ class GameChannel < ApplicationCable::Channel
   def move_card(params)
     unique_card_id = params['unique_card_id']
     to = params['to']
-    player = current_user.player
+    player = Player.find_by("id=?",current_user.player.id)
+    pp "######______#############################"
+    pp unique_card_id
+    pp to
+
     case to
     when 'inventory'
-      Ingamedeck.find_by("id = ?", unique_card_id).update(cardable: player.inventory)
+      Ingamedeck.find_by("id = ?", unique_card_id).update_attribute(:cardable, player.inventory)
     when 'player_monster'
-      if player.monsterone.cards.length < 1
+      if player.monsterone.cards.count < 1
         Ingamedeck.find_by("id = ?", unique_card_id).update(cardable: player.monsterone)
-      elsif player.monstertwo.cards.length < 1
+      elsif player.monstertwo.cards.count < 1
         Ingamedeck.find_by("id = ?", unique_card_id).update(cardable: player.monstertwo)
-      elsif player.monsterthree.length < 1
-        Ingamedeck.find_by("id = ?", unique_card_id).update(cardable: player.monstertwo)
+      elsif player.monsterthree.cards.count < 1
+        Ingamedeck.find_by("id = ?", unique_card_id).update(cardable: player.monsterthree)
       else
         broadcast_to(@gameboard, { type: DEBUG, params: { message: "All monsterslots are full" } })
         PlayerChanel.broadcast_to(player,  { type: ERROR, params: { message: "All monsterslots are full!" } })
       end
     end
 
+    pp "######______#########################313213213213213213133213213213132####"
+
+
 
     gameboard = Gameboard.find(@gameboard.id)
 
+    pp player.monsterone.ingamedecks
+    pp player
+    pp "jkjkjkfsdfuuuioiu88888WWWWWWWWWWWWWWWW"
+    pp player.inventory.ingamedecks
+    pp player.handcard.cards
+    pp player.handcard.ingamedecks
+
+
+
     PlayerChannel.broadcast_to(current_user, { type: 'HANDCARD_UPDATE', params: { handcards: Gameboard.renderCardId(player.handcard.ingamedecks) } })
+    pp "######______############################222222222222222222222222222#"
+
     broadcast_to(@gameboard, { type: BOARD_UPDATE, params: Gameboard.broadcast_game_board(gameboard) })
+
+    pp player.monsterone.ingamedecks
+    pp player.monsterone.ingamedecks
+    pp player.monsterone.ingamedecks
+
   end
 
   def unsubscribed
@@ -138,6 +161,6 @@ class GameChannel < ApplicationCable::Channel
   private
 
   def deliver_error_message(_e)
-    broadcast_to(@gameboard, _e)
+    # broadcast_to(@gameboard, _e)
   end
 end
