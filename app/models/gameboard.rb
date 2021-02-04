@@ -52,7 +52,7 @@ class Gameboard < ApplicationRecord
       )
 
       players_array.push({ name: player.name, player_id: player.id, inventory: renderCardId(player.inventory.ingamedecks), level: player.level, attack: player.attack,
-                           handcard: player.handcard.cards.count, monsters: monsters, playercurse: renderCardId(player.playercurse.ingamedecks) })
+                           handcard: player.handcard.cards.count, monsters: monsters, playercurse: renderCardId(player.playercurse.ingamedecks), user_id: player.user.id })
     end
 
     pp '##########################################################'
