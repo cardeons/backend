@@ -61,7 +61,7 @@ ANTWORT
         { 
           card_id: ,
           unique_card_id: ,
-          items: [
+          item: [
             {
               card_id: ,
               unique_card_id: ,
