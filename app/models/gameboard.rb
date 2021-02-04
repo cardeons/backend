@@ -210,12 +210,21 @@ class Gameboard < ApplicationRecord
 
   def self.flee(gameboard)
     roll = rand(1..6)
+    output = {}
     if roll > 4
       gameboard.update(can_flee: true)
+      output = {
+        flee: true,
+        value: roll
+      }
     else
       gameboard.update(can_flee: false)
+      output = {
+        flee: false,
+        value: roll
+      }
     end
 
-    roll
+    output
   end
 end
