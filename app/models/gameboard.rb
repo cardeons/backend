@@ -45,11 +45,22 @@ class Gameboard < ApplicationRecord
       Playercurse.create(player: player) unless player.playercurse
 
       monsters = []
-      monsters.push(
-        renderUserMonsters(player, 'Monsterone'),
-        renderUserMonsters(player, 'Monstertwo'),
-        renderUserMonsters(player, 'Monsterthree')
-      )
+
+      if player.monsterone.ingamedecks && player.monsterone.ingamedecks.first
+        monsters.push(
+          renderUserMonsters(player, 'Monsterone')
+        )
+      end
+      if player.monstertwo.ingamedecks && player.monstertwo.ingamedecks.first
+        monsters.push(
+          renderUserMonsters(player, 'Monstertwo')
+        )
+      end
+      if player.monsterthree.ingamedecks && player.monsterthree.ingamedecks.first
+        monsters.push(
+          renderUserMonsters(player, 'Monsterthree')
+        )
+      end
 
       players_array.push({ name: player.name, player_id: player.id, inventory: renderCardId(player.inventory.ingamedecks), level: player.level, attack: player.attack,
                            handcard: player.handcard.cards.count, monsters: monsters, playercurse: renderCardId(player.playercurse.ingamedecks) })
@@ -95,7 +106,7 @@ class Gameboard < ApplicationRecord
 
     output = []
 
-    if monster&.ingamedecks && monster.ingamedecks.first
+    if monster.ingamedecks && monster.ingamedecks.first
       unique_monster_id = -1
       monster_id = -1
       monster.ingamedecks do |ingamedeck|
@@ -116,8 +127,7 @@ class Gameboard < ApplicationRecord
   end
 
   def self.renderCardFromId(id)
-    unless Ingamedeck.exists?(id)
-
+    if Ingamedeck.find_by("id = ?", id)
       card = Ingamedeck.find(id)
       { unique_card_id: card.id, card_id: card.card_id }
     end
@@ -133,5 +143,19 @@ class Gameboard < ApplicationRecord
       success: gameboard.success,
       can_flee: gameboard.can_flee
     }
+  end
+  def self.draw_doorcard(gameboard)
+    cursecards = Cursecard.all
+    monstercards = Monstercard.all
+    bosscards = Bosscard.all
+
+    allcards = []
+    # addCardsToArray(allcards, cursecards)
+    addCardsToArray(allcards, monstercards)
+    # addCardsToArray(allcards, bosscards)
+
+    randomcard = allcards[rand(allcards.length)]
+    
+    gameboard.update(centercard: randomcard.id)
   end
 end
