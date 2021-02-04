@@ -158,7 +158,7 @@ class Gameboard < ApplicationRecord
     if gameboard.centercard.ingamedecks.any?
       centercard = gameboard.centercard.ingamedecks.first.id
     else 
-      centercard = []
+      centercard = nil
     end
 
     {
