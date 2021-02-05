@@ -15,14 +15,14 @@ class Monstercard < Card
     # deck_card = Ingamedeck.find_by("id=?", card_id)
 
 
-    pp player
-    pp deck_card
-    pp monsterslot
+    # pp player
+    # pp deck_card
+    # pp monsterslot.cardable_type
 
     # pp player.monstertwo.cards
 
     #define which monster
-    case monsterslot
+    case monsterslot.cardable_type
     when "Monsterone"
       monster_to_equip = player.monsterone
     when "Monstertwo"
@@ -62,7 +62,10 @@ pp monster_to_equip
       # yay
       else
           type = "GAMEBOARD_UPDATE"
-          deck_card.update_attribute(:cardable_type, params["slot"])
+          deck_card.update_attribute(:cardable, monster_to_equip)
+
+          pp "JOEJIGZEGIUFGIUREGEGRFI"
+          pp monster_to_equip.cards
           player_atk = monster_to_equip.cards.sum(:atk_points)
           player.update_attribute(:attack, player_atk)
           message = "Successfully equipped."
