@@ -48,7 +48,9 @@ class GameChannel < ApplicationCable::Channel
     @gameboard.update(centercard: Centercard.find_by('gameboard_id = ?', @gameboard.id), monster_atk: monsteratk)
     # updated_board = Gameboard.broadcast_game_board(@gameboard)
     # broadcast_to(@gameboard, { type: BOARD_UPDATE, params: updated_board })  
-    attack()
+    result = Gameboard.attack(@gameboard)
+    updated_board = Gameboard.broadcast_game_board(@gameboard)
+    broadcast_to(@gameboard, { type: BOARD_UPDATE, params: updated_board })  
     player = Player.find_by('user_id = ?', current_user.id)
     PlayerChannel.broadcast_to(current_user, { type: 'HANDCARD_UPDATE', params: { handcards: Gameboard.renderCardId(player.handcard.ingamedecks) } })
   end
@@ -127,7 +129,7 @@ class GameChannel < ApplicationCable::Channel
     unique_card_id = params['unique_card_id']
     to = params['to']
     player = Player.find_by("id=?",current_user.player.id)
-    
+
     case to
     when 'inventory'
       Ingamedeck.find_by("id = ?", unique_card_id).update_attribute(:cardable, player.inventory)
