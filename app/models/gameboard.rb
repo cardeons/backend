@@ -312,7 +312,7 @@ class Gameboard < ApplicationRecord
 
 
       if player_id_current
-      current_player = Player.find(player_id_current)
+      current_player = Player.find_by("id=?",player_id_current)
       current_player.handcard.ingamedecks.delete_all
       current_player.inventory.ingamedecks.delete_all
       current_player.monsterone.ingamedecks.delete_all
