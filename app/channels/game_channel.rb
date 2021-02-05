@@ -135,7 +135,10 @@ class GameChannel < ApplicationCable::Channel
     when 'inventory'
       Ingamedeck.find_by("id = ?", unique_card_id).update_attribute(:cardable, player.inventory)
     when 'player_monster'
-      if player.monsterone.cards.count < 1
+      if Ingamedeck.find_by("id=?",unique_card_id).card.type != "Monstercard"
+        ###make sure no items are placed in the monsterslot
+        PlayerChannel.broadcast_to(current_user,  { type: ERROR, params: { message: "You can not equip an item without a monster" } })
+      elsif player.monsterone.cards.count < 1
         Ingamedeck.find_by("id = ?", unique_card_id).update(cardable: player.monsterone)
       elsif player.monstertwo.cards.count < 1
         Ingamedeck.find_by("id = ?", unique_card_id).update(cardable: player.monstertwo)
@@ -143,7 +146,7 @@ class GameChannel < ApplicationCable::Channel
         Ingamedeck.find_by("id = ?", unique_card_id).update(cardable: player.monsterthree)
       else
         broadcast_to(@gameboard, { type: DEBUG, params: { message: "All monsterslots are full" } })
-        PlayerChannel.broadcast_to(player,  { type: ERROR, params: { message: "All monsterslots are full!" } })
+        PlayerChannel.broadcast_to(current_user,  { type: ERROR, params: { message: "All monsterslots are full!" } })
       end
     end
 
