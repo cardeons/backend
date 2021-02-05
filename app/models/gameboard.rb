@@ -257,9 +257,12 @@ class Gameboard < ApplicationRecord
   def self.attack(gameboard)
     monsterid = gameboard.centercard.cards.first.id
     playerid = gameboard.current_player
+    playeratkpoints = 1
 
     pp "LJPDDDDDDDOIJIHIUHOIUJKLÜJHGFDRRGHJKLÖ"
     pp playerid
+
+    unless playerid
 
     if Player.find_by("id=?", playerid).monsterone
     monstercards1 = Player.find_by("id=?", playerid).monsterone.cards.sum(:atk_points)
@@ -272,6 +275,8 @@ class Gameboard < ApplicationRecord
     if Player.find_by("id=?", playerid).monsterthree
     monstercards3 = Player.find_by("id=?", playerid).monsterthree.cards.sum(:atk_points)
     end
+
+ 
 
     playeratkpoints = monstercards1 + monstercards2 + monstercards3 + Player.find_by("id=?", playerid).level
 
@@ -290,6 +295,8 @@ class Gameboard < ApplicationRecord
     #   # broadcast: flee or use cards!
     #   puts "monsterwin"
     # end
+
+  end
 
     playeratkpoints
   end 
