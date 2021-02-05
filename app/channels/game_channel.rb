@@ -59,10 +59,15 @@ class GameChannel < ApplicationCable::Channel
     # pp params
     player = Player.find_by('user_id = ?', current_user.id)
     result = Monstercard.equip_monster(params, player)
-    pp result[:type]
 
     updated_board = Gameboard.broadcast_game_board(@gameboard)
-    broadcast_to(@gameboard, { type: result[:type], message: result[:message], params: updated_board  })
+
+    if result[:type] == "ERROR"
+    broadcast_to(@gameboard, { type: 'ERROR', params: { message: result[:message] }})
+    end
+
+    broadcast_to(@gameboard, { type: 'GAMEBOARD_UPDATE', params: updated_board  })
+    PlayerChannel.broadcast_to(current_user, { type: 'HANDCARD_UPDATE', params: { handcards: Gameboard.renderCardId(player.handcard.ingamedecks) } })
 
     pp player.monsterone.ingamedecks
     pp player
@@ -132,7 +137,7 @@ class GameChannel < ApplicationCable::Channel
         Ingamedeck.find_by("id = ?", unique_card_id).update(cardable: player.monsterthree)
       else
         broadcast_to(@gameboard, { type: DEBUG, params: { message: "All monsterslots are full" } })
-        PlayerChanel.broadcast_to(player,  { type: ERROR, params: { message: "All monsterslots are full!" } })
+        PlayerChannel.broadcast_to(player,  { type: ERROR, params: { message: "All monsterslots are full!" } })
       end
     end
 
