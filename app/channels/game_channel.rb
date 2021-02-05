@@ -62,7 +62,6 @@ class GameChannel < ApplicationCable::Channel
   end
 
   def equip_monster(params)
-    # pp params
     player = Player.find_by('user_id = ?', current_user.id)
     result = Monstercard.equip_monster(params, player)
 
@@ -74,11 +73,6 @@ class GameChannel < ApplicationCable::Channel
 
     broadcast_to(@gameboard, { type: 'BOARD_UPDATE', params: updated_board  })
     PlayerChannel.broadcast_to(current_user, { type: 'HANDCARD_UPDATE', params: { handcards: Gameboard.renderCardId(player.handcard.ingamedecks) } })
-
-    pp player.monsterone.ingamedecks
-    pp player
-    # pp player.monstertwo.ingamedecks
-    # pp player.monsterthree.ingamedecks
 
   end
 
@@ -166,23 +160,10 @@ class GameChannel < ApplicationCable::Channel
 
     gameboard = Gameboard.find(@gameboard.id)
 
-    # pp player.monsterone.ingamedecks
-    # pp player
-    # pp "jkjkjkfsdfuuuioiu88888WWWWWWWWWWWWWWWW"
-    # pp player.inventory.ingamedecks
-    # pp player.handcard.cards
-    # pp player.handcard.ingamedecks
-
-
 
     PlayerChannel.broadcast_to(current_user, { type: 'HANDCARD_UPDATE', params: { handcards: Gameboard.renderCardId(player.handcard.ingamedecks) } })
-    # pp "######______############################222222222222222222222222222#"
 
     broadcast_to(@gameboard, { type: BOARD_UPDATE, params: Gameboard.broadcast_game_board(gameboard) })
-
-    pp player.monsterone.ingamedecks
-    pp player.monsterone.ingamedecks
-    pp player.monsterone.ingamedecks
 
   end
 
