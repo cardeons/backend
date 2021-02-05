@@ -314,10 +314,26 @@ class Gameboard < ApplicationRecord
       if player_id_current
       current_player = Player.find_by("id=?",player_id_current)
       current_player.handcard.ingamedecks.delete_all
-      current_player.inventory.ingamedecks.delete_all
-      current_player.monsterone.ingamedecks.delete_all
-      current_player.monstertwo.ingamedecks.delete_all
-      current_player.monsterthree.ingamedecks.delete_all
+
+      if current_player.inventory&.ingamedecks
+        current_player.inventory.ingamedecks.delete_all
+      end
+
+      if current_player.monsterone&.ingamedecks
+        current_player.monsterone.ingamedecks.delete_all
+      end
+
+      
+      if current_player.monstertwo&.ingamedecks
+        current_player.monstertwo.ingamedecks.delete_all
+      end
+
+
+      if current_player.monsterthree&.ingamedecks
+        current_player.monsterthree.ingamedecks.delete_all
+      end
+
+
       gameboard.update_attribute(:player_atk, 1)
 
       Handcard.draw_handcards(current_player.id, gameboard)
