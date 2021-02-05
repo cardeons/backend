@@ -163,6 +163,8 @@ class GameChannel < ApplicationCable::Channel
   
     playeratkpoints = monstercards1 + monstercards2 + monstercards3 + player.level
 
+    player.update_attribute(:attack, player_atk)
+
 
     @gameboard.update_attribute(:player_atk, playeratkpoints)
 
