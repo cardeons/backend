@@ -40,17 +40,23 @@ class GameChannel < ApplicationCable::Channel
     centercard.ingamedecks.each do |ingamedeck|
       ingamedeck.update(cardable: Graveyard.find_by('gameboard_id = ?', @gameboard.id))
     end
+
     Ingamedeck.find_by("id=?", params["unique_card_id"]).update(cardable: Centercard.find_by('gameboard_id = ?', @gameboard.id))
-    @gameboard.update(centercard: Centercard.find_by('gameboard_id = ?', @gameboard.id), monster_atk: Centercard.find_by('gameboard_id = ?', @gameboard.id).cards.atk_points)
-    updated_board = Gameboard.broadcast_game_board(@gameboard)
-    broadcast_to(@gameboard, { type: BOARD_UPDATE, params: updated_board })  
+    monsteratk = Ingamedeck.find_by("id=?", params["unique_card_id"]).card.atk_points
+    pp monsteratk
+    pp "MOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOONNNNNNNNNNNSSSTTTTTEEEEEEERRRRR"
+    @gameboard.update(centercard: Centercard.find_by('gameboard_id = ?', @gameboard.id), monster_atk: monsteratk)
+    # updated_board = Gameboard.broadcast_game_board(@gameboard)
+    # broadcast_to(@gameboard, { type: BOARD_UPDATE, params: updated_board })  
+    attack()
     player = Player.find_by('user_id = ?', current_user.id)
     PlayerChannel.broadcast_to(current_user, { type: 'HANDCARD_UPDATE', params: { handcards: Gameboard.renderCardId(player.handcard.ingamedecks) } })
   end
 
   def draw_door_card()
     name = Gameboard.draw_door_card(@gameboard);
-    broadcast_to(@gameboard, { type: BOARD_UPDATE, params: Gameboard.broadcast_game_board(@gameboard) })
+    attack()
+    # broadcast_to(@gameboard, { type: BOARD_UPDATE, params: Gameboard.broadcast_game_board(@gameboard) })
     msg = "#{Player.find_by("gameboard_id = ?",@gameboard.id).name} has drawn #{name}"
     broadcast_to(@gameboard, {type: GAME_LOG, params: {date: Time.new, message: msg}})
   end
