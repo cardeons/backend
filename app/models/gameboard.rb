@@ -261,11 +261,19 @@ class Gameboard < ApplicationRecord
     pp "LJPDDDDDDDOIJIHIUHOIUJKLÜJHGFDRRGHJKLÖ"
     pp playerid
 
+    if Player.find_by("id=?", playerid).monsterone
     monstercards1 = Player.find_by("id=?", playerid).monsterone.cards.sum(:atk_points)
-    monstercards2 = Player.find_by("id=?", playerid).monstertwo.cards.sum(:atk_points)
-    monstercards3 = Player.find_by("id=?", playerid).monsterthree.cards.sum(:atk_points)
+    end
 
-    playeratkpoints = monstercards1 + monstercards2 + monstercards3 + Player.find(playerid).level
+    if Player.find_by("id=?", playerid).monstertwo
+    monstercards2 = Player.find_by("id=?", playerid).monstertwo.cards.sum(:atk_points)
+    end
+
+    if Player.find_by("id=?", playerid).monsterthree
+    monstercards3 = Player.find_by("id=?", playerid).monsterthree.cards.sum(:atk_points)
+    end
+
+    playeratkpoints = monstercards1 + monstercards2 + monstercards3 + Player.find_by("id=?", playerid).level
 
     monsteratkpts = Monstercard.find_by("id=?", monsterid).atk_points
 
@@ -303,6 +311,7 @@ class Gameboard < ApplicationRecord
       current_player.monsterone.ingamedecks.delete_all
       current_player.monstertwo.ingamedecks.delete_all
       current_player.monsterthree.ingamedecks.delete_all
+      gameboard.update_attribute(:player_atk, 1)
 
       Handcard.draw_handcards(current_player.id, gameboard)
 
