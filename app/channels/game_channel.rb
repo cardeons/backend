@@ -43,8 +43,8 @@ class GameChannel < ApplicationCable::Channel
 
     Ingamedeck.find_by("id=?", params["unique_card_id"]).update(cardable: Centercard.find_by('gameboard_id = ?', @gameboard.id))
     monsteratk = Ingamedeck.find_by("id=?", params["unique_card_id"]).card.atk_points
-    pp monsteratk
-    pp "MOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOONNNNNNNNNNNSSSTTTTTEEEEEEERRRRR"
+    # pp monsteratk
+    # pp "MOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOONNNNNNNNNNNSSSTTTTTEEEEEEERRRRR"
     @gameboard.update(centercard: Centercard.find_by('gameboard_id = ?', @gameboard.id), monster_atk: monsteratk)
     # updated_board = Gameboard.broadcast_game_board(@gameboard)
     # broadcast_to(@gameboard, { type: BOARD_UPDATE, params: updated_board })  
@@ -55,8 +55,8 @@ class GameChannel < ApplicationCable::Channel
 
   def draw_door_card()
     name = Gameboard.draw_door_card(@gameboard);
-    attack()
-    # broadcast_to(@gameboard, { type: BOARD_UPDATE, params: Gameboard.broadcast_game_board(@gameboard) })
+    # attack()
+    broadcast_to(@gameboard, { type: BOARD_UPDATE, params: Gameboard.broadcast_game_board(@gameboard) })
     msg = "#{Player.find_by("gameboard_id = ?",@gameboard.id).name} has drawn #{name}"
     broadcast_to(@gameboard, {type: GAME_LOG, params: {date: Time.new, message: msg}})
   end
