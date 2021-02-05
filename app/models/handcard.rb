@@ -36,8 +36,6 @@ class Handcard < ApplicationRecord
 
     player = Player.find(player_id)
     handcard = player.handcard
-    # puts "**********************+"
-    # pp handcard.cards
 
     Ingamedeck.create!(gameboard: gameboard, card_id: Itemcard.first.id, cardable: handcard)
 

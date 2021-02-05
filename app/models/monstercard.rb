@@ -14,13 +14,6 @@ class Monstercard < Card
     monsterslot = Ingamedeck.find_by("id=?", params["unique_monster_id"])
     # deck_card = Ingamedeck.find_by("id=?", card_id)
 
-
-    # pp player
-    # pp deck_card
-    # pp monsterslot.cardable_type
-
-    # pp player.monstertwo.cards
-
     #define which monster
     case monsterslot.cardable_type
     when "Monsterone"
@@ -31,16 +24,11 @@ class Monstercard < Card
       monster_to_equip = player.monsterthree
     end
 
-pp monster_to_equip
-#   type = "ERROR" 
-
 #     #find "original" card, only advance if found
     unless deck_card.nil?
       card = Card.find_by("id=?", deck_card.card_id)
       #TODO validieren
       cardtype = card.type
-
-      pp card
 #       # there already are 5 items, you can't put any mor (6 because the monster itself is in this table)
       if monster_to_equip.cards.count == 6
           type = "ERROR"
@@ -64,8 +52,6 @@ pp monster_to_equip
           type = "GAMEBOARD_UPDATE"
           deck_card.update_attribute(:cardable, monster_to_equip)
 
-          pp "JOEJIGZEGIUFGIUREGEGRFI"
-          pp monster_to_equip.cards
           player_atk = monster_to_equip.cards.sum(:atk_points)
           player.update_attribute(:attack, player_atk)
 
