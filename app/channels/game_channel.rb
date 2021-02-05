@@ -66,7 +66,7 @@ class GameChannel < ApplicationCable::Channel
     broadcast_to(@gameboard, { type: 'ERROR', params: { message: result[:message] }})
     end
 
-    broadcast_to(@gameboard, { type: 'GAMEBOARD_UPDATE', params: updated_board  })
+    broadcast_to(@gameboard, { type: 'BOARD_UPDATE', params: updated_board  })
     PlayerChannel.broadcast_to(current_user, { type: 'HANDCARD_UPDATE', params: { handcards: Gameboard.renderCardId(player.handcard.ingamedecks) } })
 
     pp player.monsterone.ingamedecks
