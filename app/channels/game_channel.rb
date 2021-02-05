@@ -41,7 +41,7 @@ class GameChannel < ApplicationCable::Channel
       ingamedeck.update(cardable: Graveyard.find_by('gameboard_id = ?', @gameboard.id))
     end
     Ingamedeck.find_by("id=?", params["unique_card_id"]).update(cardable: Centercard.find_by('gameboard_id = ?', @gameboard.id))
-    @gameboard.update(centercard: Centercard.find_by('gameboard_id = ?', @gameboard.id))
+    @gameboard.update(centercard: Centercard.find_by('gameboard_id = ?', @gameboard.id), monster_atk: Centercard.find_by('gameboard_id = ?', @gameboard.id).cards.atk_points)
     updated_board = Gameboard.broadcast_game_board(@gameboard)
     broadcast_to(@gameboard, { type: BOARD_UPDATE, params: updated_board })  
     player = Player.find_by('user_id = ?', current_user.id)
