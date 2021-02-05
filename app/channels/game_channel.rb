@@ -43,8 +43,6 @@ class GameChannel < ApplicationCable::Channel
 
     Ingamedeck.find_by("id=?", params["unique_card_id"]).update(cardable: Centercard.find_by('gameboard_id = ?', @gameboard.id))
     monsteratk = Ingamedeck.find_by("id=?", params["unique_card_id"]).card.atk_points
-    pp monsteratk
-    pp "MOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOONNNNNNNNNNNSSSTTTTTEEEEEEERRRRR"
     @gameboard.update(centercard: Centercard.find_by('gameboard_id = ?', @gameboard.id), monster_atk: monsteratk)
     # updated_board = Gameboard.broadcast_game_board(@gameboard)
     # broadcast_to(@gameboard, { type: BOARD_UPDATE, params: updated_board })  
@@ -65,13 +63,13 @@ class GameChannel < ApplicationCable::Channel
     # pp params
     player = Player.find_by('user_id = ?', current_user.id)
     result = Monstercard.equip_monster(params, player)
-    pp result[:type]
+    # pp result[:type]
 
     updated_board = Gameboard.broadcast_game_board(@gameboard)
     broadcast_to(@gameboard, { type: result[:type], message: result[:message], params: updated_board  })
 
-    pp player.monsterone.ingamedecks
-    pp player
+    # pp player.monsterone.ingamedecks
+    # pp player
     # pp player.monstertwo.ingamedecks
     # pp player.monsterthree.ingamedecks
 
@@ -122,9 +120,9 @@ class GameChannel < ApplicationCable::Channel
     unique_card_id = params['unique_card_id']
     to = params['to']
     player = Player.find_by("id=?",current_user.player.id)
-    pp "######______#############################"
-    pp unique_card_id
-    pp to
+    # pp "######______#############################"
+    # pp unique_card_id
+    # pp to
 
     case to
     when 'inventory'
@@ -142,29 +140,29 @@ class GameChannel < ApplicationCable::Channel
       end
     end
 
-    pp "######______#########################313213213213213213133213213213132####"
+    # pp "######______#########################313213213213213213133213213213132####"
 
 
 
     gameboard = Gameboard.find(@gameboard.id)
 
-    pp player.monsterone.ingamedecks
-    pp player
-    pp "jkjkjkfsdfuuuioiu88888WWWWWWWWWWWWWWWW"
-    pp player.inventory.ingamedecks
-    pp player.handcard.cards
-    pp player.handcard.ingamedecks
+    # pp player.monsterone.ingamedecks
+    # pp player
+    # pp "jkjkjkfsdfuuuioiu88888WWWWWWWWWWWWWWWW"
+    # pp player.inventory.ingamedecks
+    # pp player.handcard.cards
+    # pp player.handcard.ingamedecks
 
 
 
     PlayerChannel.broadcast_to(current_user, { type: 'HANDCARD_UPDATE', params: { handcards: Gameboard.renderCardId(player.handcard.ingamedecks) } })
-    pp "######______############################222222222222222222222222222#"
+    # pp "######______############################222222222222222222222222222#"
 
     broadcast_to(@gameboard, { type: BOARD_UPDATE, params: Gameboard.broadcast_game_board(gameboard) })
 
-    pp player.monsterone.ingamedecks
-    pp player.monsterone.ingamedecks
-    pp player.monsterone.ingamedecks
+    # pp player.monsterone.ingamedecks
+    # pp player.monsterone.ingamedecks
+    # pp player.monsterone.ingamedecks
 
   end
 

@@ -68,13 +68,13 @@ class Gameboard < ApplicationRecord
                            handcard: player.handcard.cards.count, monsters: monsters, playercurse: renderCardId(player.playercurse.ingamedecks), user_id: player.user.id })
     end
 
-    pp 'ggggggggggggggggggggggggggggggggggg'
-    pp output = { # add center
-      # graveyard: gameboard.graveyard,
-      players: players_array,
-      # needs more info
-      gameboard: renderGameboard(gameboard)
-    }
+    # pp 'ggggggggggggggggggggggggggggggggggg'
+    # pp output = { # add center
+    #   # graveyard: gameboard.graveyard,
+    #   players: players_array,
+    #   # needs more info
+    #   gameboard: renderGameboard(gameboard)
+    # }
 
     output = { # add center
       # graveyard: gameboard.graveyard,
@@ -108,7 +108,7 @@ class Gameboard < ApplicationRecord
 
     output = []
 
-    pp "***********************************************++"
+    # pp "***********************************************++"
     # pp monster.ingamedecks.first
 
     if monster.ingamedecks.count > 0
@@ -117,10 +117,10 @@ class Gameboard < ApplicationRecord
 
       monster.ingamedecks.each do |ingamedeck|
 
-        pp "********************************************-----"
-        pp monster.ingamedecks
-        pp ingamedeck.card
-        pp ingamedeck.card.type
+        # pp "********************************************-----"
+        # pp monster.ingamedecks
+        # pp ingamedeck.card
+        # pp ingamedeck.card.type
 
         if ingamedeck.card.type == 'Monstercard'
           unique_monster_id = ingamedeck.id
@@ -140,8 +140,8 @@ class Gameboard < ApplicationRecord
 
   def self.renderCardFromId(id)
 
-    pp "**************************"
-    pp id
+    # pp "**************************"
+    # pp id
 
     if Ingamedeck.find_by('id = ?', id)
       card = Ingamedeck.find(id)
@@ -151,9 +151,9 @@ class Gameboard < ApplicationRecord
 
   def self.renderGameboard(gameboard)
 
-    pp gameboard
-    pp gameboard.centercard
-    pp gameboard.centercard.ingamedecks
+    # pp gameboard
+    # pp gameboard.centercard
+    # pp gameboard.centercard.ingamedecks
 
     if gameboard.centercard.ingamedecks.any?
       centercard = renderCardFromId(gameboard.centercard.ingamedecks.first.id)
