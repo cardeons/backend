@@ -21,7 +21,7 @@ player7 = Player.create!(name: 'Lorenz', gameboard: gameboard_test, user: u4)
 
 bear = Monstercard.create!(
   title: 'Sir Bear',
-  description: 'A very serious bear with a beard.',
+  description: '<p>A very serious bear with a beard.</p>',
   image: '/monster/bear.png',
   action: 'lose_item_head',
   draw_chance: 10,
@@ -174,10 +174,50 @@ item3 = Itemcard.create!(
 )
 
 # Adds cards to inventory of user1
-User.find(1).cards << (Card.find(1))
-User.find(1).cards << (Card.find(2))
-User.find(1).cards << (Card.find(3))
-User.find(1).cards << (Card.find(4))
+# User.find(1).cards << (Card.find(1))
+# User.find(1).cards << (Card.find(2))
+# User.find(1).cards << (Card.find(3))
+# User.find(1).cards << (Card.find(4))
+
+#add cards to userinventories
+u1.cards << (Card.find(4))
+u2.cards << (Card.find(4))
+u3.cards << (Card.find(4))
+u4.cards << (Card.find(4))
+u5.cards << (Card.find(4))
+u6.cards << (Card.find(4))
+u7.cards << (Card.find(4))
+u8.cards << (Card.find(4))
+u9.cards << (Card.find(4))
+u1.cards << (Card.find(1))
+u2.cards << (Card.find(1))
+u3.cards << (Card.find(1))
+u4.cards << (Card.find(1))
+u5.cards << (Card.find(1))
+u6.cards << (Card.find(1))
+u7.cards << (Card.find(1))
+u8.cards << (Card.find(1))
+u9.cards << (Card.find(1))
+u1.cards << (Card.find(2))
+u2.cards << (Card.find(2))
+u3.cards << (Card.find(2))
+u4.cards << (Card.find(2))
+u5.cards << (Card.find(2))
+u6.cards << (Card.find(2))
+u7.cards << (Card.find(2))
+u8.cards << (Card.find(2))
+u9.cards << (Card.find(2))
+u1.cards << (Card.find(3))
+u2.cards << (Card.find(3))
+u3.cards << (Card.find(3))
+u4.cards << (Card.find(3))
+u5.cards << (Card.find(3))
+u6.cards << (Card.find(3))
+u7.cards << (Card.find(3))
+u8.cards << (Card.find(3))
+u9.cards << (Card.find(3))
+
+
 
 levelcard = Levelcard.create!(title: 'Level up!', draw_chance: 1, description: 'Get one level', image: '/', action: 'level_up')
 
