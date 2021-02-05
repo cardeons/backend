@@ -69,14 +69,6 @@ class Gameboard < ApplicationRecord
                            handcard: player.handcard.cards.count, monsters: monsters, playercurse: renderCardId(player.playercurse.ingamedecks), user_id: player.user.id })
     end
 
-    pp 'ggggggggggggggggggggggggggggggggggg'
-    pp output = { # add center
-      # graveyard: gameboard.graveyard,
-      players: players_array,
-      # needs more info
-      gameboard: renderGameboard(gameboard)
-    }
-
     output = { # add center
       # graveyard: gameboard.graveyard,
       players: players_array,
@@ -109,9 +101,6 @@ class Gameboard < ApplicationRecord
 
     output = []
 
-    # pp "***********************************************++"
-    # pp monster.ingamedecks.first
-
     if monster.ingamedecks.count > 0
       unique_monster_id = monster.ingamedecks[0].id
       monster_id = monster.ingamedecks[0].card_id
@@ -122,7 +111,6 @@ class Gameboard < ApplicationRecord
           unique_monster_id = ingamedeck.id
           monster_id = ingamedeck.card_id
         else
-          pp "ITEMITEMITEMITEMITEMITEMITEMITEMITEMITEMITEMITEMITEM"
           items.push({ unique_card_id: ingamedeck.id, card_id: ingamedeck.card_id })
         end
       end
@@ -137,9 +125,6 @@ class Gameboard < ApplicationRecord
   end
 
   def self.renderCardFromId(id)
-
-    # pp "**************************"
-    # pp id
 
     if Ingamedeck.find_by('id = ?', id)
       card = Ingamedeck.find(id)
@@ -213,7 +198,6 @@ class Gameboard < ApplicationRecord
 
     ingamecard = Ingamedeck.create(gameboard: gameboard, card_id: randomcard, cardable: Centercard.find_by('gameboard_id = ?', gameboard.id))
 
-    # pp centercard.cards
     monsteratk = Centercard.find_by('gameboard_id = ?', gameboard.id).cards.first.atk_points
     playeratk = attack(gameboard)
     
@@ -259,20 +243,17 @@ class Gameboard < ApplicationRecord
     playerid = gameboard.current_player
     playeratkpoints = 1
 
-    pp "LJPDDDDDDDOIJIHIUHOIUJKLÜJHGFDRRGHJKLÖ"
-    pp playerid
+    if playerid != nil
 
-    unless playerid
-
-    if Player.find_by("id=?", playerid).monsterone
+    if Player.find_by("id=?", playerid).monsterone != nil
     monstercards1 = Player.find_by("id=?", playerid).monsterone.cards.sum(:atk_points)
     end
 
-    if Player.find_by("id=?", playerid).monstertwo
+    if Player.find_by("id=?", playerid).monstertwo != nil
     monstercards2 = Player.find_by("id=?", playerid).monstertwo.cards.sum(:atk_points)
     end
 
-    if Player.find_by("id=?", playerid).monsterthree
+    if Player.find_by("id=?", playerid).monsterthree != nil
     monstercards3 = Player.find_by("id=?", playerid).monsterthree.cards.sum(:atk_points)
     end
 
