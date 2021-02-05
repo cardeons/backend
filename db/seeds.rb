@@ -21,13 +21,13 @@ player7 = Player.create!(name: 'Lorenz', gameboard: gameboard_test, user: u4)
 
 bear = Monstercard.create!(
   title: 'Sir Bear',
-  description: 'A very serious bear with a beard.',
+  description: '<p>A very serious bear with a beard.</p>',
   image: '/monster/bear.png',
   action: 'lose_item_head',
   draw_chance: 10,
   level: 3,
   element: 'earth',
-  bad_things: 'Oh no, you disrespected the Sir! Lose your headpiece.',
+  bad_things: '<p><b>Bad things:</b>Oh no, you disrespected the Sir!</p><p> Lose your headpiece.</p>',
   rewards_treasure: 1,
   good_against: 'fire',
   bad_against: 'air',
@@ -38,14 +38,14 @@ bear = Monstercard.create!(
 )
 
 startmonster1 = Monstercard.create!(
-  title: 'Startmonster 1',
-  description: 'starting',
+  title: 'M 1',
+  description: '<p>starting</p>',
   image: '/monster/bear.png',
   action: 'lose_item_head',
   draw_chance: 33,
   level: 1,
   element: 'fire',
-  bad_things: 'Oh no, you disrespected the Sir! Lose your headpiece.',
+  bad_things: '<p><b>Bad things:</b>Oh no, you disrespected the Sir!</p><p> Lose your headpiece.</p>',
   rewards_treasure: 1,
   good_against: 'air',
   bad_against: 'water',
@@ -55,14 +55,14 @@ startmonster1 = Monstercard.create!(
   level_amount: 1
 )
 startmonster2 = Monstercard.create!(
-  title: 'Startmonster 2',
-  description: 'starting',
+  title: 'M 2',
+  description: '<p>starting</p>',
   image: '/monster/bear.png',
   action: 'lose_item_head',
   draw_chance: 33,
   level: 1,
   element: 'earth',
-  bad_things: 'Oh no, you disrespected the Sir! Lose your headpiece.',
+  bad_things: '<p><b>Bad things:</b>Oh no, you disrespected the Sir!</p><p> Lose your headpiece.</p>',
   rewards_treasure: 1,
   good_against: 'water',
   bad_against: 'air',
@@ -72,14 +72,14 @@ startmonster2 = Monstercard.create!(
   level_amount: 1
 )
 startmonster3 = Monstercard.create!(
-  title: 'Startmonster 3',
-  description: 'starting',
+  title: 'M 3',
+  description: '<p>starting</p>',
   image: '/monster/bear.png',
   action: 'lose_item_head',
   draw_chance: 33,
   level: 1,
   element: 'water',
-  bad_things: 'Oh no, you disrespected the Sir! Lose your headpiece.',
+  bad_things: '<p><b>Bad things:</b>Oh no, you disrespected the Sir!</p><p> Lose your headpiece.</p>',
   rewards_treasure: 1,
   good_against: 'fire',
   bad_against: 'earth',
@@ -90,14 +90,14 @@ startmonster3 = Monstercard.create!(
 )
 
 startmonster4 = Monstercard.create!(
-  title: 'Startmonster 4',
-  description: 'starting',
+  title: 'M 4',
+  description: '<p>starting</p>',
   image: '/monster/bear.png',
   action: 'lose_item_head',
   draw_chance: 33,
   level: 1,
   element: 'air',
-  bad_things: 'Oh no, you disrespected the Sir! Lose your headpiece.',
+  bad_things: '<p><b>Bad things:</b>Oh no, you disrespected the Sir!</p><p> Lose your headpiece.</p>',
   rewards_treasure: 1,
   good_against: 'earth',
   bad_against: 'fire',
@@ -109,13 +109,13 @@ startmonster4 = Monstercard.create!(
 
 catfish = Monstercard.create!(
   title: 'Catfish',
-  description: 'HA! You got catfished.',
+  description: '<p>HA! You got catfished.</p>',
   image: '/monster/catfish.png',
   action: 'lose_level',
   draw_chance: 5,
   level: 10,
   element: 'water',
-  bad_things: 'Getting catfished, really? You should know better. Lose one level.',
+  bad_things: '<p><b>Bad things:</b>Getting catfished, really? You should know better. Lose one level.</p>',
   rewards_treasure: 2,
   good_against: 'fire',
   bad_against: 'earth',
@@ -127,7 +127,7 @@ catfish = Monstercard.create!(
 
 curse = Cursecard.create!(
   title: 'very bad curse',
-  description: 'This curse is very bad. Actually, it is so bad that this curse will stick to you and weaken your fighting ability as long as you do not find a way to remove it',
+  description: '<p>This curse is very bad.</p><p> Actually, it is so bad that this curse will stick to you and weaken your fighting ability as long as you do not find a way to remove it</p>',
   image: '/',
 
   action: 'lose_atk_points',
@@ -137,7 +137,7 @@ curse = Cursecard.create!(
 
 item1 = Itemcard.create!(
   title: 'Helmet of Doom',
-  description: 'This is the helmet of doom',
+  description: '<p>This is the helmet of doom</p>',
   image: '/item/helmet.png',
   action: 'plus_one',
   draw_chance: 13,
@@ -150,7 +150,7 @@ item1 = Itemcard.create!(
 
 item2 = Itemcard.create!(
   title: 'The things to get things out of the toilet',
-  description: 'Disgusting. If I was you, I would not touch it.',
+  description: '<p>Disgusting. If I was you, I would not touch it.</p>',
   image: '/item/poempel.png',
   action: 'plus_one',
   draw_chance: 14,
@@ -162,7 +162,7 @@ item2 = Itemcard.create!(
 )
 item3 = Itemcard.create!(
   title: 'Hermes shoes',
-  description: 'Damn, those are some nice shoes! Hopefully hermes does not mind you took them..',
+  description: '<p>Damn, those are some nice shoes! Hopefully hermes does not mind you took them..</p>',
   image: '/item/shoes.png',
   action: 'plus_3',
   draw_chance: 5,
@@ -174,17 +174,57 @@ item3 = Itemcard.create!(
 )
 
 # Adds cards to inventory of user1
-User.find(1).cards << (Card.find(1))
-User.find(1).cards << (Card.find(2))
-User.find(1).cards << (Card.find(3))
-User.find(1).cards << (Card.find(4))
+# User.find(1).cards << (Card.find(1))
+# User.find(1).cards << (Card.find(2))
+# User.find(1).cards << (Card.find(3))
+# User.find(1).cards << (Card.find(4))
+
+#add cards to userinventories
+u1.cards << (Card.find(4))
+u2.cards << (Card.find(4))
+u3.cards << (Card.find(4))
+u4.cards << (Card.find(4))
+u5.cards << (Card.find(4))
+u6.cards << (Card.find(4))
+u7.cards << (Card.find(4))
+u8.cards << (Card.find(4))
+u9.cards << (Card.find(4))
+u1.cards << (Card.find(1))
+u2.cards << (Card.find(1))
+u3.cards << (Card.find(1))
+u4.cards << (Card.find(1))
+u5.cards << (Card.find(1))
+u6.cards << (Card.find(1))
+u7.cards << (Card.find(1))
+u8.cards << (Card.find(1))
+u9.cards << (Card.find(1))
+u1.cards << (Card.find(2))
+u2.cards << (Card.find(2))
+u3.cards << (Card.find(2))
+u4.cards << (Card.find(2))
+u5.cards << (Card.find(2))
+u6.cards << (Card.find(2))
+u7.cards << (Card.find(2))
+u8.cards << (Card.find(2))
+u9.cards << (Card.find(2))
+u1.cards << (Card.find(3))
+u2.cards << (Card.find(3))
+u3.cards << (Card.find(3))
+u4.cards << (Card.find(3))
+u5.cards << (Card.find(3))
+u6.cards << (Card.find(3))
+u7.cards << (Card.find(3))
+u8.cards << (Card.find(3))
+u9.cards << (Card.find(3))
+
+
 
 levelcard = Levelcard.create!(title: 'Level up!', draw_chance: 1, description: 'Get one level', image: '/', action: 'level_up')
 
 buffcard = Buffcard.create!(
   draw_chance: 1,
   title: 'Buffing yourself up, eh?',
-  description: 'You are getting stronger and stronger. Gain 2 extra attack points',
+  description: '<p>You are getting stronger and stronger. Gain 2 extra attack points</p>',
   image: '/',
   action: 'gain_atk',
   atk_points: 2

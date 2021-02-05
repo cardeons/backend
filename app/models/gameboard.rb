@@ -64,6 +64,7 @@ class Gameboard < ApplicationRecord
         )
       end
 
+
       players_array.push({ name: player.name, player_id: player.id, inventory: renderCardId(player.inventory.ingamedecks), level: player.level, attack: player.attack,
                            handcard: player.handcard.cards.count, monsters: monsters, playercurse: renderCardId(player.playercurse.ingamedecks), user_id: player.user.id })
     end
@@ -108,7 +109,7 @@ class Gameboard < ApplicationRecord
 
     output = []
 
-    pp "***********************************************++"
+    # pp "***********************************************++"
     # pp monster.ingamedecks.first
 
     if monster.ingamedecks.count > 0
@@ -117,18 +118,15 @@ class Gameboard < ApplicationRecord
 
       monster.ingamedecks.each do |ingamedeck|
 
-        pp "********************************************-----"
-        pp monster.ingamedecks
-        pp ingamedeck.card
-        pp ingamedeck.card.type
-
         if ingamedeck.card.type == 'Monstercard'
           unique_monster_id = ingamedeck.id
           monster_id = ingamedeck.card_id
         else
+          pp "ITEMITEMITEMITEMITEMITEMITEMITEMITEMITEMITEMITEMITEM"
           items.push({ unique_card_id: ingamedeck.id, card_id: ingamedeck.card_id })
         end
       end
+
       output = {
         unique_card_id: unique_monster_id,
         card_id: monster_id,
@@ -140,8 +138,8 @@ class Gameboard < ApplicationRecord
 
   def self.renderCardFromId(id)
 
-    pp "**************************"
-    pp id
+    # pp "**************************"
+    # pp id
 
     if Ingamedeck.find_by('id = ?', id)
       card = Ingamedeck.find(id)
@@ -150,10 +148,6 @@ class Gameboard < ApplicationRecord
   end
 
   def self.renderGameboard(gameboard)
-
-    pp gameboard
-    pp gameboard.centercard
-    pp gameboard.centercard.ingamedecks
 
     if gameboard.centercard.ingamedecks.any?
       centercard = renderCardFromId(gameboard.centercard.ingamedecks.first.id)
@@ -219,7 +213,7 @@ class Gameboard < ApplicationRecord
 
     ingamecard = Ingamedeck.create(gameboard: gameboard, card_id: randomcard, cardable: Centercard.find_by('gameboard_id = ?', gameboard.id))
 
-    gameboard.update(centercard: Centercard.find_by('gameboard_id = ?', gameboard.id), rewards_treasure: Card.find_by('id = ?', randomcard).rewards_treasure)
+    gameboard.update(centercard: Centercard.find_by('gameboard_id = ?', gameboard.id), monster_atk: Card.find_by('id = ?', randomcard).atk_points, rewards_treasure: Card.find_by('id = ?', randomcard).rewards_treasure)
 
     gameboard.centercard.cards.first.title
   end
