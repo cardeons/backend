@@ -68,6 +68,9 @@ pp monster_to_equip
           pp monster_to_equip.cards
           player_atk = monster_to_equip.cards.sum(:atk_points)
           player.update_attribute(:attack, player_atk)
+
+          result = player.gameboard.monster_atk < player_atk
+          player.gameboard.update_attribute(:success, result)
           message = "Successfully equipped."
           # GameChannel.broadcast_to(gameboard, {type: 'GAMEBOARD_UPDATE', params: Gameboard.broadcast_game_board(gameboard) })
       end

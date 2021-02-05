@@ -213,7 +213,13 @@ class Gameboard < ApplicationRecord
 
     ingamecard = Ingamedeck.create(gameboard: gameboard, card_id: randomcard, cardable: Centercard.find_by('gameboard_id = ?', gameboard.id))
 
-    gameboard.update(centercard: Centercard.find_by('gameboard_id = ?', gameboard.id), monster_atk: Card.find_by('id = ?', randomcard).atk_points, rewards_treasure: Card.find_by('id = ?', randomcard).rewards_treasure)
+    # pp centercard.cards
+    monsteratk = Centercard.find_by('gameboard_id = ?', gameboard.id).cards.first.atk_points
+    playeratk = attack(gameboard)
+    
+    result = monsteratk < playeratk
+
+    gameboard.update(centercard: Centercard.find_by('gameboard_id = ?', gameboard.id), success: result, player_atk: playeratk, monster_atk: monsteratk, rewards_treasure: Card.find_by('id = ?', randomcard).rewards_treasure)
 
     gameboard.centercard.cards.first.title
   end
@@ -251,30 +257,48 @@ class Gameboard < ApplicationRecord
   def self.attack(gameboard)
     monsterid = gameboard.centercard.cards.first.id
     playerid = gameboard.current_player
+    playeratkpoints = 1
 
-    monstercards1 = Player.find(playerid).monsterone.cards.sum(:atk_points)
-    monstercards2 = Player.find(playerid).monstertwo.cards.sum(:atk_points)
-    monstercards3 = Player.find(playerid).monsterthree.cards.sum(:atk_points)
+    pp "LJPDDDDDDDOIJIHIUHOIUJKLÜJHGFDRRGHJKLÖ"
+    pp playerid
 
-    playeratkpoints = monstercards1 + monstercards2 + monstercards3 + Player.find(playerid).level
+    unless playerid
+
+    if Player.find_by("id=?", playerid).monsterone
+    monstercards1 = Player.find_by("id=?", playerid).monsterone.cards.sum(:atk_points)
+    end
+
+    if Player.find_by("id=?", playerid).monstertwo
+    monstercards2 = Player.find_by("id=?", playerid).monstertwo.cards.sum(:atk_points)
+    end
+
+    if Player.find_by("id=?", playerid).monsterthree
+    monstercards3 = Player.find_by("id=?", playerid).monsterthree.cards.sum(:atk_points)
+    end
+
+ 
+
+    playeratkpoints = monstercards1 + monstercards2 + monstercards3 + Player.find_by("id=?", playerid).level
 
     monsteratkpts = Monstercard.find_by("id=?", monsterid).atk_points
 
     playerwin = playeratkpoints > monsteratkpts
 
 
-    if playerwin
-      message = "SUCCESS"
-      gameboard.update(success: true, player_atk: playeratkpoints, monster_atk: monsteratkpts)
-    puts "playerwin"
-    else
-      message = "FAIL"
-      gameboard.update(success: false, player_atk: playeratkpoints, monster_atk: monsteratkpts)
-      # broadcast: flee or use cards!
-      puts "monsterwin"
-    end
+    # if playerwin
+    #   message = "SUCCESS"
+    #   gameboard.update(success: true, player_atk: playeratkpoints, monster_atk: monsteratkpts)
+    # puts "playerwin"
+    # else
+    #   message = "FAIL"
+    #   gameboard.update(success: false, player_atk: playeratkpoints, monster_atk: monsteratkpts)
+    #   # broadcast: flee or use cards!
+    #   puts "monsterwin"
+    # end
 
-    message
+  end
+
+    playeratkpoints
   end 
 
 
@@ -294,6 +318,7 @@ class Gameboard < ApplicationRecord
       current_player.monsterone.ingamedecks.delete_all
       current_player.monstertwo.ingamedecks.delete_all
       current_player.monsterthree.ingamedecks.delete_all
+      gameboard.update_attribute(:player_atk, 1)
 
       Handcard.draw_handcards(current_player.id, gameboard)
 

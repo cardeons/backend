@@ -43,8 +43,8 @@ class GameChannel < ApplicationCable::Channel
 
     Ingamedeck.find_by("id=?", params["unique_card_id"]).update(cardable: Centercard.find_by('gameboard_id = ?', @gameboard.id))
     monsteratk = Ingamedeck.find_by("id=?", params["unique_card_id"]).card.atk_points
-    pp monsteratk
-    pp "MOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOONNNNNNNNNNNSSSTTTTTEEEEEEERRRRR"
+    # pp monsteratk
+    # pp "MOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOONNNNNNNNNNNSSSTTTTTEEEEEEERRRRR"
     @gameboard.update(centercard: Centercard.find_by('gameboard_id = ?', @gameboard.id), monster_atk: monsteratk)
     # updated_board = Gameboard.broadcast_game_board(@gameboard)
     # broadcast_to(@gameboard, { type: BOARD_UPDATE, params: updated_board })  
@@ -55,8 +55,8 @@ class GameChannel < ApplicationCable::Channel
 
   def draw_door_card()
     name = Gameboard.draw_door_card(@gameboard);
-    attack()
-    # broadcast_to(@gameboard, { type: BOARD_UPDATE, params: Gameboard.broadcast_game_board(@gameboard) })
+    # attack()
+    broadcast_to(@gameboard, { type: BOARD_UPDATE, params: Gameboard.broadcast_game_board(@gameboard) })
     msg = "#{Player.find_by("gameboard_id = ?",@gameboard.id).name} has drawn #{name}"
     broadcast_to(@gameboard, {type: GAME_LOG, params: {date: Time.new, message: msg}})
   end
@@ -127,15 +127,15 @@ class GameChannel < ApplicationCable::Channel
     unique_card_id = params['unique_card_id']
     to = params['to']
     player = Player.find_by("id=?",current_user.player.id)
-    pp "######______#############################"
-    pp unique_card_id
-    pp to
-
+    
     case to
     when 'inventory'
       Ingamedeck.find_by("id = ?", unique_card_id).update_attribute(:cardable, player.inventory)
     when 'player_monster'
-      if player.monsterone.cards.count < 1
+      if Ingamedeck.find_by("id=?",unique_card_id).card.type != "Monstercard"
+        ###make sure no items are placed in the monsterslot
+        PlayerChannel.broadcast_to(current_user,  { type: ERROR, params: { message: "You can not equip an item without a monster" } })
+      elsif player.monsterone.cards.count < 1
         Ingamedeck.find_by("id = ?", unique_card_id).update(cardable: player.monsterone)
       elsif player.monstertwo.cards.count < 1
         Ingamedeck.find_by("id = ?", unique_card_id).update(cardable: player.monstertwo)
@@ -143,27 +143,40 @@ class GameChannel < ApplicationCable::Channel
         Ingamedeck.find_by("id = ?", unique_card_id).update(cardable: player.monsterthree)
       else
         broadcast_to(@gameboard, { type: DEBUG, params: { message: "All monsterslots are full" } })
-        PlayerChannel.broadcast_to(player,  { type: ERROR, params: { message: "All monsterslots are full!" } })
+        PlayerChannel.broadcast_to(current_user,  { type: ERROR, params: { message: "All monsterslots are full!" } })
       end
     end
 
-    pp "######______#########################313213213213213213133213213213132####"
+      if player.monsterone
+      monstercards1 = player.monsterone.cards.sum(:atk_points)
+      end
+  
+      if player.monstertwo
+      monstercards2 = player.monstertwo.cards.sum(:atk_points)
+      end
+  
+      if player.monsterthree
+      monstercards3 = player.monsterthree.cards.sum(:atk_points)
+      end
+  
+    playeratkpoints = monstercards1 + monstercards2 + monstercards3 + player.level
 
 
+    @gameboard.update_attribute(:player_atk, playeratkpoints)
 
     gameboard = Gameboard.find(@gameboard.id)
 
-    pp player.monsterone.ingamedecks
-    pp player
-    pp "jkjkjkfsdfuuuioiu88888WWWWWWWWWWWWWWWW"
-    pp player.inventory.ingamedecks
-    pp player.handcard.cards
-    pp player.handcard.ingamedecks
+    # pp player.monsterone.ingamedecks
+    # pp player
+    # pp "jkjkjkfsdfuuuioiu88888WWWWWWWWWWWWWWWW"
+    # pp player.inventory.ingamedecks
+    # pp player.handcard.cards
+    # pp player.handcard.ingamedecks
 
 
 
     PlayerChannel.broadcast_to(current_user, { type: 'HANDCARD_UPDATE', params: { handcards: Gameboard.renderCardId(player.handcard.ingamedecks) } })
-    pp "######______############################222222222222222222222222222#"
+    # pp "######______############################222222222222222222222222222#"
 
     broadcast_to(@gameboard, { type: BOARD_UPDATE, params: Gameboard.broadcast_game_board(gameboard) })
 
