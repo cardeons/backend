@@ -31,7 +31,6 @@ module ApplicationCable
       puts decoded_token[0]['user_id']
 
       if (current_user = User.find(decoded_token[0]['user_id']))
-        pp current_user
         current_user
       else
         reject_unauthorized_connection
