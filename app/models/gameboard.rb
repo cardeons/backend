@@ -262,17 +262,17 @@ class Gameboard < ApplicationRecord
     pp "LJPDDDDDDDOIJIHIUHOIUJKLÜJHGFDRRGHJKLÖ"
     pp playerid
 
-    unless playerid
+    if playerid != nil
 
-    if Player.find_by("id=?", playerid).monsterone
+    if Player.find_by("id=?", playerid).monsterone != nil
     monstercards1 = Player.find_by("id=?", playerid).monsterone.cards.sum(:atk_points)
     end
 
-    if Player.find_by("id=?", playerid).monstertwo
+    if Player.find_by("id=?", playerid).monstertwo != nil
     monstercards2 = Player.find_by("id=?", playerid).monstertwo.cards.sum(:atk_points)
     end
 
-    if Player.find_by("id=?", playerid).monsterthree
+    if Player.find_by("id=?", playerid).monsterthree != nil
     monstercards3 = Player.find_by("id=?", playerid).monsterthree.cards.sum(:atk_points)
     end
 

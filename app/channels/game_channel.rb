@@ -43,11 +43,9 @@ class GameChannel < ApplicationCable::Channel
 
     Ingamedeck.find_by("id=?", params["unique_card_id"]).update(cardable: Centercard.find_by('gameboard_id = ?', @gameboard.id))
     monsteratk = Ingamedeck.find_by("id=?", params["unique_card_id"]).card.atk_points
-    # pp monsteratk
-    # pp "MOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOONNNNNNNNNNNSSSTTTTTEEEEEEERRRRR"
+
     @gameboard.update(centercard: Centercard.find_by('gameboard_id = ?', @gameboard.id), monster_atk: monsteratk)
-    # updated_board = Gameboard.broadcast_game_board(@gameboard)
-    # broadcast_to(@gameboard, { type: BOARD_UPDATE, params: updated_board })  
+
     result = Gameboard.attack(@gameboard)
     updated_board = Gameboard.broadcast_game_board(@gameboard)
     broadcast_to(@gameboard, { type: BOARD_UPDATE, params: updated_board })  
