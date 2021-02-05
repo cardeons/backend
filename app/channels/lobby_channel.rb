@@ -32,6 +32,9 @@ class LobbyChannel < ApplicationCable::Channel
     # TODO: add monstertwo and three
 
     Ingamedeck.create(card_id: params[:monsterone], gameboard: gameboard, cardable: handcard) if params[:monsterone]
+    Ingamedeck.create(card_id: params[:monstertwo], gameboard: gameboard, cardable: handcard) if params[:monstertwo]
+    Ingamedeck.create(card_id: params[:monsterthree], gameboard: gameboard, cardable: handcard) if params[:monsterthree]
+
 
     lobbyisfull = false
 
