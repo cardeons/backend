@@ -8,7 +8,6 @@ RSpec.describe ApplicationCable::Connection, type: :channel do
     expect(connection.current_user.id).to eq 1
   end
 
-  
   it 'rejects connection without valid JWT' do
     expect { connect '/cable', headers: { 'HTTP_SEC_WEBSOCKET_PROTOCOL' => '1' } }.to have_rejected_connection
   end
