@@ -12,9 +12,9 @@ To do:
   
   -sudo -u postgres  psql
   
-  -CREATE DATABASE cardeons_backend_development
+  -CREATE DATABASE cardeons_backend_development;
   
-  -CREATE DATABASE cardeons_backend_test
+  -CREATE DATABASE cardeons_backend_test;
 
 - rails db:migrate
 
@@ -24,7 +24,7 @@ To do:
 Happy Coding😘
 
 
-Reset DB: rake db:migrate:reset #runs db:drop db:create db:migrate db:seed
+Reset DB: rails db:reset
 
 
 
