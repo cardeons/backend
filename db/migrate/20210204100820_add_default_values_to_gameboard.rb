@@ -1,6 +1,8 @@
+# frozen_string_literal: true
+
 class AddDefaultValuesToGameboard < ActiveRecord::Migration[6.1]
   def up
-    change_column_default :gameboards, :current_state, "awaiting_player"
+    change_column_default :gameboards, :current_state, 'awaiting_player'
     change_column_default :gameboards, :player_atk, 0
     change_column_default :gameboards, :monster_atk, 0
     change_column_default :gameboards, :asked_help, false

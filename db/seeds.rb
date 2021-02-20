@@ -179,7 +179,7 @@ item3 = Itemcard.create!(
 # User.find(1).cards << (Card.find(3))
 # User.find(1).cards << (Card.find(4))
 
-#add cards to userinventories
+# add cards to userinventories
 u1.cards << (Card.find(4))
 u2.cards << (Card.find(4))
 u3.cards << (Card.find(4))
@@ -216,8 +216,6 @@ u6.cards << (Card.find(3))
 u7.cards << (Card.find(3))
 u8.cards << (Card.find(3))
 u9.cards << (Card.find(3))
-
-
 
 levelcard = Levelcard.create!(title: 'Level up!', draw_chance: 1, description: 'Get one level', image: '/', action: 'level_up')
 

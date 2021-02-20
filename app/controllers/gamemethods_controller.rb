@@ -1,7 +1,6 @@
 # frozen_string_literal: true
 
 class GamemethodsController < ApplicationController
-
   def draw_random_lvl_one
     monstercards = Monstercard.all.where('level=?', 1).pluck(:id).sample
 

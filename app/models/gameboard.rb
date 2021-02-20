@@ -29,8 +29,6 @@ class Gameboard < ApplicationRecord
 
     gameboard = Gameboard.find(gameboard.id)
 
-
-
     gameboard.players.each do |player|
       # ##only for debug
       # TODO: remove later
@@ -63,7 +61,6 @@ class Gameboard < ApplicationRecord
           renderUserMonsters(player, 'Monsterthree')
         )
       end
-
 
       players_array.push({ name: player.name, player_id: player.id, inventory: renderCardId(player.inventory.ingamedecks), level: player.level, attack: player.attack,
                            handcard: player.handcard.cards.count, monsters: monsters, playercurse: renderCardId(player.playercurse.ingamedecks), user_id: player.user.id })
@@ -101,12 +98,11 @@ class Gameboard < ApplicationRecord
 
     output = []
 
-    if monster.ingamedecks.count > 0
+    if monster.ingamedecks.count.positive?
       unique_monster_id = monster.ingamedecks[0].id
       monster_id = monster.ingamedecks[0].card_id
 
       monster.ingamedecks.each do |ingamedeck|
-
         if ingamedeck.card.type == 'Monstercard'
           unique_monster_id = ingamedeck.id
           monster_id = ingamedeck.card_id
@@ -125,7 +121,6 @@ class Gameboard < ApplicationRecord
   end
 
   def self.renderCardFromId(id)
-
     if Ingamedeck.find_by('id = ?', id)
       card = Ingamedeck.find(id)
       { unique_card_id: card.id, card_id: card.card_id }
@@ -133,12 +128,7 @@ class Gameboard < ApplicationRecord
   end
 
   def self.renderGameboard(gameboard)
-
-    if gameboard.centercard.ingamedecks.any?
-      centercard = renderCardFromId(gameboard.centercard.ingamedecks.first.id)
-    else 
-      centercard = nil
-    end
+    centercard = (renderCardFromId(gameboard.centercard.ingamedecks.first.id) if gameboard.centercard.ingamedecks.any?)
 
     {
       gameboard_id: gameboard.id,
@@ -159,18 +149,16 @@ class Gameboard < ApplicationRecord
     current_player = gameboard.current_player
     count = gameboard.players.count
 
-    #search for the index player with this index 
-    index_of_player = players.find_index{ |player| player.id == current_player}
+    # search for the index player with this index
+    index_of_player = players.find_index { |player| player.id == current_player }
 
-    #index of gameboard.players
+    # index of gameboard.players
     index_of_next_player = index_of_player + 1
-    
-    #if index is bigger than player count start with first player
-    if index_of_next_player > count -1
-      index_of_next_player = 0
-    end
 
-    #get the next Player from array of players
+    # if index is bigger than player count start with first player
+    index_of_next_player = 0 if index_of_next_player > count - 1
+
+    # get the next Player from array of players
     next_player = gameboard.players[index_of_next_player]
 
     # save it to gameboard
@@ -200,10 +188,11 @@ class Gameboard < ApplicationRecord
 
     monsteratk = Centercard.find_by('gameboard_id = ?', gameboard.id).cards.first.atk_points
     playeratk = attack(gameboard)
-    
+
     result = monsteratk < playeratk
 
-    gameboard.update(centercard: Centercard.find_by('gameboard_id = ?', gameboard.id), success: result, player_atk: playeratk, monster_atk: monsteratk, rewards_treasure: Card.find_by('id = ?', randomcard).rewards_treasure)
+    gameboard.update(centercard: Centercard.find_by('gameboard_id = ?', gameboard.id), success: result, player_atk: playeratk, monster_atk: monsteratk,
+                     rewards_treasure: Card.find_by('id = ?', randomcard).rewards_treasure)
 
     gameboard.centercard.cards.first.title
   end
@@ -243,87 +232,62 @@ class Gameboard < ApplicationRecord
     playerid = gameboard.current_player
     playeratkpoints = 1
 
-    if playerid != nil
+    unless playerid.nil?
 
-    if Player.find_by("id=?", playerid).monsterone != nil
-    monstercards1 = Player.find_by("id=?", playerid).monsterone.cards.sum(:atk_points)
+      monstercards1 = Player.find_by('id=?', playerid).monsterone.cards.sum(:atk_points) if Player.find_by('id=?', playerid).monsterone != nil
+
+      monstercards2 = Player.find_by('id=?', playerid).monstertwo.cards.sum(:atk_points) if Player.find_by('id=?', playerid).monstertwo != nil
+
+      monstercards3 = Player.find_by('id=?', playerid).monsterthree.cards.sum(:atk_points) if Player.find_by('id=?', playerid).monsterthree != nil
+
+      playeratkpoints = monstercards1 + monstercards2 + monstercards3 + Player.find_by('id=?', playerid).level
+
+      monsteratkpts = Monstercard.find_by('id=?', monsterid).atk_points
+
+      playerwin = playeratkpoints > monsteratkpts
+
+      # if playerwin
+      #   message = "SUCCESS"
+      #   gameboard.update(success: true, player_atk: playeratkpoints, monster_atk: monsteratkpts)
+      # puts "playerwin"
+      # else
+      #   message = "FAIL"
+      #   gameboard.update(success: false, player_atk: playeratkpoints, monster_atk: monsteratkpts)
+      #   # broadcast: flee or use cards!
+      #   puts "monsterwin"
+      # end
+
     end
-
-    if Player.find_by("id=?", playerid).monstertwo != nil
-    monstercards2 = Player.find_by("id=?", playerid).monstertwo.cards.sum(:atk_points)
-    end
-
-    if Player.find_by("id=?", playerid).monsterthree != nil
-    monstercards3 = Player.find_by("id=?", playerid).monsterthree.cards.sum(:atk_points)
-    end
-
- 
-
-    playeratkpoints = monstercards1 + monstercards2 + monstercards3 + Player.find_by("id=?", playerid).level
-
-    monsteratkpts = Monstercard.find_by("id=?", monsterid).atk_points
-
-    playerwin = playeratkpoints > monsteratkpts
-
-
-    # if playerwin
-    #   message = "SUCCESS"
-    #   gameboard.update(success: true, player_atk: playeratkpoints, monster_atk: monsteratkpts)
-    # puts "playerwin"
-    # else
-    #   message = "FAIL"
-    #   gameboard.update(success: false, player_atk: playeratkpoints, monster_atk: monsteratkpts)
-    #   # broadcast: flee or use cards!
-    #   puts "monsterwin"
-    # end
-
-  end
 
     playeratkpoints
-  end 
+  end
 
+  def self.reset_all_game_boards
+    Ingamedeck.all.where(cardable_type: 'Centercard').destroy_all
 
-
-  def self.reset_all_game_boards()
-    Ingamedeck.all.where(cardable_type: "Centercard").destroy_all
-
-    Gameboard.all.each do |gameboard|    
-    
+    Gameboard.all.each do |gameboard|
       player_id_current = gameboard.current_player
 
+      next unless player_id_current
 
-      if player_id_current
-      current_player = Player.find_by("id=?",player_id_current)
+      current_player = Player.find_by('id=?', player_id_current)
       current_player.handcard.ingamedecks.delete_all
 
-      if current_player.inventory&.ingamedecks
-        current_player.inventory.ingamedecks.delete_all
-      end
+      current_player.inventory.ingamedecks.delete_all if current_player.inventory&.ingamedecks
 
-      if current_player.monsterone&.ingamedecks
-        current_player.monsterone.ingamedecks.delete_all
-      end
+      current_player.monsterone.ingamedecks.delete_all if current_player.monsterone&.ingamedecks
 
-      
-      if current_player.monstertwo&.ingamedecks
-        current_player.monstertwo.ingamedecks.delete_all
-      end
+      current_player.monstertwo.ingamedecks.delete_all if current_player.monstertwo&.ingamedecks
 
-
-      if current_player.monsterthree&.ingamedecks
-        current_player.monsterthree.ingamedecks.delete_all
-      end
-
+      current_player.monsterthree.ingamedecks.delete_all if current_player.monsterthree&.ingamedecks
 
       gameboard.update_attribute(:player_atk, 1)
 
       Handcard.draw_handcards(current_player.id, gameboard)
 
       # updated_board = Gameboard.broadcast_game_board(gameboard)
-      # GameChannel.broadcast_to(gameboard, { type: "BOARD_UPDATE", params: updated_board })     
+      # GameChannel.broadcast_to(gameboard, { type: "BOARD_UPDATE", params: updated_board })
       # PlayerChannel.broadcast_to(current_player.user, { type: 'HANDCARD_UPDATE', params: { handcards: Gameboard.renderCardId(current_player.handcard.ingamedecks) } })
     end
-    end
-    
   end
 end

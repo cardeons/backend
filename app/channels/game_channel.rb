@@ -17,19 +17,19 @@ class GameChannel < ApplicationCable::Channel
     broadcast_to(@gameboard, { type: BOARD_UPDATE, params: Gameboard.broadcast_game_board(@gameboard) })
   end
 
-  def flee()
-    output = Gameboard.flee(@gameboard);
-    broadcast_to(@gameboard, {type: FLEE, params: output})
-    msg=""
+  def flee
+    output = Gameboard.flee(@gameboard)
+    broadcast_to(@gameboard, { type: FLEE, params: output })
+    msg = ''
     name = current_user.name
-    if output["flee"] = true
-      msg = "Nice! #{name} rolled #{output["value"]}, #{name} managed to escape :)"
-    else
-      msg = "Oh no! #{name} only rolled #{output["value"]}. That's a fine mess!"
-    end
+    msg = if output['flee'] = true
+            "Nice! #{name} rolled #{output['value']}, #{name} managed to escape :)"
+          else
+            "Oh no! #{name} only rolled #{output['value']}. That's a fine mess!"
+          end
 
-    log = {date: Time.new, message: msg}
-    broadcast_to(@gameboard, {type: GAME_LOG, params: log})
+    log = { date: Time.new, message: msg }
+    broadcast_to(@gameboard, { type: GAME_LOG, params: log })
     updated_board = Gameboard.broadcast_game_board(@gameboard)
     broadcast_to(@gameboard, { type: BOARD_UPDATE, params: updated_board })
   end
@@ -41,24 +41,24 @@ class GameChannel < ApplicationCable::Channel
       ingamedeck.update(cardable: Graveyard.find_by('gameboard_id = ?', @gameboard.id))
     end
 
-    Ingamedeck.find_by("id=?", params["unique_card_id"]).update(cardable: Centercard.find_by('gameboard_id = ?', @gameboard.id))
-    monsteratk = Ingamedeck.find_by("id=?", params["unique_card_id"]).card.atk_points
+    Ingamedeck.find_by('id=?', params['unique_card_id']).update(cardable: Centercard.find_by('gameboard_id = ?', @gameboard.id))
+    monsteratk = Ingamedeck.find_by('id=?', params['unique_card_id']).card.atk_points
 
     @gameboard.update(centercard: Centercard.find_by('gameboard_id = ?', @gameboard.id), monster_atk: monsteratk)
 
     result = Gameboard.attack(@gameboard)
     updated_board = Gameboard.broadcast_game_board(@gameboard)
-    broadcast_to(@gameboard, { type: BOARD_UPDATE, params: updated_board })  
+    broadcast_to(@gameboard, { type: BOARD_UPDATE, params: updated_board })
     player = Player.find_by('user_id = ?', current_user.id)
     PlayerChannel.broadcast_to(current_user, { type: 'HANDCARD_UPDATE', params: { handcards: Gameboard.renderCardId(player.handcard.ingamedecks) } })
   end
 
-  def draw_door_card()
-    name = Gameboard.draw_door_card(@gameboard);
+  def draw_door_card
+    name = Gameboard.draw_door_card(@gameboard)
     # attack()
     broadcast_to(@gameboard, { type: BOARD_UPDATE, params: Gameboard.broadcast_game_board(@gameboard) })
-    msg = "#{Player.find_by("gameboard_id = ?",@gameboard.id).name} has drawn #{name}"
-    broadcast_to(@gameboard, {type: GAME_LOG, params: {date: Time.new, message: msg}})
+    msg = "#{Player.find_by('gameboard_id = ?', @gameboard.id).name} has drawn #{name}"
+    broadcast_to(@gameboard, { type: GAME_LOG, params: { date: Time.new, message: msg } })
   end
 
   def equip_monster(params)
@@ -67,19 +67,16 @@ class GameChannel < ApplicationCable::Channel
 
     updated_board = Gameboard.broadcast_game_board(@gameboard)
 
-    if result[:type] == "ERROR"
-    broadcast_to(@gameboard, { type: 'ERROR', params: { message: result[:message] }})
-    end
+    broadcast_to(@gameboard, { type: 'ERROR', params: { message: result[:message] } }) if result[:type] == 'ERROR'
 
-    broadcast_to(@gameboard, { type: 'BOARD_UPDATE', params: updated_board  })
+    broadcast_to(@gameboard, { type: 'BOARD_UPDATE', params: updated_board })
     PlayerChannel.broadcast_to(current_user, { type: 'HANDCARD_UPDATE', params: { handcards: Gameboard.renderCardId(player.handcard.ingamedecks) } })
-
   end
 
-  def attack()
+  def attack
     result = Gameboard.attack(@gameboard)
     updated_board = Gameboard.broadcast_game_board(@gameboard)
-    broadcast_to(@gameboard, { type: BOARD_UPDATE, params: updated_board })  
+    broadcast_to(@gameboard, { type: BOARD_UPDATE, params: updated_board })
   end
 
   # def play_card(params)
@@ -120,53 +117,44 @@ class GameChannel < ApplicationCable::Channel
   def move_card(params)
     unique_card_id = params['unique_card_id']
     to = params['to']
-    player = Player.find_by("id=?",current_user.player.id)
+    player = Player.find_by('id=?', current_user.player.id)
 
     case to
     when 'inventory'
-      Ingamedeck.find_by("id = ?", unique_card_id).update_attribute(:cardable, player.inventory)
+      Ingamedeck.find_by('id = ?', unique_card_id).update_attribute(:cardable, player.inventory)
     when 'player_monster'
-      if Ingamedeck.find_by("id=?",unique_card_id).card.type != "Monstercard"
-        ###make sure no items are placed in the monsterslot
-        PlayerChannel.broadcast_to(current_user,  { type: ERROR, params: { message: "You can not equip an item without a monster" } })
+      if Ingamedeck.find_by('id=?', unique_card_id).card.type != 'Monstercard'
+        # ##make sure no items are placed in the monsterslot
+        PlayerChannel.broadcast_to(current_user, { type: ERROR, params: { message: 'You can not equip an item without a monster' } })
       elsif player.monsterone.cards.count < 1
-        Ingamedeck.find_by("id = ?", unique_card_id).update(cardable: player.monsterone)
+        Ingamedeck.find_by('id = ?', unique_card_id).update(cardable: player.monsterone)
       elsif player.monstertwo.cards.count < 1
-        Ingamedeck.find_by("id = ?", unique_card_id).update(cardable: player.monstertwo)
+        Ingamedeck.find_by('id = ?', unique_card_id).update(cardable: player.monstertwo)
       elsif player.monsterthree.cards.count < 1
-        Ingamedeck.find_by("id = ?", unique_card_id).update(cardable: player.monsterthree)
+        Ingamedeck.find_by('id = ?', unique_card_id).update(cardable: player.monsterthree)
       else
-        broadcast_to(@gameboard, { type: DEBUG, params: { message: "All monsterslots are full" } })
-        PlayerChannel.broadcast_to(current_user,  { type: ERROR, params: { message: "All monsterslots are full!" } })
+        broadcast_to(@gameboard, { type: DEBUG, params: { message: 'All monsterslots are full' } })
+        PlayerChannel.broadcast_to(current_user, { type: ERROR, params: { message: 'All monsterslots are full!' } })
       end
     end
 
-      if player.monsterone
-      monstercards1 = player.monsterone.cards.sum(:atk_points)
-      end
-  
-      if player.monstertwo
-      monstercards2 = player.monstertwo.cards.sum(:atk_points)
-      end
-  
-      if player.monsterthree
-      monstercards3 = player.monsterthree.cards.sum(:atk_points)
-      end
-  
+    monstercards1 = player.monsterone.cards.sum(:atk_points) if player.monsterone
+
+    monstercards2 = player.monstertwo.cards.sum(:atk_points) if player.monstertwo
+
+    monstercards3 = player.monsterthree.cards.sum(:atk_points) if player.monsterthree
+
     playeratkpoints = monstercards1 + monstercards2 + monstercards3 + player.level
 
     player.update_attribute(:attack, playeratkpoints)
-
 
     @gameboard.update_attribute(:player_atk, playeratkpoints)
 
     gameboard = Gameboard.find(@gameboard.id)
 
-
     PlayerChannel.broadcast_to(current_user, { type: 'HANDCARD_UPDATE', params: { handcards: Gameboard.renderCardId(player.handcard.ingamedecks) } })
 
     broadcast_to(@gameboard, { type: BOARD_UPDATE, params: Gameboard.broadcast_game_board(gameboard) })
-
   end
 
   def unsubscribed

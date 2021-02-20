@@ -33,12 +33,10 @@ class Handcard < ApplicationRecord
     addCardsToArray(allcards, itemcards)
     addCardsToArray(allcards, levelcards)
 
-
     player = Player.find(player_id)
     handcard = player.handcard
 
     Ingamedeck.create!(gameboard: gameboard, card_id: Itemcard.first.id, cardable: handcard)
-
 
     # Ingamedeck.where(cardable_type: 'Handcard', cardable_id: handcard.id).delete_all
 

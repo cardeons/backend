@@ -35,7 +35,6 @@ class LobbyChannel < ApplicationCable::Channel
     Ingamedeck.create(card_id: params[:monstertwo], gameboard: gameboard, cardable: handcard) if params[:monstertwo]
     Ingamedeck.create(card_id: params[:monsterthree], gameboard: gameboard, cardable: handcard) if params[:monsterthree]
 
-
     lobbyisfull = false
 
     if gameboard.players.count > 3
@@ -51,7 +50,7 @@ class LobbyChannel < ApplicationCable::Channel
     @gameboard = gameboard
 
     stream_for @gameboard
-    
+
     broadcast_to(@gameboard, { type: 'DEBUG', params: { message: "new Player#{current_user.email} conected to the gameboard id: #{@gameboard.id} players in lobby #{@gameboard.players.count}" } })
 
     if lobbyisfull
@@ -125,7 +124,7 @@ class LobbyChannel < ApplicationCable::Channel
     p3m2 = Ingamedeck.create!(gameboard: gameboard_test, card: Monstercard.first, cardable: p3m2)
     p3m3 = Ingamedeck.create!(gameboard: gameboard_test, card: Monstercard.first, cardable: p3m3)
   end
-  
+
   def deliver_error_message(e)
     broadcast_to(@gameboard, { type: 'ERROR', params: { message: e } })
   end
