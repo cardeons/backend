@@ -8,7 +8,9 @@
 		"aki77.rails-db-schema",
 		"rebornix.ruby",
 		"castwide.solargraph",
-		"misogi.ruby-rubocop"
+		"misogi.ruby-rubocop",
+		"hjleochen.rails-nav",
+		"bung87.rails"
 	],
 	// List of extensions recommended by VS Code that should not be recommended for users of this workspace.
 	"unwantedRecommendations": [
