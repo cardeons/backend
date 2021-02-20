@@ -27,7 +27,7 @@ class LobbyChannel < ApplicationCable::Channel
 
     # create new player
     player = Player.create(name: current_user.name, gameboard_id: gameboard.id, user: current_user)
-
+    
     handcard = Handcard.create(player_id: player.id) unless player.handcard
 
     # add monsterone to handcard of player

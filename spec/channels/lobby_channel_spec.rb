@@ -11,7 +11,7 @@ RSpec.describe LobbyChannel, type: :channel do
   end
 
   it 'user does not already have a player before the game' do
-    expect(users(:one).player).to be_nil 
+    expect(users(:one).player).to be_nil
   end
 
   it 'successfully subscribes' do
@@ -19,19 +19,23 @@ RSpec.describe LobbyChannel, type: :channel do
     expect(subscription).to be_confirmed
   end
 
+  it 'user streams from lobby_channel' do
+    subscribe
+    # uses global id of model
+    expect(subscription).to have_stream_from("lobby:#{users(:one).player.gameboard.to_gid_param}")
+  end
+
   it 'successfully subscribes and creates a player for the user' do
     subscribe
     expect(users(:one).player).to be_truthy
   end
 
-  
-  it 'successfully creates all decks for the user' do
+  it 'successfully creates handcard deck for the user' do
     subscribe
-    users(:one).player.inventory.ingamedecks.cards
-    expect(users(:one).player.inventory.ingamedecks.cards.count).to be_truthy
+    expect(User.find(users(:one).id).player.handcard).to be_truthy
   end
 
-  it 'test database contains three users' do
+  it 'test fixtures contains three users' do
     expect(User.all.count).to eq(3)
   end
 end
