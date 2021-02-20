@@ -4,6 +4,8 @@ class LobbyChannel < ApplicationCable::Channel
   # rescue_from Exception, with: :deliver_error_message
 
   LOBBY = 'lobby'
+  INGAME = 'ingame'
+
 
   def subscribed
     # access current user with current_user
@@ -72,7 +74,7 @@ class LobbyChannel < ApplicationCable::Channel
   private
 
   def createNewTestGame
-    gameboard_test = Gameboard.create(current_state: 'lobby', player_atk: 5)
+    gameboard_test = Gameboard.create(current_state: INGAME, player_atk: 5)
     x = rand(1..1_000_000)
     u1 = User.create(email: "#{x}2@2.at", password: '2', name: "#{x}2", password_confirmation: '2')
     u2 = User.create(email: "#{x}3@3.at", password: '3', name: "#{x}3", password_confirmation: '3')
@@ -125,7 +127,7 @@ class LobbyChannel < ApplicationCable::Channel
     p3m3 = Ingamedeck.create!(gameboard: gameboard_test, card: Monstercard.first, cardable: p3m3)
   end
 
-  def deliver_error_message(e)
-    broadcast_to(@gameboard, { type: 'ERROR', params: { message: e } })
+  def deliver_error_message(error)
+    broadcast_to(@gameboard, { type: 'ERROR', params: { message: error } })
   end
 end
