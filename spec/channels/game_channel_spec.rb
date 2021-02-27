@@ -11,10 +11,10 @@ RSpec.describe GameChannel, type: :channel do
     stub_connection current_user: users(:usernorbert)
   end
 
-  it 'subscribe to channel' do
+  it 'successfully subscribe to channel when player and gameboard was already created previously' do
     subscribe
     expect(subscription).to be_confirmed
     expect(subscription).to have_stream_from("game:#{users(:usernorbert).player.gameboard.to_gid_param}")
-    expect(users(:usernorbert).player).to be_truthy
+    expect(users(:usernorbert).player.gameboard).to be_truthy
   end
 end
