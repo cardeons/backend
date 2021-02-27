@@ -31,8 +31,6 @@ class LobbyChannel < ApplicationCable::Channel
     handcard = Handcard.create(player_id: player.id) unless player.handcard
 
     # add monsterone to handcard of player
-    # TODO: add monstertwo and three
-
     Ingamedeck.create(card_id: params[:monsterone], gameboard: gameboard, cardable: handcard) if params[:monsterone]
     Ingamedeck.create(card_id: params[:monstertwo], gameboard: gameboard, cardable: handcard) if params[:monstertwo]
     Ingamedeck.create(card_id: params[:monsterthree], gameboard: gameboard, cardable: handcard) if params[:monsterthree]

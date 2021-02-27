@@ -17,3 +17,8 @@ three:
   email: test3@test.com
   name : UserThree
   password_digest: MyString
+
+usernorbert:
+  email: game@test.com
+  name : UserFour
+  password_digest: MyString
