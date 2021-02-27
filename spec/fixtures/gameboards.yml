@@ -9,7 +9,7 @@ one:
   can_flee: false
   shared_reward: 1
 
-two:
+gameboard:
   current_state: MyString
   player_atk: 1
   monster_atk: 1
