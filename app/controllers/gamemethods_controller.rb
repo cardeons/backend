@@ -7,54 +7,51 @@ class GamemethodsController < ApplicationController
     render json: { card: Monstercard.find(monstercards) }, status: 200
   end
 
+  cursecards = Cursecard.all
+  monstercards = Monstercard.all
+  bosscards = Bosscard.all
+  buffcards = Buffcard.all
+  itemcards = Itemcard.all
+  levelcards = Levelcard.all
+
+  all_treasure_cards = []
+  addCardsToArray(all_treasure_cards, cursecards)
+  addCardsToArray(all_treasure_cards, monstercards)
+  addCardsToArray(all_treasure_cards, buffcards)
+  addCardsToArray(all_treasure_cards, itemcards)
+  addCardsToArray(all_treasure_cards, levelcards)
+
+  all_door_cards = []
+  addCardsToArray(all_door_cards, cursecards)
+  addCardsToArray(all_door_cards, monstercards)
+  addCardsToArray(all_door_cards, bosscards)
+
+  cursecards = Cursecard.all
+  monstercards = Monstercard.all
+  buffcards = Buffcard.all
+  itemcards = Itemcard.all
+  levelcards = Levelcard.all
+
+  all_hand_cards = []
+  addCardsToArray(all_hand_cards, cursecards)
+  addCardsToArray(all_hand_cards, monstercards)
+  addCardsToArray(all_hand_cards, buffcards)
+  addCardsToArray(all_hand_cards, itemcards)
+  addCardsToArray(all_hand_cards, levelcards)
+
   def draw_doorcard
-    cursecards = Cursecard.all
-    monstercards = Monstercard.all
-    bosscards = Bosscard.all
-
-    allcards = []
-    addCardsToArray(allcards, cursecards)
-    addCardsToArray(allcards, monstercards)
-    addCardsToArray(allcards, bosscards)
-
-    randomcard = allcards[rand(allcards.length)]
+    randomcard = all_door_cards[rand(all_door_cards.length)]
 
     render json: { card: randomcard }, status: 200
   end
 
   def draw_treasurecard
-    cursecards = Cursecard.all
-    monstercards = Monstercard.all
-    buffcards = Buffcard.all
-    itemcards = Itemcard.all
-    levelcards = Levelcard.all
-
-    allcards = []
-    addCardsToArray(allcards, cursecards)
-    addCardsToArray(allcards, monstercards)
-    addCardsToArray(allcards, buffcards)
-    addCardsToArray(allcards, itemcards)
-    addCardsToArray(allcards, levelcards)
-
-    randomcard = allcards[rand(allcards.length)]
+    randomcard = all_treasure_cards[rand(all_treasure_cards.length)]
 
     render json: { card: randomcard }, status: 200
   end
 
   def draw_handcards
-    cursecards = Cursecard.all
-    monstercards = Monstercard.all
-    buffcards = Buffcard.all
-    itemcards = Itemcard.all
-    levelcards = Levelcard.all
-
-    allcards = []
-    addCardsToArray(allcards, cursecards)
-    addCardsToArray(allcards, monstercards)
-    addCardsToArray(allcards, buffcards)
-    addCardsToArray(allcards, itemcards)
-    addCardsToArray(allcards, levelcards)
-
     handcard = Player.find(params[:id]).handcard
 
     # Ingamedeck.where(cardable_type: 'Handcard', cardable_id: handcard.id).delete_all
@@ -64,7 +61,7 @@ class GamemethodsController < ApplicationController
     # TODO bei keiner mitgenommenen Karte random lvl one als monsterone, ansonsten Handkarten
     x = 5
     while x.positive?
-      Ingamedeck.create(gameboard_id: params[:gameboard_id], card_id: allcards[rand(allcards.length)], cardable_id: handcard.id, cardable_type: 'Handcard')
+      Ingamedeck.create(gameboard_id: params[:gameboard_id], card_id: all_hand_cards[rand(all_hand_cards.length)], cardable_id: handcard.id, cardable_type: 'Handcard')
       x -= 1
     end
 
