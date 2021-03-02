@@ -6,7 +6,7 @@ class SessionsController < ApplicationController
     registration_input = request.raw_post
     registration_input = JSON.parse(registration_input)
 
-    user = User.find_by(email: registration_input['email']).try(:authenticate, registration_input['password'])
+    user = User.find_by('email = ?', registration_input['email']).try(:authenticate, registration_input['password'])
 
     registration_input = request.raw_post
     registration_input = JSON.parse(registration_input)

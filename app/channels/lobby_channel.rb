@@ -22,7 +22,7 @@ class LobbyChannel < ApplicationCable::Channel
     # end
 
     # search for gameboard with open lobby
-    gameboard = Gameboard.find_by(current_state: LOBBY)
+    gameboard = Gameboard.find_by('current_state = ?', LOBBY)
     gameboard ||= Gameboard.create(current_state: LOBBY)
 
     # create new player
