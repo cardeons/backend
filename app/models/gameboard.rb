@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require 'pp'
+require "#{Rails.root}/lib/Gameboard_frontend.rb"
 
 class Gameboard < ApplicationRecord
   has_many :players, dependent: :destroy
@@ -11,10 +12,14 @@ class Gameboard < ApplicationRecord
   # has_many :cards, through: :ingame_cards
 
   def self.initialize_game_board(gameboard)
-    gameboard.update(current_player: gameboard.players.last.id, current_state: 'started')
+    current_player = gameboard.players.last.id
+    gameboard_id = gameboard.id
+    gameboard.update(current_player: current_player, current_state: 'started')
     # Gameboard.find(gameboard.id).save
-    Centercard.create(gameboard_id: gameboard.id)
-    Graveyard.create!(gameboard_id: gameboard.id)
+    Centercard.create(gameboard_id: gameboard_id)
+    Graveyard.create!(gameboard_id: gameboard_id)
+
+    @gameboard_frontend = GameboardFrontend.new(gameboard_id, current_player)
 
     gameboard.players.each do |player|
       # Player.draw_five_cards(player)
@@ -28,6 +33,7 @@ class Gameboard < ApplicationRecord
     players_array = []
 
     gameboard = Gameboard.find(gameboard.id)
+    @gameboard_frontend
 
     gameboard.players.each do |player|
       # ##only for debug
@@ -128,18 +134,18 @@ class Gameboard < ApplicationRecord
   end
 
   def self.renderGameboard(gameboard)
-    centercard = (renderCardFromId(gameboard.centercard.ingamedecks.first.id) if gameboard.centercard.ingamedecks.any?)
+    # centercard = (renderCardFromId(gameboard.centercard.ingamedecks.first.id) if gameboard.centercard.ingamedecks.any?)
 
     {
-      gameboard_id: gameboard.id,
-      current_player: gameboard.current_player,
-      center_card: centercard,
+      gameboard_id: @gameboard_frontend.id,
+      current_player: @gameboard_frontend.current_player,
+      center_card: @gameboard_frontend.centercard,
       interceptcards: [],
-      player_atk: gameboard.player_atk,
-      monster_atk: gameboard.monster_atk,
-      success: gameboard.success,
-      can_flee: gameboard.can_flee,
-      rewards_treasure: gameboard.rewards_treasure
+      player_atk: @gameboard_frontend.player_atk,
+      monster_atk: @gameboard_frontend.monster_atk,
+      success: @gameboard_frontend.success,
+      can_flee: @gameboard_frontend.can_flee,
+      rewards_treasure: @gameboard_frontend.rewards_treasure
     }
   end
 
