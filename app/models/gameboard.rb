@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require 'pp'
+require "#{Rails.root}/lib/Gameboard_frontend.rb"
 
 class Gameboard < ApplicationRecord
   has_many :players, dependent: :destroy
@@ -11,10 +12,15 @@ class Gameboard < ApplicationRecord
   # has_many :cards, through: :ingame_cards
 
   def self.initialize_game_board(gameboard)
-    gameboard.update(current_player: gameboard.players.last.id, current_state: 'started')
+    current_player = gameboard.players.last.id
+    gameboard_id = gameboard.id
+    gameboard.update(current_player: current_player, current_state: 'started')
     # Gameboard.find(gameboard.id).save
-    Centercard.create(gameboard_id: gameboard.id)
-    Graveyard.create!(gameboard_id: gameboard.id)
+    Centercard.create(gameboard_id: gameboard_id)
+    Graveyard.create!(gameboard_id: gameboard_id)
+
+    $gameboard_frontend = GameboardFrontend.new(gameboard_id, current_player, gameboard.players.last.name, 'started')
+    $gameboard_frontend.center_card = 0
 
     gameboard.players.each do |player|
       # Player.draw_five_cards(player)
@@ -128,18 +134,23 @@ class Gameboard < ApplicationRecord
   end
 
   def self.renderGameboard(gameboard)
-    centercard = (renderCardFromId(gameboard.centercard.ingamedecks.first.id) if gameboard.centercard.ingamedecks.any?)
+    # centercard = (renderCardFromId(gameboard.centercard.ingamedecks.first.id) if gameboard.centercard.ingamedecks.any?)
+
+    puts "**************************************"
+    puts $gameboard_frontend.center_card
+
+    centercard = renderCardFromId($gameboard_frontend.center_card)
 
     {
-      gameboard_id: gameboard.id,
-      current_player: gameboard.current_player,
+      gameboard_id: $gameboard_frontend.id,
+      current_player: $gameboard_frontend.current_player,
       center_card: centercard,
-      interceptcards: [],
-      player_atk: gameboard.player_atk,
-      monster_atk: gameboard.monster_atk,
-      success: gameboard.success,
-      can_flee: gameboard.can_flee,
-      rewards_treasure: gameboard.rewards_treasure
+      interceptcards: $gameboard_frontend.interceptcards,
+      player_atk: $gameboard_frontend.player_atk,
+      monster_atk: $gameboard_frontend.monster_atk,
+      success: $gameboard_frontend.success,
+      can_flee: $gameboard_frontend.can_flee,
+      rewards_treasure: $gameboard_frontend.rewards_treasure
     }
   end
 
@@ -164,6 +175,9 @@ class Gameboard < ApplicationRecord
     # save it to gameboard
     gameboard.current_player = next_player.id
     gameboard.save!
+
+    $gameboard_frontend.current_player = next_player.id
+    $gameboard_frontend.current_player_name = next_player.name
   end
 
   def self.draw_door_card(gameboard)
@@ -191,8 +205,17 @@ class Gameboard < ApplicationRecord
 
     result = monsteratk < playeratk
 
-    gameboard.update(centercard: Centercard.find_by('gameboard_id = ?', gameboard.id), success: result, player_atk: playeratk, monster_atk: monsteratk,
-                     rewards_treasure: Card.find_by('id = ?', randomcard).rewards_treasure)
+    new_center = Centercard.find_by('gameboard_id = ?', gameboard.id)
+    new_treasure = Card.find_by('id = ?', randomcard).rewards_treasure
+
+    gameboard.update(centercard: new_center, success: result, player_atk: playeratk, monster_atk: monsteratk,
+                     rewards_treasure: new_treasure)
+
+    $gameboard_frontend.center_card = gameboard.centercard.ingamedecks.first.id
+    $gameboard_frontend.success = result
+    $gameboard_frontend.player_atk = playeratk
+    $gameboard_frontend.monster_atk = monsteratk
+    $gameboard_frontend.rewards_treasure = new_treasure
 
     gameboard.centercard.cards.first.title
   end
@@ -212,12 +235,14 @@ class Gameboard < ApplicationRecord
     output = {}
     if roll > 4
       gameboard.update(can_flee: true)
+      $gameboard_frontend.can_flee = true
       output = {
         flee: true,
         value: roll
       }
     else
       gameboard.update(can_flee: false)
+      $gameboard_frontend.can_flee = false
       output = {
         flee: false,
         value: roll
@@ -282,6 +307,7 @@ class Gameboard < ApplicationRecord
       current_player.monsterthree.ingamedecks.delete_all if current_player.monsterthree&.ingamedecks
 
       gameboard.update_attribute(:player_atk, 1)
+      $gameboard_frontend.player_atk = 1
 
       Handcard.draw_handcards(current_player.id, gameboard)
 
