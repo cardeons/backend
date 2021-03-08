@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-require 'pp'
 require "#{Rails.root}/lib/Gameboard_frontend.rb"
 
 class Gameboard < ApplicationRecord
@@ -135,10 +134,6 @@ class Gameboard < ApplicationRecord
 
   def self.renderGameboard(gameboard)
     # centercard = (renderCardFromId(gameboard.centercard.ingamedecks.first.id) if gameboard.centercard.ingamedecks.any?)
-
-    puts "**************************************"
-    puts $gameboard_frontend.center_card
-
     centercard = renderCardFromId($gameboard_frontend.center_card)
 
     {

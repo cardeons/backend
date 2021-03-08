@@ -23,7 +23,7 @@ RSpec.describe GameChannel, type: :channel do
     expect(users(:usernorbert).player.gameboard).to be_truthy
   end
 
-  it 'test if flee broadcasts' do
+  it 'test if flee broadcasts to all players' do
     subscribe
 
     expect do
