@@ -11,8 +11,10 @@
 		"misogi.ruby-rubocop",
 		"hjleochen.rails-nav",
 		"bung87.rails",
-		"onnorshea.vscode-ruby-test-adapter",
+		"connorshea.vscode-ruby-test-adapter",
 		"noku.rails-run-spec-vscode",
+		"eamodio.gitlens",
+		"gruntfuggly.todo-tree",
 	],
 	// List of extensions recommended by VS Code that should not be recommended for users of this workspace.
 	"unwantedRecommendations": [
