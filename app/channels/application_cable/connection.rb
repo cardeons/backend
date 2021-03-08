@@ -1,16 +1,11 @@
 # frozen_string_literal: true
 
-require 'pp'
-
 module ApplicationCable
   class Connection < ActionCable::Connection::Base
     identified_by :current_user
 
     def connect
       self.current_user = find_verified_user
-      puts '-----------------------------'
-      puts 'found current User'
-      puts current_user.email
     end
 
     private
@@ -29,9 +24,6 @@ module ApplicationCable
 
       # wrong type of JWT
       reject_unauthorized_connection unless decoded_token
-      puts '-----------------------'
-      puts decoded_token
-      puts decoded_token[0]['user_id']
 
       if (current_user = User.find(decoded_token[0]['user_id']))
         current_user

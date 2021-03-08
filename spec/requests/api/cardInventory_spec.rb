@@ -4,7 +4,7 @@ require 'swagger_helper'
 
 RSpec.describe 'Inventory API', type: :request do
   fixtures :users
-  before { @user = users(:mando) }
+  before { @user = users(:one) }
   path '/users/{id}/inventory.json' do
     get 'list all cards of user' do
       tags 'Inventory'

@@ -75,8 +75,7 @@ class GameChannel < ApplicationCable::Channel
 
     broadcast_to(@gameboard, { type: 'ERROR', params: { message: result[:message] } }) if result[:type] == 'ERROR'
     broadcast_to(@gameboard, { type: 'BOARD_UPDATE', params: updated_board })
-    puts "''''''''''''''''''''''''''''''''''''''''''''''''''"
-    puts result
+
     if result[:type] != 'ERROR'
       msg = "#{player.name} has equiped a monster!"
       broadcast_to(@gameboard, { type: GAME_LOG, params: { date: Time.new, message: msg } })
