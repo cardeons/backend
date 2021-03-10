@@ -46,8 +46,6 @@ class GameChannel < ApplicationCable::Channel
     centercard = Centercard.find_by('gameboard_id = ?', @gameboard.id)
 
     @gameboard.update(centercard: centercard, monster_atk: monsteratk)
-    $gameboard_frontend.center_card = @gameboard.centercard.ingamedecks.first.id
-    $gameboard_frontend.monster_atk = monsteratk
 
     result = Gameboard.attack(@gameboard)
     updated_board = Gameboard.broadcast_game_board(@gameboard)
@@ -168,8 +166,7 @@ class GameChannel < ApplicationCable::Channel
     player.update_attribute(:attack, playeratkpoints)
 
     @gameboard.update_attribute(:player_atk, playeratkpoints)
-    $gameboard_frontend.player_atk = playeratkpoints
-
+    
     gameboard = Gameboard.find(@gameboard.id)
 
     PlayerChannel.broadcast_to(current_user, { type: 'HANDCARD_UPDATE', params: { handcards: Gameboard.renderCardId(player.handcard.ingamedecks) } })
