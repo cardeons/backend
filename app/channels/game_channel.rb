@@ -67,6 +67,8 @@ class GameChannel < ApplicationCable::Channel
 
   def equip_monster(params)
     player = Player.find_by('user_id = ?', current_user.id)
+    puts 'PARAMS LOOK LIKE THIS'
+    puts params
     result = Monstercard.equip_monster(params, player)
 
     updated_board = Gameboard.broadcast_game_board(@gameboard)

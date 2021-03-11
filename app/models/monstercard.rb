@@ -10,6 +10,7 @@ class Monstercard < Card
 
     deck_card = Ingamedeck.find_by('id=?', params['unique_equip_id'])
     monsterslot = Ingamedeck.find_by('id=?', params['unique_monster_id'])
+
     # deck_card = Ingamedeck.find_by("id=?", card_id)
 
     # define which monster
