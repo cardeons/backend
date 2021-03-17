@@ -6,13 +6,14 @@ class Gameboard < ApplicationRecord
   has_one :player, foreign_key: 'current_player'
   has_one :centercard, dependent: :destroy
   has_one :graveyard, dependent: :destroy
+  enum current_state: %i[lobby ingame]
 
   # has_many :cards, through: :ingame_cards
 
   def initialize_game_board
     current_player = players.last.id
     gameboard_id = id
-    update(current_player: current_player, current_state: 'started')
+    update(current_player: current_player, current_state: 'ingame')
     Centercard.create(gameboard_id: gameboard_id)
     Graveyard.create!(gameboard_id: gameboard_id)
 

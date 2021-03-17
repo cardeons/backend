@@ -27,7 +27,7 @@ class LobbyChannel < ApplicationCable::Channel
     player = Player.create(name: current_user.name, gameboard_id: gameboard.id, user: current_user)
 
     player.init_player(params)
- 
+
     lobbyisfull = false
 
     if gameboard.players.count > 3
