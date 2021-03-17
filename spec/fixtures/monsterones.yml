@@ -5,5 +5,13 @@ one:
   player: one
 
 two:
-  # ingamedeck: two
   player: two
+
+
+three:
+  # ingamedeck: three
+  player: playerOne
+
+# four:
+#   # ingamedeck: three
+#   player: playerOne

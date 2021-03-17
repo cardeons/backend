@@ -19,3 +19,47 @@ playernorbert:
 #   is_cursed: false
 #   gameboard: 1
 #   # belongs_to: 
+
+playerOne:
+  id: 2
+  name: MyString
+  avatar: MyString
+  level: 1
+  attack: 1
+  is_cursed: false
+  gameboard: 1
+  user: userOne
+  gameboard: gameboardFourPlayers
+  
+playerTwo:
+  id: 3
+  name: MyString
+  avatar: MyString
+  level: 1
+  attack: 1
+  is_cursed: false
+  gameboard: 1
+  user: userTwo
+  gameboard: gameboardFourPlayers
+  
+playerThree:
+  id: 4
+  name: MyString
+  avatar: MyString
+  level: 1
+  attack: 1
+  is_cursed: false
+  gameboard: 1
+  user: userThree
+  gameboard: gameboardFourPlayers
+  
+playerFour:
+  id: 5
+  name: MyString
+  avatar: MyString
+  level: 1
+  attack: 1
+  is_cursed: false
+  gameboard: 1
+  user: userFour
+  gameboard: gameboardFourPlayers

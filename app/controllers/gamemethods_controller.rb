@@ -83,25 +83,27 @@ class GamemethodsController < ApplicationController
   end
 
   def attack(monsterid = params[:monsterid], playerid = params[:playerid])
-    monstercards1 = Player.find(playerid).monsterone.cards
-    monstercards2 = Player.find(playerid).monstertwo.cards
-    monstercards3 = Player.find(playerid).monsterthree.cards
 
-    temparr = []
+    player = Player.find(playerid);
+    monstercards1 = player.monsterone.cards.sum(:atk_points);
+    monstercards2 = player.monstertwo.cards.sum(:atk_points);
+    monstercards3 = player.monsterthree.cards.sum(:atk_points);
 
-    addAtkPts(temparr, monstercards1)
-    addAtkPts(temparr, monstercards2)
-    addAtkPts(temparr, monstercards3)
+    # temparr = []
 
-    playeratkpts = 0
+    # addAtkPts(temparr, monstercards1)
+    # addAtkPts(temparr, monstercards2)
+    # addAtkPts(temparr, monstercards3)
 
-    temparr.each do |item|
-      playeratkpts += item
-    end
+    # playeratkpts = 0
+
+    # temparr.each do |item|
+    #   playeratkpts += item
+    # end
 
     monsteratkpts = Monstercard.find(monsterid).atk_points
 
-    playerwin = playeratkpts > monsteratkpts
+    playerwin = (monstercards1+monstercards2+monstercards3) > monsteratkpts
 
     if playerwin
     # broadcast: start interceptionface
@@ -114,9 +116,9 @@ class GamemethodsController < ApplicationController
       player_id: playerid,
       monster_id: monsterid,
 
-      playermonster: monstercards1,
-      playermonster2: monstercards2,
-      playermonster3: monstercards3,
+      # playermonster: monstercards1,
+      # playermonster2: monstercards2,
+      # playermonster3: monstercards3,
 
       totalplayeratk: playeratkpts,
       monsteratk: monsteratkpts,

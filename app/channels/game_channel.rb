@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+require 'pp'
 
 class GameChannel < ApplicationCable::Channel
   # rescue_from Exception, with: :deliver_error_message
@@ -117,21 +118,22 @@ class GameChannel < ApplicationCable::Channel
   def move_card(params)
     unique_card_id = params['unique_card_id']
     to = params['to']
-    player = Player.find_by('id=?', current_user.player.id)
+    player = Player.find_by('id=?', current_user.player.id);
+    ingamedeck = Ingamedeck.find_by('id = ?', unique_card_id);
 
     case to
     when 'inventory'
-      Ingamedeck.find_by('id = ?', unique_card_id).update_attribute(:cardable, player.inventory)
+      ingamedeck.update_attribute(:cardable, player.inventory)
     when 'player_monster'
-      if Ingamedeck.find_by('id=?', unique_card_id).card.type != 'Monstercard'
+      if ingamedeck.card.type != 'Monstercard'
         # ##make sure no items are placed in the monsterslot
         PlayerChannel.broadcast_to(current_user, { type: ERROR, params: { message: 'You can not equip an item without a monster' } })
       elsif player.monsterone.cards.count < 1
-        Ingamedeck.find_by('id = ?', unique_card_id).update(cardable: player.monsterone)
+        ingamedeck.update(cardable: player.monsterone)
       elsif player.monstertwo.cards.count < 1
-        Ingamedeck.find_by('id = ?', unique_card_id).update(cardable: player.monstertwo)
+        ingamedeck.update(cardable: player.monstertwo)
       elsif player.monsterthree.cards.count < 1
-        Ingamedeck.find_by('id = ?', unique_card_id).update(cardable: player.monsterthree)
+        ingamedeck.update(cardable: player.monsterthree)
       else
         broadcast_to(@gameboard, { type: DEBUG, params: { message: 'All monsterslots are full' } })
         PlayerChannel.broadcast_to(current_user, { type: ERROR, params: { message: 'All monsterslots are full!' } })
