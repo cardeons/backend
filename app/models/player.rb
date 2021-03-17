@@ -10,6 +10,11 @@ class Player < ApplicationRecord
   has_one :playercurse, dependent: :destroy
   belongs_to :user
 
+
+  def init_player(params)
+
+  end
+
   def self.draw_five_cards(player)
     # handcard = Handcard.create(player_id: player.id)
     # TODO: make it random

@@ -19,3 +19,20 @@ playernorbert:
 #   is_cursed: false
 #   gameboard: 1
 #   # belongs_to: 
+
+playerlobbyone:
+  user: userlobbyone
+  name : UserGameOne
+  gameboard: gameboardlobby
+
+playerlobbytwo:
+  user: userlobbtwo
+  name : UserGameTwo
+  gameboard: gameboardlobby
+
+
+playerlobbythree:
+  user: userlobbthree
+  name : UserGameThree
+  gameboard: gameboardlobby
+
