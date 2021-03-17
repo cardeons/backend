@@ -45,6 +45,11 @@ RSpec.describe LobbyChannel, type: :channel do
     expect(User.find(users(:one).id).player.inventory).to be_truthy
   end
 
+  it 'successfully creates handcards for player' do
+    subscribe
+    expect(User.find(users(:one).id).player.handcard.cards.count).to be_truthy
+  end
+
   it 'creates monsterdeck for players' do
     subscribe
     expect(User.find(users(:one).id).player.monsterone).to be_truthy
@@ -78,6 +83,21 @@ RSpec.describe LobbyChannel, type: :channel do
     expect(User.find(users(:one).id).player.gameboard.centercard).to be_truthy
     expect(User.find(users(:one).id).player.gameboard.graveyard).to be_truthy
     expect(User.find(users(:one).id).player.gameboard.ingamedeck).to be_truthy
+  end
+
+  it 'players draw 5 cards ' do
+    stub_connection current_user: users(:one)
+    subscribe
+    stub_connection current_user: users(:two)
+    subscribe
+    stub_connection current_user: users(:three)
+    subscribe
+    stub_connection current_user: users(:four)
+    subscribe
+    expect(User.find(users(:one).id).player.handcard.cards.count).to eql(5)
+    expect(User.find(users(:two).id).player.handcard.cards.count).to eql(5)
+    expect(User.find(users(:three).id).player.handcard.cards.count).to eql(5)
+    expect(User.find(users(:four).id).player.handcard.cards.count).to eql(5)
   end
 
   it '4 players get assigned to the game' do

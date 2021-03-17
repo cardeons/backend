@@ -26,19 +26,8 @@ class LobbyChannel < ApplicationCable::Channel
     # create new player
     player = Player.create(name: current_user.name, gameboard_id: gameboard.id, user: current_user)
 
-    handcard = Handcard.create(player_id: player.id) unless player.handcard
-
-    Inventory.create!(player: player) unless player.inventory
-    Monsterone.create!(player: player) unless player.monsterone
-    Monstertwo.create!(player: player) unless player.monstertwo
-    Monsterthree.create!(player: player) unless player.monsterthree
-
-    # add the monsters from the player to his handcards
-    # TODO: Check if player actually posesses these cards
-    Ingamedeck.create(card_id: params[:monsterone], gameboard: gameboard, cardable: handcard) if params[:monsterone]
-    Ingamedeck.create(card_id: params[:monstertwo], gameboard: gameboard, cardable: handcard) if params[:monstertwo]
-    Ingamedeck.create(card_id: params[:monsterthree], gameboard: gameboard, cardable: handcard) if params[:monsterthree]
-
+    player.init_player(params)
+ 
     lobbyisfull = false
 
     if gameboard.players.count > 3
