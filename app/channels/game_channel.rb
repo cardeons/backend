@@ -118,8 +118,8 @@ class GameChannel < ApplicationCable::Channel
   def move_card(params)
     unique_card_id = params['unique_card_id']
     to = params['to']
-    player = Player.find_by('id=?', current_user.player.id);
-    ingamedeck = Ingamedeck.find_by('id = ?', unique_card_id);
+    player = Player.find_by('id=?', current_user.player.id)
+    ingamedeck = Ingamedeck.find_by('id = ?', unique_card_id)
 
     case to
     when 'inventory'

@@ -13,8 +13,8 @@ class Gameboard < ApplicationRecord
   def self.initialize_game_board(gameboard)
     gameboard.update(current_player: gameboard.players.last.id, current_state: 'started')
     # Gameboard.find(gameboard.id).save
-    Centercard.create!(gameboard_id: gameboard.id)
-    Graveyard.create!(gameboard_id: gameboard.id)
+    Centercard.create(gameboard_id: gameboard.id)
+    Graveyard.create(gameboard_id: gameboard.id)
 
     gameboard.players.each do |player|
       # Player.draw_five_cards(player)
@@ -26,7 +26,7 @@ class Gameboard < ApplicationRecord
   def self.broadcast_game_board(gameboard)
     players_array = []
 
-    gameboard = Gameboard.find!(gameboard.id)
+    gameboard = Gameboard.find(gameboard.id)
 
     gameboard.players.each do |player|
       # TODO: remove later
@@ -98,22 +98,16 @@ class Gameboard < ApplicationRecord
 
     # pp monster.ingamedecks
     if monster.ingamedecks.count.positive?
-    pp 'in here'
+
       unique_monster_id = monster.ingamedecks[0].id
       monster_id = monster.ingamedecks[0].card_id
 
       monster.ingamedecks.each do |ingamedeck|
         if ingamedeck.card.type == 'Monstercard'
-          pp 'Monstercard'
-          pp ingamedeck
-
           unique_monster_id = ingamedeck.id
           monster_id = ingamedeck.card_id
 
         else
-          pp 'not monstercard'
-          pp ingamedeck
-
           items.push({ unique_card_id: ingamedeck.id, card_id: ingamedeck.card_id })
         end
       end
@@ -128,7 +122,7 @@ class Gameboard < ApplicationRecord
   end
 
   def self.renderCardFromId(id)
-    if Ingamedeck.find_by('id = ?', id)
+    if Ingamedeck.find_by!('id = ?', id)
       card = Ingamedeck.find(id)
       { unique_card_id: card.id, card_id: card.card_id }
     end
@@ -185,10 +179,10 @@ class Gameboard < ApplicationRecord
 
     randomcard = allcards[rand(allcards.length)]
 
-    centercard = Centercard.find_by('gameboard_id = ?', gameboard.id)
+    centercard = Centercard.find_by!('gameboard_id = ?', gameboard.id)
 
     centercard.ingamedecks.each do |ingamedeck|
-      ingamedeck.update(cardable: Graveyard.find_by('gameboard_id = ?', gameboard.id))
+      ingamedeck.update(cardable: Graveyard.find_by!('gameboard_id = ?', gameboard.id))
     end
 
     ingamecard = Ingamedeck.create(gameboard: gameboard, card_id: randomcard, cardable: centercard)
@@ -199,7 +193,7 @@ class Gameboard < ApplicationRecord
     result = monsteratk < playeratk
 
     gameboard.update(centercard: centercard, success: result, player_atk: playeratk, monster_atk: monsteratk,
-                     rewards_treasure: Card.find_by('id = ?', randomcard).rewards_treasure)
+                     rewards_treasure: Card.find_by!('id = ?', randomcard).rewards_treasure)
 
     gameboard.centercard.cards.first.title
   end
@@ -279,7 +273,7 @@ class Gameboard < ApplicationRecord
 
       next unless player_id_current
 
-      current_player = Player.find_by('id=?', player_id_current)
+      current_player = Player.find_by!('id=?', player_id_current)
       current_player.handcard.ingamedecks.delete_all
 
       current_player.inventory.ingamedecks.delete_all if current_player.inventory&.ingamedecks
