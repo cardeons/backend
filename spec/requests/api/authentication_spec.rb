@@ -4,7 +4,7 @@ require 'swagger_helper'
 
 RSpec.describe 'Users API', type: :request do
   fixtures :users
-  before { @user = users(:mando) }
+  before { @user = users(:one) }
   path '/users.json' do
     get 'list all the users' do
       tags 'User'

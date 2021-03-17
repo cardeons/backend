@@ -44,12 +44,16 @@ class GameChannel < ApplicationCable::Channel
 
     Ingamedeck.find_by('id=?', params['unique_card_id']).update(cardable: Centercard.find_by('gameboard_id = ?', @gameboard.id))
     monsteratk = Ingamedeck.find_by('id=?', params['unique_card_id']).card.atk_points
+    centercard = Centercard.find_by('gameboard_id = ?', @gameboard.id)
 
-    @gameboard.update(centercard: Centercard.find_by('gameboard_id = ?', @gameboard.id), monster_atk: monsteratk)
+    @gameboard.update(centercard: centercard, monster_atk: monsteratk)
 
     result = Gameboard.attack(@gameboard)
     updated_board = Gameboard.broadcast_game_board(@gameboard)
     broadcast_to(@gameboard, { type: BOARD_UPDATE, params: updated_board })
+    name = @gameboard.centercard.cards.first.title
+    msg = "#{Player.find_by('gameboard_id = ?', @gameboard.id).name} has played #{name} from handcards!"
+    broadcast_to(@gameboard, { type: GAME_LOG, params: { date: Time.new, message: msg } })
     player = Player.find_by('user_id = ?', current_user.id)
     PlayerChannel.broadcast_to(current_user, { type: 'HANDCARD_UPDATE', params: { handcards: Gameboard.renderCardId(player.handcard.ingamedecks) } })
   end
@@ -64,13 +68,18 @@ class GameChannel < ApplicationCable::Channel
 
   def equip_monster(params)
     player = Player.find_by('user_id = ?', current_user.id)
+
     result = Monstercard.equip_monster(params, player)
 
     updated_board = Gameboard.broadcast_game_board(@gameboard)
 
     broadcast_to(@gameboard, { type: 'ERROR', params: { message: result[:message] } }) if result[:type] == 'ERROR'
-
     broadcast_to(@gameboard, { type: 'BOARD_UPDATE', params: updated_board })
+
+    if result[:type] != 'ERROR'
+      msg = "#{player.name} has equiped a monster!"
+      broadcast_to(@gameboard, { type: GAME_LOG, params: { date: Time.new, message: msg } })
+    end
     PlayerChannel.broadcast_to(current_user, { type: 'HANDCARD_UPDATE', params: { handcards: Gameboard.renderCardId(player.handcard.ingamedecks) } })
   end
 
@@ -78,6 +87,9 @@ class GameChannel < ApplicationCable::Channel
     result = Gameboard.attack(@gameboard)
     updated_board = Gameboard.broadcast_game_board(@gameboard)
     broadcast_to(@gameboard, { type: BOARD_UPDATE, params: updated_board })
+
+    msg = "#{Player.find_by('gameboard_id = ?', @gameboard.id).name} has drawn #{name}"
+    broadcast_to(@gameboard, { type: GAME_LOG, params: { date: Time.new, message: msg } })
   end
 
   # def play_card(params)
@@ -130,10 +142,16 @@ class GameChannel < ApplicationCable::Channel
         PlayerChannel.broadcast_to(current_user, { type: ERROR, params: { message: 'You can not equip an item without a monster' } })
       elsif player.monsterone.cards.count < 1
         ingamedeck.update(cardable: player.monsterone)
+        msg = "#{player.name} has a new monster helping to defeat the enemy!"
+        broadcast_to(@gameboard, { type: GAME_LOG, params: { date: Time.new, message: msg } })
       elsif player.monstertwo.cards.count < 1
-        ingamedeck.update(cardable: player.monstertwo)
+       ingamedeck.update(cardable: player.monstertwo)
+        msg = "#{player.name} has a new monster helping to defeat the enemy!"
+        broadcast_to(@gameboard, { type: GAME_LOG, params: { date: Time.new, message: msg } })
       elsif player.monsterthree.cards.count < 1
         ingamedeck.update(cardable: player.monsterthree)
+        msg = "#{player.name} has a new monster helping to defeat the enemy!"
+        broadcast_to(@gameboard, { type: GAME_LOG, params: { date: Time.new, message: msg } })
       else
         broadcast_to(@gameboard, { type: DEBUG, params: { message: 'All monsterslots are full' } })
         PlayerChannel.broadcast_to(current_user, { type: ERROR, params: { message: 'All monsterslots are full!' } })
@@ -151,7 +169,7 @@ class GameChannel < ApplicationCable::Channel
     player.update_attribute(:attack, playeratkpoints)
 
     @gameboard.update_attribute(:player_atk, playeratkpoints)
-
+    
     gameboard = Gameboard.find(@gameboard.id)
 
     PlayerChannel.broadcast_to(current_user, { type: 'HANDCARD_UPDATE', params: { handcards: Gameboard.renderCardId(player.handcard.ingamedecks) } })

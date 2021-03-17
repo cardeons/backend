@@ -9,7 +9,6 @@ class LobbyChannel < ApplicationCable::Channel
 
   def subscribed
     # access current user with current_user
-    puts current_user
 
     # check if there is not a player with this user
     ## read find or create by for simpler solution

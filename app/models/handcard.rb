@@ -35,15 +35,15 @@ class Handcard < ApplicationRecord
 
     player = Player.find(player_id)
     handcard = player.handcard
-    
-    Ingamedeck.create!(gameboard: gameboard, card_id: Itemcard.first.id, cardable: handcard)
+
+    # Ingamedeck.create!(gameboard: gameboard, card_id: Itemcard.first.id, cardable: handcard)
 
     # Ingamedeck.where(cardable_type: 'Handcard', cardable_id: handcard.id).delete_all
 
     # TODO: draw lvl one card if no Inventory cards
     # TODO die x variable ändern je nachdem wie viele Karten Spieler mit ins Game nimmt :)
     # TODO bei keiner mitgenommenen Karte random lvl one als monsterone, ansonsten Handkarten
-    x = 4
+    x = 5
     while x.positive?
       Ingamedeck.create!(gameboard: gameboard, card_id: allcards[rand(allcards.length)], cardable: handcard)
       x -= 1

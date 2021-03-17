@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-require 'pp'
-
 class Gameboard < ApplicationRecord
   has_many :players, dependent: :destroy
   has_many :ingamedeck, dependent: :destroy
@@ -11,8 +9,11 @@ class Gameboard < ApplicationRecord
   # has_many :cards, through: :ingame_cards
 
   def self.initialize_game_board(gameboard)
-    gameboard.update(current_player: gameboard.players.last.id, current_state: 'started')
+    current_player = gameboard.players.last.id
+    gameboard_id = gameboard.id
+    gameboard.update(current_player: current_player, current_state: 'started')
     # Gameboard.find(gameboard.id).save
+    
     Centercard.create(gameboard_id: gameboard.id)
     Graveyard.create(gameboard_id: gameboard.id)
 
@@ -192,8 +193,11 @@ class Gameboard < ApplicationRecord
 
     result = monsteratk < playeratk
 
-    gameboard.update(centercard: centercard, success: result, player_atk: playeratk, monster_atk: monsteratk,
-                     rewards_treasure: Card.find_by!('id = ?', randomcard).rewards_treasure)
+    new_center = Centercard.find_by('gameboard_id = ?', gameboard.id)
+    new_treasure = Card.find_by('id = ?', randomcard).rewards_treasure
+
+    gameboard.update(centercard: new_center, success: result, player_atk: playeratk, monster_atk: monsteratk,
+                     rewards_treasure: new_treasure)
 
     gameboard.centercard.cards.first.title
   end

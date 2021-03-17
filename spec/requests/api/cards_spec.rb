@@ -3,6 +3,8 @@
 require 'swagger_helper'
 
 RSpec.describe 'api/cards', type: :request do
+  fixtures :cards
+  before { @user = cards(:one) }
   describe 'Cards' do
     path '/cards.json' do
       get 'list all the cards' do

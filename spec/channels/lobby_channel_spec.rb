@@ -34,8 +34,4 @@ RSpec.describe LobbyChannel, type: :channel do
     subscribe
     expect(User.find(users(:one).id).player.handcard).to be_truthy
   end
-
-  it 'test fixtures contains three users' do
-    expect(User.all.count).to eq(3)
-  end
 end
