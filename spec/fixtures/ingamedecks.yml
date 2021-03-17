@@ -7,3 +7,15 @@ one:
 two:
   card: two
   gameboard: two
+
+three:
+  card_id: 3
+  gameboard: gameboardFourPlayers
+  cardable: three (Monsterone),
+
+four:
+  card_id: 4
+  gameboard: gameboardFourPlayers
+  cardable: three (Monstercard)
+
+

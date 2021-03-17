@@ -17,3 +17,12 @@ gameboard:
   success: false
   can_flee: false
   shared_reward: 1
+
+gameboardFourPlayers:
+  current_state: MyString
+  player_atk: 4
+  monster_atk: 1
+  asked_help: false
+  success: false
+  can_flee: false
+  shared_reward: 0
