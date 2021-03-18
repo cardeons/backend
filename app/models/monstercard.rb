@@ -4,14 +4,9 @@ class Monstercard < Card
   validates :title, :description, :image, :action, :draw_chance, :level, :element, :bad_things, :rewards_treasure, :atk_points, :level_amount, :type, presence: true
 
   def self.equip_monster(params, player)
-    # TODO: frontend schickt player und unique card_id und monsterslot
-    # player = Player.find_by("id=?", params["player_id"])
-    # gameboard = Gameboard.find_by("id=?", params["gameboard_id"])
 
     deck_card = Ingamedeck.find_by('id=?', params['unique_equip_id'])
     monsterslot = Ingamedeck.find_by('id=?', params['unique_monster_id'])
-
-    # deck_card = Ingamedeck.find_by("id=?", card_id)
 
     # define which monster
     monster_to_equip = case monsterslot.cardable_type
@@ -28,7 +23,7 @@ class Monstercard < Card
       card = Card.find_by('id=?', deck_card.card_id)
       # TODO: validieren
       cardtype = card.type
-      #       # there already are 5 items, you can't put any mor (6 because the monster itself is in this table)
+      #       # there already are 5 items, you can't put any more (6 because the monster itself is in this table)
       if monster_to_equip.cards.count == 6
         type = 'ERROR'
         message = "You can't put any more items on this monster."

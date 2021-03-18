@@ -14,12 +14,12 @@ class Gameboard < ApplicationRecord
     current_player = players.last.id
     gameboard_id = id
     update(current_player: current_player, current_state: 'ingame')
-    Centercard.create(gameboard_id: gameboard_id)
+    Centercard.create!(gameboard_id: gameboard_id)
     Graveyard.create!(gameboard_id: gameboard_id)
 
     players.each do |player|
       # Player.draw_five_cards(player)
-      Handcard.create(player_id: player.id) unless player.handcard
+      Handcard.find_or_create_by!(player_id: player.id) # unless player.handcard
       Handcard.draw_handcards(player.id, self)
     end
   end
@@ -30,19 +30,18 @@ class Gameboard < ApplicationRecord
     gameboard = Gameboard.find(gameboard.id)
 
     gameboard.players.each do |player|
-      # ##only for debug
       # TODO: remove later
-      Inventory.create(player: player) unless player.inventory
+      Inventory.find_or_create_by!(player: player) # unless player.inventory
 
-      Handcard.create(player: player) unless player.handcard
+      Handcard.find_or_create_by!(player: player) # unless player.handcard
 
-      Monsterone.create(player: player) unless player.monsterone
+      Monsterone.find_or_create_by!(player: player) # unless player.monsterone
 
-      Monstertwo.create(player: player) unless player.monstertwo
+      Monstertwo.find_or_create_by!(player: player) # unless player.monstertwo
 
-      Monsterthree.create(player: player) unless player.monsterthree
+      Monsterthree.find_or_create_by!(player: player) # unless player.monsterthree
 
-      Playercurse.create(player: player) unless player.playercurse
+      Playercurse.find_or_create_by!(player: player) # unless player.playercurse
 
       monsters = []
 
@@ -98,7 +97,9 @@ class Gameboard < ApplicationRecord
 
     output = []
 
+    # pp monster.ingamedecks
     if monster.ingamedecks.count.positive?
+
       unique_monster_id = monster.ingamedecks[0].id
       monster_id = monster.ingamedecks[0].card_id
 
@@ -106,6 +107,7 @@ class Gameboard < ApplicationRecord
         if ingamedeck.card.type == 'Monstercard'
           unique_monster_id = ingamedeck.id
           monster_id = ingamedeck.card_id
+
         else
           items.push({ unique_card_id: ingamedeck.id, card_id: ingamedeck.card_id })
         end
@@ -121,7 +123,7 @@ class Gameboard < ApplicationRecord
   end
 
   def self.renderCardFromId(id)
-    if Ingamedeck.find_by('id = ?', id)
+    if Ingamedeck.find_by!('id = ?', id)
       card = Ingamedeck.find(id)
       { unique_card_id: card.id, card_id: card.card_id }
     end
@@ -178,15 +180,15 @@ class Gameboard < ApplicationRecord
 
     randomcard = allcards[rand(allcards.length)]
 
-    centercard = Centercard.find_by('gameboard_id = ?', gameboard.id)
+    centercard = Centercard.find_by!('gameboard_id = ?', gameboard.id)
 
     centercard.ingamedecks.each do |ingamedeck|
-      ingamedeck.update(cardable: Graveyard.find_by('gameboard_id = ?', gameboard.id))
+      ingamedeck.update(cardable: Graveyard.find_by!('gameboard_id = ?', gameboard.id))
     end
 
-    ingamecard = Ingamedeck.create(gameboard: gameboard, card_id: randomcard, cardable: Centercard.find_by('gameboard_id = ?', gameboard.id))
+    ingamecard = Ingamedeck.create(gameboard: gameboard, card_id: randomcard, cardable: centercard)
 
-    monsteratk = Centercard.find_by('gameboard_id = ?', gameboard.id).cards.first.atk_points
+    monsteratk =centercard.cards.first.atk_points
     playeratk = attack(gameboard)
 
     result = monsteratk < playeratk
@@ -237,13 +239,15 @@ class Gameboard < ApplicationRecord
 
     unless playerid.nil?
 
-      monstercards1 = Player.find_by('id=?', playerid).monsterone.cards.sum(:atk_points) if Player.find_by('id=?', playerid).monsterone != nil
+      player = Player.find_by('id=?', playerid);
 
-      monstercards2 = Player.find_by('id=?', playerid).monstertwo.cards.sum(:atk_points) if Player.find_by('id=?', playerid).monstertwo != nil
+      monstercards1 = player.monsterone.cards.sum(:atk_points) if player.monsterone != nil
 
-      monstercards3 = Player.find_by('id=?', playerid).monsterthree.cards.sum(:atk_points) if Player.find_by('id=?', playerid).monsterthree != nil
+      monstercards2 = player.monstertwo.cards.sum(:atk_points) if player.monstertwo != nil
 
-      playeratkpoints = monstercards1 + monstercards2 + monstercards3 + Player.find_by('id=?', playerid).level
+      monstercards3 = player.monsterthree.cards.sum(:atk_points) if player.monsterthree != nil
+
+      playeratkpoints = monstercards1 + monstercards2 + monstercards3 + player.level
 
       monsteratkpts = Monstercard.find_by('id=?', monsterid).atk_points
 
@@ -273,7 +277,7 @@ class Gameboard < ApplicationRecord
 
       next unless player_id_current
 
-      current_player = Player.find_by('id=?', player_id_current)
+      current_player = Player.find_by!('id=?', player_id_current)
       current_player.handcard.ingamedecks.delete_all
 
       current_player.inventory.ingamedecks.delete_all if current_player.inventory&.ingamedecks
