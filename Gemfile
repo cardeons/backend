@@ -59,7 +59,6 @@ group :development do
   gem 'rack-livereload'
   gem 'rspec-rails'
   gem 'rswag-specs'
-  gem 'rusky'
   gem 'spring'
 end
 
