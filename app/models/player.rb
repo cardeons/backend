@@ -10,14 +10,15 @@ class Player < ApplicationRecord
   has_one :playercurse, dependent: :destroy
   belongs_to :user
 
-  def init_player(params)
+  def init_player(params = {})
     handcard ||= Handcard.create(player_id: id)
 
     Inventory.create!(player: self) unless inventory
     Monsterone.create!(player: self) unless monsterone
     Monstertwo.create!(player: self) unless monstertwo
     Monsterthree.create!(player: self) unless monsterthree
-    Handcard.create!(player: self) unless monsterthree
+    Handcard.create!(player: self) unless handcard
+    Playercurse.create!(player: self) unless playercurse
 
     # add the monsters from the player to his handcards
     # TODO: Check if player actually posesses these cards
@@ -35,5 +36,39 @@ class Player < ApplicationRecord
     # Ingamedeck.new(gameboard_id: player.gameboard_id, card_id: 2, cardable_id: 1, cardable_type: 'Handcard').save!
     # Ingamedeck.new(gameboard_id: player.gameboard_id, card_id: 1, cardable_id: 1, cardable_type: 'Handcard').save!
     # Ingamedeck.new(gameboard_id: player.gameboard_id, card_id: 2, cardable_id: 1, cardable_type: 'Handcard').save!
+  end
+
+  def render_player
+    # Inventory.find_or_create_by!(player: self) # unless player.inventory
+
+    # Handcard.find_or_create_by!(player: self) # unless player.handcard
+
+    # Monsterone.find_or_create_by!(player: self) # unless player.monsterone
+
+    # Monstertwo.find_or_create_by!(player: self) # unless player.monstertwo
+
+    # Monsterthree.find_or_create_by!(player: self) # unless player.monsterthree
+
+    # Playercurse.find_or_create_by!(player: self) # unless player.playercurse
+
+    monsters = []
+
+    if monsterone.ingamedecks&.first
+      monsters.push(
+        renderUserMonsters(player, 'Monsterone')
+      )
+    end
+    if monstertwo.ingamedecks&.first
+      monsters.push(
+        renderUserMonsters(player, 'Monstertwo')
+      )
+    end
+    if monsterthree.ingamedecks&.first
+      monsters.push(
+        renderUserMonsters(player, 'Monsterthree')
+      )
+    end
+    { name: name, player_id: id, inventory: Gameboard.render_cards_array(inventory.ingamedecks), level: level, attack: attack,
+      handcard: handcard.cards.count, monsters: monsters, playercurse: Gameboard.render_cards_array(playercurse.ingamedecks), user_id: user.id }
   end
 end

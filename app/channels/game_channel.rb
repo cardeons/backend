@@ -1,5 +1,4 @@
 # frozen_string_literal: true
-require 'pp'
 
 class GameChannel < ApplicationCable::Channel
   # rescue_from Exception, with: :deliver_error_message
@@ -21,7 +20,6 @@ class GameChannel < ApplicationCable::Channel
   def flee
     output = Gameboard.flee(@gameboard)
     broadcast_to(@gameboard, { type: FLEE, params: output })
-    msg = ''
     name = current_user.name
     msg = if output['flee'] = true
             "Nice! #{name} rolled #{output['value']}, #{name} managed to escape :)"
@@ -55,7 +53,7 @@ class GameChannel < ApplicationCable::Channel
     msg = "#{Player.find_by('gameboard_id = ?', @gameboard.id).name} has played #{name} from handcards!"
     broadcast_to(@gameboard, { type: GAME_LOG, params: { date: Time.new, message: msg } })
     player = Player.find_by('user_id = ?', current_user.id)
-    PlayerChannel.broadcast_to(current_user, { type: 'HANDCARD_UPDATE', params: { handcards: Gameboard.renderCardId(player.handcard.ingamedecks) } })
+    PlayerChannel.broadcast_to(current_user, { type: 'HANDCARD_UPDATE', params: { handcards: Gameboard.render_cards_array(player.handcard.ingamedecks) } })
   end
 
   def draw_door_card
@@ -80,7 +78,7 @@ class GameChannel < ApplicationCable::Channel
       msg = "#{player.name} has equiped a monster!"
       broadcast_to(@gameboard, { type: GAME_LOG, params: { date: Time.new, message: msg } })
     end
-    PlayerChannel.broadcast_to(current_user, { type: 'HANDCARD_UPDATE', params: { handcards: Gameboard.renderCardId(player.handcard.ingamedecks) } })
+    PlayerChannel.broadcast_to(current_user, { type: 'HANDCARD_UPDATE', params: { handcards: Gameboard.render_cards_array(player.handcard.ingamedecks) } })
   end
 
   def attack
@@ -145,7 +143,7 @@ class GameChannel < ApplicationCable::Channel
         msg = "#{player.name} has a new monster helping to defeat the enemy!"
         broadcast_to(@gameboard, { type: GAME_LOG, params: { date: Time.new, message: msg } })
       elsif player.monstertwo.cards.count < 1
-       ingamedeck.update(cardable: player.monstertwo)
+        ingamedeck.update(cardable: player.monstertwo)
         msg = "#{player.name} has a new monster helping to defeat the enemy!"
         broadcast_to(@gameboard, { type: GAME_LOG, params: { date: Time.new, message: msg } })
       elsif player.monsterthree.cards.count < 1
@@ -169,10 +167,10 @@ class GameChannel < ApplicationCable::Channel
     player.update_attribute(:attack, playeratkpoints)
 
     @gameboard.update_attribute(:player_atk, playeratkpoints)
-    
+
     gameboard = Gameboard.find(@gameboard.id)
 
-    PlayerChannel.broadcast_to(current_user, { type: 'HANDCARD_UPDATE', params: { handcards: Gameboard.renderCardId(player.handcard.ingamedecks) } })
+    PlayerChannel.broadcast_to(current_user, { type: 'HANDCARD_UPDATE', params: { handcards: Gameboard.render_cards_array(player.handcard.ingamedecks) } })
 
     broadcast_to(@gameboard, { type: BOARD_UPDATE, params: Gameboard.broadcast_game_board(gameboard) })
   end

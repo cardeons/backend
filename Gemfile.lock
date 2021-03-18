@@ -324,6 +324,7 @@ DEPENDENCIES
   guard
   guard-livereload (~> 2.5)
   jbuilder (~> 2.7)
+  json-schema
   jwt
   listen (~> 3.3)
   pg (~> 1.1)
@@ -351,4 +352,4 @@ RUBY VERSION
    ruby 3.0.0p0
 
 BUNDLED WITH
-   2.2.7
+   2.2.11

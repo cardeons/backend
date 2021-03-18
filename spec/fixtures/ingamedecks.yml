@@ -18,4 +18,8 @@ four:
   gameboard: gameboardFourPlayers
   cardable: three (Monstercard)
 
+four:
+  card_id: 5
+  gameboard: gameboardFourPlayers
+  cardable: three (Centercard)
 

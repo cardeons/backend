@@ -11,6 +11,7 @@ RSpec.describe GameChannel, type: :channel do
   before do
     # initialize connection with identifiers
     users(:usernorbert).player = players(:playernorbert)
+    users(:usernorbert).player.init_player
     stub_connection current_user: users(:usernorbert)
     # srand sets the seed for the rnd generator of rails => rails returns the same value if srand is sets
     srand(1)

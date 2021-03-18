@@ -7,3 +7,8 @@ one:
 two:
   # ingamedeck_id: two
   gameboard: two
+
+three:
+  # ingamedeck_id: two
+  gameboard: gameboardFourPlayers
+

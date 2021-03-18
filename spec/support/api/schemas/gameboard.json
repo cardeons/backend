@@ -1,0 +1,32 @@
+{
+    "type": "object",
+    "properties": {
+        "gameboard_id": {
+            "type": "bigint"
+        },
+        "current_player": {
+            "type": "bigint"
+        },
+        "center_card": {
+            "type": "bigint"
+        },
+        "interceptcards": {
+            "type": "array"
+        },
+        "player_atk": {
+            "type": "integer"
+        },
+        "monster_atk": {
+            "type": "integer"
+        },
+        "success": {
+            "type": "boolean"
+        },
+        "can_flee": {
+            "type": "boolean"
+        },
+        "rewards_treasure": {
+            "type": "integer"
+        }
+    }
+}

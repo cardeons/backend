@@ -30,60 +30,28 @@ class Gameboard < ApplicationRecord
     gameboard = Gameboard.find(gameboard.id)
 
     gameboard.players.each do |player|
-      # TODO: remove later
-      Inventory.find_or_create_by!(player: player) # unless player.inventory
-
-      Handcard.find_or_create_by!(player: player) # unless player.handcard
-
-      Monsterone.find_or_create_by!(player: player) # unless player.monsterone
-
-      Monstertwo.find_or_create_by!(player: player) # unless player.monstertwo
-
-      Monsterthree.find_or_create_by!(player: player) # unless player.monsterthree
-
-      Playercurse.find_or_create_by!(player: player) # unless player.playercurse
-
-      monsters = []
-
-      if player.monsterone.ingamedecks&.first
-        monsters.push(
-          renderUserMonsters(player, 'Monsterone')
-        )
-      end
-      if player.monstertwo.ingamedecks&.first
-        monsters.push(
-          renderUserMonsters(player, 'Monstertwo')
-        )
-      end
-      if player.monsterthree.ingamedecks&.first
-        monsters.push(
-          renderUserMonsters(player, 'Monsterthree')
-        )
-      end
-
-      players_array.push({ name: player.name, player_id: player.id, inventory: renderCardId(player.inventory.ingamedecks), level: player.level, attack: player.attack,
-                           handcard: player.handcard.cards.count, monsters: monsters, playercurse: renderCardId(player.playercurse.ingamedecks), user_id: player.user.id })
+      players_array.push(player.render_player)
     end
 
     output = { # add center
       # graveyard: gameboard.graveyard,
       players: players_array,
       # needs more info
-      gameboard: renderGameboard(gameboard)
+      gameboard: render_gameboard(gameboard)
     }
   end
 
   # render cards for frontend
-  def self.renderCardId(cards)
-    cardArray = []
+  def self.render_cards_array(cards)
+    card_array = []
 
     cards.each do |card|
-      cardArray.push({ unique_card_id: card.id, card_id: card.card_id })
+      card_array.push({ unique_card_id: card.id, card_id: card.card_id })
     end
-    cardArray
+    card_array
   end
 
-  def self.renderUserMonsters(player, monsterslot)
+  def self.render_user_monsters(player, monsterslot)
     monster = case monsterslot
               when 'Monsterone'
                 player.monsterone
@@ -122,20 +90,21 @@ class Gameboard < ApplicationRecord
     output
   end
 
-  def self.renderCardFromId(id)
+  def self.render_card_from_id(id)
     if Ingamedeck.find_by!('id = ?', id)
-      card = Ingamedeck.find(id)
+      card = Ingamedeck.find_by!('id=?', id)
       { unique_card_id: card.id, card_id: card.card_id }
     end
   end
 
-  def self.renderGameboard(gameboard)
-    centercard = (renderCardFromId(gameboard.centercard.ingamedecks.first.id) if gameboard.centercard.ingamedecks.any?)
-
+  def self.render_gameboard(gameboard)
+    # TODO: check if this selects the right card
+    centercard = (render_card_from_id(gameboard.centercard.ingamedecks.first.id) if gameboard.centercard.ingamedecks.any?)
     {
       gameboard_id: gameboard.id,
       current_player: gameboard.current_player,
       center_card: centercard,
+      # TODO: intercept cards are missing
       interceptcards: [],
       player_atk: gameboard.player_atk,
       monster_atk: gameboard.monster_atk,
@@ -169,13 +138,13 @@ class Gameboard < ApplicationRecord
   end
 
   def self.draw_door_card(gameboard)
-    cursecards = Cursecard.all
+    # cursecards = Cursecard.all
     monstercards = Monstercard.all
-    bosscards = Bosscard.all
+    # bosscards = Bosscard.all
 
     allcards = []
     # addCardsToArray(allcards, cursecards)
-    addCardsToArray(allcards, monstercards)
+    add_cards_to_array(allcards, monstercards)
     # addCardsToArray(allcards, bosscards)
 
     randomcard = allcards[rand(allcards.length)]
@@ -186,9 +155,9 @@ class Gameboard < ApplicationRecord
       ingamedeck.update(cardable: Graveyard.find_by!('gameboard_id = ?', gameboard.id))
     end
 
-    ingamecard = Ingamedeck.create(gameboard: gameboard, card_id: randomcard, cardable: centercard)
+    Ingamedeck.create(gameboard: gameboard, card_id: randomcard, cardable: centercard)
 
-    monsteratk =centercard.cards.first.atk_points
+    monsteratk = centercard.cards.first.atk_points
     playeratk = attack(gameboard)
 
     result = monsteratk < playeratk
@@ -202,7 +171,7 @@ class Gameboard < ApplicationRecord
     gameboard.centercard.cards.first.title
   end
 
-  def self.addCardsToArray(arr, cards)
+  def self.add_cards_to_array(arr, cards)
     cards.each do |card|
       x = card.draw_chance
       while x.positive?
@@ -239,13 +208,13 @@ class Gameboard < ApplicationRecord
 
     unless playerid.nil?
 
-      player = Player.find_by('id=?', playerid);
+      player = Player.find_by('id=?', playerid)
 
-      monstercards1 = player.monsterone.cards.sum(:atk_points) if player.monsterone != nil
+      monstercards1 = player.monsterone.cards.sum(:atk_points) unless player.monsterone.nil?
 
-      monstercards2 = player.monstertwo.cards.sum(:atk_points) if player.monstertwo != nil
+      monstercards2 = player.monstertwo.cards.sum(:atk_points) unless player.monstertwo.nil?
 
-      monstercards3 = player.monsterthree.cards.sum(:atk_points) if player.monsterthree != nil
+      monstercards3 = player.monsterthree.cards.sum(:atk_points) unless player.monsterthree.nil?
 
       playeratkpoints = monstercards1 + monstercards2 + monstercards3 + player.level
 
