@@ -42,6 +42,7 @@ two:
   has_combination: 1
   level_amount: 1
 
+
 monstercard:
   id: 3
   title: MyString
@@ -63,6 +64,7 @@ monstercard:
   has_combination: 1
   level_amount: 1
   type: Monstercard
+
 
 itemcard:
   id: 4

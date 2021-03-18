@@ -4,23 +4,23 @@ class Gameboard < ApplicationRecord
   has_many :players, dependent: :destroy
   has_many :ingamedeck, dependent: :destroy
   has_one :player, foreign_key: 'current_player'
-  has_one :centercard
+  has_one :centercard, dependent: :destroy
+  has_one :graveyard, dependent: :destroy
+  enum current_state: %i[lobby ingame]
 
   # has_many :cards, through: :ingame_cards
 
-  def self.initialize_game_board(gameboard)
-    current_player = gameboard.players.last.id
-    gameboard_id = gameboard.id
-    gameboard.update(current_player: current_player, current_state: 'started')
-    # Gameboard.find(gameboard.id).save
-    
-    Centercard.create(gameboard_id: gameboard.id)
-    Graveyard.create(gameboard_id: gameboard.id)
+  def initialize_game_board
+    current_player = players.last.id
+    gameboard_id = id
+    update(current_player: current_player, current_state: 'ingame')
+    Centercard.create!(gameboard_id: gameboard_id)
+    Graveyard.create!(gameboard_id: gameboard_id)
 
-    gameboard.players.each do |player|
+    players.each do |player|
       # Player.draw_five_cards(player)
       Handcard.find_or_create_by!(player_id: player.id) # unless player.handcard
-      Handcard.draw_handcards(player.id, gameboard)
+      Handcard.draw_handcards(player.id, self)
     end
   end
 

@@ -18,9 +18,31 @@ three:
   name : UserThree
   password_digest: MyString
 
+four:
+  id: 4
+  email: test4@test.com
+  name : UserFour
+  password_digest: MyString
+
 usernorbert:
   email: game@test.com
   name : UserFour
+  password_digest: MyString
+
+userlobbyone:
+  email: game1@test.com
+  name : UserGameOne
+  password_digest: MyString
+
+userlobbytwo:
+  email: game2@test.com
+  name : UserGameTwo
+  password_digest: MyString
+
+
+userlobbythree:
+  email: game3@test.com
+  name : UserGameThree
   password_digest: MyString
 
 

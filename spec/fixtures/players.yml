@@ -20,6 +20,22 @@ playernorbert:
 #   gameboard: 1
 #   # belongs_to: 
 
+playerlobbyone:
+  user: userlobbyone
+  name : UserGameOne
+  gameboard: gameboardlobby
+
+playerlobbytwo:
+  user: userlobbtwo
+  name : UserGameTwo
+  gameboard: gameboardlobby
+
+
+playerlobbythree:
+  user: userlobbthree
+  name : UserGameThree
+  gameboard: gameboardlobby
+
 playerOne:
   id: 2
   name: MyString

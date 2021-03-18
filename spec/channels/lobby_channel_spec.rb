@@ -3,7 +3,7 @@
 require 'rails_helper'
 
 RSpec.describe LobbyChannel, type: :channel do
-  fixtures :users
+  fixtures :users, :cards
 
   before do
     # initialize connection with identifiers
@@ -33,5 +33,85 @@ RSpec.describe LobbyChannel, type: :channel do
   it 'successfully creates handcard deck for the user' do
     subscribe
     expect(User.find(users(:one).id).player.handcard).to be_truthy
+  end
+
+  it 'successfully assigns player to a gameboard' do
+    subscribe
+    expect(User.find(users(:one).id).player.gameboard).to be_truthy
+  end
+
+  it 'successfully creates inventory for player' do
+    subscribe
+    expect(User.find(users(:one).id).player.inventory).to be_truthy
+  end
+
+  it 'successfully creates handcards for player' do
+    subscribe
+    expect(User.find(users(:one).id).player.handcard.cards.count).to be_truthy
+  end
+
+  it 'creates monsterdeck for players' do
+    subscribe
+    expect(User.find(users(:one).id).player.monsterone).to be_truthy
+    expect(User.find(users(:one).id).player.monstertwo).to be_truthy
+    expect(User.find(users(:one).id).player.monsterthree).to be_truthy
+  end
+
+  it 'adds monsters to handcards if player brought some' do
+    subscribe monsterone: 1, monstertwo: 2, monsterthree: 3
+    expect(User.find(users(:one).id).player.handcard.cards.find(1)).to be_truthy
+    expect(User.find(users(:one).id).player.handcard.cards.find(2)).to be_truthy
+    expect(User.find(users(:one).id).player.handcard.cards.find(3)).to be_truthy
+  end
+
+  it 'only adds the monsters a player brought' do
+    subscribe monsterone: 1, monstertwo: 2, monsterthree: 3
+    expect(User.find(users(:one).id).player.handcard.cards.find_by_id(4)).to be_falsy
+    expect(User.find(users(:one).id).player.handcard.cards.find_by_id(5)).to be_falsy
+    expect(User.find(users(:one).id).player.handcard.cards.find_by_id(6)).to be_falsy
+  end
+
+  it 'gameboard got initalized ' do
+    stub_connection current_user: users(:one)
+    subscribe
+    stub_connection current_user: users(:two)
+    subscribe
+    stub_connection current_user: users(:three)
+    subscribe
+    stub_connection current_user: users(:four)
+    subscribe
+    expect(User.find(users(:one).id).player.gameboard.centercard).to be_truthy
+    expect(User.find(users(:one).id).player.gameboard.graveyard).to be_truthy
+    expect(User.find(users(:one).id).player.gameboard.ingamedeck).to be_truthy
+  end
+
+  it 'players draw 5 cards ' do
+    stub_connection current_user: users(:one)
+    subscribe
+    stub_connection current_user: users(:two)
+    subscribe
+    stub_connection current_user: users(:three)
+    subscribe
+    stub_connection current_user: users(:four)
+    subscribe
+    expect(User.find(users(:one).id).player.handcard.cards.count).to eql(5)
+    expect(User.find(users(:two).id).player.handcard.cards.count).to eql(5)
+    expect(User.find(users(:three).id).player.handcard.cards.count).to eql(5)
+    expect(User.find(users(:four).id).player.handcard.cards.count).to eql(5)
+  end
+
+  it '4 players get assigned to the game' do
+    stub_connection current_user: users(:one)
+    subscribe
+    stub_connection current_user: users(:two)
+    subscribe
+    stub_connection current_user: users(:three)
+    subscribe
+    stub_connection current_user: users(:four)
+    subscribe
+    expect(User.find(users(:one).id).player.gameboard.players.count).to eql(4)
+    stub_connection current_user: users(:usernorbert)
+    subscribe
+    expect(User.find(users(:usernorbert).id).player.gameboard.players.count).to eql(1)
   end
 end
