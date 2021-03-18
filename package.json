@@ -9,11 +9,6 @@
     "jquery": "^3.5.1",
     "turbolinks": "^5.2.0"
   },
-  "husky": {
-    "hooks": {
-      "pre-commit": "git-format-staged -f 'prettier --ignore-unknown --stdin --stdin-filepath \"{}\"' ."
-    }
-  },
   "scripts": {
     "precommit": "lint-staged"
   },
