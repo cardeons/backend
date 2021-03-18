@@ -5,4 +5,7 @@
 
 require_relative 'config/application'
 
+require 'rusky/task'
+Rusky::Task.install
+
 Rails.application.load_tasks

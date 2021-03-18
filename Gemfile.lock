@@ -257,6 +257,9 @@ GEM
       parser (>= 2.7.1.5)
     ruby-progressbar (1.10.1)
     rubyzip (2.3.0)
+    rusky (0.2.5)
+      rake
+      thor
     sass-rails (6.0.0)
       sassc-rails (~> 2.1, >= 2.1.1)
     sassc (2.4.0)
@@ -339,6 +342,7 @@ DEPENDENCIES
   rswag
   rswag-specs
   rubocop
+  rusky
   sass-rails (>= 6)
   selenium-webdriver
   spring

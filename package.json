@@ -9,14 +9,6 @@
     "jquery": "^3.5.1",
     "turbolinks": "^5.2.0"
   },
-  "husky": {
-    "hooks": {
-      "pre-commit": "git-format-staged -f 'prettier --ignore-unknown --stdin --stdin-filepath \"{}\"' ."
-    }
-  },
-  "scripts": {
-    "precommit": "rspec"
-  },
   "lint-staged": {
     "app/**/*.{js,es6,jsx,scss,css}": [
       "./node_modules/prettier/bin/prettier.js --trailing-comma --single-quote es5 --write",

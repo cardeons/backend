@@ -1,0 +1,4 @@
+pre-commit:
+  - bundle exec rspec
+pre-push:
+  - bundle exec rspec
