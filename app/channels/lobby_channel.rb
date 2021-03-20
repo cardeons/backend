@@ -28,7 +28,8 @@ class LobbyChannel < ApplicationCable::Channel
 
     player.init_player(params)
 
-    lobbyisfull = false
+    # TODO: only for testing otherwise false
+    lobbyisfull = true
 
     if gameboard.players.count > 3
       # gameboard.current_state = 'started'
@@ -51,10 +52,13 @@ class LobbyChannel < ApplicationCable::Channel
       broadcast_to(@gameboard, { type: 'DEBUG', params: { message: 'Lobby is full start with game subscribe to Player and GameChannel' } })
 
       @gameboard.initialize_game_board
+
+      createNewTestGame(@gameboard)
+
       broadcast_to(@gameboard, { type: 'START_GAME', params: { game_id: @gameboard.id } })
 
       # TODO: Remove after testing i guesss
-      createNewTestGame
+
     end
   end
 
@@ -64,8 +68,8 @@ class LobbyChannel < ApplicationCable::Channel
 
   private
 
-  def createNewTestGame
-    gameboard_test = Gameboard.create(current_state: INGAME, player_atk: 5)
+  def createNewTestGame(gameboard)
+    gameboard_test = gameboard
     x = rand(1..1_000_000)
     u1 = User.create(email: "#{x}2@2.at", password: '2', name: "#{x}2", password_confirmation: '2')
     u2 = User.create(email: "#{x}3@3.at", password: '3', name: "#{x}3", password_confirmation: '3')
@@ -78,6 +82,10 @@ class LobbyChannel < ApplicationCable::Channel
     playercurse1 = Playercurse.create(player: player1)
     playercurse2 = Playercurse.create(player: player2)
     playercurse3 = Playercurse.create(player: player3)
+
+    Handcard.create(player: player1)
+    Handcard.create(player: player2)
+    Handcard.create(player: player3)
 
     p1i = Inventory.create(player: player1)
     p2i = Inventory.create(player: player2)

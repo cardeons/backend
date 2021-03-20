@@ -64,13 +64,6 @@ RSpec.describe LobbyChannel, type: :channel do
     expect(User.find(users(:one).id).player.handcard.cards.find(3)).to be_truthy
   end
 
-  it 'only adds the monsters a player brought' do
-    subscribe monsterone: 1, monstertwo: 2, monsterthree: 3
-    expect(User.find(users(:one).id).player.handcard.cards.find_by_id(4)).to be_falsy
-    expect(User.find(users(:one).id).player.handcard.cards.find_by_id(5)).to be_falsy
-    expect(User.find(users(:one).id).player.handcard.cards.find_by_id(6)).to be_falsy
-  end
-
   it 'gameboard got initalized ' do
     stub_connection current_user: users(:one)
     subscribe
