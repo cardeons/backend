@@ -15,9 +15,9 @@ u9 = User.create!(email: '1@1.at', password: '1', name: '1', password_confirmati
 
 gameboard_test = Gameboard.create!(current_state: 'lobby', player_atk: 5)
 
-player5 = Player.create!(name: 'Gustav', gameboard: gameboard_test, user: u3)
-player6 = Player.create!(name: 'Thomas', gameboard: gameboard_test, user: u2)
-player7 = Player.create!(name: 'Lorenz', gameboard: gameboard_test, user: u4)
+# player5 = Player.create!(name: 'Gustav', gameboard: gameboard_test, user: u3)
+# player6 = Player.create!(name: 'Thomas', gameboard: gameboard_test, user: u2)
+# player7 = Player.create!(name: 'Lorenz', gameboard: gameboard_test, user: u4)
 
 bear = Monstercard.create!(
   title: 'Sir Bear',
