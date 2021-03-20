@@ -20,8 +20,8 @@ class LobbyChannel < ApplicationCable::Channel
     # end
 
     # search for gameboard with open lobby
-    gameboard = Gameboard.find_by(current_state: LOBBY)
-    gameboard ||= Gameboard.create(current_state: LOBBY)
+    gameboard = Gameboard.find_or_create_by(current_state: LOBBY)
+    # gameboard ||= Gameboard.create(current_state: LOBBY)
 
     # create new player
     player = Player.create(name: current_user.name, gameboard_id: gameboard.id, user: current_user)
@@ -31,16 +31,8 @@ class LobbyChannel < ApplicationCable::Channel
     # TODO: only for testing otherwise false
     lobbyisfull = true
 
-    if gameboard.players.count > 3
-      # gameboard.current_state = 'started'
-      # gameboard.current_player = gameboard.players.first
-      # gameboard.save
+    lobbyisfull = true if gameboard.players.count > 3
 
-      ### add add the starting user
-      lobbyisfull = true
-    end
-
-    # hopefully it is the same after saving?
     @gameboard = gameboard
 
     stream_for @gameboard
