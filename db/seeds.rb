@@ -217,7 +217,7 @@ u7.cards << (Card.find(3))
 u8.cards << (Card.find(3))
 u9.cards << (Card.find(3))
 
-levelcard = Levelcard.create!(title: 'Level up!', draw_chance: 1, description: 'Get one level', image: '/', action: 'level_up')
+levelcard = Levelcard.create!(title: 'Level up!', draw_chance: 1, description: 'Get one level', image: '/', action: 'level_up', level_amount: 1)
 
 buffcard = Buffcard.create!(
   draw_chance: 1,
