@@ -139,14 +139,14 @@ RSpec.describe Gameboard, type: :model do
 
   # #get_next_player
   it 'chooses the right next player' do
-    gameboards(:gameboardFourPlayers).initialize_game_board
     gameboards(:gameboardFourPlayers).players.each(&:init_player)
+    gameboards(:gameboardFourPlayers).initialize_game_board
     expect(Gameboard.get_next_player(gameboards(:gameboardFourPlayers))).to eql(gameboards(:gameboardFourPlayers).players.first)
   end
 
   it 'chooses the right next player after 4 times' do
-    gameboards(:gameboardFourPlayers).initialize_game_board
     gameboards(:gameboardFourPlayers).players.each(&:init_player)
+    gameboards(:gameboardFourPlayers).initialize_game_board
 
     Gameboard.get_next_player(gameboards(:gameboardFourPlayers))
     Gameboard.get_next_player(gameboards(:gameboardFourPlayers))

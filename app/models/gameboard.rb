@@ -30,7 +30,7 @@ class Gameboard < ApplicationRecord
     gameboard = Gameboard.find(gameboard.id)
 
     gameboard.players.each do |player|
-      players_array.push(player.render_player(player))
+      players_array.push(player.render_player)
     end
 
     output = { # add center

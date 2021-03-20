@@ -11,14 +11,13 @@ class Player < ApplicationRecord
   belongs_to :user
 
   def init_player(params = {})
-    handcard ||= Handcard.create(player_id: id)
+    Inventory.find_or_create_by!(player: self)
+    Monsterone.find_or_create_by!(player: self)
+    Monstertwo.find_or_create_by!(player: self)
+    Monsterthree.find_or_create_by!(player: self)
+    Playercurse.find_or_create_by!(player: self)
 
-    Inventory.create!(player: self) unless inventory
-    Monsterone.create!(player: self) unless monsterone
-    Monstertwo.create!(player: self) unless monstertwo
-    Monsterthree.create!(player: self) unless monsterthree
-    Handcard.create!(player: self) unless handcard
-    Playercurse.create!(player: self) unless playercurse
+    handcard = Handcard.find_or_create_by!(player: self)
 
     # add the monsters from the player to his handcards
     # TODO: Check if player actually posesses these cards
@@ -38,7 +37,7 @@ class Player < ApplicationRecord
     # Ingamedeck.new(gameboard_id: player.gameboard_id, card_id: 2, cardable_id: 1, cardable_type: 'Handcard').save!
   end
 
-  def render_player(player)
+  def render_player
     # Inventory.find_or_create_by!(player: self) # unless player.inventory
 
     # Handcard.find_or_create_by!(player: self) # unless player.handcard
@@ -55,17 +54,17 @@ class Player < ApplicationRecord
 
     if monsterone.ingamedecks&.first
       monsters.push(
-        Gameboard.render_user_monsters(player, 'Monsterone')
+        Gameboard.render_user_monsters(self, 'Monsterone')
       )
     end
     if monstertwo.ingamedecks&.first
       monsters.push(
-        Gameboard.render_user_monsters(player, 'Monstertwo')
+        Gameboard.render_user_monsters(self, 'Monstertwo')
       )
     end
     if monsterthree.ingamedecks&.first
       monsters.push(
-        Gameboard.render_user_monsters(player, 'Monsterthree')
+        Gameboard.render_user_monsters(self, 'Monsterthree')
       )
     end
     { name: name, player_id: id, inventory: Gameboard.render_cards_array(inventory.ingamedecks), level: level, attack: attack,
