@@ -19,12 +19,14 @@ class LobbyChannel < ApplicationCable::Channel
     #   # reject
     # end
 
+    # remove player from old gameboard
+    delete_old_players
+
     # search for gameboard with open lobby
     gameboard = Gameboard.find_or_create_by(current_state: LOBBY)
-    # gameboard ||= Gameboard.create(current_state: LOBBY)
 
     # create new player
-    player = Player.create(name: current_user.name, gameboard_id: gameboard.id, user: current_user)
+    player = Player.create!(name: current_user.name, gameboard_id: gameboard.id, user: current_user)
 
     player.init_player(params)
 
@@ -120,5 +122,16 @@ class LobbyChannel < ApplicationCable::Channel
 
   def deliver_error_message(error)
     broadcast_to(@gameboard, { type: 'ERROR', params: { message: error } })
+  end
+
+  def delete_old_players
+    # search if user is already in a game
+    old_players = Player.where('user_id=?', current_user.id)
+    old_players.each do |player|
+      # if its the current players turn get the next one in line
+      old_gameboard = player.gameboard
+      Gameboard.get_next_player(old_gameboard) if old_gameboard.current_player == player.id
+      player.destroy
+    end
   end
 end

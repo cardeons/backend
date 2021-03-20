@@ -103,8 +103,14 @@ RSpec.describe LobbyChannel, type: :channel do
     stub_connection current_user: users(:four)
     subscribe
     expect(User.find(users(:one).id).player.gameboard.players.count).to eql(4)
-    stub_connection current_user: users(:usernorbert)
+  end
+
+  it 'should delete old player from old gameboard if user joins again' do
+    stub_connection current_user: users(:one)
     subscribe
-    expect(User.find(users(:usernorbert).id).player.gameboard.players.count).to eql(1)
+    expect(Player.where('user_id=?', users(:one).id).count).to eql(1)
+    stub_connection current_user: users(:one)
+    subscribe
+    expect(Player.where('user_id=?', users(:one).id).count).to eql(1)
   end
 end
