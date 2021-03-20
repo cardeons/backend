@@ -11,15 +11,20 @@ two:
 three:
   card_id: 3
   gameboard: gameboardFourPlayers
-  cardable: three (Monsterone),
+  cardable: three (Monsterone)
 
 four:
   card_id: 4
   gameboard: gameboardFourPlayers
   cardable: three (Monstercard)
 
-four:
+five:
   card_id: 5
+  gameboard: gameboardFourPlayers
+  cardable: three (Centercard)
+
+six:
+  card_id: 3
   gameboard: gameboardFourPlayers
   cardable: three (Centercard)
 

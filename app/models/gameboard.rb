@@ -30,7 +30,7 @@ class Gameboard < ApplicationRecord
     gameboard = Gameboard.find(gameboard.id)
 
     gameboard.players.each do |player|
-      players_array.push(player.render_player)
+      players_array.push(player.render_player(player))
     end
 
     output = { # add center
@@ -91,10 +91,8 @@ class Gameboard < ApplicationRecord
   end
 
   def self.render_card_from_id(id)
-    if Ingamedeck.find_by!('id = ?', id)
-      card = Ingamedeck.find_by!('id=?', id)
-      { unique_card_id: card.id, card_id: card.card_id }
-    end
+    card = Ingamedeck.find_by!('id = ?', id)
+    { unique_card_id: card.id, card_id: card.card_id }
   end
 
   def self.render_gameboard(gameboard)
@@ -115,19 +113,17 @@ class Gameboard < ApplicationRecord
   end
 
   def self.get_next_player(gameboard)
-    gameboard = Gameboard.find(gameboard.id)
+    gameboard = Gameboard.find_by('id = ?', gameboard.id)
     players = gameboard.players
-    current_player = gameboard.current_player
-    count = gameboard.players.count
+    current_player_id = gameboard.current_player
+
+    count = players.count
 
     # search for the index player with this index
-    index_of_player = players.find_index { |player| player.id == current_player }
-
-    # index of gameboard.players
-    index_of_next_player = index_of_player + 1
+    index_of_player = players.find_index { |player| player.id == current_player_id }
 
     # if index is bigger than player count start with first player
-    index_of_next_player = 0 if index_of_next_player > count - 1
+    index_of_next_player = (index_of_player + 1) % count
 
     # get the next Player from array of players
     next_player = gameboard.players[index_of_next_player]
@@ -135,6 +131,8 @@ class Gameboard < ApplicationRecord
     # save it to gameboard
     gameboard.current_player = next_player.id
     gameboard.save!
+
+    next_player
   end
 
   def self.draw_door_card(gameboard)
@@ -151,47 +149,40 @@ class Gameboard < ApplicationRecord
 
     centercard = Centercard.find_by!('gameboard_id = ?', gameboard.id)
 
+    # pp centercard.ingamedecks
+
     centercard.ingamedecks.each do |ingamedeck|
-      ingamedeck.update(cardable: Graveyard.find_by!('gameboard_id = ?', gameboard.id))
+      # pp ingamedeck
+      ingamedeck.update!(cardable: gameboard.graveyard)
+      # pp ingamedeck
     end
 
+    # centercard
     Ingamedeck.create(gameboard: gameboard, card_id: randomcard, cardable: centercard)
 
-    monsteratk = centercard.cards.first.atk_points
-    playeratk = attack(gameboard)
-
-    result = monsteratk < playeratk
+    attack_obj = attack(gameboard)
 
     new_center = Centercard.find_by('gameboard_id = ?', gameboard.id)
     new_treasure = Card.find_by('id = ?', randomcard).rewards_treasure
 
-    gameboard.update(centercard: new_center, success: result, player_atk: playeratk, monster_atk: monsteratk,
+    gameboard.update(centercard: new_center, success: attack_obj[:result], player_atk: attack_obj[:playeratk], monster_atk: attack_obj[:monsteratk],
                      rewards_treasure: new_treasure)
 
     gameboard.centercard.cards.first.title
   end
 
-  def self.add_cards_to_array(arr, cards)
-    cards.each do |card|
-      x = card.draw_chance
-      while x.positive?
-        arr.push card.id
-        x -= 1
-      end
-    end
-  end
-
   def self.flee(gameboard)
     roll = rand(1..6)
     output = {}
+
     if roll > 4
-      gameboard.update(can_flee: true)
+      gameboard.update!(can_flee: true)
       output = {
         flee: true,
         value: roll
       }
     else
-      gameboard.update(can_flee: false)
+      gameboard.update!(can_flee: false)
       output = {
         flee: false,
         value: roll
@@ -203,6 +194,7 @@ class Gameboard < ApplicationRecord
 
   def self.attack(gameboard)
     monsterid = gameboard.centercard.cards.first.id
+
     playerid = gameboard.current_player
     playeratkpoints = 1
 
@@ -210,32 +202,37 @@ class Gameboard < ApplicationRecord
 
       player = Player.find_by('id=?', playerid)
 
-      monstercards1 = player.monsterone.cards.sum(:atk_points) unless player.monsterone.nil?
+      monstercards1 = player.monsterone.nil? ? 0 : player.monsterone.cards.sum(:atk_points)
 
-      monstercards2 = player.monstertwo.cards.sum(:atk_points) unless player.monstertwo.nil?
+      monstercards2 = player.monstertwo.nil? ? 0 : player.monstertwo.cards.sum(:atk_points)
 
-      monstercards3 = player.monsterthree.cards.sum(:atk_points) unless player.monsterthree.nil?
+      monstercards3 = player.monsterthree.nil? ? 0 : player.monsterthree.cards.sum(:atk_points)
 
       playeratkpoints = monstercards1 + monstercards2 + monstercards3 + player.level
+
+      pp monstercards1
+      pp monstercards2
+      pp monstercards3
+      pp player.level
 
       monsteratkpts = Monstercard.find_by('id=?', monsterid).atk_points
 
       playerwin = playeratkpoints > monsteratkpts
 
-      # if playerwin
-      #   message = "SUCCESS"
-      #   gameboard.update(success: true, player_atk: playeratkpoints, monster_atk: monsteratkpts)
-      # puts "playerwin"
-      # else
-      #   message = "FAIL"
-      #   gameboard.update(success: false, player_atk: playeratkpoints, monster_atk: monsteratkpts)
-      #   # broadcast: flee or use cards!
-      #   puts "monsterwin"
-      # end
+      if playerwin
+        #   message = "SUCCESS"
+        gameboard.update(success: true, player_atk: playeratkpoints, monster_atk: monsteratkpts)
+        puts 'playerwin'
+      else
+        #   message = "FAIL"
+        gameboard.update(success: false, player_atk: playeratkpoints, monster_atk: monsteratkpts)
+        #   # broadcast: flee or use cards!
+        puts 'monsterwin'
+      end
 
     end
 
-    playeratkpoints
+    { result: playerwin, playeratk: playeratkpoints, monsteratk: monsteratkpts }
   end
 
   def self.reset_all_game_boards
@@ -264,6 +261,16 @@ class Gameboard < ApplicationRecord
       # updated_board = Gameboard.broadcast_game_board(gameboard)
       # GameChannel.broadcast_to(gameboard, { type: "BOARD_UPDATE", params: updated_board })
       # PlayerChannel.broadcast_to(current_player.user, { type: 'HANDCARD_UPDATE', params: { handcards: Gameboard.renderCardId(current_player.handcard.ingamedecks) } })
+    end
+  end
+
+  def self.add_cards_to_array(arr, cards)
+    cards.each do |card|
+      x = card.draw_chance
+      while x.positive?
+        arr.push card.id
+        x -= 1
+      end
     end
   end
 end

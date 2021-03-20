@@ -38,7 +38,7 @@ class Player < ApplicationRecord
     # Ingamedeck.new(gameboard_id: player.gameboard_id, card_id: 2, cardable_id: 1, cardable_type: 'Handcard').save!
   end
 
-  def render_player
+  def render_player(player)
     # Inventory.find_or_create_by!(player: self) # unless player.inventory
 
     # Handcard.find_or_create_by!(player: self) # unless player.handcard
@@ -55,17 +55,17 @@ class Player < ApplicationRecord
 
     if monsterone.ingamedecks&.first
       monsters.push(
-        renderUserMonsters(player, 'Monsterone')
+        Gameboard.render_user_monsters(player, 'Monsterone')
       )
     end
     if monstertwo.ingamedecks&.first
       monsters.push(
-        renderUserMonsters(player, 'Monstertwo')
+        Gameboard.render_user_monsters(player, 'Monstertwo')
       )
     end
     if monsterthree.ingamedecks&.first
       monsters.push(
-        renderUserMonsters(player, 'Monsterthree')
+        Gameboard.render_user_monsters(player, 'Monsterthree')
       )
     end
     { name: name, player_id: id, inventory: Gameboard.render_cards_array(inventory.ingamedecks), level: level, attack: attack,

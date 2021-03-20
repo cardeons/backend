@@ -21,10 +21,10 @@ class GameChannel < ApplicationCable::Channel
     output = Gameboard.flee(@gameboard)
     broadcast_to(@gameboard, { type: FLEE, params: output })
     name = current_user.name
-    msg = if output['flee'] = true
-            "Nice! #{name} rolled #{output['value']}, #{name} managed to escape :)"
+    msg = if output[:flee] == true
+            "Nice! #{name} rolled #{output[:value]}, #{name} managed to escape :)"
           else
-            "Oh no! #{name} only rolled #{output['value']}. That's a fine mess!"
+            "Oh no! #{name} only rolled #{output[:value]}. That's a fine mess!"
           end
 
     log = { date: Time.new, message: msg }
@@ -34,12 +34,15 @@ class GameChannel < ApplicationCable::Channel
   end
 
   def play_monster(params)
+
+    # move all centercard to graveyard
     centercard = Centercard.find_by('gameboard_id = ?', @gameboard.id)
 
     centercard.ingamedecks.each do |ingamedeck|
       ingamedeck.update(cardable: Graveyard.find_by('gameboard_id = ?', @gameboard.id))
     end
 
+    # update handcard to centercard
     Ingamedeck.find_by('id=?', params['unique_card_id']).update(cardable: Centercard.find_by('gameboard_id = ?', @gameboard.id))
     monsteratk = Ingamedeck.find_by('id=?', params['unique_card_id']).card.atk_points
     centercard = Centercard.find_by('gameboard_id = ?', @gameboard.id)
@@ -50,9 +53,9 @@ class GameChannel < ApplicationCable::Channel
     updated_board = Gameboard.broadcast_game_board(@gameboard)
     broadcast_to(@gameboard, { type: BOARD_UPDATE, params: updated_board })
     name = @gameboard.centercard.cards.first.title
-    msg = "#{Player.find_by('gameboard_id = ?', @gameboard.id).name} has played #{name} from handcards!"
+    player = current_user.player
+    msg = "#{player.name} has played #{name} from handcards!"
     broadcast_to(@gameboard, { type: GAME_LOG, params: { date: Time.new, message: msg } })
-    player = Player.find_by('user_id = ?', current_user.id)
     PlayerChannel.broadcast_to(current_user, { type: 'HANDCARD_UPDATE', params: { handcards: Gameboard.render_cards_array(player.handcard.ingamedecks) } })
   end
 
@@ -60,7 +63,7 @@ class GameChannel < ApplicationCable::Channel
     name = Gameboard.draw_door_card(@gameboard)
     # attack()
     broadcast_to(@gameboard, { type: BOARD_UPDATE, params: Gameboard.broadcast_game_board(@gameboard) })
-    msg = "#{Player.find_by('gameboard_id = ?', @gameboard.id).name} has drawn #{name}"
+    msg = "#{current_user.player.name} has drawn #{name}"
     broadcast_to(@gameboard, { type: GAME_LOG, params: { date: Time.new, message: msg } })
   end
 

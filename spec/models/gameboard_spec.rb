@@ -1,7 +1,6 @@
 # frozen_string_literal: true
 
 require 'rails_helper'
-require 'pp'
 
 RSpec.describe Gameboard, type: :model do
   fixtures :users, :players, :gameboards, :cards, :monsterones, :ingamedecks, :centercards
@@ -108,9 +107,10 @@ RSpec.describe Gameboard, type: :model do
 
     expect(Gameboard.render_gameboard(gameboards(:gameboardFourPlayers))).to eql(gameboard_obj)
     ending = Process.clock_gettime(Process::CLOCK_MONOTONIC)
-    puts ending - starting
+    # puts ending - starting
   end
 
+  # only measure times
   it 'runs broadcast gameboard ' do
     gameboards(:gameboardFourPlayers).initialize_game_board
     gameboards(:gameboardFourPlayers).players.each(&:init_player)
@@ -120,6 +120,81 @@ RSpec.describe Gameboard, type: :model do
     Gameboard.broadcast_game_board(gameboards(:gameboardFourPlayers))
 
     ending = Process.clock_gettime(Process::CLOCK_MONOTONIC)
-    puts ending - starting
+    # puts ending - starting
+  end
+
+  it 'renders the right card from id' do
+    gameboards(:gameboardFourPlayers).initialize_game_board
+    gameboards(:gameboardFourPlayers).players.each(&:init_player)
+
+    ingamedeck_id = gameboards(:gameboardFourPlayers).players.first.handcard.ingamedecks.first.id
+    card_id = gameboards(:gameboardFourPlayers).players.first.handcard.ingamedecks.first.card_id
+
+    card = Gameboard.render_card_from_id(ingamedeck_id)
+
+    schema = { unique_card_id: ingamedeck_id, card_id: card_id }
+
+    expect(card).to eql(schema)
+  end
+
+  # #get_next_player
+  it 'chooses the right next player' do
+    gameboards(:gameboardFourPlayers).initialize_game_board
+    gameboards(:gameboardFourPlayers).players.each(&:init_player)
+    expect(Gameboard.get_next_player(gameboards(:gameboardFourPlayers))).to eql(gameboards(:gameboardFourPlayers).players.first)
+  end
+
+  it 'chooses the right next player after 4 times' do
+    gameboards(:gameboardFourPlayers).initialize_game_board
+    gameboards(:gameboardFourPlayers).players.each(&:init_player)
+
+    Gameboard.get_next_player(gameboards(:gameboardFourPlayers))
+    Gameboard.get_next_player(gameboards(:gameboardFourPlayers))
+    Gameboard.get_next_player(gameboards(:gameboardFourPlayers))
+
+    expect(Gameboard.get_next_player(gameboards(:gameboardFourPlayers))).to eql(gameboards(:gameboardFourPlayers).players.last)
+  end
+
+  it 'current centercards get thrown to graveyard' do
+    gameboards(:gameboardFourPlayers).initialize_game_board
+    gameboards(:gameboardFourPlayers).players.each(&:init_player)
+    old_centercard_id = Ingamedeck.where('gameboard_id = ?', gameboards(:gameboardFourPlayers).id).where(cardable_type: 'Centercard').first.id
+
+    Gameboard.draw_door_card(gameboards(:gameboardFourPlayers))
+
+    expect(Ingamedeck.find(old_centercard_id).cardable_type).to eql('Graveyard')
+    expect(Ingamedeck.where('gameboard_id = ?', gameboards(:gameboardFourPlayers).id).where(cardable_type: 'Centercard').length).to eql(1)
+  end
+
+  it 'gets new centercard' do
+    gameboards(:gameboardFourPlayers).initialize_game_board
+    gameboards(:gameboardFourPlayers).players.each(&:init_player)
+    old_centercard_id = Ingamedeck.where('gameboard_id = ?', gameboards(:gameboardFourPlayers).id).where(cardable_type: 'Centercard').first.id
+
+    Gameboard.draw_door_card(gameboards(:gameboardFourPlayers))
+
+    expect(gameboards(:gameboardFourPlayers).centercard).to_not eql(old_centercard_id)
+  end
+
+  it 'flee returns right value in gameboard if it is successful or not' do
+    gameboards(:gameboardFourPlayers).initialize_game_board
+    gameboards(:gameboardFourPlayers).players.each(&:init_player)
+
+    flee_result = Gameboard.flee(gameboards(:gameboardFourPlayers))
+
+    expect(flee_result[:value] < 5).to be_truthy if flee_result[:flee] == false
+    expect(flee_result[:value] >= 5).to be_truthy if flee_result[:flee] == true
+    expect(gameboards(:gameboardFourPlayers).can_flee).to eql(flee_result[:flee])
+  end
+
+  it 'attack' do
+    gameboards(:gameboardFourPlayers).initialize_game_board
+    gameboards(:gameboardFourPlayers).players.each(&:init_player)
+
+    playerwin = Gameboard.attack(gameboards(:gameboardFourPlayers))
+
+    # expect(playeratk.to(eql))
+    expect(gameboards(:gameboardFourPlayers).success).to be_truthy if playerwin[:result]
+    expect(gameboards(:gameboardFourPlayers).success).to be_falsy unless playerwin[:result]
   end
 end
