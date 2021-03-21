@@ -34,7 +34,6 @@ class GameChannel < ApplicationCable::Channel
   end
 
   def play_monster(params)
-
     # move all centercard to graveyard
     centercard = Centercard.find_by('gameboard_id = ?', @gameboard.id)
 
@@ -95,9 +94,9 @@ class GameChannel < ApplicationCable::Channel
 
   def intercept(params)
     # params={
-      # action: "intercept",
-      # unique_card_id: 1,
-      # to: 'center_card' | 'current_player'
+    # action: "intercept",
+    # unique_card_id: 1,
+    # to: 'center_card' | 'current_player'
     # }
 
     unique_card_id = params['unique_card_id']
@@ -105,14 +104,18 @@ class GameChannel < ApplicationCable::Channel
 
     @gameboard.reload
     case to
-      when 'center_card'
-        @gameboard.interceptcard.add_card_with_ingamedeck_id(unique_card_id)
+    when 'center_card'
+      @gameboard.interceptcard.add_card_with_ingamedeck_id(unique_card_id)
 
-      when 'fighting_player'
-        #buff player
-
+    when 'fighting_player'
+      # buff player
+      @gameboard.playerinterceptcard.add_card_with_ingamedeck_id(unique_card_id)
     end
 
+    # update this players handcards
+    PlayerChannel.broadcast_to(current_user, { type: 'HANDCARD_UPDATE', params: { handcards: Gameboard.render_cards_array(player.handcard.ingamedecks) } })
+    #update board
+    broadcast_to(@gameboard, { type: BOARD_UPDATE, params: Gameboard.broadcast_game_board(@gameboard) })
   end
 
   # def play_card(params)

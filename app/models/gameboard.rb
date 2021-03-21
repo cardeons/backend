@@ -151,7 +151,6 @@ class Gameboard < ApplicationRecord
 
     centercard = Centercard.find_by!('gameboard_id = ?', gameboard.id)
 
-
     centercard.ingamedecks.each do |ingamedeck|
       ingamedeck.update!(cardable: gameboard.graveyard)
     end
@@ -206,10 +205,14 @@ class Gameboard < ApplicationRecord
       monstercards3 = player.monsterthree.nil? ? 0 : player.monsterthree.cards.sum(:atk_points)
 
       playeratkpoints = monstercards1 + monstercards2 + monstercards3 + player.level
-      
+
+      playeratkpoints += gameboard.playerinterceptcard.cards.sum(:atk_points)
 
       ## monsteratk points get set to 0 if cards.first is nil => no centercard
       monsteratkpts = gameboard.centercard.cards.first&.atk_points || 0
+
+      # #add intercept buffs
+      monsteratkpts += gameboard.interceptcard.cards.sum(:atk_points)
 
       playerwin = playeratkpoints > monsteratkpts
 

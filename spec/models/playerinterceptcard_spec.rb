@@ -2,7 +2,7 @@
 
 require 'rails_helper'
 
-RSpec.describe Interceptcard, type: :model do
+RSpec.describe Playerinterceptcard, type: :model do
   fixtures :gameboards, :players, :users, :cards
 
   subject do
@@ -30,17 +30,17 @@ RSpec.describe Interceptcard, type: :model do
     ingamedeck_card = player.handcard.ingamedecks.find_by!('card_id=?', cards(:buffcard).id)
     expect(ingamedeck_card).to be_truthy
 
-    expect(gameboards(:gameboardFourPlayers).interceptcard.ingamedecks.find_by('id=?', ingamedeck_card.id)).to be_falsy
+    expect(gameboards(:gameboardFourPlayers).playerinterceptcard.ingamedecks.find_by('id=?', ingamedeck_card.id)).to be_falsy
 
     Gameboard.draw_door_card(gameboards(:gameboardFourPlayers))
 
-    gameboards(:gameboardFourPlayers).interceptcard.add_card_with_ingamedeck_id(ingamedeck_card.id)
+    gameboards(:gameboardFourPlayers).playerinterceptcard.add_card_with_ingamedeck_id(ingamedeck_card.id)
 
     expect(player.handcard.ingamedecks.find_by('id=?', ingamedeck_card.id)).to be_falsy
-    expect(gameboards(:gameboardFourPlayers).interceptcard.ingamedecks.find_by('id=?', ingamedeck_card.id)).to be_truthy
+    expect(gameboards(:gameboardFourPlayers).playerinterceptcard.ingamedecks.find_by('id=?', ingamedeck_card.id)).to be_truthy
   end
 
-  it 'interceptcard should increase monster dmg' do
+  it 'playerinterceptcard should increase player dmg' do
     gameboards(:gameboardFourPlayers).initialize_game_board
     gameboards(:gameboardFourPlayers).players.each(&:init_player)
 
@@ -52,6 +52,6 @@ RSpec.describe Interceptcard, type: :model do
     # get a  monster to buff
     Gameboard.draw_door_card(gameboards(:gameboardFourPlayers))
 
-    expect { gameboards(:gameboardFourPlayers).interceptcard.add_card_with_ingamedeck_id(ingamedeck_card.id) }.to change { gameboards(:gameboardFourPlayers).monster_atk }
+    expect { gameboards(:gameboardFourPlayers).playerinterceptcard.add_card_with_ingamedeck_id(ingamedeck_card.id) }.to change { gameboards(:gameboardFourPlayers).player_atk }
   end
 end
