@@ -109,3 +109,26 @@ test:
   has_combination: 1
   level_amount: 1
   type: Monstercard
+
+buffcard:
+  id: 6
+  title: MyString
+  description: MyString
+  image: MyString
+  action: MyString
+  draw_chance: 1
+  level: 1
+  element: MyString
+  bad_things: MyString
+  rewards_treasure: MyString
+  good_against: MyString
+  bad_against: MyString
+  good_against_value: 1
+  bad_against_value: 1
+  element_modifier: 1
+  atk_points: 1
+  item_category: MyString
+  has_combination: 1
+  level_amount: 1
+  type: Buffcard
+

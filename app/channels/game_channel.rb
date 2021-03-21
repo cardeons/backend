@@ -93,6 +93,28 @@ class GameChannel < ApplicationCable::Channel
     broadcast_to(@gameboard, { type: GAME_LOG, params: { date: Time.new, message: msg } })
   end
 
+  def intercept(params)
+    # params={
+      # action: "intercept",
+      # unique_card_id: 1,
+      # to: 'center_card' | 'current_player'
+    # }
+
+    unique_card_id = params['unique_card_id']
+    to = params['to']
+
+    @gameboard.reload
+    case to
+      when 'center_card'
+        @gameboard.interceptcard.add_card_with_ingamedeck_id(unique_card_id)
+
+      when 'fighting_player'
+        #buff player
+
+    end
+
+  end
+
   # def play_card(params)
   #   # add actions!
 

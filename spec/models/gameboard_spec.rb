@@ -179,7 +179,7 @@ RSpec.describe Gameboard, type: :model do
     gameboards(:gameboardFourPlayers).initialize_game_board
     gameboards(:gameboardFourPlayers).players.each(&:init_player)
     
-    #create a previous centercard
+    # create a previous centercard
     prev_centercard = gameboards(:gameboardFourPlayers).centercard.ingamedecks.create!(card_id: 3, gameboard: gameboards(:gameboardFourPlayers))
 
     Gameboard.draw_door_card(gameboards(:gameboardFourPlayers))

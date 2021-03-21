@@ -6,6 +6,8 @@ class Gameboard < ApplicationRecord
   has_one :player, foreign_key: 'current_player'
   has_one :centercard, dependent: :destroy
   has_one :graveyard, dependent: :destroy
+  has_one :interceptcard, dependent: :destroy
+  has_one :playerinterceptcard, dependent: :destroy
   enum current_state: %i[lobby ingame]
 
   # has_many :cards, through: :ingame_cards
@@ -16,6 +18,8 @@ class Gameboard < ApplicationRecord
     update(current_player: current_player, current_state: 'ingame')
     Centercard.create!(gameboard_id: gameboard_id)
     Graveyard.create!(gameboard_id: gameboard_id)
+    Playerinterceptcard.create!(gameboard_id: gameboard_id)
+    Interceptcard.create!(gameboard_id: gameboard_id)
 
     players.each do |player|
       Handcard.find_or_create_by!(player_id: player.id) # unless player.handcard
@@ -204,7 +208,7 @@ class Gameboard < ApplicationRecord
       playeratkpoints = monstercards1 + monstercards2 + monstercards3 + player.level
       
 
-      ## monsteratk points get set to zero if cards.first is nil => no centercard
+      ## monsteratk points get set to 0 if cards.first is nil => no centercard
       monsteratkpts = gameboard.centercard.cards.first&.atk_points || 0
 
       playerwin = playeratkpoints > monsteratkpts
