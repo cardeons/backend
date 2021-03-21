@@ -52,6 +52,6 @@ RSpec.describe Interceptcard, type: :model do
     # get a  monster to buff
     Gameboard.draw_door_card(gameboards(:gameboardFourPlayers))
 
-    expect { gameboards(:gameboardFourPlayers).interceptcard.add_card_with_ingamedeck_id(ingamedeck_card.id) }.to change { gameboards(:gameboardFourPlayers).monster_atk }
+    expect { gameboards(:gameboardFourPlayers).interceptcard.add_card_with_ingamedeck_id(ingamedeck_card.id) }.to(change { gameboards(:gameboardFourPlayers).monster_atk })
   end
 end
