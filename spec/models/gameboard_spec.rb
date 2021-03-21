@@ -158,22 +158,33 @@ RSpec.describe Gameboard, type: :model do
   it 'current centercards get thrown to graveyard' do
     gameboards(:gameboardFourPlayers).initialize_game_board
     gameboards(:gameboardFourPlayers).players.each(&:init_player)
-    old_centercard_id = Ingamedeck.where('gameboard_id = ?', gameboards(:gameboardFourPlayers).id).where(cardable_type: 'Centercard').first.id
 
+    #draw new centercard
+    Gameboard.draw_door_card(gameboards(:gameboardFourPlayers))
+    
+
+    previous_centercard = gameboards(:gameboardFourPlayers).centercard.ingamedecks.first
+    expect(previous_centercard.cardable_type).to eql("Centercard")
+
+    # Draw another card now the old centercards should be moved to the graveyard
     Gameboard.draw_door_card(gameboards(:gameboardFourPlayers))
 
-    expect(Ingamedeck.find(old_centercard_id).cardable_type).to eql('Graveyard')
-    expect(Ingamedeck.where('gameboard_id = ?', gameboards(:gameboardFourPlayers).id).where(cardable_type: 'Centercard').length).to eql(1)
+
+    # old card should now be moved to the graveyard
+    expect(previous_centercard.reload.cardable_type).to eql('Graveyard')
+    expect(gameboards(:gameboardFourPlayers).centercard.ingamedecks.length).to eql(1)
   end
 
   it 'gets new centercard' do
     gameboards(:gameboardFourPlayers).initialize_game_board
     gameboards(:gameboardFourPlayers).players.each(&:init_player)
-    old_centercard_id = Ingamedeck.where('gameboard_id = ?', gameboards(:gameboardFourPlayers).id).where(cardable_type: 'Centercard').first.id
+    
+    #create a previous centercard
+    prev_centercard = gameboards(:gameboardFourPlayers).centercard.ingamedecks.create!(card_id: 3, gameboard: gameboards(:gameboardFourPlayers))
 
     Gameboard.draw_door_card(gameboards(:gameboardFourPlayers))
 
-    expect(gameboards(:gameboardFourPlayers).centercard).to_not eql(old_centercard_id)
+    expect(gameboards(:gameboardFourPlayers).centercard).to_not eql(prev_centercard)
   end
 
   it 'flee returns right value in gameboard if it is successful or not' do
@@ -190,6 +201,7 @@ RSpec.describe Gameboard, type: :model do
   it 'attack' do
     gameboards(:gameboardFourPlayers).initialize_game_board
     gameboards(:gameboardFourPlayers).players.each(&:init_player)
+    Gameboard.draw_door_card(gameboards(:gameboardFourPlayers))
 
     playerwin = Gameboard.attack(gameboards(:gameboardFourPlayers))
 
