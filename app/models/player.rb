@@ -9,6 +9,7 @@ class Player < ApplicationRecord
   has_one :monsterthree, dependent: :destroy
   has_one :playercurse, dependent: :destroy
   belongs_to :user
+  validates_uniqueness_of :user_id
 
   def init_player(params = {})
     Inventory.find_or_create_by!(player: self)
