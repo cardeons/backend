@@ -169,15 +169,14 @@ class Gameboard < ApplicationRecord
 
     new_center = Centercard.find_by('gameboard_id = ?', gameboard.id)
     new_treasure = Card.find_by('id = ?', randomcard).rewards_treasure
-    
 
     gameboard.update(centercard: new_center, rewards_treasure: new_treasure)	
-		
-	  attack_obj = attack(gameboard.reload)	
-		
-	  gameboard.update(success: attack_obj[:result], player_atk: attack_obj[:playeratk], monster_atk: attack_obj[:monsteratk])	
-		
-	  gameboard.centercard.card.title
+
+    attack_obj = attack(gameboard.reload)	
+
+    gameboard.update(success: attack_obj[:result], player_atk: attack_obj[:playeratk], monster_atk: attack_obj[:monsteratk])	
+
+    gameboard.centercard.card.title
   end
 
   def self.flee(gameboard)
@@ -197,10 +196,10 @@ class Gameboard < ApplicationRecord
         value: roll
       }
     end
-    
+
     # TODO: add bad things if flee does not succeed	
-	  get_next_player(gameboard)	
-	
+    get_next_player(gameboard)	
+
     output
   end
 
@@ -221,7 +220,7 @@ class Gameboard < ApplicationRecord
       playeratkpoints = monstercards1 + monstercards2 + monstercards3 + player.level
 
       playeratkpoints += gameboard.playerinterceptcard.cards.sum(:atk_points)
-      
+
       ## monsteratk points get set to 0 if cards.first is nil => no centercard
       monsteratkpts = gameboard.centercard.card&.atk_points || 0
 

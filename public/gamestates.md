@@ -218,7 +218,7 @@ Gameboard Channel response
    { 
      player_id: 1,
      player_name: "gustav"
-    helping_shared_rewards: 1,
+     helping_shared_rewards: 1,
     }  
 }
 

@@ -163,6 +163,27 @@ class GameChannel < ApplicationCable::Channel
     broadcast_to(@gameboard, { type: BOARD_UPDATE, params: Gameboard.broadcast_game_board(@gameboard) })
   end
 
+  def help_call(params)
+    helping_player = Player.find_by('id = ?', params['helping_player_id'])
+    helping_shared_reward = params['helping_shared_rewards']
+    helping_player_id = helping_player.id
+
+    @gameboard.update(shared_reward: helping_shared_reward, asked_help: true, helping_player: helping_player_id)
+
+    PlayerChannel.broadcast_to(current_user, { type: 'ASK_FOR_HELP', params: { player_id: helping_player_id, player_name: helping_player.name, helping_shared_rewards: helping_shared_reward } })
+  end
+
+  def answer_help_call(params)
+    if params['help'] && @gameboard.helping_player
+      helping_player_id = @gameboard.helping_player
+      helping_player = Player.find_by('id = ?', helping_player_id)
+
+      @gameboard.update(player_atk: @gameboard.player_atk + helping_player.attack)
+    end
+
+    broadcast_to(@gameboard, { type: BOARD_UPDATE, params: Gameboard.broadcast_game_board(@gameboard) })
+  end
+
   # def play_card(params)
   #   # add actions!
 
