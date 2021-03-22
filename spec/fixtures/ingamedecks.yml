@@ -18,13 +18,13 @@ four:
   gameboard: gameboardFourPlayers
   cardable: three (Monstercard)
 
-five:
-  card_id: 5
-  gameboard: gameboardFourPlayers
-  cardable: three (Centercard)
+# five:
+#   card_id: 5
+#   gameboard: gameboardFourPlayers
+#   cardable: three (Centercard)
 
-six:
-  card_id: 3
-  gameboard: gameboardFourPlayers
-  cardable: three (Centercard)
+# six:
+#   card_id: 3
+#   gameboard: gameboardFourPlayers
+#   cardable: three (Centercard)
 

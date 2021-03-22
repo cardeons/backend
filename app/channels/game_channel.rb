@@ -34,13 +34,14 @@ class GameChannel < ApplicationCable::Channel
   end
 
   def play_monster(params)
-
     # move all centercard to graveyard
     centercard = Centercard.find_by('gameboard_id = ?', @gameboard.id)
 
-    centercard.ingamedecks.each do |ingamedeck|
-      ingamedeck.update(cardable: Graveyard.find_by('gameboard_id = ?', @gameboard.id))
-    end
+    # centercard.ingamedecks.each do |ingamedeck|
+    #   ingamedeck.update(cardable: Graveyard.find_by('gameboard_id = ?', @gameboard.id))
+    # end
+
+    centercard.ingamedeck.update(cardable: Graveyard.find_by('gameboard_id = ?', @gameboard.id))
 
     # update handcard to centercard
     Ingamedeck.find_by('id=?', params['unique_card_id']).update(cardable: Centercard.find_by('gameboard_id = ?', @gameboard.id))
@@ -50,11 +51,13 @@ class GameChannel < ApplicationCable::Channel
     @gameboard.update(centercard: centercard, monster_atk: monsteratk)
 
     result = Gameboard.attack(@gameboard)
+    @gameboard.update(success: result[:result], player_atk: result[:playeratk], monster_atk: result[:monsteratk])
     updated_board = Gameboard.broadcast_game_board(@gameboard)
     broadcast_to(@gameboard, { type: BOARD_UPDATE, params: updated_board })
-    name = @gameboard.centercard.cards.first.title
-    player = current_user.player
+    name = @gameboard.centercard.card.title
+    player = Player.find_by('user_id = ?', current_user.id)
     msg = "#{player.name} has played #{name} from handcards!"
+
     broadcast_to(@gameboard, { type: GAME_LOG, params: { date: Time.new, message: msg } })
     PlayerChannel.broadcast_to(current_user, { type: 'HANDCARD_UPDATE', params: { handcards: Gameboard.render_cards_array(player.handcard.ingamedecks) } })
   end
@@ -81,16 +84,72 @@ class GameChannel < ApplicationCable::Channel
       msg = "#{player.name} has equiped a monster!"
       broadcast_to(@gameboard, { type: GAME_LOG, params: { date: Time.new, message: msg } })
     end
+
     PlayerChannel.broadcast_to(current_user, { type: 'HANDCARD_UPDATE', params: { handcards: Gameboard.render_cards_array(player.handcard.ingamedecks) } })
   end
 
   def attack
     result = Gameboard.attack(@gameboard)
-    updated_board = Gameboard.broadcast_game_board(@gameboard)
-    broadcast_to(@gameboard, { type: BOARD_UPDATE, params: updated_board })
 
-    msg = "#{Player.find_by('gameboard_id = ?', @gameboard.id).name} has drawn #{name}"
-    broadcast_to(@gameboard, { type: GAME_LOG, params: { date: Time.new, message: msg } })
+    if result[:result]
+      player = Player.find_by('user_id = ?', current_user.id)
+      current_player_treasure = @gameboard.rewards_treasure - @gameboard.shared_reward
+      Handcard.draw_handcards(@gameboard.current_player, @gameboard, current_player_treasure)
+      # TODO: add helping player to gameboard? give treasures to helping player
+      # Handcard.draw_handcards(@gameboard.current_player.id, @gameboard, current_player_treasure)
+      @gameboard.centercard.ingamedeck.update!(cardable: @gameboard.graveyard) if @gameboard.centercard.ingamedeck
+      msg = "#{current_user.player.name} has killed #{@gameboard.centercard.card.title}"
+      broadcast_to(@gameboard, { type: GAME_LOG, params: { date: Time.new, message: msg } })
+
+      PlayerChannel.broadcast_to(current_user.reload, { type: 'HANDCARD_UPDATE', params: { handcards: Gameboard.render_cards_array(player.handcard.ingamedecks) } })
+
+      Gameboard.get_next_player(@gameboard)
+      broadcast_to(@gameboard, { type: BOARD_UPDATE, params: Gameboard.broadcast_game_board(@gameboard) })
+    end
+
+    broadcast_to(@gameboard, { type: 'ERROR', params: { message: "Playerattack too low" } }) unless result[:result]
+
+
+    # updated_board = Gameboard.broadcast_game_board(@gameboard)
+    # broadcast_to(@gameboard, { type: BOARD_UPDATE, params: updated_board })
+
+    # msg = "#{Player.find_by('gameboard_id = ?', @gameboard.id).name} has drawn #{name}"
+    # broadcast_to(@gameboard, { type: GAME_LOG, params: { date: Time.new, message: msg } })
+  end
+
+  def intercept(params)
+    # params={
+    # action: "intercept",
+    # unique_card_id: 1,
+    # to: 'center_card' | 'current_player'
+    # }
+
+    unique_card_id = params['unique_card_id']
+    to = params['to']
+
+    # return if player does not own this card
+    ingame_card = check_if_player_owns_card(unique_card_id) || return
+
+    if ingame_card.card.type != 'Buffcard'
+      # only buffcards are allowed alteast i think
+      PlayerChannel.broadcast_error(current_user, 'This card cannot be used to intercept')
+      return
+    end
+
+    @gameboard.reload
+    case to
+    when 'center_card'
+      @gameboard.interceptcard.add_card_with_ingamedeck_id(unique_card_id)
+
+    when 'fighting_player'
+      # buff player
+      @gameboard.playerinterceptcard.add_card_with_ingamedeck_id(unique_card_id)
+    end
+
+    # update this players handcards
+    PlayerChannel.broadcast_to(current_user, { type: 'HANDCARD_UPDATE', params: { handcards: Gameboard.render_cards_array(current_user.player.handcard.ingamedecks.reload) } })
+    # update board
+    broadcast_to(@gameboard, { type: BOARD_UPDATE, params: Gameboard.broadcast_game_board(@gameboard) })
   end
 
   # def play_card(params)
@@ -173,9 +232,19 @@ class GameChannel < ApplicationCable::Channel
 
     gameboard = Gameboard.find(@gameboard.id)
 
+    # get updatet result of attack
+    attack_obj = Gameboard.attack(gameboard)
+    gameboard.update(success: attack_obj[:result], player_atk: attack_obj[:playeratk], monster_atk: attack_obj[:monsteratk])
+
     PlayerChannel.broadcast_to(current_user, { type: 'HANDCARD_UPDATE', params: { handcards: Gameboard.render_cards_array(player.handcard.ingamedecks) } })
 
     broadcast_to(@gameboard, { type: BOARD_UPDATE, params: Gameboard.broadcast_game_board(gameboard) })
+  end
+
+  def develop_add_buff_card
+    card = Buffcard.all.first
+    current_user.player.handcard.ingamedecks.create(card: card, gameboard: current_user.player.gameboard)
+    PlayerChannel.broadcast_to(current_user, { type: 'HANDCARD_UPDATE', params: { handcards: Gameboard.render_cards_array(current_user.player.handcard.ingamedecks) } })
   end
 
   def unsubscribed
@@ -186,5 +255,18 @@ class GameChannel < ApplicationCable::Channel
 
   def deliver_error_message(_e)
     # broadcast_to(@gameboard, _e)
+  end
+
+  def check_if_player_owns_card(ingame_deck_id)
+    card = current_user.player.handcard.ingamedecks.find_by('id=?', ingame_deck_id)
+    # broadcast error to player channel if he does not own this ingamedeck_id
+    if card
+      # this method returns the card if player owns card
+      card
+    else
+      PlayerChannel.broadcast_error(current_user, "You do not own this card #{ingame_deck_id}")
+      # this method returns false if player does not own card
+      false
+    end
   end
 end

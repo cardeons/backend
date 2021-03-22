@@ -12,4 +12,8 @@ class PlayerChannel < ApplicationCable::Channel
   def unsubscribed
     # Any cleanup needed when channel is unsubscribed
   end
+
+  def self.broadcast_error(current_user, message)
+    broadcast_to(current_user, { type: 'ERROR', params: { message: message } })
+  end
 end

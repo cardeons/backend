@@ -91,17 +91,19 @@ RSpec.describe Gameboard, type: :model do
   it 'render gameboard' do
     gameboards(:gameboardFourPlayers).initialize_game_board
 
-    centercard = (Gameboard.render_card_from_id(gameboards(:gameboardFourPlayers).centercard.ingamedecks.first.id) if gameboards(:gameboardFourPlayers).centercard.ingamedecks.any?)
+    centercard = (Gameboard.render_card_from_id(gameboards(:gameboardFourPlayers).centercard.ingamedeck.id) if gameboards(:gameboardFourPlayers).centercard.ingamedeck)
     gameboard_obj = {
       gameboard_id: gameboards(:gameboardFourPlayers).id,
       current_player: gameboards(:gameboardFourPlayers).current_player,
       center_card: centercard,
       interceptcards: [],
+      player_interceptcards: [],
       player_atk: gameboards(:gameboardFourPlayers).player_atk,
       monster_atk: gameboards(:gameboardFourPlayers).monster_atk,
       success: gameboards(:gameboardFourPlayers).success,
       can_flee: gameboards(:gameboardFourPlayers).can_flee,
-      rewards_treasure: gameboards(:gameboardFourPlayers).rewards_treasure
+      rewards_treasure: gameboards(:gameboardFourPlayers).rewards_treasure,
+      graveyard: [],
     }
     starting = Process.clock_gettime(Process::CLOCK_MONOTONIC)
 
@@ -158,22 +160,35 @@ RSpec.describe Gameboard, type: :model do
   it 'current centercards get thrown to graveyard' do
     gameboards(:gameboardFourPlayers).initialize_game_board
     gameboards(:gameboardFourPlayers).players.each(&:init_player)
-    old_centercard_id = Ingamedeck.where('gameboard_id = ?', gameboards(:gameboardFourPlayers).id).where(cardable_type: 'Centercard').first.id
 
+    # draw new centercard
     Gameboard.draw_door_card(gameboards(:gameboardFourPlayers))
 
-    expect(Ingamedeck.find(old_centercard_id).cardable_type).to eql('Graveyard')
-    expect(Ingamedeck.where('gameboard_id = ?', gameboards(:gameboardFourPlayers).id).where(cardable_type: 'Centercard').length).to eql(1)
+    previous_centercard = gameboards(:gameboardFourPlayers).centercard.ingamedeck
+    expect(previous_centercard.cardable_type).to eql('Centercard')
+
+    # Draw another card now the old centercards should be moved to the graveyard
+    Gameboard.draw_door_card(gameboards(:gameboardFourPlayers))
+
+    # old card should now be moved to the graveyard
+    expect(previous_centercard.reload.cardable_type).to eql('Graveyard')
+    expect(gameboards(:gameboardFourPlayers).centercard.ingamedeck).to be_truthy
   end
 
   it 'gets new centercard' do
     gameboards(:gameboardFourPlayers).initialize_game_board
     gameboards(:gameboardFourPlayers).players.each(&:init_player)
-    old_centercard_id = Ingamedeck.where('gameboard_id = ?', gameboards(:gameboardFourPlayers).id).where(cardable_type: 'Centercard').first.id
-
+    
     Gameboard.draw_door_card(gameboards(:gameboardFourPlayers))
 
-    expect(gameboards(:gameboardFourPlayers).centercard).to_not eql(old_centercard_id)
+    
+    # create a previous centercard
+    previous_centercard = gameboards(:gameboardFourPlayers).centercard.ingamedeck
+    Gameboard.draw_door_card(gameboards(:gameboardFourPlayers))
+    
+    new_centercard = gameboards(:gameboardFourPlayers).centercard.ingamedeck
+
+    expect(previous_centercard.reload.id).to_not eql(new_centercard.id)
   end
 
   it 'flee returns right value in gameboard if it is successful or not' do
@@ -190,6 +205,7 @@ RSpec.describe Gameboard, type: :model do
   it 'attack' do
     gameboards(:gameboardFourPlayers).initialize_game_board
     gameboards(:gameboardFourPlayers).players.each(&:init_player)
+    Gameboard.draw_door_card(gameboards(:gameboardFourPlayers))
 
     playerwin = Gameboard.attack(gameboards(:gameboardFourPlayers))
 

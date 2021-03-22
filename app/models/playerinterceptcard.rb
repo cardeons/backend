@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class Interceptcard < ApplicationRecord
+class Playerinterceptcard < ApplicationRecord
   belongs_to :gameboard
   validates_uniqueness_of :gameboard_id
   has_many :ingamedecks, as: :cardable
