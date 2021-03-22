@@ -97,11 +97,13 @@ RSpec.describe Gameboard, type: :model do
       current_player: gameboards(:gameboardFourPlayers).current_player,
       center_card: centercard,
       interceptcards: [],
+      player_interceptcards: [],
       player_atk: gameboards(:gameboardFourPlayers).player_atk,
       monster_atk: gameboards(:gameboardFourPlayers).monster_atk,
       success: gameboards(:gameboardFourPlayers).success,
       can_flee: gameboards(:gameboardFourPlayers).can_flee,
-      rewards_treasure: gameboards(:gameboardFourPlayers).rewards_treasure
+      rewards_treasure: gameboards(:gameboardFourPlayers).rewards_treasure,
+      graveyard: [],
     }
     starting = Process.clock_gettime(Process::CLOCK_MONOTONIC)
 
@@ -159,34 +161,32 @@ RSpec.describe Gameboard, type: :model do
     gameboards(:gameboardFourPlayers).initialize_game_board
     gameboards(:gameboardFourPlayers).players.each(&:init_player)
 
-    #draw new centercard
+    # draw new centercard
     Gameboard.draw_door_card(gameboards(:gameboardFourPlayers))
-    
 
     previous_centercard = gameboards(:gameboardFourPlayers).centercard.ingamedeck
-    expect(previous_centercard.cardable_type).to eql("Centercard")
+    expect(previous_centercard.cardable_type).to eql('Centercard')
 
     # Draw another card now the old centercards should be moved to the graveyard
     Gameboard.draw_door_card(gameboards(:gameboardFourPlayers))
 
-
     # old card should now be moved to the graveyard
     expect(previous_centercard.reload.cardable_type).to eql('Graveyard')
-    # expect(gameboards(:gameboardFourPlayers).centercard.ingamedecks.length).to eql(1)
+    expect(gameboards(:gameboardFourPlayers).centercard.ingamedeck).to be_truthy
   end
 
   it 'gets new centercard' do
     gameboards(:gameboardFourPlayers).initialize_game_board
     gameboards(:gameboardFourPlayers).players.each(&:init_player)
     
-    #create a previous centercard
     Gameboard.draw_door_card(gameboards(:gameboardFourPlayers))
+
+    
+    # create a previous centercard
     previous_centercard = gameboards(:gameboardFourPlayers).centercard.ingamedeck
-
-    # Draw another card now the old centercards should be moved to the graveyard
     Gameboard.draw_door_card(gameboards(:gameboardFourPlayers))
+    
     new_centercard = gameboards(:gameboardFourPlayers).centercard.ingamedeck
-
 
     expect(previous_centercard.reload.id).to_not eql(new_centercard.id)
   end

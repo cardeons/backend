@@ -6,6 +6,8 @@ class Gameboard < ApplicationRecord
   has_one :player, foreign_key: 'current_player'
   has_one :centercard, dependent: :destroy
   has_one :graveyard, dependent: :destroy
+  has_one :interceptcard, dependent: :destroy
+  has_one :playerinterceptcard, dependent: :destroy
   enum current_state: %i[lobby ingame]
 
   # has_many :cards, through: :ingame_cards
@@ -16,6 +18,8 @@ class Gameboard < ApplicationRecord
     update(current_player: current_player, current_state: 'ingame')
     Centercard.create!(gameboard_id: gameboard_id)
     Graveyard.create!(gameboard_id: gameboard_id)
+    Playerinterceptcard.create!(gameboard_id: gameboard_id)
+    Interceptcard.create!(gameboard_id: gameboard_id)
 
     players.each do |player|
       Handcard.find_or_create_by!(player_id: player.id) # unless player.handcard
@@ -43,9 +47,13 @@ class Gameboard < ApplicationRecord
   def self.render_cards_array(cards)
     card_array = []
 
+    # return nil if cards are empty
+    return nil unless cards
+
     cards.each do |card|
       card_array.push({ unique_card_id: card.id, card_id: card.card_id })
     end
+
     card_array
   end
 
@@ -96,13 +104,14 @@ class Gameboard < ApplicationRecord
   def self.render_gameboard(gameboard)
     # TODO: check if this selects the right card
     gameboard = gameboard.reload
+    
     centercard = (render_card_from_id(gameboard.centercard.ingamedeck.id) if gameboard.centercard.ingamedeck)
     {
       gameboard_id: gameboard.id,
       current_player: gameboard.current_player,
       center_card: centercard,
-      # TODO: intercept cards are missing
-      interceptcards: [],
+      interceptcards: render_cards_array(gameboard.interceptcard&.ingamedecks),
+      player_interceptcards: render_cards_array(gameboard.playerinterceptcard&.ingamedecks),
       player_atk: gameboard.player_atk,
       monster_atk: gameboard.monster_atk,
       success: gameboard.success,
@@ -152,7 +161,7 @@ class Gameboard < ApplicationRecord
     # centercard.ingamedecks.each do |ingamedeck|
     #   ingamedeck.update!(cardable: gameboard.graveyard)
     # end
-
+    
     centercard.ingamedeck.update!(cardable: gameboard.graveyard) if centercard.ingamedeck
 
     # centercard
@@ -160,14 +169,15 @@ class Gameboard < ApplicationRecord
 
     new_center = Centercard.find_by('gameboard_id = ?', gameboard.id)
     new_treasure = Card.find_by('id = ?', randomcard).rewards_treasure
+    
 
-    gameboard.update(centercard: new_center, rewards_treasure: new_treasure)
-
-    attack_obj = attack(gameboard.reload)
-
-    gameboard.update(success: attack_obj[:result], player_atk: attack_obj[:playeratk], monster_atk: attack_obj[:monsteratk])
-
-    gameboard.centercard.card.title
+    gameboard.update(centercard: new_center, rewards_treasure: new_treasure)	
+		
+	  attack_obj = attack(gameboard.reload)	
+		
+	  gameboard.update(success: attack_obj[:result], player_atk: attack_obj[:playeratk], monster_atk: attack_obj[:monsteratk])	
+		
+	  gameboard.centercard.card.title
   end
 
   def self.flee(gameboard)
@@ -187,10 +197,10 @@ class Gameboard < ApplicationRecord
         value: roll
       }
     end
-
-    # TODO: add bad things if flee does not succeed
-    get_next_player(gameboard)
-
+    
+    # TODO: add bad things if flee does not succeed	
+	  get_next_player(gameboard)	
+	
     output
   end
 
@@ -210,8 +220,13 @@ class Gameboard < ApplicationRecord
 
       playeratkpoints = monstercards1 + monstercards2 + monstercards3 + player.level
 
-      ## monsteratk points get set to zero if cards.first is nil => no centercard
-      monsteratkpts = gameboard.reload.centercard.card&.atk_points || 0
+      playeratkpoints += gameboard.playerinterceptcard.cards.sum(:atk_points)
+      
+      ## monsteratk points get set to 0 if cards.first is nil => no centercard
+      monsteratkpts = gameboard.centercard.card&.atk_points || 0
+
+      # #add intercept buffs
+      monsteratkpts += gameboard.interceptcard.cards.sum(:atk_points)
 
       playerwin = playeratkpoints > monsteratkpts
 
