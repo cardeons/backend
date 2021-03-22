@@ -99,11 +99,13 @@ class GameChannel < ApplicationCable::Channel
       # TODO: add helping player to gameboard? give treasures to helping player
       # Handcard.draw_handcards(@gameboard.current_player.id, @gameboard, current_player_treasure)
       @gameboard.centercard.ingamedeck.update!(cardable: @gameboard.graveyard) if @gameboard.centercard.ingamedeck
-      broadcast_to(@gameboard, { type: BOARD_UPDATE, params: Gameboard.broadcast_game_board(@gameboard) })
       msg = "#{current_user.player.name} has killed #{@gameboard.centercard.card.title}"
       broadcast_to(@gameboard, { type: GAME_LOG, params: { date: Time.new, message: msg } })
 
       PlayerChannel.broadcast_to(current_user.reload, { type: 'HANDCARD_UPDATE', params: { handcards: Gameboard.render_cards_array(player.handcard.ingamedecks) } })
+
+      Gameboard.get_next_player(@gameboard)
+      broadcast_to(@gameboard, { type: BOARD_UPDATE, params: Gameboard.broadcast_game_board(@gameboard) })
     end
 
     broadcast_to(@gameboard, { type: 'ERROR', params: { message: "Playerattack too low" } }) unless result[:result]
