@@ -246,3 +246,12 @@ Gameboard Channel response
      handcards: []
     }  
 }
+
+#GEWINNEN
+{ 
+  type: 'WIN', 
+  params: 
+  { 
+    player: player.name 
+  }
+}

@@ -95,7 +95,13 @@ class GameChannel < ApplicationCable::Channel
     if result[:result]
       player = Player.find_by('user_id = ?', current_user.id)
 
-      player.update_attribute(:level, player.level + 1)
+      player_level = player.level
+
+      if player_level == 4
+        broadcast_to(@gameboard, { type: 'WIN', params: { player: player.name } })
+      end
+      player.update_attribute(:level, player_level + 1)
+
       current_player_treasure = @gameboard.rewards_treasure - @gameboard.shared_reward
       Handcard.draw_handcards(@gameboard.current_player, @gameboard, current_player_treasure)
       # TODO: add helping player to gameboard? give treasures to helping player
