@@ -19,110 +19,593 @@ gameboard_test = Gameboard.create!(current_state: 'lobby', player_atk: 5)
 # player6 = Player.create!(name: 'Thomas', gameboard: gameboard_test, user: u2)
 # player7 = Player.create!(name: 'Lorenz', gameboard: gameboard_test, user: u4)
 
-bear = Monstercard.create!(
+
+## Monstercards
+
+##bear
+bear_fire = Monstercard.create!(
   title: 'Sir Bear',
-  description: '<p>A very serious bear with a beard.</p>',
-  image: '/monster/bear.png',
-  action: 'lose_item_head',
+  description: '<p><b>*slaps you with his glove*</b> I challenge you to a duel!</p>',
+  image: '/monster/Baer_Orange.png',
+  action: 'lose_item_hand',
   draw_chance: 10,
-  level: 3,
-  element: 'earth',
-  bad_things: '<p><b>Bad things:</b>Oh no, you disrespected the Sir!</p><p> Lose your headpiece.</p>',
+  level: 5,
+  element: 'fire',
+  bad_things: '<p><b>Bad things:</b>Oh no, you disrespected the Sir!</p><p> Lose one hand thing.</p>',
   rewards_treasure: 1,
-  good_against: 'fire',
-  bad_against: 'air',
-  good_against_value: 3,
-  bad_against_value: 1,
-  atk_points: 6,
+  good_against: '',
+  bad_against: '',
+  good_against_value: 0,
+  bad_against_value: 0,
+  atk_points: 5,
   level_amount: 1
 )
 
-startmonster1 = Monstercard.create!(
-  title: 'M 1',
-  description: '<p>starting</p>',
-  image: '/monster/bear.png',
-  action: 'lose_item_head',
-  draw_chance: 33,
-  level: 1,
-  element: 'fire',
-  bad_things: '<p><b>Bad things:</b>Oh no, you disrespected the Sir!</p><p> Lose your headpiece.</p>',
-  rewards_treasure: 1,
-  good_against: 'air',
-  bad_against: 'water',
-  good_against_value: 3,
-  bad_against_value: 1,
-  atk_points: 6,
+bear_water = Monstercard.create!(
+  title: 'Sir Bear',
+  description: '<p><b>*slaps you with his glove*</b> I challenge you to a duel! -3 Against Hot Dog and Buffalo Wings. He is not willing to touch those.</p>',
+  image: '/monster/Baer_Dunkelblau.png',
+  action: 'lose_item_shoe',
+  draw_chance: 10,
+  level: 10,
+  element: 'water',
+  bad_things: '<p><b>Bad things:</b>Oh no, you disrespected the Sir!</p><p> Lose your shoes.</p>',
+  rewards_treasure: 3,
+  good_against: '',
+  bad_against: '',
+  good_against_value: 0,
+  bad_against_value: 3,
+  atk_points: 10,
   level_amount: 1
 )
-startmonster2 = Monstercard.create!(
-  title: 'M 2',
-  description: '<p>starting</p>',
-  image: '/monster/bear.png',
-  action: 'lose_item_head',
-  draw_chance: 33,
-  level: 1,
+
+bear_earth = Monstercard.create!(
+  title: 'Sir Bear',
+  description: '<p><b>*slaps you with his glove*</b> I challenge you to a duel! +2 against Water</p>',
+  image: '/monster/Baer_Gruen.png',
+  action: 'lose_item_shoe',
+  draw_chance: 10,
+  level: 7,
   element: 'earth',
-  bad_things: '<p><b>Bad things:</b>Oh no, you disrespected the Sir!</p><p> Lose your headpiece.</p>',
+  bad_things: '<p><b>Bad things:</b>Oh no, you disrespected the Sir!</p><p> Lose one hand thing.</p>',
   rewards_treasure: 1,
   good_against: 'water',
-  bad_against: 'air',
-  good_against_value: 3,
-  bad_against_value: 1,
-  atk_points: 6,
+  bad_against: '',
+  good_against_value: 2,
+  bad_against_value: 0,
+  atk_points: 7,
   level_amount: 1
 )
-startmonster3 = Monstercard.create!(
-  title: 'M 3',
-  description: '<p>starting</p>',
-  image: '/monster/bear.png',
-  action: 'lose_item_head',
-  draw_chance: 33,
-  level: 1,
-  element: 'water',
-  bad_things: '<p><b>Bad things:</b>Oh no, you disrespected the Sir!</p><p> Lose your headpiece.</p>',
+
+bear_air = Monstercard.create!(
+  title: 'Sir Bear',
+  description: '<p><b>*slaps you with his glove*</b> I challenge you to a duel!</p>',
+  image: '/monster/Baer_Hellblau.png',
+  action: 'lose_item_shoe',
+  draw_chance: 10,
+  level: 15,
+  element: 'air',
+  bad_things: '<p><b>Bad things:</b>Oh no, you disrespected the Sir!</p><p> Lose your shoes.</p>',
+  rewards_treasure: 3,
+  good_against: '',
+  bad_against: '',
+  good_against_value: 0,
+  bad_against_value: 0,
+  atk_points: 15,
+  level_amount: 1
+)
+
+# startmonster1 = Monstercard.create!(
+#   title: 'M 1',
+#   description: '<p>starting</p>',
+#   image: '/monster/bear.png',
+#   action: 'lose_item_head',
+#   draw_chance: 33,
+#   level: 1,
+#   element: 'fire',
+#   bad_things: '<p><b>Bad things:</b>Oh no, you disrespected the Sir!</p><p> Lose your headpiece.</p>',
+#   rewards_treasure: 1,
+#   good_against: 'air',
+#   bad_against: 'water',
+#   good_against_value: 3,
+#   bad_against_value: 1,
+#   atk_points: 6,
+#   level_amount: 1
+# )
+# startmonster2 = Monstercard.create!(
+#   title: 'M 2',
+#   description: '<p>starting</p>',
+#   image: '/monster/bear.png',
+#   action: 'lose_item_head',
+#   draw_chance: 33,
+#   level: 1,
+#   element: 'earth',
+#   bad_things: '<p><b>Bad things:</b>Oh no, you disrespected the Sir!</p><p> Lose your headpiece.</p>',
+#   rewards_treasure: 1,
+#   good_against: 'water',
+#   bad_against: 'air',
+#   good_against_value: 3,
+#   bad_against_value: 1,
+#   atk_points: 6,
+#   level_amount: 1
+# )
+# startmonster3 = Monstercard.create!(
+#   title: 'M 3',
+#   description: '<p>starting</p>',
+#   image: '/monster/bear.png',
+#   action: 'lose_item_head',
+#   draw_chance: 33,
+#   level: 1,
+#   element: 'water',
+#   bad_things: '<p><b>Bad things:</b>Oh no, you disrespected the Sir!</p><p> Lose your headpiece.</p>',
+#   rewards_treasure: 1,
+#   good_against: 'fire',
+#   bad_against: 'earth',
+#   good_against_value: 3,
+#   bad_against_value: 1,
+#   atk_points: 6,
+#   level_amount: 1
+# )
+
+# startmonster4 = Monstercard.create!(
+#   title: 'M 4',
+#   description: '<p>starting</p>',
+#   image: '/monster/bear.png',
+#   action: 'lose_item_head',
+#   draw_chance: 33,
+#   level: 1,
+#   element: 'air',
+#   bad_things: '<p><b>Bad things:</b>Oh no, you disrespected the Sir!</p><p> Lose your headpiece.</p>',
+#   rewards_treasure: 1,
+#   good_against: 'earth',
+#   bad_against: 'fire',
+#   good_against_value: 3,
+#   bad_against_value: 1,
+#   atk_points: 6,
+#   level_amount: 1
+# )
+
+##catfish
+catfish_fire = Monstercard.create!(
+  title: 'Catfish',
+  description: '<p>Is it a cat? Is it a fish? I don’t know! -3 Against Hot Dog</p>',
+  image: '/monster/CatFish_Orange.png',
+  action: 'random_card_lowest_level',
+  draw_chance: 5,
+  level: 7,
+  element: 'fire',
+  bad_things: '<p><b>Bad things:</b>Got catfished, really? You should know better.. Give a random card to the player with the lowest level. </p>',
   rewards_treasure: 1,
   good_against: 'fire',
   bad_against: 'earth',
-  good_against_value: 3,
-  bad_against_value: 1,
-  atk_points: 6,
+  good_against_value: 0,
+  bad_against_value: 3,
+  atk_points: 7,
   level_amount: 1
 )
 
-startmonster4 = Monstercard.create!(
-  title: 'M 4',
-  description: '<p>starting</p>',
-  image: '/monster/bear.png',
-  action: 'lose_item_head',
-  draw_chance: 33,
-  level: 1,
-  element: 'air',
-  bad_things: '<p><b>Bad things:</b>Oh no, you disrespected the Sir!</p><p> Lose your headpiece.</p>',
-  rewards_treasure: 1,
-  good_against: 'earth',
-  bad_against: 'fire',
-  good_against_value: 3,
-  bad_against_value: 1,
-  atk_points: 6,
-  level_amount: 1
-)
-
-catfish = Monstercard.create!(
+catfish_earth = Monstercard.create!(
   title: 'Catfish',
-  description: '<p>HA! You got catfished.</p>',
-  image: '/monster/catfish.png',
+  description: '<p>Is it a cat? Is it a fish? I don’t know! -3 Against Hot Dog</p>',
+  image: '/monster/CatFish_Gruen.png',
+  action: 'lose_one_card',
+  draw_chance: 5,
+  level: 10,
+  element: 'earth',
+  bad_things: '<p><b>Bad things:</b>Got catfished, really? You should know better.. Lose one card. </p>',
+  rewards_treasure: 2,
+  good_against: '',
+  bad_against: '',
+  good_against_value: 0,
+  bad_against_value: 3,
+  atk_points: 10,
+  level_amount: 1
+)
+
+catfish_water = Monstercard.create!(
+  title: 'Catfish',
+  description: '<p>I don’t think cats like water so it’s probably a fish? +3 Against Fire Hot Dog</p>',
+  image: '/monster/CatFish_Dunkelblau.png',
+  action: 'random_card_lowest_level',
+  draw_chance: 5,
+  level: 4,
+  element: 'water',
+  bad_things: '<p><b>Bad things:</b>Got catfished, really? You should know better.. Give a random card to the player with the lowest level. </p>',
+  rewards_treasure: 1,
+  good_against: '',
+  bad_against: '',
+  good_against_value: 3,
+  bad_against_value: 0,
+  atk_points: 4,
+  level_amount: 1
+)
+
+catfish_air = Monstercard.create!(
+  title: 'Catfish',
+  description: '<p>Is it a cat? Is it a fish? Love is not in the air! -3 Against Hot Dog</p>',
+  image: '/monster/CatFish_Hellblau.png',
+  action: 'lose_level',
+  draw_chance: 5,
+  level: 18,
+  element: 'air',
+  bad_things: '<p><b>Bad things:</b>Got catfished, really? You should know better.. Give a random card to the player with the lowest level. </p>',
+  rewards_treasure: 3,
+  good_against: '',
+  bad_against: '',
+  good_against_value: 0,
+  bad_against_value: 3,
+  atk_points: 18,
+  level_amount: 1
+)
+
+
+##Pit-Bull
+pitbull_water = Monstercard.create!(
+  title: 'Pit-Bull',
+  description: '<p>Only listens to Mister Worldwide. +3 against Fire Monster!</p>',
+  image: '/monster/PitBull_Dunkelblau.png',
+  action: 'lose_item_head',
+  draw_chance: 5,
+  level: 5,
+  element: 'water',
+  bad_things: '<p><b>Bad things:</b>Picture that with a Kodak: Lose some cool sunglasses or your headpiece!</p>',
+  rewards_treasure: 1,
+  good_against: 'fire',
+  bad_against: '',
+  good_against_value: 3,
+  bad_against_value: 0,
+  atk_points: 5,
+  level_amount: 1
+)
+
+pitbull_earth = Monstercard.create!(
+  title: 'Pit-Bull',
+  description: '<p>Only listens to Mister Worldwide. +1 against Water Monster!</p>',
+  image: '/monster/PitBull_Gruen.png',
+  action: 'lose_item_head',
+  draw_chance: 5,
+  level: 3,
+  element: 'earth',
+  bad_things: '<p><b>Bad things:</b>Picture that with a Kodak: Lose some cool sunglasses or your headpiece!</p>',
+  rewards_treasure: 1,
+  good_against: 'water',
+  bad_against: '',
+  good_against_value: 1,
+  bad_against_value: 0,
+  atk_points: 3,
+  level_amount: 1
+)
+
+pitbull_fire = Monstercard.create!(
+  title: 'Pit-Bull',
+  description: '<p>Only listens to Mister Worldwide. +5 against Air Monster!</p>',
+  image: '/monster/PitBull_Orange.png',
+  action: 'lose_item_head',
+  draw_chance: 5,
+  level: 8,
+  element: 'fire',
+  bad_things: '<p><b>Bad things:</b>Picture that with a Kodak: Lose some cool sunglasses or your headpiece!</p>',
+  rewards_treasure: 2,
+  good_against: 'air',
+  bad_against: '',
+  good_against_value: 5,
+  bad_against_value: 0,
+  atk_points: 8,
+  level_amount: 1
+)
+
+pitbull_air = Monstercard.create!(
+  title: 'Pit-Bull',
+  description: '<p>Only listens to Mister Worldwide. +7 against Earth Monster!</p>',
+  image: '/monster/PitBull_Hellblau.png',
+  action: 'lose_item_head',
+  draw_chance: 5,
+  level: 12,
+  element: 'air',
+  bad_things: '<p><b>Bad things:</b>Picture that with a Kodak: Lose some cool sunglasses or your headpiece!</p>',
+  rewards_treasure: 3,
+  good_against: '',
+  bad_against: '',
+  good_against_value: 0,
+  bad_against_value: 3,
+  atk_points: 12,
+  level_amount: 1
+)
+
+
+##Buffalo Wings
+buffalowings_water = Monstercard.create!(
+  title: 'Buffalo Wings',
+  description: '<p>Buffalo wings are an all time favorite, they’re perfect for parties!</p>',
+  image: '/monster/BuffaloWings_Dunkelblau.png',
+  action: 'lose_level',
+  draw_chance: 5,
+  level: 3,
+  element: 'water',
+  bad_things: '<p><b>Bad things:</b>Too hot to handle! Lose a Level!</p>',
+  rewards_treasure: 1,
+  good_against: '',
+  bad_against: '',
+  good_against_value: 0,
+  bad_against_value: 0,
+  atk_points: 3,
+  level_amount: 1
+)
+
+buffalowings_earth = Monstercard.create!(
+  title: 'Buffalo Wings',
+  description: '<p>Buffalo wings are an all time favorite, they’re perfect for parties! +3 Against Fire Monster!</p>',
+  image: '/monster/BuffaloWings_Gruen.png',
+  action: 'lose_level',
+  draw_chance: 5,
+  level: 9,
+  element: 'earth',
+  bad_things: '<p><b>Bad things:</b>Too hot to handle! Lose a Level!</p>',
+  rewards_treasure: 2,
+  good_against: 'fire',
+  bad_against: '',
+  good_against_value: 3,
+  bad_against_value: 0,
+  atk_points: 9,
+  level_amount: 1
+)
+
+buffalowings_air = Monstercard.create!(
+  title: 'Buffalo Wings',
+  description: '<p>Buffalo wings are an all time favorite, they’re perfect for parties! -2 Against Fire Monster!</p>',
+  image: '/monster/BuffaloWings_Hellblau.png',
+  action: 'lose_level',
+  draw_chance: 5,
+  level: 5,
+  element: 'air',
+  bad_things: '<p><b>Bad things:</b>Too hot to handle! Lose a Level!</p>',
+  rewards_treasure: 1,
+  good_against: '',
+  bad_against: 'fire',
+  good_against_value: 0,
+  bad_against_value: 2,
+  atk_points: 5,
+  level_amount: 1
+)
+
+buffalowings_fire = Monstercard.create!(
+  title: 'Buffalo Wings',
+  description: '<p>Buffalo wings are an all time favorite, they’re perfect for parties! +7 Against Water Monster, -3 Against Earth Monster! Won’t follow a Player under Level 3.</p>',
+  image: '/monster/BuffaloWings_Orange.png',
+  action: 'die',
+  draw_chance: 5,
+  level: 16,
+  element: 'fire',
+  bad_things: '<p><b>Bad things:</b>Too hot to handle! You die, lose all your Levels!</p>',
+  rewards_treasure: 3,
+  good_against: '',
+  bad_against: '',
+  good_against_value: 0,
+  bad_against_value: 0,
+  atk_points: 16,
+  level_amount: 1
+)
+
+
+##Unicorn
+unicorn_water = Monstercard.create!(
+  title: 'Unicorn',
+  description: '<p>It is the perfect movie partner! It brings its own wet popcorn! +3 Against Buffalo Wings and Hotdogs. It will be the only snack at the party!</p>',
+  image: '/monster/UniCorn_Dunkelblau.png',
   action: 'lose_level',
   draw_chance: 5,
   level: 10,
   element: 'water',
-  bad_things: '<p><b>Bad things:</b>Getting catfished, really? You should know better. Lose one level.</p>',
+  bad_things: '<p><b>Bad things:</b>Oh no, it seems like the popcorn is soaking wet! You eat it out of respect and lose one level because it is so disgusting.</p>',
+  rewards_treasure: 3,
+  good_against: '',
+  bad_against: '',
+  good_against_value: 0,
+  bad_against_value: 0,
+  atk_points: 10,
+  level_amount: 1
+)
+
+unicorn_earth = Monstercard.create!(
+  title: 'Unicorn',
+  description: '<p>It is just a horse with corn stuck on its head. What did you expect?</p>',
+  image: '/monster/UniCorn_Gruen.png',
+  action: 'lose_item_hand',
+  draw_chance: 5,
+  level: 7,
+  element: 'earth',
+  bad_things: '<p><b>Bad things:</b>The Corn is not done and still on the fields… You lose one hand thing!</p>',
   rewards_treasure: 2,
   good_against: 'fire',
-  bad_against: 'earth',
+  bad_against: '',
+  good_against_value: 0,
+  bad_against_value: 0,
+  atk_points: 7,
+  level_amount: 1
+)
+
+unicorn_air = Monstercard.create!(
+  title: 'Unicorn',
+  description: '<p>Ever tried Popcorn out of an Airfryer? Me neither. +3 Against Air Monster</p>',
+  image: '/monster/UniCorn_Hellblau.png',
+  action: 'lose_level',
+  draw_chance: 5,
+  level: 15,
+  element: 'air',
+  bad_things: '<p><b>Bad things:</b>The Corn flies away and so does your future. Lose one level.</p>',
+  rewards_treasure: 3,
+  good_against: 'air',
+  bad_against: '',
   good_against_value: 3,
-  bad_against_value: 1,
-  atk_points: 14,
-  level_amount: 2
+  bad_against_value: 0,
+  atk_points: 15,
+  level_amount: 1
+)
+
+unicorn_fire = Monstercard.create!(
+  title: 'Unicorn',
+  description: '<p>The corn is ready to pop! Wanna try some? +3 Against Water Monster</p>',
+  image: '/monster/UniCorn_Orange.png',
+  action: 'no_help_next_fight',
+  draw_chance: 5,
+  level: 5,
+  element: 'fire',
+  bad_things: '<p><b>Bad things:</b>You got some Popcorn stuck between your teeth! Gross! You can’t get it out. No one is willing to help you in your next fight!</p>',
+  rewards_treasure: 1,
+  good_against: 'water',
+  bad_against: '',
+  good_against_value: 3,
+  bad_against_value: 0,
+  atk_points: 5,
+  level_amount: 1
+)
+
+
+##HotDog
+hotdog_water = Monstercard.create!(
+  title: 'Wet Hot Dog',
+  description: '<p>Your Hot Dog fell into a lake! +5 Against Fire Monster</p>',
+  image: '/monster/HotDog_Dunkelblau.png',
+  action: 'lose_level',
+  draw_chance: 5,
+  level: 15,
+  element: 'water',
+  bad_things: '<p><b>Bad things:</b>Wet dogs smell horrible. You run away and lose a level!</p>',
+  rewards_treasure: 3,
+  good_against: 'fire',
+  bad_against: '',
+  good_against_value: 5,
+  bad_against_value: 0,
+  atk_points: 15,
+  level_amount: 1
+)
+
+hotdog_earth = Monstercard.create!(
+  title: 'Dirty Hot Dog',
+  description: '<p>Dirty Talk? No, I said dirty dog! -3 Against Boaring, he just doesn’t care if it’s dirty.</p>',
+  image: '/monster/HotDog_Gruen.png',
+  action: 'lose_item_hand',
+  draw_chance: 5,
+  level: 9,
+  element: 'earth',
+  bad_things: '<p><b>Bad things:</b>Your Hot Dog fell on the ground. You still try to eat it and poison yourself. Lose one hand thing.</p>',
+  rewards_treasure: 2,
+  good_against: '',
+  bad_against: '',
+  good_against_value: 0,
+  bad_against_value: 3,
+  atk_points: 9,
+  level_amount: 1
+)
+
+hotdog_air = Monstercard.create!(
+  title: 'Flying Hot Dog',
+  description: '<p>Is it a bird? Is it a plane? No it’s a Hot Dog! Is it falling or flying? We don’t know yet!</p>',
+  image: '/monster/HotDog_Hellblau.png',
+  action: 'lose_item',
+  draw_chance: 5,
+  level: 4,
+  element: 'air',
+  bad_things: '<p><b>Bad things:</b>Looks more like Falling, you lose an item!</p>',
+  rewards_treasure: 1,
+  good_against: '',
+  bad_against: '',
+  good_against_value: 0,
+  bad_against_value: 0,
+  atk_points: 4,
+  level_amount: 1
+)
+
+unicorn_fire = Monstercard.create!(
+  title: 'Hawt Dog',
+  description: '<p>Would you like some chili sauce for your hotdog? +3 Against Buffalo Wings, there can only be one.</p>',
+  image: '/monster/HotDog_Orange.png',
+  action: 'lose_item_hand',
+  draw_chance: 5,
+  level: 6,
+  element: 'fire',
+  bad_things: '<p><b>Bad things:</b>Oh no, it’s way too hot! You burn your tongue and lose a weapon.</p>',
+  rewards_treasure: 2,
+  good_against: '',
+  bad_against: '',
+  good_against_value: 3,
+  bad_against_value: 0,
+  atk_points: 6,
+  level_amount: 1
+)
+
+
+##Boaring
+boaring_water = Monstercard.create!(
+  title: 'Boaring',
+  description: '<p>He is wet. Still bored.</p>',
+  image: '/monster/Willdschwein_Dunkelblau.png',
+  action: 'lose_level',
+  draw_chance: 5,
+  level: 13,
+  element: 'water',
+  bad_things: '<p><b>Bad things:</b>He almost bored you to death. Lose a level!</p>',
+  rewards_treasure: 3,
+  good_against: '',
+  bad_against: '',
+  good_against_value: 0,
+  bad_against_value: 0,
+  atk_points: 13,
+  level_amount: 1
+)
+
+boaring_earth = Monstercard.create!(
+  title: 'Boaring',
+  description: '<p>He is dirty. Still bored. +4 Against Water Monster!</p>',
+  image: '/monster/Willdschwein_Gruen.png',
+  action: 'lose_item_hand',
+  draw_chance: 5,
+  level: 11,
+  element: 'earth',
+  bad_things: '<p><b>Bad things:</b>He almost bored you to death. Lose a weapon!</p>',
+  rewards_treasure: 2,
+  good_against: 'water',
+  bad_against: '',
+  good_against_value: 4,
+  bad_against_value: 0,
+  atk_points: 11,
+  level_amount: 1
+)
+
+boaring_air = Monstercard.create!(
+  title: 'Boaring',
+  description: '<p>He is flying. Still bored. +3 for every fire monster he fights.</p>',
+  image: '/monster/Willdschwein_Hellblau.png',
+  action: 'die',
+  draw_chance: 5,
+  level: 18,
+  element: 'air',
+  bad_things: '<p><b>Bad things:</b>He bored you to death. Lose all levels.</p>',
+  rewards_treasure: 4,
+  good_against: 'fire',
+  bad_against: '',
+  good_against_value: 3,
+  bad_against_value: 0,
+  atk_points: 18,
+  level_amount: 1
+)
+
+boaring_fire = Monstercard.create!(
+  title: 'Boaring',
+  description: '<p>He is on fire. Still bored.</p>',
+  image: '/monster/Willdschwein_Orange.png',
+  action: 'no_action',
+  draw_chance: 5,
+  level: 6,
+  element: 'fire',
+  bad_things: '<p><b>Bad things:</b>He almost bored you to death. Nothing happens, you are still bored.</p>',
+  rewards_treasure: 1,
+  good_against: '',
+  bad_against: '',
+  good_against_value: 0,
+  bad_against_value: 0,
+  atk_points: 6,
+  level_amount: 1
 )
 
 curse = Cursecard.create!(
