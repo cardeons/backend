@@ -6,7 +6,7 @@
 require 'rails_helper'
 
 RSpec.describe GameChannel, type: :channel do
-  fixtures :users, :players, :gameboards, :centercards, :cards
+  fixtures :users, :players, :gameboards, :centercards, :cards, :graveyards
 
   before do
     # initialize connection with identifiers
@@ -26,6 +26,7 @@ RSpec.describe GameChannel, type: :channel do
 
   it 'test if flee broadcasts to all players' do
     subscribe
+    connection.current_user.player.gameboard.update(current_player: players(:singleplayer).id)
 
     expect do
       perform('flee', {})
