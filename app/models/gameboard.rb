@@ -95,7 +95,7 @@ class Gameboard < ApplicationRecord
 
   def self.render_gameboard(gameboard)
     # TODO: check if this selects the right card
-    centercard = (render_card_from_id(gameboard.centercard.ingamedecks.first.id) if gameboard.centercard.ingamedecks.any?)
+    centercard = (render_card_from_id(gameboard.centercard.ingamedeck.id) if gameboard.centercard.ingamedeck)
     {
       gameboard_id: gameboard.id,
       current_player: gameboard.current_player,
@@ -147,10 +147,11 @@ class Gameboard < ApplicationRecord
 
     centercard = Centercard.find_by!('gameboard_id = ?', gameboard.id)
 
+    # centercard.ingamedecks.each do |ingamedeck|
+    #   ingamedeck.update!(cardable: gameboard.graveyard)
+    # end
 
-    centercard.ingamedecks.each do |ingamedeck|
-      ingamedeck.update!(cardable: gameboard.graveyard)
-    end
+    centercard.ingamedeck.update!(cardable: gameboard.graveyard) if centercard.ingamedeck
 
     # centercard
     Ingamedeck.create(gameboard: gameboard, card_id: randomcard, cardable: centercard)
@@ -163,7 +164,7 @@ class Gameboard < ApplicationRecord
     gameboard.update(centercard: new_center, success: attack_obj[:result], player_atk: attack_obj[:playeratk], monster_atk: attack_obj[:monsteratk],
                      rewards_treasure: new_treasure)
 
-    gameboard.centercard.cards.first.title
+    gameboard.centercard.card.title
   end
 
   def self.flee(gameboard)
@@ -205,7 +206,7 @@ class Gameboard < ApplicationRecord
       
 
       ## monsteratk points get set to zero if cards.first is nil => no centercard
-      monsteratkpts = gameboard.centercard.cards.first&.atk_points || 0
+      monsteratkpts = gameboard.centercard.card&.atk_points || 0
 
       playerwin = playeratkpoints > monsteratkpts
 

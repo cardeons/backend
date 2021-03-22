@@ -38,9 +38,11 @@ class GameChannel < ApplicationCable::Channel
     # move all centercard to graveyard
     centercard = Centercard.find_by('gameboard_id = ?', @gameboard.id)
 
-    centercard.ingamedecks.each do |ingamedeck|
-      ingamedeck.update(cardable: Graveyard.find_by('gameboard_id = ?', @gameboard.id))
-    end
+    # centercard.ingamedecks.each do |ingamedeck|
+    #   ingamedeck.update(cardable: Graveyard.find_by('gameboard_id = ?', @gameboard.id))
+    # end
+
+    centercard.ingamedeck.update(cardable: Graveyard.find_by('gameboard_id = ?', @gameboard.id))
 
     # update handcard to centercard
     Ingamedeck.find_by('id=?', params['unique_card_id']).update(cardable: Centercard.find_by('gameboard_id = ?', @gameboard.id))
@@ -52,9 +54,10 @@ class GameChannel < ApplicationCable::Channel
     result = Gameboard.attack(@gameboard)
     updated_board = Gameboard.broadcast_game_board(@gameboard)
     broadcast_to(@gameboard, { type: BOARD_UPDATE, params: updated_board })
-    name = @gameboard.centercard.cards.first.title
-    player = current_user.player
+    name = @gameboard.centercard.card.title
+    player = Player.find_by('user_id = ?', current_user.id)
     msg = "#{player.name} has played #{name} from handcards!"
+    
     broadcast_to(@gameboard, { type: GAME_LOG, params: { date: Time.new, message: msg } })
     PlayerChannel.broadcast_to(current_user, { type: 'HANDCARD_UPDATE', params: { handcards: Gameboard.render_cards_array(player.handcard.ingamedecks) } })
   end
@@ -81,6 +84,7 @@ class GameChannel < ApplicationCable::Channel
       msg = "#{player.name} has equiped a monster!"
       broadcast_to(@gameboard, { type: GAME_LOG, params: { date: Time.new, message: msg } })
     end
+    
     PlayerChannel.broadcast_to(current_user, { type: 'HANDCARD_UPDATE', params: { handcards: Gameboard.render_cards_array(player.handcard.ingamedecks) } })
   end
 
