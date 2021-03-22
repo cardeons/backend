@@ -988,7 +988,7 @@ ladle = Itemcard.create!(
 rubber_ring = Itemcard.create!(
   title: 'Rubber Ring',
   description: '<p>You ain’t afraid of water. +3 against water monster.</p>',
-  image: '/item/Schiwmmreifen_Gruen.png',
+  image: '/item/Schwimmreifen_Gruen.png',
   action: 'plus_three',
   draw_chance: 5,
   element: 'water',
