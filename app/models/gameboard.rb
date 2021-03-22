@@ -29,7 +29,7 @@ class Gameboard < ApplicationRecord
     gameboard = Gameboard.find(gameboard.id)
 
     gameboard.players.each do |player|
-      players_array.push(player.render_player)
+      players_array.push(player.reload.render_player)
     end
 
     {
@@ -95,7 +95,8 @@ class Gameboard < ApplicationRecord
 
   def self.render_gameboard(gameboard)
     # TODO: check if this selects the right card
-    centercard = (render_card_from_id(gameboard.centercard.ingamedecks.first.id) if gameboard.centercard.ingamedecks.any?)
+    gameboard = gameboard.reload
+    centercard = (render_card_from_id(gameboard.centercard.ingamedeck.id) if gameboard.centercard.ingamedeck)
     {
       gameboard_id: gameboard.id,
       current_player: gameboard.current_player,
@@ -106,7 +107,8 @@ class Gameboard < ApplicationRecord
       monster_atk: gameboard.monster_atk,
       success: gameboard.success,
       can_flee: gameboard.can_flee,
-      rewards_treasure: gameboard.rewards_treasure
+      rewards_treasure: gameboard.rewards_treasure,
+      graveyard: render_cards_array(gameboard.graveyard.ingamedecks)
     }
   end
 
@@ -147,23 +149,25 @@ class Gameboard < ApplicationRecord
 
     centercard = Centercard.find_by!('gameboard_id = ?', gameboard.id)
 
+    # centercard.ingamedecks.each do |ingamedeck|
+    #   ingamedeck.update!(cardable: gameboard.graveyard)
+    # end
 
-    centercard.ingamedecks.each do |ingamedeck|
-      ingamedeck.update!(cardable: gameboard.graveyard)
-    end
+    centercard.ingamedeck.update!(cardable: gameboard.graveyard) if centercard.ingamedeck
 
     # centercard
     Ingamedeck.create(gameboard: gameboard, card_id: randomcard, cardable: centercard)
 
-    attack_obj = attack(gameboard)
-
     new_center = Centercard.find_by('gameboard_id = ?', gameboard.id)
     new_treasure = Card.find_by('id = ?', randomcard).rewards_treasure
 
-    gameboard.update(centercard: new_center, success: attack_obj[:result], player_atk: attack_obj[:playeratk], monster_atk: attack_obj[:monsteratk],
-                     rewards_treasure: new_treasure)
+    gameboard.update(centercard: new_center, rewards_treasure: new_treasure)
 
-    gameboard.centercard.cards.first.title
+    attack_obj = attack(gameboard.reload)
+
+    gameboard.update(success: attack_obj[:result], player_atk: attack_obj[:playeratk], monster_atk: attack_obj[:monsteratk])
+
+    gameboard.centercard.card.title
   end
 
   def self.flee(gameboard)
@@ -184,11 +188,14 @@ class Gameboard < ApplicationRecord
       }
     end
 
+    # TODO: add bad things if flee does not succeed
+    get_next_player(gameboard)
+
     output
   end
 
   def self.attack(gameboard)
-    playerid = gameboard.current_player
+    playerid = gameboard.reload.current_player
     playeratkpoints = 1
 
     unless playerid.nil?
@@ -202,10 +209,9 @@ class Gameboard < ApplicationRecord
       monstercards3 = player.monsterthree.nil? ? 0 : player.monsterthree.cards.sum(:atk_points)
 
       playeratkpoints = monstercards1 + monstercards2 + monstercards3 + player.level
-      
 
       ## monsteratk points get set to zero if cards.first is nil => no centercard
-      monsteratkpts = gameboard.centercard.cards.first&.atk_points || 0
+      monsteratkpts = gameboard.reload.centercard.card&.atk_points || 0
 
       playerwin = playeratkpoints > monsteratkpts
 
