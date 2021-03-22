@@ -58,7 +58,7 @@ class GameChannel < ApplicationCable::Channel
     name = @gameboard.centercard.card.title
     player = Player.find_by('user_id = ?', current_user.id)
     msg = "#{player.name} has played #{name} from handcards!"
-    
+
     broadcast_to(@gameboard, { type: GAME_LOG, params: { date: Time.new, message: msg } })
     PlayerChannel.broadcast_to(current_user, { type: 'HANDCARD_UPDATE', params: { handcards: Gameboard.render_cards_array(player.handcard.ingamedecks) } })
   end
@@ -85,17 +85,35 @@ class GameChannel < ApplicationCable::Channel
       msg = "#{player.name} has equiped a monster!"
       broadcast_to(@gameboard, { type: GAME_LOG, params: { date: Time.new, message: msg } })
     end
-    
+
     PlayerChannel.broadcast_to(current_user, { type: 'HANDCARD_UPDATE', params: { handcards: Gameboard.render_cards_array(player.handcard.ingamedecks) } })
   end
 
   def attack
     result = Gameboard.attack(@gameboard)
-    updated_board = Gameboard.broadcast_game_board(@gameboard)
-    broadcast_to(@gameboard, { type: BOARD_UPDATE, params: updated_board })
 
-    msg = "#{Player.find_by('gameboard_id = ?', @gameboard.id).name} has drawn #{name}"
-    broadcast_to(@gameboard, { type: GAME_LOG, params: { date: Time.new, message: msg } })
+    if result[:result]
+      player = Player.find_by('user_id = ?', current_user.id)
+      current_player_treasure = @gameboard.rewards_treasure - @gameboard.shared_reward
+      Handcard.draw_handcards(@gameboard.current_player, @gameboard, current_player_treasure)
+      # TODO: add helping player to gameboard? give treasures to helping player
+      # Handcard.draw_handcards(@gameboard.current_player.id, @gameboard, current_player_treasure)
+      @gameboard.centercard.ingamedeck.update!(cardable: @gameboard.graveyard) if @gameboard.centercard.ingamedeck
+      broadcast_to(@gameboard, { type: BOARD_UPDATE, params: Gameboard.broadcast_game_board(@gameboard) })
+      msg = "#{current_user.player.name} has killed #{@gameboard.centercard.card.title}"
+      broadcast_to(@gameboard, { type: GAME_LOG, params: { date: Time.new, message: msg } })
+
+      PlayerChannel.broadcast_to(current_user.reload, { type: 'HANDCARD_UPDATE', params: { handcards: Gameboard.render_cards_array(player.handcard.ingamedecks) } })
+    end
+
+    broadcast_to(@gameboard, { type: 'ERROR', params: { message: "Playerattack too low" } }) unless result[:result]
+
+
+    # updated_board = Gameboard.broadcast_game_board(@gameboard)
+    # broadcast_to(@gameboard, { type: BOARD_UPDATE, params: updated_board })
+
+    # msg = "#{Player.find_by('gameboard_id = ?', @gameboard.id).name} has drawn #{name}"
+    # broadcast_to(@gameboard, { type: GAME_LOG, params: { date: Time.new, message: msg } })
   end
 
   # def play_card(params)
@@ -177,7 +195,7 @@ class GameChannel < ApplicationCable::Channel
     @gameboard.update_attribute(:player_atk, playeratkpoints)
 
     gameboard = Gameboard.find(@gameboard.id)
-    
+
     # get updatet result of attack
     attack_obj = Gameboard.attack(gameboard)
     gameboard.update(success: attack_obj[:result], player_atk: attack_obj[:playeratk], monster_atk: attack_obj[:monsteratk])
