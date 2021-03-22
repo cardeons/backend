@@ -104,7 +104,7 @@ class Gameboard < ApplicationRecord
   def self.render_gameboard(gameboard)
     # TODO: check if this selects the right card
     gameboard = gameboard.reload
-    
+
     centercard = (render_card_from_id(gameboard.centercard.ingamedeck.id) if gameboard.centercard.ingamedeck)
     {
       gameboard_id: gameboard.id,
@@ -233,12 +233,10 @@ class Gameboard < ApplicationRecord
       if playerwin
         #   message = "SUCCESS"
         gameboard.update(success: true, player_atk: playeratkpoints, monster_atk: monsteratkpts)
-        puts 'playerwin'
       else
         #   message = "FAIL"
         gameboard.update(success: false, player_atk: playeratkpoints, monster_atk: monsteratkpts)
         #   # broadcast: flee or use cards!
-        puts 'monsterwin'
       end
 
     end

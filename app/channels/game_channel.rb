@@ -101,10 +101,14 @@ class GameChannel < ApplicationCable::Channel
       end
       player.update_attribute(:level, player_level + 1)
 
-      current_player_treasure = @gameboard.rewards_treasure - @gameboard.shared_reward
+      shared_reward = @gameboard.shared_reward
+      current_player_treasure = @gameboard.rewards_treasure - shared_reward
       Handcard.draw_handcards(@gameboard.current_player, @gameboard, current_player_treasure)
       # TODO: add helping player to gameboard? give treasures to helping player
-      # Handcard.draw_handcards(@gameboard.current_player.id, @gameboard, current_player_treasure)
+      if @gameboard.helping_player
+        helping_player = Player.find_by("id = ?", @gameboard.helping_player)
+        Handcard.draw_handcards(helping_player, @gameboard, shared_reward)
+      end
       @gameboard.centercard.ingamedeck&.update!(cardable: @gameboard.graveyard)
       msg = "#{current_user.player.name} has killed #{@gameboard.centercard.card.title}"
       broadcast_to(@gameboard, { type: GAME_LOG, params: { date: Time.new, message: msg } })
@@ -116,7 +120,6 @@ class GameChannel < ApplicationCable::Channel
     end
 
     broadcast_to(@gameboard, { type: 'ERROR', params: { message: "Playerattack too low" } }) unless result[:result]
-
 
     # updated_board = Gameboard.broadcast_game_board(@gameboard)
     # broadcast_to(@gameboard, { type: BOARD_UPDATE, params: updated_board })
