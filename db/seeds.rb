@@ -608,13 +608,171 @@ boaring_fire = Monstercard.create!(
   level_amount: 1
 )
 
+
+##Cursecards
+
 curse = Cursecard.create!(
-  title: 'very bad curse',
+  title: 'Very bad curse',
   description: '<p>This curse is very bad.</p><p> Actually, it is so bad that this curse will stick to you and weaken your fighting ability as long as you do not find a way to remove it</p>',
   image: '/',
   action: 'lose_atk_points',
   draw_chance: 4,
   atk_points: -1
+)
+
+curse2 = Cursecard.create!(
+  title: 'Eight-legged curse',
+  description: '<p>A spider scared you, you dropped something you held in your hand!</p>',
+  image: '/',
+  action: 'lose_item_hand',
+  draw_chance: 4,
+  atk_points: 0
+)
+
+curse3 = Cursecard.create!(
+  title: 'Pretty shitty curse',
+  description: '<p>You stepped in Pit-Bull poo.. you stink, nobody wants to help you for a round.</p>',
+  image: '/',
+  action: 'no_help_next_fight',
+  draw_chance: 4,
+  atk_points: 0
+)
+
+curse4 = Cursecard.create!(
+  title: 'Student life curse',
+  description: '<p>You did not finish your thesis in time… -3 for you in the next Fight.</p>',
+  image: '/',
+  action: 'minus_atk_next_fight',
+  draw_chance: 4,
+  atk_points: -3
+)
+
+curse5 = Cursecard.create!(
+  title: 'You got cursed!',
+  description: '<p>Lose a headpiece!</p>',
+  image: '/',
+  action: 'lose_item_head',
+  draw_chance: 4,
+  atk_points: 0
+)
+
+curse6 = Cursecard.create!(
+  title: 'Uh oh.',
+  description: '<p>Your waifu disappointed you. Commit sudoko! Lose a level.</p>',
+  image: '/',
+  action: 'lose_level',
+  draw_chance: 4,
+  atk_points: 0
+)
+
+curse7 = Cursecard.create!(
+  title: 'Bad Luck Brian',
+  description: '<p>Lose a level.</p>',
+  image: '/',
+  action: 'lose_level',
+  draw_chance: 4,
+  atk_points: 0
+)
+
+curse8 = Cursecard.create!(
+  title: 'Is this really bad?',
+  description: '<p>The monsters attack get doubled but gives double the rewards!</p>',
+  image: '/',
+  action: 'double_attack_double_reward',
+  draw_chance: 4,
+  atk_points: 0
+)
+
+##Buffcards
+
+buffcard = Buffcard.create!(
+  draw_chance: 1,
+  title: 'Buffing yourself up, eh?',
+  description: '<p>You are getting stronger and stronger. Gain 2 extra attack points</p>',
+  image: '/',
+  action: 'gain_atk',
+  atk_points: 2
+)
+
+buffcard2 = Buffcard.create!(
+  draw_chance: 1,
+  title: 'Slippery slope',
+  description: '<p>The monster slipped, it looses 5 attack points.</p>',
+  image: '/',
+  action: 'monster_lose_atk',
+  atk_points: -5
+)
+
+buffcard3 = Buffcard.create!(
+  draw_chance: 1,
+  title: 'Extremely cool potion',
+  description: '<p>+5 for any side!</p>',
+  image: '/',
+  action: 'plus_atk',
+  atk_points: 5
+)
+
+buffcard4 = Buffcard.create!(
+  draw_chance: 1,
+  title: 'Yeet',
+  description: '<p>You send the monster to the shadow realm. You do not get any rewards or levels!</p>',
+  image: '/',
+  action: 'dodge_monster',
+  atk_points: 0
+)
+
+buffcard5 = Buffcard.create!(
+  draw_chance: 1,
+  title: 'Pot of Greed',
+  description: '<p>Time for a duel: Draw two additional cards!</p>',
+  image: '/',
+  action: 'draw_two_cards',
+  atk_points: 0
+)
+
+buffcard6 = Buffcard.create!(
+  draw_chance: 1,
+  title: 'Chloroform',
+  description: '<p>You can force a chosen player to help you!</p>',
+  image: '/',
+  action: 'force_help',
+  atk_points: 0
+)
+
+buffcard7 = Buffcard.create!(
+  draw_chance: 1,
+  title: 'Greater potion of Awesomeness',
+  description: '<p>+6 for any side</p>',
+  image: '/',
+  action: 'plus_atk',
+  atk_points: 6
+)
+
+buffcard8 = Buffcard.create!(
+  draw_chance: 1,
+  title: 'Invisibility potion',
+  description: '<p>You can flee without a problem!</p>',
+  image: '/',
+  action: 'flee_success',
+  atk_points: 0
+)
+
+buffcard9 = Buffcard.create!(
+  draw_chance: 1,
+  title: 'Lick',
+  description: '<p>You paralyzed the monster, it hurts itself and loses 3 ATP</p>',
+  image: '/',
+  action: 'monster_lose_atk',
+  atk_points: 3
+)
+
+buffcard10 = Buffcard.create!(
+  draw_chance: 1,
+  title: 'Over 9000!',
+  description: '<p>Your hair starts glowing! +5 for any side!</p>',
+  image: '/',
+  action: 'plus_atk',
+  atk_points: 5
 )
 
 # item1 = Itemcard.create!(
@@ -643,6 +801,7 @@ curse = Cursecard.create!(
 #   has_combination: false
 # )
 
+##Itemcards
 
 ##mullet
 mullet = Itemcard.create!(
@@ -1113,15 +1272,6 @@ u8.cards << (Card.find(3))
 u9.cards << (Card.find(3))
 
 levelcard = Levelcard.create!(title: 'Level up!', draw_chance: 1, description: 'Get one level', image: '/', action: 'level_up', level_amount: 1)
-
-buffcard = Buffcard.create!(
-  draw_chance: 1,
-  title: 'Buffing yourself up, eh?',
-  description: '<p>You are getting stronger and stronger. Gain 2 extra attack points</p>',
-  image: '/',
-  action: 'gain_atk',
-  atk_points: 2
-)
 
 # gameboard = Gameboard.create!(current_state: 'fight', player_atk: 5)
 
