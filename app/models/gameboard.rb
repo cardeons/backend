@@ -186,11 +186,14 @@ class Gameboard < ApplicationRecord
       }
     end
 
+    # TODO: add bad things if flee does not succeed
+    get_next_player(gameboard)
+
     output
   end
 
   def self.attack(gameboard)
-    playerid = gameboard.current_player
+    playerid = gameboard.reload.current_player
     playeratkpoints = 1
 
     unless playerid.nil?
