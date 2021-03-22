@@ -612,49 +612,461 @@ curse = Cursecard.create!(
   title: 'very bad curse',
   description: '<p>This curse is very bad.</p><p> Actually, it is so bad that this curse will stick to you and weaken your fighting ability as long as you do not find a way to remove it</p>',
   image: '/',
-
   action: 'lose_atk_points',
   draw_chance: 4,
   atk_points: -1
 )
 
-item1 = Itemcard.create!(
-  title: 'Helmet of Doom',
-  description: '<p>This is the helmet of doom</p>',
-  image: '/item/helmet.png',
-  action: 'plus_one',
-  draw_chance: 13,
+# item1 = Itemcard.create!(
+#   title: 'Helmet of Doom',
+#   description: '<p>This is the helmet of doom</p>',
+#   image: '/item/helmet.png',
+#   action: 'plus_one',
+#   draw_chance: 13,
+#   element: 'fire',
+#   element_modifier: 2,
+#   atk_points: 2,
+#   item_category: 'head',
+#   has_combination: false
+# )
+
+# item2 = Itemcard.create!(
+#   title: 'The things to get things out of the toilet',
+#   description: '<p>Disgusting. If I was you, I would not touch it.</p>',
+#   image: '/item/poempel.png',
+#   action: 'plus_one',
+#   draw_chance: 14,
+#   element: 'fire',
+#   element_modifier: 2,
+#   atk_points: 2,
+#   item_category: 'hand_one',
+#   has_combination: false
+# )
+
+
+##mullet
+mullet = Itemcard.create!(
+  title: 'Mullet',
+  description: '<p>Very fancy 80s hair. -3 Stylepoints</p>',
+  image: '/item/Vokuhila_Hellblau.png',
+  action: 'no_action',
+  draw_chance: 5,
+  element: 'no_element',
+  element_modifier: 0,
+  atk_points: 3,
+  item_category: 'head',
+  has_combination: false
+)
+
+##roman helmet
+roman_helmet = Itemcard.create!(
+  title: 'Roman Helmet',
+  description: '<p>Asterix will hate you! +2 Against Boaring</p>',
+  image: '/item/Helm_Orange.png',
+  action: 'no_action',
+  draw_chance: 5,
+  element: 'no_element',
+  element_modifier: 0,
+  atk_points: 1,
+  item_category: 'head',
+  has_combination: false
+)
+
+##pizza
+tunapizza = Itemcard.create!(
+  title: 'Tuna Pizza Shield',
+  description: '<p>Mamma mia, molto bene! +3 when combined with a pizza cutter!</p>',
+  image: '/item/Pizza_Dunkelblau.png',
+  action: 'no_action',
+  draw_chance: 5,
+  element: 'water',
+  element_modifier: 0,
+  atk_points: 3,
+  item_category: 'hand',
+  has_combination: true
+)
+
+veggiepizza = Itemcard.create!(
+  title: 'Veggie Pizza Shield',
+  description: '<p>Mamma mia, molto bene! +3 when combined with a pizza cutter!</p>',
+  image: '/item/Pizza_Gruen.png',
+  action: 'no_action',
+  draw_chance: 5,
+  element: 'water',
+  element_modifier: 0,
+  atk_points: 3,
+  item_category: 'hand',
+  has_combination: true
+)
+
+chickenpizza = Itemcard.create!(
+  title: 'Chicken Pizza Shield',
+  description: '<p>Mamma mia, prosciutto? no chickerino! +3 when combined with a pizza cutter!</p>',
+  image: '/item/Pizza_Hellblau.png',
+  action: 'no_action',
+  draw_chance: 5,
+  element: 'air',
+  element_modifier: 0,
+  atk_points: 3,
+  item_category: 'hand',
+  has_combination: true
+)
+
+diavolopizza = Itemcard.create!(
+  title: 'Diavolo Pizza Shield',
+  description: '<p>Mamma mia, oh mio dio, che caldo! +3 when combined with a pizza cutter!</p>',
+  image: '/item/Pizza_Orange.png',
+  action: 'no_action',
+  draw_chance: 5,
   element: 'fire',
+  element_modifier: 0,
+  atk_points: 3,
+  item_category: 'hand',
+  has_combination: true
+)
+
+##pizza cutter
+pizzacutter = Itemcard.create!(
+  title: 'Pizza Cutter',
+  description: '<p>Cuts pizza! +3 if you have a Pizza.</p>',
+  image: '/item/Pizzaschneider.png',
+  action: 'plus_3_if_combination',
+  draw_chance: 5,
+  element: 'no_element',
+  element_modifier: 3,
+  atk_points: 3,
+  item_category: 'hand',
+  has_combination: true
+)
+
+##controller
+controller = Itemcard.create!(
+  title: 'Controller',
+  description: '<p>You better not use it for this game.</p>',
+  image: '/item/Controller_Dunkelblau.png',
+  action: 'no_action',
+  draw_chance: 5,
+  element: 'no_element',
+  element_modifier: 0,
+  atk_points: 2,
+  item_category: 'hand',
+  has_combination: false
+)
+
+
+##the one ring
+the_one_ring = Itemcard.create!(
+  title: 'The One Ring',
+  description: '<p>One Ring to rule them all! The Ring has awoken, it’s heard its master’s call.</p>',
+  image: '/item/Ring_Hellblau.png',
+  action: 'no_action',
+  draw_chance: 5,
+  element: 'no_element',
+  element_modifier: 0,
+  atk_points: 1,
+  item_category: 'none',
+  has_combination: false
+)
+
+
+##german tourist shoes
+german_tourist_shoes = Itemcard.create!(
+  title: 'German Tourist Shoes',
+  description: '<p>Oh no, a german tourist on the run! Hide your towels!</p>',
+  image: '/item/Sandalen_Dunkelblau.png',
+  action: 'no_action',
+  draw_chance: 5,
+  element: 'no_element',
+  element_modifier: 0,
+  atk_points: 3,
+  item_category: 'shoe',
+  has_combination: false
+)
+
+##ironing board
+ironing_board = Itemcard.create!(
+  title: 'Ironing Board',
+  description: '<p>Can handle hot stuff. You can use it as a shield!</p>',
+  image: '/item/Buegelbrett.png',
+  action: 'no_action',
+  draw_chance: 5,
+  element: 'no_element',
+  element_modifier: 0,
+  atk_points: 2,
+  item_category: 'hand',
+  has_combination: false
+)
+
+##Plunger
+plunger = Itemcard.create!(
+  title: 'Plunger',
+  description: '<p>The thing to get things out of the toilet.</p>',
+  image: '/item/Puempel.png',
+  action: 'no_action',
+  draw_chance: 5,
+  element: 'no_element',
+  element_modifier: 0,
+  atk_points: 2,
+  item_category: 'hand',
+  has_combination: false
+)
+
+##Ladle
+ladle = Itemcard.create!(
+  title: 'Ladle',
+  description: '<p>You can use it to get soup OR to hit your enemies. Maybe your enemies are hungry?</p>',
+  image: '/item/Schoepfkelle.png',
+  action: 'no_action',
+  draw_chance: 5,
+  element: 'no_element',
+  element_modifier: 0,
+  atk_points: 2,
+  item_category: 'hand',
+  has_combination: false
+)
+
+##Rubber ring
+rubber_ring = Itemcard.create!(
+  title: 'Rubber Ring',
+  description: '<p>You ain’t afraid of water. +3 against water monster.</p>',
+  image: '/item/Schiwmmreifen_Gruen.png',
+  action: 'plus_three',
+  draw_chance: 5,
+  element: 'water',
+  element_modifier: 3,
+  atk_points: 2,
+  item_category: 'none',
+  has_combination: false
+)
+
+##Sunglasses
+sunglasses = Itemcard.create!(
+  title: 'Sunglasses',
+  description: '<p>+3 when worn by Pit-Bull, transforms him into Mister World Wide!</p>',
+  image: '/item/Sonnenbrille_Hellblau.png',
+  action: 'plus_three_if_combination',
+  draw_chance: 5,
+  element: 'no_element',
+  element_modifier: 3,
+  atk_points: 2,
+  item_category: 'none',
+  has_combination: true
+)
+
+
+##Water Gun
+water_gun = Itemcard.create!(
+  title: 'Water Gun',
+  description: '<p>+3 against fire monster.</p>',
+  image: '/item/Wasserpistole.png',
+  action: 'plus_three',
+  draw_chance: 5,
+  element: 'water',
+  element_modifier: 3,
+  atk_points: 2,
+  item_category: 'hand',
+  has_combination: false
+)
+
+##Wand
+wand = Itemcard.create!(
+  title: 'Wand',
+  description: '<p>You are a wizard, player!</p>',
+  image: '/item/Zauberstab_Orange.png',
+  action: 'no_action',
+  draw_chance: 5,
+  element: 'no_element',
+  element_modifier: 0,
+  atk_points: 3,
+  item_category: 'hand',
+  has_combination: false
+)
+
+##Whip
+whip = Itemcard.create!(
+  title: 'Whip',
+  description: '<p>Use it for your horse or something else ;-). +2 against Unicorns.</p>',
+  image: '/item/Gerte.png',
+  action: 'plus_two',
+  draw_chance: 5,
+  element: 'no_element',
   element_modifier: 2,
+  atk_points: 3,
+  item_category: 'hand',
+  has_combination: false
+)
+
+##Dagger
+dagger = Itemcard.create!(
+  title: 'Dagger',
+  description: '<p>Sneaky thief!</p>',
+  image: '/item/Dolch_Dunkelblau.png',
+  action: 'no_action',
+  draw_chance: 5,
+  element: 'no_element',
+  element_modifier: 0,
+  atk_points: 3,
+  item_category: 'hand',
+  has_combination: false
+)
+
+##hermes
+item3 = Itemcard.create!(
+  title: 'Hermes shoes',
+  description: '<p>Damn, WHAT ARE THOOOSE. Hopefully hermes does not mind you took them.</p>',
+  image: '/item/shoes.png',
+  action: 'no_action',
+  draw_chance: 5,
+  element: 'no_element',
+  element_modifier: 0,
+  atk_points: 3,
+  item_category: 'shoes',
+  has_combination: false
+)
+
+##spaghetto_head
+spaghetto_head = Itemcard.create!(
+  title: 'Spaghetti Head',
+  description: '<p>You accept the flying spaghetti monster as your lord and savior!</p>',
+  image: '/item/Nudelsieb.png',
+  action: 'no_action',
+  draw_chance: 5,
+  element: 'no_element',
+  element_modifier: 0,
   atk_points: 2,
   item_category: 'head',
   has_combination: false
 )
 
-item2 = Itemcard.create!(
-  title: 'The things to get things out of the toilet',
-  description: '<p>Disgusting. If I was you, I would not touch it.</p>',
-  image: '/item/poempel.png',
-  action: 'plus_one',
-  draw_chance: 14,
-  element: 'fire',
-  element_modifier: 2,
-  atk_points: 2,
-  item_category: 'hand_one',
-  has_combination: false
-)
-item3 = Itemcard.create!(
-  title: 'Hermes shoes',
-  description: '<p>Damn, those are some nice shoes! Hopefully hermes does not mind you took them..</p>',
-  image: '/item/shoes.png',
-  action: 'plus_3',
+
+##Berserker axe
+berserker_axe = Itemcard.create!(
+  title: 'Berserker Axe',
+  description: '<p>Boy!</p>',
+  image: '/item/Axt_Orange.png',
+  action: 'no_action',
   draw_chance: 5,
-  element: 'earth',
-  element_modifier: 3,
-  atk_points: 4,
-  item_category: 'shoes',
+  element: 'no_element',
+  element_modifier: 0,
+  atk_points: 3,
+  item_category: 'hand',
   has_combination: false
 )
+
+##Katana
+katana = Itemcard.create!(
+  title: 'Katana',
+  description: '<p>+3 against Weebs. Omae wa mou shinderu!</p>',
+  image: '/item/Katana.png',
+  action: 'no_action',
+  draw_chance: 5,
+  element: 'no_element',
+  element_modifier: 0,
+  atk_points: 3,
+  item_category: 'hand',
+  has_combination: false
+)
+
+##Saddle
+saddle = Itemcard.create!(
+  title: 'Saddle',
+  description: '<p>Perfect accessory for a horse girl. BRR! +2 if equipped on a Unicorn</p>',
+  image: '/item/Sattel_Hellblau.png',
+  action: 'no_action',
+  draw_chance: 5,
+  element: 'no_element',
+  element_modifier: 2,
+  atk_points: 1,
+  item_category: 'hand',
+  has_combination: true
+)
+
+
+##Morning star
+morning_star = Itemcard.create!(
+  title: 'Morning Star',
+  description: '<p>The perfect weapon of the devil.</p>',
+  image: '/item/Morgenstern.png',
+  action: 'no_action',
+  draw_chance: 5,
+  element: 'no_element',
+  element_modifier: 0,
+  atk_points: 3,
+  item_category: 'hand',
+  has_combination: false
+)
+
+##Toothbrush
+toothbrush = Itemcard.create!(
+  title: 'Toothbrush',
+  description: '<p>Slayer of morning breath.</p>',
+  image: '/item/Zahnbuerste_Gruen.png',
+  action: 'no_action',
+  draw_chance: 5,
+  element: 'no_element',
+  element_modifier: 0,
+  atk_points: 1,
+  item_category: 'hand',
+  has_combination: false
+)
+
+##Spongebobs Spatula
+spongebobs_spatula = Itemcard.create!(
+  title: 'Spongebobs Spatula',
+  description: '<p>Even the Hash-Slinging Slasher lives in fear of this weapon.</p>',
+  image: '/item/Pfannenwender.png',
+  action: 'no_action',
+  draw_chance: 5,
+  element: 'no_element',
+  element_modifier: 0,
+  atk_points: 2,
+  item_category: 'hand',
+  has_combination: false
+)
+
+##Crown
+crown = Itemcard.create!(
+  title: 'Crown',
+  description: '<p>Suits a king. + 3 when Sir Bear wears it.</p>',
+  image: '/item/Krone.png',
+  action: 'no_action',
+  draw_chance: 5,
+  element: 'no_element',
+  element_modifier: 3,
+  atk_points: 2,
+  item_category: 'hand',
+  has_combination: true
+)
+
+
+##Bow and arrow
+bow_and_arrow = Itemcard.create!(
+  title: 'Bow and Arrow',
+  description: '<p></p>',
+  image: '/item/Pfeil_Und_Bogen_Gruen.png',
+  action: 'no_action',
+  draw_chance: 5,
+  element: 'no_element',
+  element_modifier: 0,
+  atk_points: 3,
+  item_category: 'hand',
+  has_combination: false
+)
+
+##Excalibur
+excalibur = Itemcard.create!(
+  title: 'Excalibur',
+  description: '<p></p>',
+  image: '/item/Schwert_Hellblau.png',
+  action: 'no_action',
+  draw_chance: 5,
+  element: 'no_element',
+  element_modifier: 0,
+  atk_points: 2,
+  item_category: 'hand',
+  has_combination: false
+)
+
 
 # Adds cards to inventory of user1
 # User.find(1).cards << (Card.find(1))
