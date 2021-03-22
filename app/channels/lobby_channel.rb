@@ -47,12 +47,11 @@ class LobbyChannel < ApplicationCable::Channel
 
       @gameboard.initialize_game_board
 
+
+      # TODO: Remove after testing i guesss
       createNewTestGame(@gameboard)
 
       broadcast_to(@gameboard, { type: 'START_GAME', params: { game_id: @gameboard.id } })
-
-      # TODO: Remove after testing i guesss
-
     end
   end
 

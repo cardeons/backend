@@ -18,7 +18,6 @@ class Gameboard < ApplicationRecord
     Graveyard.create!(gameboard_id: gameboard_id)
 
     players.each do |player|
-      # Player.draw_five_cards(player)
       Handcard.find_or_create_by!(player_id: player.id) # unless player.handcard
       Handcard.draw_handcards(player.id, self)
     end
@@ -33,10 +32,9 @@ class Gameboard < ApplicationRecord
       players_array.push(player.render_player)
     end
 
-    output = { # add center
+    {
       # graveyard: gameboard.graveyard,
       players: players_array,
-      # needs more info
       gameboard: render_gameboard(gameboard)
     }
   end
@@ -149,12 +147,9 @@ class Gameboard < ApplicationRecord
 
     centercard = Centercard.find_by!('gameboard_id = ?', gameboard.id)
 
-    # pp centercard.ingamedecks
 
     centercard.ingamedecks.each do |ingamedeck|
-      # pp ingamedeck
       ingamedeck.update!(cardable: gameboard.graveyard)
-      # pp ingamedeck
     end
 
     # centercard
@@ -193,8 +188,6 @@ class Gameboard < ApplicationRecord
   end
 
   def self.attack(gameboard)
-    monsterid = gameboard.centercard.cards.first.id
-
     playerid = gameboard.current_player
     playeratkpoints = 1
 
@@ -209,13 +202,10 @@ class Gameboard < ApplicationRecord
       monstercards3 = player.monsterthree.nil? ? 0 : player.monsterthree.cards.sum(:atk_points)
 
       playeratkpoints = monstercards1 + monstercards2 + monstercards3 + player.level
+      
 
-      pp monstercards1
-      pp monstercards2
-      pp monstercards3
-      pp player.level
-
-      monsteratkpts = Monstercard.find_by('id=?', monsterid).atk_points
+      ## monsteratk points get set to zero if cards.first is nil => no centercard
+      monsteratkpts = gameboard.centercard.cards.first&.atk_points || 0
 
       playerwin = playeratkpoints > monsteratkpts
 
