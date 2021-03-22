@@ -24,7 +24,7 @@ bear = Monstercard.create!(
   description: '<p>A very serious bear with a beard.</p>',
   image: '/monster/bear.png',
   action: 'lose_item_head',
-  draw_chance: 10,
+  draw_chance: 5,
   level: 3,
   element: 'earth',
   bad_things: '<p><b>Bad things:</b>Oh no, you disrespected the Sir!</p><p> Lose your headpiece.</p>',
@@ -33,7 +33,7 @@ bear = Monstercard.create!(
   bad_against: 'air',
   good_against_value: 3,
   bad_against_value: 1,
-  atk_points: 6,
+  atk_points: 2,
   level_amount: 1
 )
 
@@ -42,7 +42,7 @@ startmonster1 = Monstercard.create!(
   description: '<p>starting</p>',
   image: '/monster/bear.png',
   action: 'lose_item_head',
-  draw_chance: 33,
+  draw_chance: 5,
   level: 1,
   element: 'fire',
   bad_things: '<p><b>Bad things:</b>Oh no, you disrespected the Sir!</p><p> Lose your headpiece.</p>',
@@ -51,7 +51,7 @@ startmonster1 = Monstercard.create!(
   bad_against: 'water',
   good_against_value: 3,
   bad_against_value: 1,
-  atk_points: 6,
+  atk_points: 12,
   level_amount: 1
 )
 startmonster2 = Monstercard.create!(
@@ -59,7 +59,7 @@ startmonster2 = Monstercard.create!(
   description: '<p>starting</p>',
   image: '/monster/bear.png',
   action: 'lose_item_head',
-  draw_chance: 33,
+  draw_chance: 5,
   level: 1,
   element: 'earth',
   bad_things: '<p><b>Bad things:</b>Oh no, you disrespected the Sir!</p><p> Lose your headpiece.</p>',
@@ -68,7 +68,7 @@ startmonster2 = Monstercard.create!(
   bad_against: 'air',
   good_against_value: 3,
   bad_against_value: 1,
-  atk_points: 6,
+  atk_points: 55,
   level_amount: 1
 )
 startmonster3 = Monstercard.create!(
@@ -76,7 +76,7 @@ startmonster3 = Monstercard.create!(
   description: '<p>starting</p>',
   image: '/monster/bear.png',
   action: 'lose_item_head',
-  draw_chance: 33,
+  draw_chance: 5,
   level: 1,
   element: 'water',
   bad_things: '<p><b>Bad things:</b>Oh no, you disrespected the Sir!</p><p> Lose your headpiece.</p>',
@@ -85,7 +85,7 @@ startmonster3 = Monstercard.create!(
   bad_against: 'earth',
   good_against_value: 3,
   bad_against_value: 1,
-  atk_points: 6,
+  atk_points: 2,
   level_amount: 1
 )
 
@@ -94,7 +94,7 @@ startmonster4 = Monstercard.create!(
   description: '<p>starting</p>',
   image: '/monster/bear.png',
   action: 'lose_item_head',
-  draw_chance: 33,
+  draw_chance: 5,
   level: 1,
   element: 'air',
   bad_things: '<p><b>Bad things:</b>Oh no, you disrespected the Sir!</p><p> Lose your headpiece.</p>',
@@ -103,7 +103,7 @@ startmonster4 = Monstercard.create!(
   bad_against: 'fire',
   good_against_value: 3,
   bad_against_value: 1,
-  atk_points: 6,
+  atk_points: 26,
   level_amount: 1
 )
 
@@ -143,7 +143,7 @@ item1 = Itemcard.create!(
   draw_chance: 13,
   element: 'fire',
   element_modifier: 2,
-  atk_points: 2,
+  atk_points: 22,
   item_category: 'head',
   has_combination: false
 )
@@ -156,7 +156,7 @@ item2 = Itemcard.create!(
   draw_chance: 14,
   element: 'fire',
   element_modifier: 2,
-  atk_points: 2,
+  atk_points: 22,
   item_category: 'hand_one',
   has_combination: false
 )
@@ -168,7 +168,7 @@ item3 = Itemcard.create!(
   draw_chance: 5,
   element: 'earth',
   element_modifier: 3,
-  atk_points: 4,
+  atk_points: 42,
   item_category: 'shoes',
   has_combination: false
 )

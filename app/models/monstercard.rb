@@ -43,16 +43,21 @@ class Monstercard < Card
 
       # yay
       else
+        
         type = 'GAMEBOARD_UPDATE'
         deck_card.update_attribute(:cardable, monster_to_equip)
-
+        
         player_atk = monster_to_equip.cards.sum(:atk_points)
         player.update_attribute(:attack, player_atk)
-
+        
         result = player.gameboard.monster_atk < player_atk
         player.gameboard.update_attribute(:success, result)
         message = 'Successfully equipped.'
         # GameChannel.broadcast_to(gameboard, {type: 'GAMEBOARD_UPDATE', params: Gameboard.broadcast_game_board(gameboard) })
+        
+        # get updatet result of attack
+        attack_obj = Gameboard.attack(player.gameboard)
+        player.gameboard.update(success: attack_obj[:result], player_atk: attack_obj[:playeratk], monster_atk: attack_obj[:monsteratk])
       end
     end
 

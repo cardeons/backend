@@ -52,6 +52,7 @@ class GameChannel < ApplicationCable::Channel
     @gameboard.update(centercard: centercard, monster_atk: monsteratk)
 
     result = Gameboard.attack(@gameboard)
+    gameboard.update(success: result[:result], player_atk: result[:playeratk], monster_atk: result[:monsteratk])
     updated_board = Gameboard.broadcast_game_board(@gameboard)
     broadcast_to(@gameboard, { type: BOARD_UPDATE, params: updated_board })
     name = @gameboard.centercard.card.title
@@ -176,6 +177,10 @@ class GameChannel < ApplicationCable::Channel
     @gameboard.update_attribute(:player_atk, playeratkpoints)
 
     gameboard = Gameboard.find(@gameboard.id)
+    
+    # get updatet result of attack
+    attack_obj = Gameboard.attack(gameboard)
+    gameboard.update(success: attack_obj[:result], player_atk: attack_obj[:playeratk], monster_atk: attack_obj[:monsteratk])
 
     PlayerChannel.broadcast_to(current_user, { type: 'HANDCARD_UPDATE', params: { handcards: Gameboard.render_cards_array(player.handcard.ingamedecks) } })
 

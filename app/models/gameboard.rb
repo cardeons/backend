@@ -156,13 +156,14 @@ class Gameboard < ApplicationRecord
     # centercard
     Ingamedeck.create(gameboard: gameboard, card_id: randomcard, cardable: centercard)
 
-    attack_obj = attack(gameboard)
-
     new_center = Centercard.find_by('gameboard_id = ?', gameboard.id)
     new_treasure = Card.find_by('id = ?', randomcard).rewards_treasure
 
-    gameboard.update(centercard: new_center, success: attack_obj[:result], player_atk: attack_obj[:playeratk], monster_atk: attack_obj[:monsteratk],
-                     rewards_treasure: new_treasure)
+    gameboard.update(centercard: new_center, rewards_treasure: new_treasure)
+
+    attack_obj = attack(gameboard.reload)
+
+    gameboard.update(success: attack_obj[:result], player_atk: attack_obj[:playeratk], monster_atk: attack_obj[:monsteratk])
 
     gameboard.centercard.card.title
   end
@@ -203,10 +204,9 @@ class Gameboard < ApplicationRecord
       monstercards3 = player.monsterthree.nil? ? 0 : player.monsterthree.cards.sum(:atk_points)
 
       playeratkpoints = monstercards1 + monstercards2 + monstercards3 + player.level
-      
 
       ## monsteratk points get set to zero if cards.first is nil => no centercard
-      monsteratkpts = gameboard.centercard.card&.atk_points || 0
+      monsteratkpts = gameboard.reload.centercard.card&.atk_points || 0
 
       playerwin = playeratkpoints > monsteratkpts
 

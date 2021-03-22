@@ -172,7 +172,7 @@ RSpec.describe Gameboard, type: :model do
 
     # old card should now be moved to the graveyard
     expect(previous_centercard.reload.cardable_type).to eql('Graveyard')
-    # expect(gameboards(:gameboardFourPlayers).centercard.ingamedeck.length).to eql(1)
+    # expect(gameboards(:gameboardFourPlayers).centercard.ingamedecks.length).to eql(1)
   end
 
   it 'gets new centercard' do
@@ -180,11 +180,15 @@ RSpec.describe Gameboard, type: :model do
     gameboards(:gameboardFourPlayers).players.each(&:init_player)
     
     #create a previous centercard
-    # prev_centercard = gameboards(:gameboardFourPlayers).centercard.ingamedecks.create!(card_id: 3, gameboard: gameboards(:gameboardFourPlayers))
-
     Gameboard.draw_door_card(gameboards(:gameboardFourPlayers))
+    previous_centercard = gameboards(:gameboardFourPlayers).centercard.ingamedeck
 
-    # expect(gameboards(:gameboardFourPlayers).centercard).to_not eql(prev_centercard)
+    # Draw another card now the old centercards should be moved to the graveyard
+    Gameboard.draw_door_card(gameboards(:gameboardFourPlayers))
+    new_centercard = gameboards(:gameboardFourPlayers).centercard.ingamedeck
+
+
+    expect(previous_centercard.reload.id).to_not eql(new_centercard.id)
   end
 
   it 'flee returns right value in gameboard if it is successful or not' do
