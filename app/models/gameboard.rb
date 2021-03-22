@@ -47,7 +47,7 @@ class Gameboard < ApplicationRecord
   def self.render_cards_array(cards)
     card_array = []
 
-    #return nil if cards are empty
+    # return nil if cards are empty
     return nil unless cards
 
     cards.each do |card|
@@ -109,7 +109,7 @@ class Gameboard < ApplicationRecord
       current_player: gameboard.current_player,
       center_card: centercard,
       interceptcards: render_cards_array(gameboard.interceptcard&.ingamedecks),
-      player_interceptcards: render_cards_array(gameboard.interceptcard&.ingamedecks),
+      player_interceptcards: render_cards_array(gameboard.playerinterceptcard&.ingamedecks),
       player_atk: gameboard.player_atk,
       monster_atk: gameboard.monster_atk,
       success: gameboard.success,

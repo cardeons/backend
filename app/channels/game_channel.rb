@@ -107,7 +107,7 @@ class GameChannel < ApplicationCable::Channel
 
     if ingame_card.card.type != 'Buffcard'
       # only buffcards are allowed alteast i think
-      PlayerChannel.broadcast_error(current_user, "This card cannot be used to intercept")
+      PlayerChannel.broadcast_error(current_user, 'This card cannot be used to intercept')
       return
     end
 
@@ -122,7 +122,7 @@ class GameChannel < ApplicationCable::Channel
     end
 
     # update this players handcards
-    PlayerChannel.broadcast_to(current_user, { type: 'HANDCARD_UPDATE', params: { handcards: Gameboard.render_cards_array(current_user.player.handcard.ingamedecks) } })
+    PlayerChannel.broadcast_to(current_user, { type: 'HANDCARD_UPDATE', params: { handcards: Gameboard.render_cards_array(current_user.player.handcard.ingamedecks.reload) } })
     # update board
     broadcast_to(@gameboard, { type: BOARD_UPDATE, params: Gameboard.broadcast_game_board(@gameboard) })
   end
@@ -210,6 +210,12 @@ class GameChannel < ApplicationCable::Channel
     PlayerChannel.broadcast_to(current_user, { type: 'HANDCARD_UPDATE', params: { handcards: Gameboard.render_cards_array(player.handcard.ingamedecks) } })
 
     broadcast_to(@gameboard, { type: BOARD_UPDATE, params: Gameboard.broadcast_game_board(gameboard) })
+  end
+
+  def develop_add_buff_card
+    card = Buffcard.all.first
+    current_user.player.handcard.ingamedecks.create(card: card, gameboard: current_user.player.gameboard)
+    PlayerChannel.broadcast_to(current_user, { type: 'HANDCARD_UPDATE', params: { handcards: Gameboard.render_cards_array(current_user.player.handcard.ingamedecks) } })
   end
 
   def unsubscribed
