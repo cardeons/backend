@@ -95,6 +95,7 @@ class Gameboard < ApplicationRecord
 
   def self.render_gameboard(gameboard)
     # TODO: check if this selects the right card
+    gameboard = gameboard.reload
     centercard = (render_card_from_id(gameboard.centercard.ingamedeck.id) if gameboard.centercard.ingamedeck)
     {
       gameboard_id: gameboard.id,
@@ -106,7 +107,8 @@ class Gameboard < ApplicationRecord
       monster_atk: gameboard.monster_atk,
       success: gameboard.success,
       can_flee: gameboard.can_flee,
-      rewards_treasure: gameboard.rewards_treasure
+      rewards_treasure: gameboard.rewards_treasure,
+      graveyard: render_cards_array(gameboard.graveyard.ingamedecks)
     }
   end
 

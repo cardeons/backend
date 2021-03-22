@@ -52,7 +52,7 @@ class GameChannel < ApplicationCable::Channel
     @gameboard.update(centercard: centercard, monster_atk: monsteratk)
 
     result = Gameboard.attack(@gameboard)
-    gameboard.update(success: result[:result], player_atk: result[:playeratk], monster_atk: result[:monsteratk])
+    @gameboard.update(success: result[:result], player_atk: result[:playeratk], monster_atk: result[:monsteratk])
     updated_board = Gameboard.broadcast_game_board(@gameboard)
     broadcast_to(@gameboard, { type: BOARD_UPDATE, params: updated_board })
     name = @gameboard.centercard.card.title
