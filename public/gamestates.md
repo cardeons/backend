@@ -33,6 +33,18 @@ ANTWORT
       center_card: card_id,
       player_atk: integer,
       monster_atk: integer,
+      interceptcards: [
+        {
+          card_id: int,
+          unique_card_id: int
+        }
+      ]
+      player_interceptcards: [
+        {
+          card_id: int,
+          unique_card_id: int
+        }
+      ]
       success: bool,
       can_flee: bool,
       asked_help: bool,

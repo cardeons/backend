@@ -52,6 +52,41 @@ RSpec.describe Interceptcard, type: :model do
     # get a  monster to buff
     Gameboard.draw_door_card(gameboards(:gameboardFourPlayers))
 
-    expect { gameboards(:gameboardFourPlayers).interceptcard.add_card_with_ingamedeck_id(ingamedeck_card.id) }.to(change { gameboards(:gameboardFourPlayers).monster_atk })
+    old_atk = gameboards(:gameboardFourPlayers).monster_atk
+
+    buff_atk = cards(:buffcard).atk_points
+
+    # checks if monster atk got increased
+    expect { gameboards(:gameboardFourPlayers).interceptcard.add_card_with_ingamedeck_id(ingamedeck_card.id) }.to(change do
+                                                                                                                    gameboards(:gameboardFourPlayers).monster_atk
+                                                                                                                  end.from(old_atk).to(old_atk + buff_atk))
+  end
+  it 'add multiple interceptcard should increase monster dmg' do
+    gameboards(:gameboardFourPlayers).initialize_game_board
+    gameboards(:gameboardFourPlayers).players.each(&:init_player)
+
+    player = gameboards(:gameboardFourPlayers).players.first
+    # add two buffcards to player
+    player.handcard.ingamedecks.create(card: cards(:buffcard), gameboard: gameboards(:gameboardFourPlayers))
+    player.handcard.ingamedecks.create(card: cards(:buffcard), gameboard: gameboards(:gameboardFourPlayers))
+
+    # get a  monster to buff
+    Gameboard.draw_door_card(gameboards(:gameboardFourPlayers))
+
+    old_atk = gameboards(:gameboardFourPlayers).monster_atk
+
+    buff_atk = cards(:buffcard).atk_points
+
+    # checks if monster atk got increased
+    expect do
+      # get first buffcard
+      ingamedeck_card = player.handcard.ingamedecks.find_by!('card_id=?', cards(:buffcard).id)
+      gameboards(:gameboardFourPlayers).interceptcard.add_card_with_ingamedeck_id(ingamedeck_card.id)
+      # get second buffcard
+      ingamedeck_card = player.handcard.ingamedecks.find_by!('card_id=?', cards(:buffcard).id)
+      gameboards(:gameboardFourPlayers).interceptcard.add_card_with_ingamedeck_id(ingamedeck_card.id)
+    end.to(change do
+             gameboards(:gameboardFourPlayers).monster_atk
+           end.from(old_atk).to(old_atk + 2 * buff_atk))
   end
 end

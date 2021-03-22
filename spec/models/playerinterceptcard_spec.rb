@@ -52,6 +52,13 @@ RSpec.describe Playerinterceptcard, type: :model do
     # get a  monster to buff
     Gameboard.draw_door_card(gameboards(:gameboardFourPlayers))
 
-    expect { gameboards(:gameboardFourPlayers).playerinterceptcard.add_card_with_ingamedeck_id(ingamedeck_card.id) }.to(change { gameboards(:gameboardFourPlayers).player_atk })
+    old_atk = gameboards(:gameboardFourPlayers).player_atk
+
+    buff_atk = cards(:buffcard).atk_points
+
+    # checks if player atk got increased
+    expect { gameboards(:gameboardFourPlayers).playerinterceptcard.add_card_with_ingamedeck_id(ingamedeck_card.id) }.to(change do
+                                                                                                                          gameboards(:gameboardFourPlayers).player_atk
+                                                                                                                        end.from(old_atk).to(old_atk + buff_atk))
   end
 end

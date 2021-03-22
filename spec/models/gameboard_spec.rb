@@ -97,6 +97,7 @@ RSpec.describe Gameboard, type: :model do
       current_player: gameboards(:gameboardFourPlayers).current_player,
       center_card: centercard,
       interceptcards: [],
+      player_interceptcards: [],
       player_atk: gameboards(:gameboardFourPlayers).player_atk,
       monster_atk: gameboards(:gameboardFourPlayers).monster_atk,
       success: gameboards(:gameboardFourPlayers).success,
@@ -159,16 +160,14 @@ RSpec.describe Gameboard, type: :model do
     gameboards(:gameboardFourPlayers).initialize_game_board
     gameboards(:gameboardFourPlayers).players.each(&:init_player)
 
-    #draw new centercard
+    # draw new centercard
     Gameboard.draw_door_card(gameboards(:gameboardFourPlayers))
-    
 
     previous_centercard = gameboards(:gameboardFourPlayers).centercard.ingamedecks.first
-    expect(previous_centercard.cardable_type).to eql("Centercard")
+    expect(previous_centercard.cardable_type).to eql('Centercard')
 
     # Draw another card now the old centercards should be moved to the graveyard
     Gameboard.draw_door_card(gameboards(:gameboardFourPlayers))
-
 
     # old card should now be moved to the graveyard
     expect(previous_centercard.reload.cardable_type).to eql('Graveyard')
@@ -178,7 +177,7 @@ RSpec.describe Gameboard, type: :model do
   it 'gets new centercard' do
     gameboards(:gameboardFourPlayers).initialize_game_board
     gameboards(:gameboardFourPlayers).players.each(&:init_player)
-    
+
     # create a previous centercard
     prev_centercard = gameboards(:gameboardFourPlayers).centercard.ingamedecks.create!(card_id: 3, gameboard: gameboards(:gameboardFourPlayers))
 
