@@ -63,6 +63,8 @@ ActiveRecord::Schema.define(version: 2021_03_23_122123) do
     t.bigint "current_player"
     t.integer "rewards_treasure", default: 0
     t.integer "current_state", default: 0
+    t.bigint "helping_player"
+    t.integer "helping_player_atk", default: 0
     t.index ["current_player"], name: "index_gameboards_on_current_player"
   end
 

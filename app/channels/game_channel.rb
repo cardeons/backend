@@ -41,7 +41,7 @@ class GameChannel < ApplicationCable::Channel
     #   ingamedeck.update(cardable: Graveyard.find_by('gameboard_id = ?', @gameboard.id))
     # end
 
-    centercard.ingamedeck.update(cardable: Graveyard.find_by('gameboard_id = ?', @gameboard.id))
+    centercard.ingamedeck&.update(cardable: Graveyard.find_by('gameboard_id = ?', @gameboard.id))
 
     # update handcard to centercard
     Ingamedeck.find_by('id=?', params['unique_card_id']).update(cardable: Centercard.find_by('gameboard_id = ?', @gameboard.id))
@@ -101,15 +101,21 @@ class GameChannel < ApplicationCable::Channel
 
       player_level = player.level
 
-      if player_level == 4
-        broadcast_to(@gameboard, { type: 'WIN', params: { player: player.name } })
-      end
+      broadcast_to(@gameboard, { type: 'WIN', params: { player: player.name } }) if player_level == 4
+
       player.update_attribute(:level, player_level + 1)
 
-      current_player_treasure = @gameboard.rewards_treasure - @gameboard.shared_reward
+      rewards = @gameboard.rewards_treasure
+      shared_reward = @gameboard.shared_reward
+      current_player_treasure = rewards - shared_reward
+
+      # broadcast_to(@gameboard, { type: 'ERROR', params: { message: "Can't share more rewards than monster gives" } }) if shared_reward > @gameboard.rewards_treasure
       Handcard.draw_handcards(@gameboard.current_player, @gameboard, current_player_treasure)
       # TODO: add helping player to gameboard? give treasures to helping player
-      # Handcard.draw_handcards(@gameboard.current_player.id, @gameboard, current_player_treasure)
+      if @gameboard.helping_player
+        helping_player = @gameboard.helping_player
+        Handcard.draw_handcards(helping_player, @gameboard, shared_reward)
+      end
       @gameboard.centercard.ingamedeck&.update!(cardable: @gameboard.graveyard)
       msg = "#{current_user.player.name} has killed #{@gameboard.centercard.card.title}"
       broadcast_to(@gameboard, { type: GAME_LOG, params: { date: Time.new, message: msg } })
@@ -122,7 +128,6 @@ class GameChannel < ApplicationCable::Channel
     end
 
     broadcast_to(@gameboard, { type: 'ERROR', params: { message: "Playerattack too low" } }) unless result[:result]
-
 
     # updated_board = Gameboard.broadcast_game_board(@gameboard)
     # broadcast_to(@gameboard, { type: BOARD_UPDATE, params: updated_board })
@@ -176,11 +181,6 @@ class GameChannel < ApplicationCable::Channel
 
     current_user.player.update!(intercept: false)
 
-    # pp "------------------------------------"
-    # pp @gameboard.players
-    # pp "cooooooouuuuuuuunnnnnnnnttttttttttt"
-    # pp @gameboard.players.where("intercept = ?", false).count
-
     if @gameboard.players.where("intercept = ?", false).count == 3
       msg = "Nobody wants to intercept this turn."
       @gameboard.intercept_finished!
@@ -194,6 +194,7 @@ class GameChannel < ApplicationCable::Channel
       broadcast_to(@gameboard, { type: BOARD_UPDATE, params: Gameboard.broadcast_game_board(@gameboard) })
     end
   end
+
   # def play_card(params)
   #   # add actions!
 
@@ -228,6 +229,36 @@ class GameChannel < ApplicationCable::Channel
 
   #   broadcast_to(@gameboard, { type: BOARD_UPDATE, params: Gameboard.broadcast_game_board(@gameboard) })
   # end
+
+  def help_call(params)
+    helping_player = Player.find_by('id = ?', params['helping_player_id'])
+    helping_shared_reward = params['helping_shared_rewards']
+    helping_player_id = helping_player.id
+
+    PlayerChannel.broadcast_to(current_user, { type: 'ERROR', params: { message: "It's not your round, you can't ask for help..." } }) unless current_user.id == @gameboard.current_player
+
+    PlayerChannel.broadcast_to(current_user, { type: 'ERROR', params: { message: 'You already asked for help...' } }) if @gameboard.asked_help
+
+    PlayerChannel.broadcast_to(current_user, { type: 'ERROR', params: { message: "Can't share more rewards than monster gives" } }) if helping_shared_reward > @gameboard.rewards_treasure
+
+    @gameboard.update(shared_reward: helping_shared_reward, asked_help: true, helping_player: helping_player_id)
+
+    PlayerChannel.broadcast_to(current_user, { type: 'ASK_FOR_HELP', params: { player_id: helping_player_id, player_name: helping_player.name, helping_shared_rewards: helping_shared_reward, helping_player_attack: helping_player.attack } }) unless helping_shared_reward > @gameboard.rewards_treasure
+  end
+
+  def answer_help_call(params)
+    if params['help'] && @gameboard.helping_player
+      helping_player_id = @gameboard.helping_player
+      helping_player = Player.find_by('id = ?', helping_player_id)
+
+      @gameboard.update(helping_player_atk: helping_player.attack)
+    end
+
+    @gameboard.update(shared_reward: 0) unless params['help']
+
+    broadcast_to(@gameboard, { type: BOARD_UPDATE, params: Gameboard.broadcast_game_board(@gameboard) })
+  end
+
 
   def move_card(params)
     unique_card_id = params['unique_card_id']
