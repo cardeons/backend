@@ -25,7 +25,7 @@ To do:
 
 We are using foreman to start redis/sidekiq and puma in one shell:
 
-gem install foreman
+- gem install foreman
 
 - foreman start -p 3000
 
