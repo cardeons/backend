@@ -194,40 +194,6 @@ class GameChannel < ApplicationCable::Channel
       broadcast_to(@gameboard, { type: BOARD_UPDATE, params: Gameboard.broadcast_game_board(@gameboard) })
     end
   end
-  # def play_card(params)
-  #   # add actions!
-
-  #   paramsObject = JSON.parse params
-  #   puts paramsObject
-
-  #   broadcast_to(@gameboard, { type: DEBUG, params: { message: 'You just used play_card with ', params: paramsObject } })
-
-  #   case paramsObject.to
-  #   when 'Inventory'
-  #     broadcast_to(@gameboard, { type: DEBUG, params: { message: "Player #{current_user.email} just played to inventory" } })
-  #     current_card = Ingamedeck.find_by('id=?', paramsObject.unique_id)
-  #     current_card.update_attribute(:cardable_type, 'Inventory')
-  #   when 'Monsterone'
-  #     broadcast_to(@gameboard, { type: DEBUG, params: { message: "Player #{current_user.email} just played to monsterone" } })
-  #     current_card = Ingamedeck.find_by('id=?', paramsObject.unique_id)
-  #     current_card.update_attribute(:cardable_type, 'Monsterone')
-  #   when 'Monstertwo'
-  #     broadcast_to(@gameboard, { type: DEBUG, params: { message: "Player #{current_user.email} just played to monstertwo" } })
-  #     current_card = Ingamedeck.find_by('id=?', paramsObject.unique_id)
-  #     current_card.update_attribute(:cardable_type, 'Monstertwo')
-  #   when 'Monsterthree'
-  #     broadcast_to(@gameboard, { type: DEBUG, params: { message: "Player #{current_user.email} just played to monsterthree" } })
-  #     current_card = Ingamedeck.find_by('id=?', paramsObject.unique_id)
-  #     current_card.update_attribute(:cardable_type, 'Monsterthree')
-  #   when 'center'
-  #     broadcast_to(@gameboard, { type: DEBUG, params: { message: "Player #{current_user.email} just played to center" } })
-  #     # TODO: currently not implemented
-  #   else
-  #     broadcast_to(@gameboard, { type: ERROR, params: { message: "Player #{current_user.email} just played to something i dont know" } })
-  #   end
-
-  #   broadcast_to(@gameboard, { type: BOARD_UPDATE, params: Gameboard.broadcast_game_board(@gameboard) })
-  # end
 
   def move_card(params)
     unique_card_id = params['unique_card_id']
