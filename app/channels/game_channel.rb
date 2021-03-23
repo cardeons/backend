@@ -41,7 +41,7 @@ class GameChannel < ApplicationCable::Channel
     #   ingamedeck.update(cardable: Graveyard.find_by('gameboard_id = ?', @gameboard.id))
     # end
 
-    centercard.ingamedeck.update(cardable: Graveyard.find_by('gameboard_id = ?', @gameboard.id))
+    centercard.ingamedeck&.update(cardable: Graveyard.find_by('gameboard_id = ?', @gameboard.id))
 
     # update handcard to centercard
     Ingamedeck.find_by('id=?', params['unique_card_id']).update(cardable: Centercard.find_by('gameboard_id = ?', @gameboard.id))
