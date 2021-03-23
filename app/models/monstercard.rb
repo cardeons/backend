@@ -178,15 +178,17 @@ class Monstercard < Card
     when 'random_card_lowest_level'
       all_players = gameboard.players
       first = true
+      player_lowest_level = [player]
 
       all_players.each do |player_temp|
-        unless player_temp.id == player
+        if player_temp.id != player.id && player_temp.level <= player.level
           if first
-            @player_lowest_level = player_temp
+            player_lowest_level = [player_temp]
             first = false
+          else
+            player_lowest_level = [player_temp] if player_lowest_level[0].level > player_temp.level
+            player_lowest_level.push(player_temp) if player_lowest_level[0].level == player_temp.level
           end
-
-          @player_lowest_level = player_temp if @player_lowest_level.level > player_temp.level
         end
       end
 
@@ -194,9 +196,11 @@ class Monstercard < Card
 
       random_card = player.handcard.ingamedecks.offset(offset).first
 
-      random_card&.update!(cardable: @player_lowest_level.handcard)
+      random = rand(0..player_lowest_level.length - 1)
+
+      random_card&.update!(cardable: player_lowest_level[random].handcard)
     when 'no_help_next_fight'
-      puts 'uwu'
+      Ingamedeck.create(card: Cursecard.find_by('title = ?', 'The unicorn curse'), gameboard: gameboard, cardable: player.playercurse)
     when 'lose_one_card'
       offset = rand(player.handcard.ingamedecks.count)
 

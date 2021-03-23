@@ -438,7 +438,7 @@ RSpec.describe Monstercard, type: :model do
     expect(current_player.reload.monstertwo.ingamedecks.count).to eql(1)
   end
 
-  it 'lose 1 handcard to lowest level player if monster is winning' do
+  it 'lose 1 handcard to lowest level player if monster is winning, everyone has the same level' do
     gameboards(:gameboardFourPlayers).initialize_game_board
     gameboards(:gameboardFourPlayers).players.each(&:init_player)
 
@@ -447,6 +447,46 @@ RSpec.describe Monstercard, type: :model do
     expect(current_player.handcard.ingamedecks.count).to eql(5)
     Monstercard.bad_things(cards(:monstercard5), gameboards(:gameboardFourPlayers))
     expect(current_player.reload.handcard.ingamedecks.count).to eql(4)
-    expect(Player.find(2).handcard.ingamedecks.count).to eql(6)
+  end
+
+  it 'lose 0 handcard to lowest level player if monster is winning, if you are the lowest level' do
+    gameboards(:gameboardFourPlayers).initialize_game_board
+    gameboards(:gameboardFourPlayers).players.each(&:init_player)
+
+    gameboards(:gameboardFourPlayers).players.each do |player|
+      player.update(level: 4)
+    end
+
+    current_player = Player.find(gameboards(:gameboardFourPlayers).current_player)
+    current_player.update(level: 1)
+
+    expect(current_player.handcard.ingamedecks.count).to eql(5)
+    Monstercard.bad_things(cards(:monstercard5), gameboards(:gameboardFourPlayers))
+    gameboards(:gameboardFourPlayers).players.each do |player|
+      expect(player.reload.handcard.ingamedecks.count).to eql(5)
+    end
+  end
+
+  it 'lose 1 handcard to lowest level player if monster is winning, if you are the highest level' do
+    gameboards(:gameboardFourPlayers).initialize_game_board
+    gameboards(:gameboardFourPlayers).players.each(&:init_player)
+
+    current_player = Player.find(gameboards(:gameboardFourPlayers).current_player)
+    current_player.update(level: 4)
+
+    expect(current_player.handcard.ingamedecks.count).to eql(5)
+    Monstercard.bad_things(cards(:monstercard5), gameboards(:gameboardFourPlayers))
+    expect(current_player.handcard.ingamedecks.count).to eql(4)
+  end
+
+  it 'get cursed if monster is winning' do
+    gameboards(:gameboardFourPlayers).initialize_game_board
+    gameboards(:gameboardFourPlayers).players.each(&:init_player)
+
+    current_player = Player.find(gameboards(:gameboardFourPlayers).current_player)
+
+    Monstercard.bad_things(cards(:monstercard4), gameboards(:gameboardFourPlayers))
+    expect(current_player.reload.playercurse.ingamedecks.count).to eql(1)
+
   end
 end

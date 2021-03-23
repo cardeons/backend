@@ -3,24 +3,68 @@
 class Cursecard < Card
   validates :title, :description, :image, :action, :draw_chance, :atk_points, :type, presence: true
 
-  def self.activate(card)
+  def self.activate(card, player)
     case card.action # get the action from card
     when 'lose_atk_points'
-      puts "it was 1" 
+      player.update(attack: player.attack - card.atk_points)
     when 'lose_item_hand'
-      puts "it was 2"
+      monster_arr = []
+      monster_slot = []
+      if player.monsterone.cards.where(item_category: 'hand').any?
+        monster_arr.push(player.monsterone.cards.where(item_category: 'hand'))
+        monster_slot.push(player.monsterone)
+      end
+      if player.monstertwo.cards.where(item_category: 'hand').any?
+        monster_arr.push(player.monstertwo.cards.where(item_category: 'hand'))
+        monster_slot.push(player.monstertwo)
+      end
+      if player.monsterthree.cards.where(item_category: 'hand').any?
+        monster_arr.push(player.monsterthree.cards.where(item_category: 'hand'))
+        monster_slot.push(player.monsterthree)
+      end
+
+      if monster_arr.length.positive?
+        random = rand(0..monster_arr.length - 1)
+        offset = rand(monster_arr[random].count)
+        random_card_id = monster_arr[random].offset(offset).first.id
+
+        Ingamedeck.where(card_id: random_card_id, cardable: monster_slot[random]).first&.update!(cardable: gameboard.graveyard)
+      end
     when 'no_help_next_fight'
-      puts 'hi'
+      puts 'no_help_next_fight - not implemented yet'
     when 'minus_atk_next_fight'
-      puts 'hi'
+      puts 'minus_atk_next_fight - not implemented yet'
     when 'lose_item_head'
-      puts 'uwu'
+      monster_arr = []
+      monster_slot = []
+      if player.monsterone.cards.where(item_category: 'head').any?
+        monster_arr.push(player.monsterone.cards.where(item_category: 'head'))
+        monster_slot.push(player.monsterone)
+      end
+      if player.monstertwo.cards.where(item_category: 'head').any?
+        monster_arr.push(player.monstertwo.cards.where(item_category: 'head'))
+        monster_slot.push(player.monstertwo)
+      end
+      if player.monsterthree.cards.where(item_category: 'head').any?
+        monster_arr.push(player.monsterthree.cards.where(item_category: 'head'))
+        monster_slot.push(player.monsterthree)
+      end
+
+      if monster_arr.length.positive?
+        random = rand(0..monster_arr.length - 1)
+        offset = rand(monster_arr[random].count)
+        random_card_id = monster_arr[random].offset(offset).first.id
+
+        Ingamedeck.where(card_id: random_card_id, cardable: monster_slot[random]).first&.update!(cardable: gameboard.graveyard)
+      end
     when 'lose_level'
-      puts 'uwu'
+      player = Player.find_by('id = ?', gameboard.current_player)
+
+      player.update(level: player.level - 1) unless player.level == 1
     when 'double_attack_double_reward'
-      puts 'hi'
+      puts 'double_attack_double_reward - not implemented yet'
     else
-      puts "it was something else"
+      puts 'action not found'
     end
   end
 end

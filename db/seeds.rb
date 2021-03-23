@@ -460,6 +460,14 @@ unicorn_fire = Monstercard.create!(
   level_amount: 1
 )
 
+unicorn_curse = Cursecard.create!(
+  title: 'The unicorn curse',
+  description: '<p>The unicorn cursed you.</p><p> No one is willing to help you in your next fight...</p>',
+  image: '/',
+  action: 'no_help_next_fight',
+  draw_chance: 0,
+  atk_points: 0
+)
 
 ##HotDog
 hotdog_water = Monstercard.create!(
