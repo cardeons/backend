@@ -35,7 +35,7 @@ class Monstercard < Card
         if card.item_category == 'hand' && monster_to_equip.cards.where('item_category=?', card.item_category).count == 1
           type = 'GAMEBOARD_UPDATE'
           message = 'Successfully equipped.'
-          deck_card.update_attribute(:cardable, monster_to_equip)
+          deck_card.update(cardable: monster_to_equip)
 
           attack_obj = Gameboard.attack(player.gameboard)
 
@@ -84,7 +84,7 @@ class Monstercard < Card
 
         playeratkpoints = monstercards1 + monstercards2 + monstercards3 + player.level
 
-        player.update_attribute(:attack, playeratkpoints)
+        player.update(attack: playeratkpoints)
         player.gameboard.update(success: attack_obj[:result], player_atk: attack_obj[:playeratk], monster_atk: attack_obj[:monsteratk])
         message = 'Successfully equipped.'
       end
