@@ -21,9 +21,6 @@ class Monstercard < Card
     unless deck_card.nil?
       card = Card.find_by('id=?', deck_card.card_id)
 
-      pp '---------------'
-      pp card
-      pp '---------------'
       # TODO: validieren
       cardtype = card.type
       #       # there already are 5 items, you can't put any more (6 because the monster itself is in this table)
@@ -35,17 +32,11 @@ class Monstercard < Card
       # category already on monster
       elsif monster_to_equip.cards.where('item_category=?', card.item_category).count.positive?
 
-        pp 'in here'
-        pp card.item_category
-        pp monster_to_equip.cards.where('item_category=?', card.item_category).count
-
         if card.item_category == 'hand' && monster_to_equip.cards.where('item_category=?', card.item_category).count == 1
-          pp 'erlaubt'
           type = 'GAMEBOARD_UPDATE'
           message = 'Successfully equipped.'
           deck_card.update_attribute(:cardable, monster_to_equip)
         else
-          pp 'nicht erlaubt'
           type = 'ERROR'
           message = "You already have this type of item on your monster! (#{card.item_category})"
         end
@@ -59,8 +50,6 @@ class Monstercard < Card
 
       # yay
       else
-
-        pp 'all good'
         type = 'GAMEBOARD_UPDATE'
         deck_card.update_attribute(:cardable, monster_to_equip)
 
