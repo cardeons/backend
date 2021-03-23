@@ -238,7 +238,7 @@ Gameboard Channel response
 
 
 #ANFRAGE
-#kein player möchte nicht in den kampf eingreifen
+#kein player möchte in den kampf eingreifen
 {
   action: "no_interception",
 }
@@ -258,3 +258,12 @@ Gameboard Channel response
      handcards: []
     }  
 }
+
+CURRENT_STATE
+
+available values: lobby | ingame | intercept_phase | intercept_finished
+
+lobby = spieler befinden sich in der lobby
+ingame = spiel hat gestartet
+intercept_phase = spieler hat ein monster ausgespielt/eine türkarte gezogen
+intercept_finished = kein spieler wollte intercepten, zug ist "vorbei"

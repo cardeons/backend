@@ -8,7 +8,7 @@ class Gameboard < ApplicationRecord
   has_one :graveyard, dependent: :destroy
   has_one :interceptcard, dependent: :destroy
   has_one :playerinterceptcard, dependent: :destroy
-  enum current_state: %i[lobby ingame]
+  enum current_state: %i[lobby ingame intercept_phase intercept_finished]
 
   # has_many :cards, through: :ingame_cards
 
@@ -21,6 +21,7 @@ class Gameboard < ApplicationRecord
     Playerinterceptcard.create!(gameboard_id: gameboard_id)
     Interceptcard.create!(gameboard_id: gameboard_id)
 
+    # pp Player.find(current_player).gameboard
     players.each do |player|
       Handcard.find_or_create_by!(player_id: player.id) # unless player.handcard
       Handcard.draw_handcards(player.id, self)
@@ -233,12 +234,12 @@ class Gameboard < ApplicationRecord
       if playerwin
         #   message = "SUCCESS"
         gameboard.update(success: true, player_atk: playeratkpoints, monster_atk: monsteratkpts)
-        puts 'playerwin'
+        # puts 'playerwin'
       else
         #   message = "FAIL"
         gameboard.update(success: false, player_atk: playeratkpoints, monster_atk: monsteratkpts)
         #   # broadcast: flee or use cards!
-        puts 'monsterwin'
+        # puts 'monsterwin'
       end
 
     end

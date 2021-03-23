@@ -104,6 +104,7 @@ class GameChannel < ApplicationCable::Channel
       PlayerChannel.broadcast_to(current_user.reload, { type: 'HANDCARD_UPDATE', params: { handcards: Gameboard.render_cards_array(player.handcard.ingamedecks) } })
 
       Gameboard.get_next_player(@gameboard)
+      @gameboard.ingame!
       broadcast_to(@gameboard, { type: BOARD_UPDATE, params: Gameboard.broadcast_game_board(@gameboard) })
     end
 
@@ -123,6 +124,8 @@ class GameChannel < ApplicationCable::Channel
     # unique_card_id: 1,
     # to: 'center_card' | 'current_player'
     # }
+
+    @gameboard.intercept_phase!
 
     unique_card_id = params['unique_card_id']
     to = params['to']
@@ -146,12 +149,31 @@ class GameChannel < ApplicationCable::Channel
       @gameboard.playerinterceptcard.add_card_with_ingamedeck_id(unique_card_id)
     end
 
+    # user did intercept
+    current_user.player.update!(intercept: true)
     # update this players handcards
     PlayerChannel.broadcast_to(current_user, { type: 'HANDCARD_UPDATE', params: { handcards: Gameboard.render_cards_array(current_user.player.handcard.ingamedecks.reload) } })
     # update board
     broadcast_to(@gameboard, { type: BOARD_UPDATE, params: Gameboard.broadcast_game_board(@gameboard) })
   end
 
+  def no_intercept(params)
+
+    current_user.player.update!(intercept: false)
+
+    if @gameboard.players.where("intercept = ?", false).count == 3
+      msg = "Nobody wants to intercept this turn."
+      @gameboard.intercept_finished!
+
+      ##reset all player intercept values back to default (true)
+      @gameboard.players.each do |player|
+        player.update!(intercept: true)
+      end
+
+      broadcast_to(@gameboard, { type: GAME_LOG, params: { date: Time.new, message: msg } })
+      broadcast_to(@gameboard, { type: BOARD_UPDATE, params: Gameboard.broadcast_game_board(@gameboard) })
+    end
+  end
   # def play_card(params)
   #   # add actions!
 

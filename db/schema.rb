@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_03_21_205819) do
+ActiveRecord::Schema.define(version: 2021_03_22_171205) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -52,7 +52,6 @@ ActiveRecord::Schema.define(version: 2021_03_21_205819) do
   end
 
   create_table "gameboards", force: :cascade do |t|
-    t.string "current_state", default: "awaiting_player"
     t.integer "player_atk", default: 0
     t.integer "monster_atk", default: 0
     t.boolean "asked_help", default: false
@@ -63,6 +62,7 @@ ActiveRecord::Schema.define(version: 2021_03_21_205819) do
     t.datetime "updated_at", precision: 6, null: false
     t.bigint "current_player"
     t.integer "rewards_treasure", default: 0
+    t.integer "current_state", default: 0
     t.index ["current_player"], name: "index_gameboards_on_current_player"
   end
 
@@ -151,6 +151,7 @@ ActiveRecord::Schema.define(version: 2021_03_21_205819) do
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
     t.bigint "user_id", null: false
+    t.boolean "intercept", default: true
     t.index ["gameboard_id"], name: "index_players_on_gameboard_id"
     t.index ["user_id"], name: "index_players_on_user_id"
   end
