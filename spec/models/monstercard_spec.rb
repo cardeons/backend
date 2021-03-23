@@ -3,6 +3,9 @@
 require 'rails_helper'
 
 RSpec.describe Monstercard, type: :model do
+
+  # fixtures :users, :players, :gameboards, :cards, :monsterones, :ingamedecks, :centercards
+
   subject do
     described_class.new(
       title: 'Sir Bear',
@@ -312,4 +315,106 @@ RSpec.describe Monstercard, type: :model do
     result = Monstercard.equip_monster(params, player1)
     expect(result == { type: 'ERROR', message: "You can't put any more items on this monster." }).to be_truthy
   end
+
+  it 'monster can have two hand items eqiupped' do
+    catfish = Monstercard.create!(
+      title: 'Catfish',
+      description: '<p>HA! You got catfished.</p>',
+      image: '/monster/catfish.png',
+      action: 'lose_level',
+      draw_chance: 5,
+      level: 10,
+      element: 'water',
+      bad_things: '<p><b>Bad things:</b>Getting catfished, really? You should know better. Lose one level.</p>',
+      rewards_treasure: 2,
+      good_against: 'fire',
+      bad_against: 'earth',
+      good_against_value: 3,
+      bad_against_value: 1,
+      atk_points: 14,
+      level_amount: 2
+    )
+
+    item1 = Itemcard.create!(
+      title: 'The things to get things out of the toilet',
+      description: '<p>Disgusting. If I was you, I would not touch it.</p>',
+      image: '/item/poempel.png',
+      action: 'plus_one',
+      draw_chance: 14,
+      element: 'fire',
+      element_modifier: 2,
+      atk_points: 2,
+      item_category: 'hand',
+      has_combination: false
+    )
+    
+    u1 = User.create!(email: '1@1.at', password: '1', name: '1', password_confirmation: '1')
+    gameboard_test = Gameboard.create!(current_state: 'lobby', player_atk: 5)
+    player1 = Player.create(name: 'Gustav', gameboard: gameboard_test, user: u1)
+
+    Handcard.create(player_id: player1.id)
+    Monsterone.create(player: player1)
+    ingamedeck1 = Ingamedeck.create!(gameboard: gameboard_test, card_id: catfish.id, cardable: player1.monsterone)
+    ingamedeck2 = Ingamedeck.create!(gameboard: gameboard_test, card_id: item1.id, cardable: player1.handcard)
+    ingamedeck3 = Ingamedeck.create!(gameboard: gameboard_test, card_id: item1.id, cardable: player1.handcard)
+
+    equip_one = Monstercard.equip_monster({ 'unique_monster_id' => ingamedeck1.id, 'unique_equip_id' => ingamedeck2.id, 'action' => 'equip_monster' }, player1)
+    expect(equip_one == { type: 'GAMEBOARD_UPDATE', message: "Successfully equipped." }).to be_truthy
+
+    equip_two = Monstercard.equip_monster({ 'unique_monster_id' => ingamedeck1.id, 'unique_equip_id' => ingamedeck3.id, 'action' => 'equip_monster' }, player1)
+    expect(equip_two == { type: 'GAMEBOARD_UPDATE', message: "Successfully equipped." }).to be_truthy
+
+  end
+  it 'attack points are calculated correctly' do
+    catfish = Monstercard.create!(
+      title: 'Catfish',
+      description: '<p>HA! You got catfished.</p>',
+      image: '/monster/catfish.png',
+      action: 'lose_level',
+      draw_chance: 5,
+      level: 10,
+      element: 'water',
+      bad_things: '<p><b>Bad things:</b>Getting catfished, really? You should know better. Lose one level.</p>',
+      rewards_treasure: 2,
+      good_against: 'fire',
+      bad_against: 'earth',
+      good_against_value: 3,
+      bad_against_value: 1,
+      atk_points: 14,
+      level_amount: 2
+    )
+
+    item1 = Itemcard.create!(
+      title: 'The things to get things out of the toilet',
+      description: '<p>Disgusting. If I was you, I would not touch it.</p>',
+      image: '/item/poempel.png',
+      action: 'plus_one',
+      draw_chance: 14,
+      element: 'fire',
+      element_modifier: 2,
+      atk_points: 2,
+      item_category: 'hand',
+      has_combination: false
+    )
+    
+    u1 = User.create!(email: '1@1.at', password: '1', name: '1', password_confirmation: '1')
+    gameboard_test = Gameboard.create!(current_state: 'lobby', player_atk: 5)
+    player1 = Player.create(name: 'Gustav', gameboard: gameboard_test, user: u1)
+
+    Handcard.create(player_id: player1.id)
+    Monsterone.create(player: player1)
+    ingamedeck1 = Ingamedeck.create!(gameboard: gameboard_test, card_id: catfish.id, cardable: player1.monsterone)
+    ingamedeck2 = Ingamedeck.create!(gameboard: gameboard_test, card_id: item1.id, cardable: player1.handcard)
+    ingamedeck3 = Ingamedeck.create!(gameboard: gameboard_test, card_id: item1.id, cardable: player1.handcard)
+
+    equip_one = Monstercard.equip_monster({ 'unique_monster_id' => ingamedeck1.id, 'unique_equip_id' => ingamedeck2.id, 'action' => 'equip_monster' }, player1)
+    ## attack must be 17 - monster has 14 atk, item 2, player 1
+    expect(player1.attack).to eql(17)
+
+    equip_two = Monstercard.equip_monster({ 'unique_monster_id' => ingamedeck1.id, 'unique_equip_id' => ingamedeck3.id, 'action' => 'equip_monster' }, player1)
+    ## attack must be 19 - monster has 14 atk, item 2+2, player 1
+    expect(player1.attack).to eql(19)
+
+  end
+  
 end
