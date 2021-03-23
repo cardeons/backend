@@ -18,7 +18,7 @@ To do:
 
 - rails db:migrate
 
-<!-- //sudo apt install redis-server -->
+ //sudo apt install redis-server 
 <!-- - redis-server --daemonize yes -->
 <!-- || -->
 <!-- - bundle exec sidekiq --environment development -->
