@@ -31,7 +31,7 @@ class LobbyChannel < ApplicationCable::Channel
     player.init_player(params)
 
     # TODO: only for testing otherwise false
-    # lobbyisfull = true
+    lobbyisfull = true
 
     lobbyisfull = true if gameboard.players.count > 3
 
@@ -49,7 +49,7 @@ class LobbyChannel < ApplicationCable::Channel
 
 
       # TODO: Remove after testing i guesss
-      #createNewTestGame(@gameboard)
+      createNewTestGame(@gameboard)
 
       broadcast_to(@gameboard, { type: 'START_GAME', params: { game_id: @gameboard.id } })
     end
