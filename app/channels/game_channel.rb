@@ -125,8 +125,6 @@ class GameChannel < ApplicationCable::Channel
     # to: 'center_card' | 'current_player'
     # }
 
-    @gameboard.intercept_phase!
-
     unique_card_id = params['unique_card_id']
     to = params['to']
 
@@ -150,7 +148,13 @@ class GameChannel < ApplicationCable::Channel
     end
 
     # user did intercept
-    current_user.player.update!(intercept: true)
+    @gameboard.intercept_phase!
+
+    #if one player intercepted, all players are allowed to intercept again
+    @gameboard.players.each do |player|
+      player.update!(intercept: true)
+    end
+    
     # update this players handcards
     PlayerChannel.broadcast_to(current_user, { type: 'HANDCARD_UPDATE', params: { handcards: Gameboard.render_cards_array(current_user.player.handcard.ingamedecks.reload) } })
     # update board
