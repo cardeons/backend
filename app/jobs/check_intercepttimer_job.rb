@@ -13,7 +13,7 @@ class CheckIntercepttimerJob < ApplicationJob
 
     pp gameboard
 
-    GameChannel.broadcast_to(gameboard, { type: 'DEBUG', params: { message: "This Message was delayed by: #{timestamp - Time.new}" } }) if gameboard
+    GameChannel.broadcast_to(gameboard, { type: 'DEBUG', params: { message: "You just activated my job ;) with a delay of #{timestamp - Time.new}" } }) if gameboard
 
     # gameboard = Gameboard.find_by('id=?', gameboard_id)
     # if gameboard.last_intercept_ts != timestamp

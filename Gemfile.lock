@@ -98,6 +98,8 @@ GEM
       http_parser.rb (~> 0.6.0)
     erubi (1.10.0)
     eventmachine (1.2.7)
+    fakeredis (0.8.0)
+      redis (~> 4.1)
     ffi (1.14.2)
     formatador (0.2.5)
     globalid (0.4.2)
@@ -326,6 +328,7 @@ DEPENDENCIES
   capybara (>= 3.26)
   devise
   dotenv-rails
+  fakeredis
   guard
   guard-livereload (~> 2.5)
   jbuilder (~> 2.7)

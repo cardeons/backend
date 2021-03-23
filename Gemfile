@@ -68,6 +68,8 @@ group :test do
   # Adds support for Capybara system testing and selenium driver
   gem 'capybara', '>= 3.26'
   gem 'selenium-webdriver'
+  # fake redis for testing
+  gem 'fakeredis', require: 'fakeredis/rspec'
   # Easy installation and use of web drivers to run system tests with browsers
   gem 'json-schema'
   gem 'webdrivers'
