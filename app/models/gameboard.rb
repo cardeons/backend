@@ -8,7 +8,7 @@ class Gameboard < ApplicationRecord
   has_one :graveyard, dependent: :destroy
   has_one :interceptcard, dependent: :destroy
   has_one :playerinterceptcard, dependent: :destroy
-  enum current_state: %i[lobby ingame]
+  enum current_state: %i[lobby ingame intercept_phase intercept_finished]
 
   # has_many :cards, through: :ingame_cards
 
@@ -21,6 +21,7 @@ class Gameboard < ApplicationRecord
     Playerinterceptcard.create!(gameboard_id: gameboard_id)
     Interceptcard.create!(gameboard_id: gameboard_id)
 
+    # pp Player.find(current_player).gameboard
     players.each do |player|
       Handcard.find_or_create_by!(player_id: player.id) # unless player.handcard
       Handcard.draw_handcards(player.id, self)
@@ -145,6 +146,7 @@ class Gameboard < ApplicationRecord
   end
 
   def self.draw_door_card(gameboard)
+    gameboard.intercept_phase!
     # cursecards = Cursecard.all
     monstercards = Monstercard.all
     # bosscards = Bosscard.all
@@ -174,7 +176,11 @@ class Gameboard < ApplicationRecord
 
     attack_obj = attack(gameboard.reload)
 
-    gameboard.update(asked_help: false, success: attack_obj[:result], player_atk: attack_obj[:playeratk], monster_atk: attack_obj[:monsteratk])
+    gameboard.update(success: attack_obj[:result], player_atk: attack_obj[:playeratk], monster_atk: attack_obj[:monsteratk])
+
+    gameboard.players.each do |player|
+      player.update!(intercept: true)
+    end
 
     gameboard.centercard.card.title
   end
