@@ -1,1 +1,3 @@
-worker: bundle exec sidekiq
+web:    bundle exec rails s -p 3000
+redis:  redis-server
+worker: bundle exec sidekiq -v

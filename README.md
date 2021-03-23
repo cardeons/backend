@@ -26,6 +26,9 @@ To do:
 - bundle exec sidekiq --environment development
 
 
+gem install foreman
+
+
 - rails s
 
 

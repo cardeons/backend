@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class CheckIntercepttimerJob < ApplicationJob
-  queue_as :important
+  queue_as :default
 
   def perform(gameboard_id, timestamp)
     pp 'JOB'
