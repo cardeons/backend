@@ -161,8 +161,8 @@ class Gameboard < ApplicationRecord
     # centercard.ingamedecks.each do |ingamedeck|
     #   ingamedeck.update!(cardable: gameboard.graveyard)
     # end
-    
-    centercard.ingamedeck.update!(cardable: gameboard.graveyard) if centercard.ingamedeck
+
+    centercard.ingamedeck&.update!(cardable: gameboard.graveyard)
 
     # centercard
     Ingamedeck.create(gameboard: gameboard, card_id: randomcard, cardable: centercard)
@@ -170,11 +170,11 @@ class Gameboard < ApplicationRecord
     new_center = Centercard.find_by('gameboard_id = ?', gameboard.id)
     new_treasure = Card.find_by('id = ?', randomcard).rewards_treasure
 
-    gameboard.update(centercard: new_center, rewards_treasure: new_treasure)	
+    gameboard.update(centercard: new_center, rewards_treasure: new_treasure)
 
-    attack_obj = attack(gameboard.reload)	
+    attack_obj = attack(gameboard.reload)
 
-    gameboard.update(success: attack_obj[:result], player_atk: attack_obj[:playeratk], monster_atk: attack_obj[:monsteratk])	
+    gameboard.update(success: attack_obj[:result], player_atk: attack_obj[:playeratk], monster_atk: attack_obj[:monsteratk])
 
     gameboard.centercard.card.title
   end
@@ -197,14 +197,15 @@ class Gameboard < ApplicationRecord
       }
     end
 
-    # TODO: add bad things if flee does not succeed	
-    get_next_player(gameboard)	
+    # TODO: add bad things if flee does not succeed
+    get_next_player(gameboard)
 
     output
   end
 
   def self.attack(gameboard)
-    playerid = gameboard.reload.current_player
+    gameboard.reload
+    playerid = gameboard.current_player
     playeratkpoints = 1
 
     unless playerid.nil?
@@ -217,7 +218,7 @@ class Gameboard < ApplicationRecord
 
       monstercards3 = player.monsterthree.nil? ? 0 : player.monsterthree.cards.sum(:atk_points)
 
-      playeratkpoints = monstercards1 + monstercards2 + monstercards3 + player.level
+      playeratkpoints = monstercards1 + monstercards2 + monstercards3 + player.level + gameboard.helping_player_atk
 
       playeratkpoints += gameboard.playerinterceptcard.cards.sum(:atk_points)
 

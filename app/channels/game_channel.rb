@@ -96,17 +96,19 @@ class GameChannel < ApplicationCable::Channel
 
       player_level = player.level
 
-      if player_level == 4
-        broadcast_to(@gameboard, { type: 'WIN', params: { player: player.name } })
-      end
+      broadcast_to(@gameboard, { type: 'WIN', params: { player: player.name } }) if player_level == 4
+
       player.update_attribute(:level, player_level + 1)
 
+      rewards = @gameboard.rewards_treasure
       shared_reward = @gameboard.shared_reward
-      current_player_treasure = @gameboard.rewards_treasure - shared_reward
+      current_player_treasure = rewards - shared_reward
+
+      broadcast_to(@gameboard, { type: 'ERROR', params: { message: "Can't share more rewards than monster gives" } }) if shared_reward > @gameboard.rewards_treasure
       Handcard.draw_handcards(@gameboard.current_player, @gameboard, current_player_treasure)
       # TODO: add helping player to gameboard? give treasures to helping player
       if @gameboard.helping_player
-        helping_player = Player.find_by("id = ?", @gameboard.helping_player)
+        helping_player = @gameboard.helping_player
         Handcard.draw_handcards(helping_player, @gameboard, shared_reward)
       end
       @gameboard.centercard.ingamedeck&.update!(cardable: @gameboard.graveyard)
@@ -170,7 +172,7 @@ class GameChannel < ApplicationCable::Channel
 
     @gameboard.update(shared_reward: helping_shared_reward, asked_help: true, helping_player: helping_player_id)
 
-    PlayerChannel.broadcast_to(current_user, { type: 'ASK_FOR_HELP', params: { player_id: helping_player_id, player_name: helping_player.name, helping_shared_rewards: helping_shared_reward } })
+    PlayerChannel.broadcast_to(current_user, { type: 'ASK_FOR_HELP', params: { player_id: helping_player_id, player_name: helping_player.name, helping_shared_rewards: helping_shared_reward, helping_player_attack: helping_player.attack } })
   end
 
   def answer_help_call(params)
@@ -178,46 +180,13 @@ class GameChannel < ApplicationCable::Channel
       helping_player_id = @gameboard.helping_player
       helping_player = Player.find_by('id = ?', helping_player_id)
 
-      @gameboard.update(player_atk: @gameboard.player_atk + helping_player.attack)
+      @gameboard.update(helping_player_atk: helping_player.attack)
     end
+
+    @gameboard.update(shared_reward: 0) unless params['help']
 
     broadcast_to(@gameboard, { type: BOARD_UPDATE, params: Gameboard.broadcast_game_board(@gameboard) })
   end
-
-  # def play_card(params)
-  #   # add actions!
-
-  #   paramsObject = JSON.parse params
-  #   puts paramsObject
-
-  #   broadcast_to(@gameboard, { type: DEBUG, params: { message: 'You just used play_card with ', params: paramsObject } })
-
-  #   case paramsObject.to
-  #   when 'Inventory'
-  #     broadcast_to(@gameboard, { type: DEBUG, params: { message: "Player #{current_user.email} just played to inventory" } })
-  #     current_card = Ingamedeck.find_by('id=?', paramsObject.unique_id)
-  #     current_card.update_attribute(:cardable_type, 'Inventory')
-  #   when 'Monsterone'
-  #     broadcast_to(@gameboard, { type: DEBUG, params: { message: "Player #{current_user.email} just played to monsterone" } })
-  #     current_card = Ingamedeck.find_by('id=?', paramsObject.unique_id)
-  #     current_card.update_attribute(:cardable_type, 'Monsterone')
-  #   when 'Monstertwo'
-  #     broadcast_to(@gameboard, { type: DEBUG, params: { message: "Player #{current_user.email} just played to monstertwo" } })
-  #     current_card = Ingamedeck.find_by('id=?', paramsObject.unique_id)
-  #     current_card.update_attribute(:cardable_type, 'Monstertwo')
-  #   when 'Monsterthree'
-  #     broadcast_to(@gameboard, { type: DEBUG, params: { message: "Player #{current_user.email} just played to monsterthree" } })
-  #     current_card = Ingamedeck.find_by('id=?', paramsObject.unique_id)
-  #     current_card.update_attribute(:cardable_type, 'Monsterthree')
-  #   when 'center'
-  #     broadcast_to(@gameboard, { type: DEBUG, params: { message: "Player #{current_user.email} just played to center" } })
-  #     # TODO: currently not implemented
-  #   else
-  #     broadcast_to(@gameboard, { type: ERROR, params: { message: "Player #{current_user.email} just played to something i dont know" } })
-  #   end
-
-  #   broadcast_to(@gameboard, { type: BOARD_UPDATE, params: Gameboard.broadcast_game_board(@gameboard) })
-  # end
 
   def move_card(params)
     unique_card_id = params['unique_card_id']
