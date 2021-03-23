@@ -36,6 +36,20 @@ class Monstercard < Card
           type = 'GAMEBOARD_UPDATE'
           message = 'Successfully equipped.'
           deck_card.update_attribute(:cardable, monster_to_equip)
+
+          attack_obj = Gameboard.attack(player.gameboard)
+
+          monstercards1 = player.monsterone ? player.monsterone.cards.sum(:atk_points) : 0
+          
+          monstercards2 = player.monstertwo ? player.monstertwo.cards.sum(:atk_points) : 0
+          
+          monstercards3 = player.monsterthree ? player.monsterthree.cards.sum(:atk_points) : 0
+          
+          playeratkpoints = monstercards1 + monstercards2 + monstercards3 + player.level
+          
+          player.update_attribute(:attack, playeratkpoints)
+          player.gameboard.update(success: attack_obj[:result], player_atk: attack_obj[:playeratk], monster_atk: attack_obj[:monsteratk])
+
         else
           type = 'ERROR'
           message = "You already have this type of item on your monster! (#{card.item_category})"
