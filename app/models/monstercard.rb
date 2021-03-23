@@ -55,7 +55,16 @@ class Monstercard < Card
 
         # get updatet result of attack
         attack_obj = Gameboard.attack(player.gameboard)
-        player.update_attribute(:attack, attack_obj[:playeratk])
+
+        monstercards1 = player.monsterone ? player.monsterone.cards.sum(:atk_points) : 0
+
+        monstercards2 = player.monstertwo ? player.monstertwo.cards.sum(:atk_points) : 0
+
+        monstercards3 = player.monsterthree ? player.monsterthree.cards.sum(:atk_points) : 0
+
+        playeratkpoints = monstercards1 + monstercards2 + monstercards3 + player.level
+
+        player.update_attribute(:attack, playeratkpoints)
         player.gameboard.update(success: attack_obj[:result], player_atk: attack_obj[:playeratk], monster_atk: attack_obj[:monsteratk])
         message = 'Successfully equipped.'
       end

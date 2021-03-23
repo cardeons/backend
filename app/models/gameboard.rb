@@ -210,7 +210,8 @@ class Gameboard < ApplicationRecord
   end
 
   def self.attack(gameboard)
-    playerid = gameboard.reload.current_player
+    gameboard.reload
+    playerid = gameboard.current_player
     playeratkpoints = 1
 
     unless playerid.nil?
@@ -223,7 +224,7 @@ class Gameboard < ApplicationRecord
 
       monstercards3 = player.monsterthree.nil? ? 0 : player.monsterthree.cards.sum(:atk_points)
 
-      playeratkpoints = monstercards1 + monstercards2 + monstercards3 + player.level
+      playeratkpoints = monstercards1 + monstercards2 + monstercards3 + player.level + gameboard.helping_player_atk
 
       playeratkpoints += gameboard.playerinterceptcard.cards.sum(:atk_points)
 
@@ -238,12 +239,10 @@ class Gameboard < ApplicationRecord
       if playerwin
         #   message = "SUCCESS"
         gameboard.update(success: true, player_atk: playeratkpoints, monster_atk: monsteratkpts)
-        # puts 'playerwin'
       else
         #   message = "FAIL"
         gameboard.update(success: false, player_atk: playeratkpoints, monster_atk: monsteratkpts)
         #   # broadcast: flee or use cards!
-        # puts 'monsterwin'
       end
 
     end
