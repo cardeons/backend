@@ -104,7 +104,7 @@ class GameChannel < ApplicationCable::Channel
       shared_reward = @gameboard.shared_reward
       current_player_treasure = rewards - shared_reward
 
-      broadcast_to(@gameboard, { type: 'ERROR', params: { message: "Can't share more rewards than monster gives" } }) if shared_reward > @gameboard.rewards_treasure
+      # broadcast_to(@gameboard, { type: 'ERROR', params: { message: "Can't share more rewards than monster gives" } }) if shared_reward > @gameboard.rewards_treasure
       Handcard.draw_handcards(@gameboard.current_player, @gameboard, current_player_treasure)
       # TODO: add helping player to gameboard? give treasures to helping player
       if @gameboard.helping_player
@@ -172,7 +172,9 @@ class GameChannel < ApplicationCable::Channel
 
     @gameboard.update(shared_reward: helping_shared_reward, asked_help: true, helping_player: helping_player_id)
 
-    PlayerChannel.broadcast_to(current_user, { type: 'ASK_FOR_HELP', params: { player_id: helping_player_id, player_name: helping_player.name, helping_shared_rewards: helping_shared_reward, helping_player_attack: helping_player.attack } })
+    PlayerChannel.broadcast_to(current_user, { type: 'ERROR', params: { message: "Can't share more rewards than monster gives" } }) if helping_shared_reward > @gameboard.rewards_treasure
+
+    PlayerChannel.broadcast_to(current_user, { type: 'ASK_FOR_HELP', params: { player_id: helping_player_id, player_name: helping_player.name, helping_shared_rewards: helping_shared_reward, helping_player_attack: helping_player.attack } }) unless helping_shared_reward > @gameboard.rewards_treasure
   end
 
   def answer_help_call(params)
