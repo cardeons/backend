@@ -47,7 +47,7 @@ class Monstercard < Card
           
           playeratkpoints = monstercards1 + monstercards2 + monstercards3 + player.level
           
-          player.update_attribute(:attack, playeratkpoints)
+          player.update!(attack: playeratkpoints)
           player.gameboard.update(success: attack_obj[:result], player_atk: attack_obj[:playeratk], monster_atk: attack_obj[:monsteratk])
 
         else
@@ -65,7 +65,7 @@ class Monstercard < Card
       # yay
       else
         type = 'GAMEBOARD_UPDATE'
-        deck_card.update_attribute(:cardable, monster_to_equip)
+        deck_card.update(cardable: monster_to_equip)
 
         # player_atk = monster_to_equip.cards.sum(:atk_points)
 
