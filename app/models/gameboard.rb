@@ -146,6 +146,8 @@ class Gameboard < ApplicationRecord
   end
 
   def self.draw_door_card(gameboard)
+
+    gameboard.intercept_phase!
     # cursecards = Cursecard.all
     monstercards = Monstercard.all
     # bosscards = Bosscard.all
@@ -177,6 +179,11 @@ class Gameboard < ApplicationRecord
 	  attack_obj = attack(gameboard.reload)	
 		
 	  gameboard.update(success: attack_obj[:result], player_atk: attack_obj[:playeratk], monster_atk: attack_obj[:monsteratk])	
+
+    
+    gameboard.players.each do |player|
+      player.update!(intercept: true)
+    end
 		
 	  gameboard.centercard.card.title
   end

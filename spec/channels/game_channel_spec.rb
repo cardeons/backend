@@ -169,8 +169,11 @@ RSpec.describe GameChannel, type: :channel do
     gameboards(:gameboardFourPlayers).players.each(&:init_player)
     users(:userOne).player = gameboards(:gameboardFourPlayers).players.first
 
+    Gameboard.draw_door_card(gameboards(:gameboardFourPlayers))
+
     stub_connection current_user: users(:userTwo)
     subscribe
+
 
     # player 2 doesn't want to intercept
       perform('no_intercept', {
@@ -214,6 +217,10 @@ RSpec.describe GameChannel, type: :channel do
     gameboards(:gameboardFourPlayers).initialize_game_board
     gameboards(:gameboardFourPlayers).players.each(&:init_player)
     users(:userOne).player = gameboards(:gameboardFourPlayers).players.first
+
+    Gameboard.draw_door_card(gameboards(:gameboardFourPlayers))
+
+    pp gameboards(:gameboardFourPlayers).players
 
     stub_connection current_user: users(:userOne)
     subscribe
@@ -320,11 +327,24 @@ RSpec.describe GameChannel, type: :channel do
       })
 
       #all players should have the default values back after no_intercept is finished
-      expect(users(:userOne).player.reload.intercept).to be_truthy
-      expect(users(:userTwo).player.reload.intercept).to be_truthy
-      expect(users(:userThree).player.reload.intercept).to be_truthy
-      expect(users(:userFour).player.reload.intercept).to be_truthy
+      expect(users(:userOne).player.reload.intercept).to be_falsy
+      expect(users(:userTwo).player.reload.intercept).to be_falsy
+      expect(users(:userThree).player.reload.intercept).to be_falsy
+      expect(users(:userFour).player.reload.intercept).to be_falsy
      
   end  
+
+  
+  it 'all players have default value false in intercept' do
+    gameboards(:gameboardFourPlayers).initialize_game_board
+    gameboards(:gameboardFourPlayers).players.each(&:init_player)
+
+    # pp gameboards(:gameboardFourPlayers).players
+
+    expect(users(:userOne).player.intercept).to be_falsy
+    expect(users(:userTwo).player.intercept).to be_falsy
+    expect(users(:userThree).player.intercept).to be_falsy
+    expect(users(:userFour).player.intercept).to be_falsy
+  end
 
 end

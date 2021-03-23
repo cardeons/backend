@@ -49,6 +49,10 @@ class GameChannel < ApplicationCable::Channel
     centercard = Centercard.find_by('gameboard_id = ?', @gameboard.id)
 
     @gameboard.update(centercard: centercard, monster_atk: monsteratk)
+    @gameboard.intercept_phase!
+    @gameboard.players.each do |player|
+      player.update!(intercept: true)
+    end
 
     result = Gameboard.attack(@gameboard)
     @gameboard.update(success: result[:result], player_atk: result[:playeratk], monster_atk: result[:monsteratk])
@@ -64,6 +68,7 @@ class GameChannel < ApplicationCable::Channel
 
   def draw_door_card
     name = Gameboard.draw_door_card(@gameboard)
+
     # attack()
     broadcast_to(@gameboard, { type: BOARD_UPDATE, params: Gameboard.broadcast_game_board(@gameboard) })
     msg = "#{current_user.player.name} has drawn #{name}"
@@ -145,6 +150,9 @@ class GameChannel < ApplicationCable::Channel
       return
     end
 
+    current_user.player.reload
+    @gameboard.intercept_phase!
+
     @gameboard.reload
     case to
     when 'center_card'
@@ -155,13 +163,8 @@ class GameChannel < ApplicationCable::Channel
       @gameboard.playerinterceptcard.add_card_with_ingamedeck_id(unique_card_id)
     end
 
-    # user did intercept
-    @gameboard.intercept_phase!
 
-    #if one player intercepted, all players are allowed to intercept again
-    @gameboard.players.each do |player|
-      player.update!(intercept: true)
-    end
+    # current_user.player.update(intercept: true)
     
     # update this players handcards
     PlayerChannel.broadcast_to(current_user, { type: 'HANDCARD_UPDATE', params: { handcards: Gameboard.render_cards_array(current_user.player.handcard.ingamedecks.reload) } })
@@ -173,13 +176,18 @@ class GameChannel < ApplicationCable::Channel
 
     current_user.player.update!(intercept: false)
 
+    # pp "------------------------------------"
+    # pp @gameboard.players
+    # pp "cooooooouuuuuuuunnnnnnnnttttttttttt"
+    # pp @gameboard.players.where("intercept = ?", false).count
+
     if @gameboard.players.where("intercept = ?", false).count == 3
       msg = "Nobody wants to intercept this turn."
       @gameboard.intercept_finished!
 
-      ##reset all player intercept values back to default (true)
+      ##reset all player intercept values back to default (false)
       @gameboard.players.each do |player|
-        player.update!(intercept: true)
+        player.update!(intercept: false)
       end
 
       broadcast_to(@gameboard, { type: GAME_LOG, params: { date: Time.new, message: msg } })

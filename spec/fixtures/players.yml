@@ -43,7 +43,6 @@ playerOne:
   level: 1
   attack: 1
   is_cursed: false
-  intercept: true
   gameboard: 1
   user: userOne
   gameboard: gameboardFourPlayers
@@ -55,7 +54,6 @@ playerTwo:
   level: 1
   attack: 1
   is_cursed: false
-  intercept: true
   gameboard: 1
   user: userTwo
   gameboard: gameboardFourPlayers
@@ -67,7 +65,6 @@ playerThree:
   level: 1
   attack: 1
   is_cursed: false
-  intercept: true
   gameboard: 1
   user: userThree
   gameboard: gameboardFourPlayers
@@ -79,7 +76,6 @@ playerFour:
   level: 1
   attack: 1
   is_cursed: false
-  intercept: true
   gameboard: 1
   user: userFour
   gameboard: gameboardFourPlayers
