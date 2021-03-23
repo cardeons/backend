@@ -259,6 +259,16 @@ Gameboard Channel response
     }  
 }
 
+
+#GEWINNEN
+{ 
+  type: 'WIN', 
+  params: 
+  { 
+    player: player.name 
+  }
+}
+
 CURRENT_STATE
 
 available values: lobby | ingame | intercept_phase | intercept_finished
