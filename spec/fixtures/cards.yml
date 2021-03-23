@@ -53,7 +53,7 @@ monstercard:
   level: 1
   element: MyString
   bad_things: MyString
-  rewards_treasure: MyString
+  rewards_treasure: 3
   good_against: MyString
   bad_against: MyString
   good_against_value: 1
