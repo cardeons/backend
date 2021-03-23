@@ -78,4 +78,141 @@ class Monstercard < Card
     # type = "equip"
     { type: type, message: message }
   end
+
+  def self.bad_things(card, gameboard)
+    player = Player.find_by('id = ?', gameboard.current_player)
+
+    case card.action # get the action from card
+    when 'lose_item_hand'
+      monster_arr = []
+      monster_slot = []
+      if player.monsterone.cards.where(item_category: 'hand').any?
+        monster_arr.push(player.monsterone.cards.where(item_category: 'hand'))
+        monster_slot.push(player.monsterone)
+      end
+      if player.monstertwo.cards.where(item_category: 'hand').any?
+        monster_arr.push(player.monstertwo.cards.where(item_category: 'hand'))
+        monster_slot.push(player.monstertwo)
+      end
+      if player.monsterthree.cards.where(item_category: 'hand').any?
+        monster_arr.push(player.monsterthree.cards.where(item_category: 'hand'))
+        monster_slot.push(player.monsterthree)
+      end
+
+      if monster_arr.length.positive?
+        random = rand(0..monster_arr.length - 1)
+        offset = rand(monster_arr[random].count)
+        random_card_id = monster_arr[random].offset(offset).first.id
+
+        Ingamedeck.where(card_id: random_card_id, cardable: monster_slot[random]).first&.update!(cardable: gameboard.graveyard)
+      end
+    when 'lose_item_shoe'
+      monster_arr = []
+      monster_slot = []
+      if player.monsterone.cards.where(item_category: 'shoe').any?
+        monster_arr.push(player.monsterone.cards.where(item_category: 'shoe'))
+        monster_slot.push(player.monsterone)
+      end
+      if player.monstertwo.cards.where(item_category: 'shoe').any?
+        monster_arr.push(player.monstertwo.cards.where(item_category: 'shoe'))
+        monster_slot.push(player.monstertwo)
+      end
+      if player.monsterthree.cards.where(item_category: 'shoe').any?
+        monster_arr.push(player.monsterthree.cards.where(item_category: 'shoe'))
+        monster_slot.push(player.monsterthree)
+      end
+
+      if monster_arr.length.positive?
+        random = rand(0..monster_arr.length - 1)
+        offset = rand(monster_arr[random].count)
+        random_card_id = monster_arr[random].offset(offset).first.id
+
+        Ingamedeck.where(card_id: random_card_id, cardable: monster_slot[random]).first&.update!(cardable: gameboard.graveyard)
+      end
+    when 'lose_item_head'
+      monster_arr = []
+      monster_slot = []
+      if player.monsterone.cards.where(item_category: 'head').any?
+        monster_arr.push(player.monsterone.cards.where(item_category: 'head'))
+        monster_slot.push(player.monsterone)
+      end
+      if player.monstertwo.cards.where(item_category: 'head').any?
+        monster_arr.push(player.monstertwo.cards.where(item_category: 'head'))
+        monster_slot.push(player.monstertwo)
+      end
+      if player.monsterthree.cards.where(item_category: 'head').any?
+        monster_arr.push(player.monsterthree.cards.where(item_category: 'head'))
+        monster_slot.push(player.monsterthree)
+      end
+
+      if monster_arr.length.positive?
+        random = rand(0..monster_arr.length - 1)
+        offset = rand(monster_arr[random].count)
+        random_card_id = monster_arr[random].offset(offset).first.id
+
+        Ingamedeck.where(card_id: random_card_id, cardable: monster_slot[random]).first&.update!(cardable: gameboard.graveyard)
+      end
+    when 'lose_item'
+      monster_arr = []
+      monster_slot = []
+      if player.monsterone.cards.where(type: 'Itemcard').any?
+        monster_arr.push(player.monsterone.cards.where(type: 'Itemcard'))
+        monster_slot.push(player.monsterone)
+      end
+      if player.monstertwo.cards.where(type: 'Itemcard').any?
+        monster_arr.push(player.monstertwo.cards.where(type: 'Itemcard'))
+        monster_slot.push(player.monstertwo)
+      end
+      if player.monsterthree.cards.where(type: 'Itemcard').any?
+        monster_arr.push(player.monsterthree.cards.where(type: 'Itemcard'))
+        monster_slot.push(player.monsterthree)
+      end
+
+      if monster_arr.length.positive?
+        random = rand(0..monster_arr.length - 1)
+        offset = rand(monster_arr[random].count)
+        random_card_id = monster_arr[random].offset(offset).first.id
+
+        Ingamedeck.where(card_id: random_card_id, cardable: monster_slot[random]).first&.update!(cardable: gameboard.graveyard)
+      end
+    when 'random_card_lowest_level'
+      all_players = gameboard.players
+      first = true
+
+      all_players.each do |player_temp|
+        unless player_temp.id == player
+          if first
+            @player_lowest_level = player_temp
+            first = false
+          end
+
+          @player_lowest_level = player_temp if @player_lowest_level.level > player_temp.level
+        end
+      end
+
+      offset = rand(player.handcard.ingamedecks.count)
+
+      random_card = player.handcard.ingamedecks.offset(offset).first
+
+      random_card&.update!(cardable: @player_lowest_level.handcard)
+    when 'no_help_next_fight'
+      puts 'uwu'
+    when 'lose_one_card'
+      offset = rand(player.handcard.ingamedecks.count)
+
+      random_card = player.handcard.ingamedecks.offset(offset).first
+
+      random_card&.update!(cardable: gameboard.graveyard)
+    when 'lose_level'
+      player = Player.find_by('id = ?', gameboard.current_player)
+
+      player.update(level: player.level - 1) unless player.level == 1
+    when 'die'
+      player = Player.find_by('id = ?', gameboard.current_player)
+
+      player.update(level: 1)
+    else
+      puts 'action unknown :('
+    end
+  end
 end

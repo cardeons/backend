@@ -3,6 +3,18 @@
 require 'rails_helper'
 
 RSpec.describe Monstercard, type: :model do
+  fixtures :users, :players, :gameboards, :cards, :monsterones, :ingamedecks, :centercards
+
+  before do
+    # initialize connection with identifiers
+    users(:userOne).player = players(:playerOne)
+    users(:userTwo).player = players(:playerTwo)
+    users(:userThree).player = players(:playerThree)
+    users(:userFour).player = players(:playerFour)
+
+    players(:playerOne).monsterone = monsterones(:three)
+  end
+
   subject do
     described_class.new(
       title: 'Sir Bear',
@@ -225,7 +237,7 @@ RSpec.describe Monstercard, type: :model do
       item_category: 'head',
       has_combination: false
     )
-    
+
     item2 = Itemcard.create!(
       title: 'The things to get things out of the toilet',
       description: '<p>Disgusting. If I was you, I would not touch it.</p>',
@@ -262,7 +274,7 @@ RSpec.describe Monstercard, type: :model do
       item_category: 'hand_two',
       has_combination: false
     )
-    
+
     item5 = Itemcard.create!(
       title: 'The things to get things out of the toilet',
       description: '<p>Disgusting. If I was you, I would not touch it.</p>',
@@ -311,5 +323,130 @@ RSpec.describe Monstercard, type: :model do
     params = { 'unique_monster_id' => ingamedeck1.id, 'unique_equip_id' => ingamedeck7.id, 'action' => 'equip_monster' }
     result = Monstercard.equip_monster(params, player1)
     expect(result == { type: 'ERROR', message: "You can't put any more items on this monster." }).to be_truthy
+  end
+
+  it 'lose one level if monster is winning' do
+    gameboards(:gameboardFourPlayers).initialize_game_board
+    gameboards(:gameboardFourPlayers).players.each(&:init_player)
+
+    current_player = Player.find(gameboards(:gameboardFourPlayers).current_player)
+    current_player.update(level: 3)
+
+    expect(current_player.level).to eql(3)
+    Monstercard.bad_things(cards(:monstercard), gameboards(:gameboardFourPlayers))
+    expect(current_player.reload.level).to eql(2)
+  end
+
+  it 'lose all levels if monster is winning' do
+    gameboards(:gameboardFourPlayers).initialize_game_board
+    gameboards(:gameboardFourPlayers).players.each(&:init_player)
+
+    current_player = Player.find(gameboards(:gameboardFourPlayers).current_player)
+    current_player.update(level: 3)
+
+    expect(current_player.level).to eql(3)
+    Monstercard.bad_things(cards(:monstercard2), gameboards(:gameboardFourPlayers))
+    expect(current_player.reload.level).to eql(1)
+  end
+
+  it 'lose 1 handcard if monster is winning' do
+    gameboards(:gameboardFourPlayers).initialize_game_board
+    gameboards(:gameboardFourPlayers).players.each(&:init_player)
+
+    current_player = Player.find(gameboards(:gameboardFourPlayers).current_player)
+
+    expect(current_player.handcard.ingamedecks.count).to eql(5)
+    Monstercard.bad_things(cards(:monstercard3), gameboards(:gameboardFourPlayers))
+    expect(current_player.reload.handcard.ingamedecks.count).to eql(4)
+  end
+
+  it 'lose 1 hand item if monster is winning' do
+    gameboards(:gameboardFourPlayers).initialize_game_board
+    gameboards(:gameboardFourPlayers).players.each(&:init_player)
+
+    current_player = Player.find(gameboards(:gameboardFourPlayers).current_player)
+    Ingamedeck.create!(gameboard: gameboards(:gameboardFourPlayers), card: cards(:monstercard9), cardable: current_player.monstertwo)
+    Ingamedeck.create!(gameboard: gameboards(:gameboardFourPlayers), card: cards(:itemcard4), cardable: current_player.monstertwo)
+
+    expect(current_player.monstertwo.ingamedecks.count).to eql(2)
+    Monstercard.bad_things(cards(:monstercard9), gameboards(:gameboardFourPlayers))
+    expect(current_player.reload.monstertwo.ingamedecks.count).to eql(1)
+  end
+
+  it 'lose 1 hand item if monster is winning' do
+    gameboards(:gameboardFourPlayers).initialize_game_board
+    gameboards(:gameboardFourPlayers).players.each(&:init_player)
+
+    current_player = Player.find(gameboards(:gameboardFourPlayers).current_player)
+    Ingamedeck.create!(gameboard: gameboards(:gameboardFourPlayers), card: cards(:monstercard9), cardable: current_player.monsterone)
+    Ingamedeck.create!(gameboard: gameboards(:gameboardFourPlayers), card: cards(:itemcard4), cardable: current_player.monsterone)
+
+    expect(current_player.monsterone.ingamedecks.count).to eql(2)
+    Monstercard.bad_things(cards(:monstercard9), gameboards(:gameboardFourPlayers))
+    expect(current_player.reload.monsterone.ingamedecks.count).to eql(1)
+  end
+
+  it 'lose 0 hand item if none available and monster is winning' do
+    gameboards(:gameboardFourPlayers).initialize_game_board
+    gameboards(:gameboardFourPlayers).players.each(&:init_player)
+
+    current_player = Player.find(gameboards(:gameboardFourPlayers).current_player)
+    Ingamedeck.create!(gameboard: gameboards(:gameboardFourPlayers), card: cards(:monstercard9), cardable: current_player.monstertwo)
+    Ingamedeck.create!(gameboard: gameboards(:gameboardFourPlayers), card: cards(:itemcard2), cardable: current_player.monstertwo)
+
+    expect(current_player.monstertwo.ingamedecks.count).to eql(2)
+    Monstercard.bad_things(cards(:monstercard9), gameboards(:gameboardFourPlayers))
+    expect(current_player.reload.monstertwo.ingamedecks.count).to eql(2)
+  end
+
+  it 'lose 1 head item if monster is winning' do
+    gameboards(:gameboardFourPlayers).initialize_game_board
+    gameboards(:gameboardFourPlayers).players.each(&:init_player)
+
+    current_player = Player.find(gameboards(:gameboardFourPlayers).current_player)
+    Ingamedeck.create!(gameboard: gameboards(:gameboardFourPlayers), card: cards(:monstercard9), cardable: current_player.monstertwo)
+    Ingamedeck.create!(gameboard: gameboards(:gameboardFourPlayers), card: cards(:itemcard2), cardable: current_player.monstertwo)
+
+    expect(current_player.monstertwo.ingamedecks.count).to eql(2)
+    Monstercard.bad_things(cards(:monstercard7), gameboards(:gameboardFourPlayers))
+    expect(current_player.reload.monstertwo.ingamedecks.count).to eql(1)
+  end
+
+  it 'lose 1 shoes item if monster is winning' do
+    gameboards(:gameboardFourPlayers).initialize_game_board
+    gameboards(:gameboardFourPlayers).players.each(&:init_player)
+
+    current_player = Player.find(gameboards(:gameboardFourPlayers).current_player)
+    Ingamedeck.create!(gameboard: gameboards(:gameboardFourPlayers), card: cards(:monstercard9), cardable: current_player.monstertwo)
+    Ingamedeck.create!(gameboard: gameboards(:gameboardFourPlayers), card: cards(:itemcard3), cardable: current_player.monstertwo)
+
+    expect(current_player.monstertwo.ingamedecks.count).to eql(2)
+    Monstercard.bad_things(cards(:monstercard8), gameboards(:gameboardFourPlayers))
+    expect(current_player.reload.monstertwo.ingamedecks.count).to eql(1)
+  end
+
+  it 'lose 1 item if monster is winning' do
+    gameboards(:gameboardFourPlayers).initialize_game_board
+    gameboards(:gameboardFourPlayers).players.each(&:init_player)
+
+    current_player = Player.find(gameboards(:gameboardFourPlayers).current_player)
+    Ingamedeck.create!(gameboard: gameboards(:gameboardFourPlayers), card: cards(:monstercard9), cardable: current_player.monstertwo)
+    Ingamedeck.create!(gameboard: gameboards(:gameboardFourPlayers), card: cards(:itemcard3), cardable: current_player.monstertwo)
+
+    expect(current_player.monstertwo.ingamedecks.count).to eql(2)
+    Monstercard.bad_things(cards(:monstercard6), gameboards(:gameboardFourPlayers))
+    expect(current_player.reload.monstertwo.ingamedecks.count).to eql(1)
+  end
+
+  it 'lose 1 handcard to lowest level player if monster is winning' do
+    gameboards(:gameboardFourPlayers).initialize_game_board
+    gameboards(:gameboardFourPlayers).players.each(&:init_player)
+
+    current_player = Player.find(gameboards(:gameboardFourPlayers).current_player)
+
+    expect(current_player.handcard.ingamedecks.count).to eql(5)
+    Monstercard.bad_things(cards(:monstercard5), gameboards(:gameboardFourPlayers))
+    expect(current_player.reload.handcard.ingamedecks.count).to eql(4)
+    expect(Player.find(2).handcard.ingamedecks.count).to eql(6)
   end
 end
