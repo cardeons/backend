@@ -170,9 +170,13 @@ class GameChannel < ApplicationCable::Channel
     helping_shared_reward = params['helping_shared_rewards']
     helping_player_id = helping_player.id
 
-    @gameboard.update(shared_reward: helping_shared_reward, asked_help: true, helping_player: helping_player_id)
+    PlayerChannel.broadcast_to(current_user, { type: 'ERROR', params: { message: "It's not your round, you can't ask for help..." } }) unless current_user.id == @gameboard.current_player
+
+    PlayerChannel.broadcast_to(current_user, { type: 'ERROR', params: { message: 'You already asked for help...' } }) if @gameboard.asked_help
 
     PlayerChannel.broadcast_to(current_user, { type: 'ERROR', params: { message: "Can't share more rewards than monster gives" } }) if helping_shared_reward > @gameboard.rewards_treasure
+
+    @gameboard.update(shared_reward: helping_shared_reward, asked_help: true, helping_player: helping_player_id)
 
     PlayerChannel.broadcast_to(current_user, { type: 'ASK_FOR_HELP', params: { player_id: helping_player_id, player_name: helping_player.name, helping_shared_rewards: helping_shared_reward, helping_player_attack: helping_player.attack } }) unless helping_shared_reward > @gameboard.rewards_treasure
   end

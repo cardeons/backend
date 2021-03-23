@@ -125,7 +125,6 @@ Gameboard Channel response
   action: "equip_monster",
   unique_monster_id:  int
   unique_equip_id:  int
-  player: int
 }
 
 #ANTWORT

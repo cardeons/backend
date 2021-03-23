@@ -413,7 +413,7 @@ RSpec.describe GameChannel, type: :channel do
     gameboards(:gameboardFourPlayers).players.each(&:init_player)
     # assign player to this user
     users(:one).player = gameboards(:gameboardFourPlayers).players.first
-    gameboards(:gameboardFourPlayers).update(current_player: users(:one).player.id)
+    gameboards(:gameboardFourPlayers).update(current_player: 1)
     stub_connection current_user: users(:one)
     subscribe
 
@@ -437,5 +437,69 @@ RSpec.describe GameChannel, type: :channel do
       .with(
         hash_including(type: 'BOARD_UPDATE')
       ).exactly(0).times
+  end
+
+  it 'test if throws error if already asked for help' do
+    gameboards(:gameboardFourPlayers).initialize_game_board
+    gameboards(:gameboardFourPlayers).players.each(&:init_player)
+    # assign player to this user
+    users(:one).player = gameboards(:gameboardFourPlayers).players.first
+    gameboards(:gameboardFourPlayers).update(current_player: 1)
+    stub_connection current_user: users(:one)
+    subscribe
+
+    expect do
+      perform('draw_door_card', {})
+    end.to have_broadcasted_to("game:#{users(:one).player.gameboard.to_gid_param}")
+      .with(
+        hash_including(type: 'BOARD_UPDATE')
+      ).exactly(:once)
+
+    expect do
+      perform('help_call', {
+                helping_player_id: 3,
+                helping_shared_rewards: 1
+              })
+    end.to have_broadcasted_to(PlayerChannel.broadcasting_for(connection.current_user))
+      .with(
+        hash_including(type: 'ASK_FOR_HELP')
+      ).exactly(:once)
+
+    expect do
+      perform('help_call', {
+                helping_player_id: 3,
+                helping_shared_rewards: 1
+              })
+    end.to have_broadcasted_to(PlayerChannel.broadcasting_for(connection.current_user))
+      .with(
+        hash_including(type: 'ERROR')
+      ).exactly(:once)
+  end
+
+  it 'test if throws error if player is not current_player for help' do
+    gameboards(:gameboardFourPlayers).initialize_game_board
+    gameboards(:gameboardFourPlayers).players.each(&:init_player)
+    # assign player to this user
+    users(:one).player = gameboards(:gameboardFourPlayers).players.first
+    gameboards(:gameboardFourPlayers).update(current_player: 5)
+    stub_connection current_user: users(:one)
+    subscribe
+
+    expect do
+      perform('draw_door_card', {})
+    end.to have_broadcasted_to("game:#{users(:one).player.gameboard.to_gid_param}")
+      .with(
+        hash_including(type: 'BOARD_UPDATE')
+      ).exactly(:once)
+
+    expect do
+      perform('help_call', {
+                helping_player_id: 3,
+                helping_shared_rewards: 1
+              })
+    end.to have_broadcasted_to(PlayerChannel.broadcasting_for(connection.current_user))
+      .with(
+        hash_including(type: 'ERROR')
+      ).exactly(:once)
   end
 end
