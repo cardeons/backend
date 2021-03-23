@@ -102,7 +102,6 @@ class GameChannel < ApplicationCable::Channel
       player_level = player.level
 
       broadcast_to(@gameboard, { type: 'WIN', params: { player: player.name } }) if player_level == 4
-
       player.update_attribute(:level, player_level + 1)
 
       rewards = @gameboard.rewards_treasure
@@ -127,7 +126,7 @@ class GameChannel < ApplicationCable::Channel
       broadcast_to(@gameboard, { type: BOARD_UPDATE, params: Gameboard.broadcast_game_board(@gameboard) })
     end
 
-    broadcast_to(@gameboard, { type: 'ERROR', params: { message: "Playerattack too low" } }) unless result[:result]
+    broadcast_to(@gameboard, { type: 'ERROR', params: { message: 'Playerattack too low' } }) unless result[:result]
 
     # updated_board = Gameboard.broadcast_game_board(@gameboard)
     # broadcast_to(@gameboard, { type: BOARD_UPDATE, params: updated_board })
@@ -154,6 +153,10 @@ class GameChannel < ApplicationCable::Channel
       PlayerChannel.broadcast_error(current_user, 'This card cannot be used to intercept')
       return
     end
+
+    # TODO: WIP InterceptJob
+    # pp 'CheckintercpetTimer'
+    # CheckIntercepttimerJob.set(wait: 10.seconds).perform_later(current_user.player.gameboard.id, Time.now)
 
     current_user.player.reload
     @gameboard.intercept_phase!
@@ -208,7 +211,12 @@ class GameChannel < ApplicationCable::Channel
 
     @gameboard.update(shared_reward: helping_shared_reward, asked_help: true, helping_player: helping_player_id)
 
-    PlayerChannel.broadcast_to(current_user, { type: 'ASK_FOR_HELP', params: { player_id: helping_player_id, player_name: helping_player.name, helping_shared_rewards: helping_shared_reward, helping_player_attack: helping_player.attack } }) unless helping_shared_reward > @gameboard.rewards_treasure
+    unless helping_shared_reward > @gameboard.rewards_treasure
+      PlayerChannel.broadcast_to(current_user,
+                                 { type: 'ASK_FOR_HELP',
+                                   params: { player_id: helping_player_id, player_name: helping_player.name, helping_shared_rewards: helping_shared_reward,
+                                             helping_player_attack: helping_player.attack } })
+    end
   end
 
   def answer_help_call(params)

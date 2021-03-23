@@ -18,20 +18,26 @@ To do:
 
 - rails db:migrate
 
-- rails s
+<!-- //sudo apt install redis-server -->
+<!-- - redis-server --daemonize yes -->
+<!-- || -->
+<!-- - bundle exec sidekiq --environment development -->
+
+We are using foreman to start redis/sidekiq and puma in one shell:
+
+gem install foreman
+
+- foreman start -p 3000
 
 
 Happy Coding😘
 
-
 Reset DB: rails db:reset
 
 
-
-
-
-
-
+*For Testing*
+<!-- - bundle exec sidekiq --environment test -->
+- rspec 
 
 ## Backend: 
 
