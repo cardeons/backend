@@ -49,7 +49,7 @@ class LobbyChannel < ApplicationCable::Channel
 
 
       # TODO: Remove after testing i guesss
-      createNewTestGame(@gameboard)
+      #createNewTestGame(@gameboard)
 
       broadcast_to(@gameboard, { type: 'START_GAME', params: { game_id: @gameboard.id } })
     end
