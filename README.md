@@ -27,6 +27,7 @@ We are using foreman to start redis/sidekiq and puma in one shell:
 <!-- - bundle exec sidekiq --environment development -->
 
 // you need to install redis before you can use the dev env
+
 // sudo apt install redis-server 
 - foreman start -p 3000
 
