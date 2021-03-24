@@ -49,7 +49,9 @@ ANTWORT
       can_flee: bool,
       asked_help: bool,
       shared_reward: int,
-      helping_player: nil
+      helping_player: id | nil,
+      intercept_timestamp: timestamp | nil,
+      current_state: lobby | ingame | intercept_phase | intercept_finished
     },
     players: [{
       player_id: ,
@@ -238,7 +240,7 @@ Gameboard Channel response
 
 
 #ANFRAGE
-#kein player möchte nicht in den kampf eingreifen
+#kein player möchte in den kampf eingreifen
 {
   action: "no_interception",
 }
@@ -259,6 +261,7 @@ Gameboard Channel response
     }  
 }
 
+
 #GEWINNEN
 { 
   type: 'WIN', 
@@ -267,3 +270,12 @@ Gameboard Channel response
     player: player.name 
   }
 }
+
+CURRENT_STATE
+
+available values: lobby | ingame | intercept_phase | intercept_finished
+
+lobby = spieler befinden sich in der lobby
+ingame = spiel hat gestartet
+intercept_phase = spieler hat ein monster ausgespielt/eine türkarte gezogen. Solange nicht alle spieler no_intercept drücken, ist das spiel in dieser phase.
+intercept_finished = kein spieler wollte intercepten, zug ist "vorbei"

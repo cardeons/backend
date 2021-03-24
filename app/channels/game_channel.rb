@@ -49,6 +49,10 @@ class GameChannel < ApplicationCable::Channel
     centercard = Centercard.find_by('gameboard_id = ?', @gameboard.id)
 
     @gameboard.update(centercard: centercard, monster_atk: monsteratk)
+    @gameboard.intercept_phase!
+    @gameboard.players.each do |player|
+      player.update!(intercept: true)
+    end
 
     result = Gameboard.attack(@gameboard)
     @gameboard.update(success: result[:result], player_atk: result[:playeratk], monster_atk: result[:monsteratk])
@@ -64,6 +68,7 @@ class GameChannel < ApplicationCable::Channel
 
   def draw_door_card
     name = Gameboard.draw_door_card(@gameboard)
+
     # attack()
     broadcast_to(@gameboard, { type: BOARD_UPDATE, params: Gameboard.broadcast_game_board(@gameboard) })
     msg = "#{current_user.player.name} has drawn #{name}"
@@ -97,7 +102,6 @@ class GameChannel < ApplicationCable::Channel
       player_level = player.level
 
       broadcast_to(@gameboard, { type: 'WIN', params: { player: player.name } }) if player_level == 4
-
       player.update_attribute(:level, player_level + 1)
 
       rewards = @gameboard.rewards_treasure
@@ -118,6 +122,7 @@ class GameChannel < ApplicationCable::Channel
       PlayerChannel.broadcast_to(current_user.reload, { type: 'HANDCARD_UPDATE', params: { handcards: Gameboard.render_cards_array(player.handcard.ingamedecks) } })
 
       Gameboard.get_next_player(@gameboard)
+      @gameboard.ingame!
       broadcast_to(@gameboard, { type: BOARD_UPDATE, params: Gameboard.broadcast_game_board(@gameboard) })
     end
 
@@ -149,7 +154,9 @@ class GameChannel < ApplicationCable::Channel
       return
     end
 
+    current_user.player.reload
     @gameboard.reload
+
     case to
     when 'center_card'
       @gameboard.interceptcard.add_card_with_ingamedeck_id(unique_card_id)
@@ -157,12 +164,40 @@ class GameChannel < ApplicationCable::Channel
     when 'fighting_player'
       # buff player
       @gameboard.playerinterceptcard.add_card_with_ingamedeck_id(unique_card_id)
+    else
+      PlayerChannel.broadcast_error(current_user, 'This is ont a correct field for to!')
     end
-    
+
+    @gameboard.intercept_phase!
+
+    timestamp = Time.now
+
+    @gameboard.update!(intercept_timestamp: timestamp)
+
+    # sets Intercept Timer
+    CheckIntercepttimerJob.set(wait: 5.seconds).perform_later(@gameboard, timestamp, 15)
+
     # update this players handcards
     PlayerChannel.broadcast_to(current_user, { type: 'HANDCARD_UPDATE', params: { handcards: Gameboard.render_cards_array(current_user.player.handcard.ingamedecks.reload) } })
     # update board
     broadcast_to(@gameboard, { type: BOARD_UPDATE, params: Gameboard.broadcast_game_board(@gameboard) })
+  end
+
+  def no_intercept(_params)
+    current_user.player.update!(intercept: false)
+
+    if @gameboard.players.where('intercept = ?', false).count == 3
+      msg = 'Nobody wants to intercept this turn.'
+      @gameboard.intercept_finished!
+
+      # #reset all player intercept values back to default (false)
+      @gameboard.players.each do |player|
+        player.update!(intercept: false)
+      end
+
+      broadcast_to(@gameboard, { type: GAME_LOG, params: { date: Time.new, message: msg } })
+      broadcast_to(@gameboard, { type: BOARD_UPDATE, params: Gameboard.broadcast_game_board(@gameboard) })
+    end
   end
 
   def help_call(params)
