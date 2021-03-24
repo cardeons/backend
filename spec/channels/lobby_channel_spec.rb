@@ -113,4 +113,25 @@ RSpec.describe LobbyChannel, type: :channel do
     subscribe
     expect(Player.where('user_id=?', users(:one).id).count).to eql(1)
   end
+
+  it 'create new test game accepts params for how many players to add to game' do
+    stub_connection current_user: users(:one)
+    subscribe(testplayers: 2)
+
+    expect(users(:one).player.gameboard.players.size).to eql(3)
+  end
+
+  it 'if no testplayers are sent default 3 and 4 players should be in game' do
+    stub_connection current_user: users(:one)
+    subscribe()
+
+    expect(users(:one).player.gameboard.players.size).to eql(4)
+  end
+
+  it 'if testplayer count is higher than 3 use 3 for a full game' do
+    stub_connection current_user: users(:one)
+    subscribe(testplayers: 4)
+
+    expect(users(:one).player.gameboard.players.size).to eql(4)
+  end
 end
