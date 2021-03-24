@@ -570,7 +570,7 @@ buffcard:
   item_category: MyString
   has_combination: 1
   level_amount: 1
-  type: Levelcard
+  type: Buffcard
 
 buffcard2:
   id: 28
@@ -592,7 +592,7 @@ buffcard2:
   item_category: MyString
   has_combination: 1
   level_amount: 1
-  type: Levelcard
+  type: Buffcard
 
 buffcard3:
   id: 29
@@ -614,7 +614,7 @@ buffcard3:
   item_category: MyString
   has_combination: 1
   level_amount: 1
-  type: Levelcard
+  type: Buffcard
 
 buffcard4:
   id: 30
@@ -636,7 +636,7 @@ buffcard4:
   item_category: MyString
   has_combination: 1
   level_amount: 1
-  type: Levelcard
+  type: Buffcard
 
 buffcard5:
   id: 31
@@ -658,7 +658,7 @@ buffcard5:
   item_category: MyString
   has_combination: 1
   level_amount: 1
-  type: Levelcard
+  type: Buffcard
 
 buffcard6:
   id: 32
@@ -680,4 +680,4 @@ buffcard6:
   item_category: MyString
   has_combination: 1
   level_amount: 1
-  type: Levelcard
+  type: Buffcard
