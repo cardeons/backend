@@ -99,102 +99,68 @@ class Monstercard < Card
     { type: type, message: message }
   end
 
-  def self.bad_things(ingamedeck, gameboard)
+  def self.lose_item_by_category(player, gameboard, category)
+    monster_arr = []
+    monster_slot = []
+    if player.monsterone.cards.where(item_category: category).any?
+      monster_arr.push(player.monsterone.cards.where(item_category: category))
+      monster_slot.push(player.monsterone)
+    end
+    if player.monstertwo.cards.where(item_category: category).any?
+      monster_arr.push(player.monstertwo.cards.where(item_category: category))
+      monster_slot.push(player.monstertwo)
+    end
+    if player.monsterthree.cards.where(item_category: category).any?
+      monster_arr.push(player.monsterthree.cards.where(item_category: category))
+      monster_slot.push(player.monsterthree)
+    end
+
+    if monster_arr.size.positive?
+      random = rand(0..monster_arr.size - 1)
+      offset = rand(monster_arr[random].count)
+      random_card_id = monster_arr[random].offset(offset).first.id
+
+      Ingamedeck.where(card_id: random_card_id, cardable: monster_slot[random]).first&.update!(cardable: gameboard.graveyard)
+    end
+  end
+
+  def self.lose_item(player, gameboard)
+    monster_arr = []
+    monster_slot = []
+    if player.monsterone.cards.where(type: 'Itemcard').any?
+      monster_arr.push(player.monsterone.cards.where(type: 'Itemcard'))
+      monster_slot.push(player.monsterone)
+    end
+    if player.monstertwo.cards.where(type: 'Itemcard').any?
+      monster_arr.push(player.monstertwo.cards.where(type: 'Itemcard'))
+      monster_slot.push(player.monstertwo)
+    end
+    if player.monsterthree.cards.where(type: 'Itemcard').any?
+      monster_arr.push(player.monsterthree.cards.where(type: 'Itemcard'))
+      monster_slot.push(player.monsterthree)
+    end
+
+    if monster_arr.size.positive?
+      random = rand(0..monster_arr.size - 1)
+      offset = rand(monster_arr[random].count)
+      random_card_id = monster_arr[random].offset(offset).first.id
+
+      Ingamedeck.where(card_id: random_card_id, cardable: monster_slot[random]).first&.update!(cardable: gameboard.graveyard)
+    end
+  end
+
+  def self.bad_things(ingamedeck, gameboard)   
     player = Player.find_by('id = ?', gameboard.current_player)
 
     case ingamedeck.card.action # get the action from card
     when 'lose_item_hand'
-      monster_arr = []
-      monster_slot = []
-      if player.monsterone.cards.where(item_category: 'hand').any?
-        monster_arr.push(player.monsterone.cards.where(item_category: 'hand'))
-        monster_slot.push(player.monsterone)
-      end
-      if player.monstertwo.cards.where(item_category: 'hand').any?
-        monster_arr.push(player.monstertwo.cards.where(item_category: 'hand'))
-        monster_slot.push(player.monstertwo)
-      end
-      if player.monsterthree.cards.where(item_category: 'hand').any?
-        monster_arr.push(player.monsterthree.cards.where(item_category: 'hand'))
-        monster_slot.push(player.monsterthree)
-      end
-
-      if monster_arr.length.positive?
-        random = rand(0..monster_arr.length - 1)
-        offset = rand(monster_arr[random].count)
-        random_card_id = monster_arr[random].offset(offset).first.id
-
-        Ingamedeck.where(card_id: random_card_id, cardable: monster_slot[random]).first&.update!(cardable: gameboard.graveyard)
-      end
+      lose_item_by_category(player, gameboard, 'hand')
     when 'lose_item_shoe'
-      monster_arr = []
-      monster_slot = []
-      if player.monsterone.cards.where(item_category: 'shoe').any?
-        monster_arr.push(player.monsterone.cards.where(item_category: 'shoe'))
-        monster_slot.push(player.monsterone)
-      end
-      if player.monstertwo.cards.where(item_category: 'shoe').any?
-        monster_arr.push(player.monstertwo.cards.where(item_category: 'shoe'))
-        monster_slot.push(player.monstertwo)
-      end
-      if player.monsterthree.cards.where(item_category: 'shoe').any?
-        monster_arr.push(player.monsterthree.cards.where(item_category: 'shoe'))
-        monster_slot.push(player.monsterthree)
-      end
-
-      if monster_arr.length.positive?
-        random = rand(0..monster_arr.length - 1)
-        offset = rand(monster_arr[random].count)
-        random_card_id = monster_arr[random].offset(offset).first.id
-
-        Ingamedeck.where(card_id: random_card_id, cardable: monster_slot[random]).first&.update!(cardable: gameboard.graveyard)
-      end
+      lose_item_by_category(player, gameboard, 'shoe')
     when 'lose_item_head'
-      monster_arr = []
-      monster_slot = []
-      if player.monsterone.cards.where(item_category: 'head').any?
-        monster_arr.push(player.monsterone.cards.where(item_category: 'head'))
-        monster_slot.push(player.monsterone)
-      end
-      if player.monstertwo.cards.where(item_category: 'head').any?
-        monster_arr.push(player.monstertwo.cards.where(item_category: 'head'))
-        monster_slot.push(player.monstertwo)
-      end
-      if player.monsterthree.cards.where(item_category: 'head').any?
-        monster_arr.push(player.monsterthree.cards.where(item_category: 'head'))
-        monster_slot.push(player.monsterthree)
-      end
-
-      if monster_arr.length.positive?
-        random = rand(0..monster_arr.length - 1)
-        offset = rand(monster_arr[random].count)
-        random_card_id = monster_arr[random].offset(offset).first.id
-
-        Ingamedeck.where(card_id: random_card_id, cardable: monster_slot[random]).first&.update!(cardable: gameboard.graveyard)
-      end
+      lose_item_by_category(player, gameboard, 'head')
     when 'lose_item'
-      monster_arr = []
-      monster_slot = []
-      if player.monsterone.cards.where(type: 'Itemcard').any?
-        monster_arr.push(player.monsterone.cards.where(type: 'Itemcard'))
-        monster_slot.push(player.monsterone)
-      end
-      if player.monstertwo.cards.where(type: 'Itemcard').any?
-        monster_arr.push(player.monstertwo.cards.where(type: 'Itemcard'))
-        monster_slot.push(player.monstertwo)
-      end
-      if player.monsterthree.cards.where(type: 'Itemcard').any?
-        monster_arr.push(player.monsterthree.cards.where(type: 'Itemcard'))
-        monster_slot.push(player.monsterthree)
-      end
-
-      if monster_arr.length.positive?
-        random = rand(0..monster_arr.length - 1)
-        offset = rand(monster_arr[random].count)
-        random_card_id = monster_arr[random].offset(offset).first.id
-
-        Ingamedeck.where(card_id: random_card_id, cardable: monster_slot[random]).first&.update!(cardable: gameboard.graveyard)
-      end
+      lose_item(player, gameboard)
     when 'random_card_lowest_level'
       all_players = gameboard.players
       first = true
@@ -216,7 +182,7 @@ class Monstercard < Card
 
       random_card = player.handcard.ingamedecks.offset(offset).first
 
-      random = rand(0..player_lowest_level.length - 1)
+      random = rand(0..player_lowest_level.size - 1)
 
       random_card&.update!(cardable: player_lowest_level[random].handcard)
     when 'no_help_next_fight'

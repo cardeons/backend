@@ -158,7 +158,7 @@ class Gameboard < ApplicationRecord
     add_cards_to_array(allcards, monstercards)
     # addCardsToArray(allcards, bosscards)
 
-    randomcard = allcards[rand(allcards.length)]
+    randomcard = allcards[rand(allcards.size)]
 
     centercard = Centercard.find_by!('gameboard_id = ?', gameboard.id)
 

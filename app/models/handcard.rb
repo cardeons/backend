@@ -45,7 +45,7 @@ class Handcard < ApplicationRecord
     # TODO bei keiner mitgenommenen Karte random lvl one als monsterone, ansonsten Handkarten
     x = card_amount
     while x.positive?
-      Ingamedeck.create!(gameboard: gameboard, card_id: allcards[rand(allcards.length)], cardable: handcard)
+      Ingamedeck.create!(gameboard: gameboard, card_id: allcards[rand(allcards.size)], cardable: handcard)
       x -= 1
     end
   end

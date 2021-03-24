@@ -25,28 +25,8 @@ class Cursecard < Card
     when 'lose_atk_points'
       player.update(attack: player.attack + ingamedeck.card.atk_points)
     when 'lose_item_hand'
-      monster_arr = []
-      monster_slot = []
-      if player.monsterone.cards.where(item_category: 'hand').any?
-        monster_arr.push(player.monsterone.cards.where(item_category: 'hand'))
-        monster_slot.push(player.monsterone)
-      end
-      if player.monstertwo.cards.where(item_category: 'hand').any?
-        monster_arr.push(player.monstertwo.cards.where(item_category: 'hand'))
-        monster_slot.push(player.monstertwo)
-      end
-      if player.monsterthree.cards.where(item_category: 'hand').any?
-        monster_arr.push(player.monsterthree.cards.where(item_category: 'hand'))
-        monster_slot.push(player.monsterthree)
-      end
+      Monstercard.lose_item_by_category(player, gameboard, 'hand')
 
-      if monster_arr.length.positive?
-        random = rand(0..monster_arr.length - 1)
-        offset = rand(monster_arr[random].count)
-        random_card_id = monster_arr[random].offset(offset).first.id
-
-        Ingamedeck.where(card_id: random_card_id, cardable: monster_slot[random]).first&.update!(cardable: gameboard.graveyard)
-      end
       ingamedeck.update(cardable: gameboard.graveyard)
     when 'no_help_next_fight'
       gameboard.update(asked_help: true)
@@ -57,28 +37,7 @@ class Cursecard < Card
 
       ingamedeck.update(cardable: gameboard.graveyard)
     when 'lose_item_head'
-      monster_arr = []
-      monster_slot = []
-      if player.monsterone.cards.where(item_category: 'head').any?
-        monster_arr.push(player.monsterone.cards.where(item_category: 'head'))
-        monster_slot.push(player.monsterone)
-      end
-      if player.monstertwo.cards.where(item_category: 'head').any?
-        monster_arr.push(player.monstertwo.cards.where(item_category: 'head'))
-        monster_slot.push(player.monstertwo)
-      end
-      if player.monsterthree.cards.where(item_category: 'head').any?
-        monster_arr.push(player.monsterthree.cards.where(item_category: 'head'))
-        monster_slot.push(player.monsterthree)
-      end
-
-      if monster_arr.length.positive?
-        random = rand(0..monster_arr.length - 1)
-        offset = rand(monster_arr[random].count)
-        random_card_id = monster_arr[random].offset(offset).first.id
-
-        Ingamedeck.where(card_id: random_card_id, cardable: monster_slot[random]).first&.update!(cardable: gameboard.graveyard)
-      end
+      Monstercard.lose_item_by_category(player, gameboard, 'head')
       ingamedeck.update(cardable: gameboard.graveyard)
     when 'lose_level'
       player.update(level: player.level - 1) unless player.level == 1
