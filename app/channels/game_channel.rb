@@ -289,21 +289,7 @@ class GameChannel < ApplicationCable::Channel
   end
 
   def curse_player(params)
-    ingamedeck = Ingamedeck.find_by('id = ?', params['unique_card_id'])
-    player_to = Player.find_by('id = ?', params['to'])
-
-    if ingamedeck.card.type == 'Levelcard'
-      Levelcard.activate(ingamedeck, player_to)
-      broadcast_to(@gameboard, { type: BOARD_UPDATE, params: Gameboard.broadcast_game_board(@gameboard) })
-    end
-
-    unless ingamedeck.card.type == 'Cursecard'
-      PlayerChannel.broadcast_to(current_user, { type: 'ERROR', params: { message: "You can't curse someone with a card that is not a cursecard..." } })
-      return
-    end
-
-    ingamedeck.update(cardable: player_to.playercurse)
-    Cursecard.activate(ingamedeck, player_to, @gameboard) if ingamedeck.card.action == 'lose_item_head' || ingamedeck.card.action == 'lose_item_hand' || ingamedeck.card.action == 'lose_level'
+    Cursecard.handlecurse(params, @gameboard, current_user)
     broadcast_to(@gameboard, { type: BOARD_UPDATE, params: Gameboard.broadcast_game_board(@gameboard) })
   end
 
