@@ -62,12 +62,17 @@ class GameChannel < ApplicationCable::Channel
     player = Player.find_by('user_id = ?', current_user.id)
     msg = "#{player.name} has played #{name} from handcards!"
 
+    @gameboard.reload
+    start_intercept_phase(@gameboard)
+
     broadcast_to(@gameboard, { type: GAME_LOG, params: { date: Time.new, message: msg } })
     PlayerChannel.broadcast_to(current_user, { type: 'HANDCARD_UPDATE', params: { handcards: Gameboard.render_cards_array(player.handcard.ingamedecks) } })
   end
 
   def draw_door_card
     name = Gameboard.draw_door_card(@gameboard)
+
+    start_intercept_phase(@gameboard.reload)
 
     # attack()
     broadcast_to(@gameboard, { type: BOARD_UPDATE, params: Gameboard.broadcast_game_board(@gameboard) })
@@ -161,21 +166,15 @@ class GameChannel < ApplicationCable::Channel
     when 'center_card'
       @gameboard.interceptcard.add_card_with_ingamedeck_id(unique_card_id)
 
-    when 'fighting_player'
+    when 'current_player'
       # buff player
       @gameboard.playerinterceptcard.add_card_with_ingamedeck_id(unique_card_id)
     else
       PlayerChannel.broadcast_error(current_user, 'This is ont a correct field for to!')
+      return
     end
 
-    @gameboard.intercept_phase!
-
-    timestamp = Time.now
-
-    @gameboard.update!(intercept_timestamp: timestamp)
-
-    # sets Intercept Timer
-    CheckIntercepttimerJob.set(wait: 5.seconds).perform_later(@gameboard, timestamp, 15)
+    start_intercept_phase(@gameboard)
 
     # update this players handcards
     PlayerChannel.broadcast_to(current_user, { type: 'HANDCARD_UPDATE', params: { handcards: Gameboard.render_cards_array(current_user.player.handcard.ingamedecks.reload) } })
@@ -315,5 +314,16 @@ class GameChannel < ApplicationCable::Channel
       # this method returns false if player does not own card
       false
     end
+  end
+
+  def start_intercept_phase(gameboard)
+    gameboard.intercept_phase!
+
+    timestamp = Time.now
+
+    gameboard.update!(intercept_timestamp: timestamp)
+
+    # sets Intercept Timer
+    CheckIntercepttimerJob.set(wait: 10.seconds).perform_later(@gameboard, timestamp, 15)
   end
 end
