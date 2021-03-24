@@ -47,8 +47,14 @@ class LobbyChannel < ApplicationCable::Channel
 
       @gameboard.initialize_game_board
 
+
+      # pp params["testplayers"]
       # TODO: Remove after testing i guesss
-      createNewTestGame(@gameboard)
+      if params['testplayers'].nil?
+        createNewTestGame(@gameboard)
+      else
+        createNewTestGame(@gameboard, params['testplayers'])
+      end
 
       broadcast_to(@gameboard, { type: 'START_GAME', params: { game_id: @gameboard.id } })
     end
@@ -60,62 +66,82 @@ class LobbyChannel < ApplicationCable::Channel
 
   private
 
-  def createNewTestGame(gameboard)
+  def createNewTestGame(gameboard, number_of_players = 3)
     gameboard_test = gameboard
-    x = rand(1..1_000_000)
-    u1 = User.create(email: "#{x}2@2.at", password: '2', name: "#{x}2", password_confirmation: '2')
-    u2 = User.create(email: "#{x}3@3.at", password: '3', name: "#{x}3", password_confirmation: '3')
-    u3 = User.create(email: "#{x}4@4.at", password: '4', name: "#{x}4", password_confirmation: '4')
 
-    player1 = Player.create(name: "#{x}2", gameboard: gameboard_test, user: u1)
-    player2 = Player.create(name: "#{x}3", gameboard: gameboard_test, user: u2)
-    player3 = Player.create(name: "#{x}4", gameboard: gameboard_test, user: u3)
+    if number_of_players > 3
+      number_of_players = 3
+    end
+    
+    (1..number_of_players). each do
+      x = rand(1..1_000_000)
+      u1 = User.create!(email: "#{x}2@2.at", password: '2', name: "#{x}2", password_confirmation: '2')
+      player1 = Player.create!(name: "#{x}2", gameboard: gameboard_test, user: u1)
+      playercurse1 = Playercurse.create!(player: player1)
+      Handcard.create!(player: player1)
+      p1i = Inventory.create!(player: player1)
+      p1m1 = Monsterone.create!(player: player1)
+      p1m2 = Monstertwo.create!(player: player1)
+      p1m3 = Monsterthree.create!(player: player1)
+      # pp Cursecard.all
+      # p1c = Ingamedeck.create!(gameboard: gameboard_test, card: Cursecard.first, cardable: playercurse1)
+      p1i1 = Ingamedeck.create!(gameboard: gameboard_test, card: Itemcard.first, cardable: p1i)
+      p1i2 = Ingamedeck.create!(gameboard: gameboard_test, card: Itemcard.first, cardable: p1i)
 
-    playercurse1 = Playercurse.create(player: player1)
-    playercurse2 = Playercurse.create(player: player2)
-    playercurse3 = Playercurse.create(player: player3)
+    end
+    # u1 = User.create(email: "#{x}2@2.at", password: '2', name: "#{x}2", password_confirmation: '2')
+    # u2 = User.create(email: "#{x}3@3.at", password: '3', name: "#{x}3", password_confirmation: '3')
+    # u3 = User.create(email: "#{x}4@4.at", password: '4', name: "#{x}4", password_confirmation: '4')
 
-    Handcard.create(player: player1)
-    Handcard.create(player: player2)
-    Handcard.create(player: player3)
+    # player1 = Player.create(name: "#{x}2", gameboard: gameboard_test, user: u1)
+    # player2 = Player.create(name: "#{x}3", gameboard: gameboard_test, user: u2)
+    # player3 = Player.create(name: "#{x}4", gameboard: gameboard_test, user: u3)
 
-    p1i = Inventory.create(player: player1)
-    p2i = Inventory.create(player: player2)
-    p3i = Inventory.create(player: player3)
+    # playercurse1 = Playercurse.create(player: player1)
+    # playercurse2 = Playercurse.create(player: player2)
+    # playercurse3 = Playercurse.create(player: player3)
 
-    p1m1 = Monsterone.create(player: player1)
-    p2m1 = Monsterone.create(player: player2)
-    p3m1 = Monsterone.create(player: player3)
+    # Handcard.create(player: player1)
+    # Handcard.create(player: player2)
+    # Handcard.create(player: player3)
 
-    p1m2 = Monstertwo.create(player: player1)
-    p2m2 = Monstertwo.create(player: player2)
-    p3m2 = Monstertwo.create(player: player3)
+    # p1i = Inventory.create(player: player1)
+    # p2i = Inventory.create(player: player2)
+    # p3i = Inventory.create(player: player3)
 
-    p1m3 = Monsterthree.create(player: player1)
-    p2m3 = Monsterthree.create(player: player2)
-    p3m3 = Monsterthree.create(player: player3)
+    # p1m1 = Monsterone.create(player: player1)
+    # p2m1 = Monsterone.create(player: player2)
+    # p3m1 = Monsterone.create(player: player3)
 
-    p1c = Ingamedeck.create(gameboard: gameboard_test, card: Cursecard.first, cardable: playercurse1)
-    p2c = Ingamedeck.create(gameboard: gameboard_test, card: Cursecard.first, cardable: playercurse2)
-    p3c = Ingamedeck.create(gameboard: gameboard_test, card: Cursecard.first, cardable: playercurse3)
+    # p1m2 = Monstertwo.create(player: player1)
+    # p2m2 = Monstertwo.create(player: player2)
+    # p3m2 = Monstertwo.create(player: player3)
 
-    p1i1 = Ingamedeck.create(gameboard: gameboard_test, card: Itemcard.first, cardable: p1i)
-    p1i2 = Ingamedeck.create(gameboard: gameboard_test, card: Itemcard.first, cardable: p1i)
-    p2i1 = Ingamedeck.create(gameboard: gameboard_test, card: Itemcard.first, cardable: p2i)
-    p2i2 = Ingamedeck.create(gameboard: gameboard_test, card: Itemcard.first, cardable: p2i)
-    p3i1 = Ingamedeck.create(gameboard: gameboard_test, card: Itemcard.first, cardable: p3i)
+    # p1m3 = Monsterthree.create(player: player1)
+    # p2m3 = Monsterthree.create(player: player2)
+    # p3m3 = Monsterthree.create(player: player3)
 
-    p1m1 = Ingamedeck.create!(gameboard: gameboard_test, card: Monstercard.first, cardable: p1m1)
-    p1m2 = Ingamedeck.create!(gameboard: gameboard_test, card: Monstercard.first, cardable: p1m2)
-    p1m3 = Ingamedeck.create!(gameboard: gameboard_test, card: Monstercard.first, cardable: p1m3)
+    # p1c = Ingamedeck.create(gameboard: gameboard_test, card: Cursecard.first, cardable: playercurse1)
+    # p2c = Ingamedeck.create(gameboard: gameboard_test, card: Cursecard.first, cardable: playercurse2)
+    # p3c = Ingamedeck.create(gameboard: gameboard_test, card: Cursecard.first, cardable: playercurse3)
 
-    p2m1 = Ingamedeck.create!(gameboard: gameboard_test, card: Monstercard.first, cardable: p2m1)
-    p2m2 = Ingamedeck.create!(gameboard: gameboard_test, card: Monstercard.first, cardable: p2m2)
-    p2m3 = Ingamedeck.create!(gameboard: gameboard_test, card: Monstercard.first, cardable: p2m3)
+    # p1i1 = Ingamedeck.create(gameboard: gameboard_test, card: Itemcard.first, cardable: p1i)
+    # p1i2 = Ingamedeck.create(gameboard: gameboard_test, card: Itemcard.first, cardable: p1i)
+    # p2i1 = Ingamedeck.create(gameboard: gameboard_test, card: Itemcard.first, cardable: p2i)
+    # p2i2 = Ingamedeck.create(gameboard: gameboard_test, card: Itemcard.first, cardable: p2i)
+    # p3i1 = Ingamedeck.create(gameboard: gameboard_test, card: Itemcard.first, cardable: p3i)
 
-    p3m1 = Ingamedeck.create!(gameboard: gameboard_test, card: Monstercard.first, cardable: p3m1)
-    p3m2 = Ingamedeck.create!(gameboard: gameboard_test, card: Monstercard.first, cardable: p3m2)
-    p3m3 = Ingamedeck.create!(gameboard: gameboard_test, card: Monstercard.first, cardable: p3m3)
+    # p1m1 = Ingamedeck.create!(gameboard: gameboard_test, card: Monstercard.first, cardable: p1m1)
+    # p1m2 = Ingamedeck.create!(gameboard: gameboard_test, card: Monstercard.first, cardable: p1m2)
+    # p1m3 = Ingamedeck.create!(gameboard: gameboard_test, card: Monstercard.first, cardable: p1m3)
+
+    # p2m1 = Ingamedeck.create!(gameboard: gameboard_test, card: Monstercard.first, cardable: p2m1)
+    # p2m2 = Ingamedeck.create!(gameboard: gameboard_test, card: Monstercard.first, cardable: p2m2)
+    # p2m3 = Ingamedeck.create!(gameboard: gameboard_test, card: Monstercard.first, cardable: p2m3)
+
+    # p3m1 = Ingamedeck.create!(gameboard: gameboard_test, card: Monstercard.first, cardable: p3m1)
+    # p3m2 = Ingamedeck.create!(gameboard: gameboard_test, card: Monstercard.first, cardable: p3m2)
+    # p3m3 = Ingamedeck.create!(gameboard: gameboard_test, card: Monstercard.first, cardable: p3m3)
   end
 
   def deliver_error_message(error)
