@@ -154,14 +154,9 @@ class GameChannel < ApplicationCable::Channel
       return
     end
 
-    # TODO: WIP InterceptJob
-    # pp 'CheckintercpetTimer'
-    # CheckIntercepttimerJob.set(wait: 10.seconds).perform_later(current_user.player.gameboard.id, Time.now)
-
     current_user.player.reload
-    @gameboard.intercept_phase!
-
     @gameboard.reload
+
     case to
     when 'center_card'
       @gameboard.interceptcard.add_card_with_ingamedeck_id(unique_card_id)
@@ -169,26 +164,33 @@ class GameChannel < ApplicationCable::Channel
     when 'fighting_player'
       # buff player
       @gameboard.playerinterceptcard.add_card_with_ingamedeck_id(unique_card_id)
+    else
+      PlayerChannel.broadcast_error(current_user, 'This is ont a correct field for to!')
     end
 
+    @gameboard.intercept_phase!
 
-    # current_user.player.update(intercept: true)
-    
+    timestamp = Time.now
+
+    @gameboard.update!(intercept_timestamp: timestamp)
+
+    # sets Intercept Timer
+    CheckIntercepttimerJob.set(wait: 5.seconds).perform_later(@gameboard, timestamp, 15)
+
     # update this players handcards
     PlayerChannel.broadcast_to(current_user, { type: 'HANDCARD_UPDATE', params: { handcards: Gameboard.render_cards_array(current_user.player.handcard.ingamedecks.reload) } })
     # update board
     broadcast_to(@gameboard, { type: BOARD_UPDATE, params: Gameboard.broadcast_game_board(@gameboard) })
   end
 
-  def no_intercept(params)
-
+  def no_intercept(_params)
     current_user.player.update!(intercept: false)
 
-    if @gameboard.players.where("intercept = ?", false).count == 3
-      msg = "Nobody wants to intercept this turn."
+    if @gameboard.players.where('intercept = ?', false).count == 3
+      msg = 'Nobody wants to intercept this turn.'
       @gameboard.intercept_finished!
 
-      ##reset all player intercept values back to default (false)
+      # #reset all player intercept values back to default (false)
       @gameboard.players.each do |player|
         player.update!(intercept: false)
       end

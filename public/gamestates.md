@@ -49,7 +49,9 @@ ANTWORT
       can_flee: bool,
       asked_help: bool,
       shared_reward: int,
-      helping_player: nil
+      helping_player: id | nil,
+      intercept_timestamp: timestamp | nil,
+      current_state: lobby | ingame | intercept_phase | intercept_finished
     },
     players: [{
       player_id: ,
