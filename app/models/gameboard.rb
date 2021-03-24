@@ -202,7 +202,7 @@ class Gameboard < ApplicationRecord
       gameboard.update!(can_flee: false)
 
       Monstercard.bad_things(gameboard.centercard, gameboard)
-
+      
       output = {
         flee: false,
         value: roll
