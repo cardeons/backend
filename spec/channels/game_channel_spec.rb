@@ -405,7 +405,7 @@ RSpec.describe GameChannel, type: :channel do
       ).exactly(:once)
 
     expect(Player.find(3).handcard.ingamedecks.length).to eql(5)
-    expect(player.reload.handcard.ingamedecks.length).to eql(5 + (gameboards(:gameboardFourPlayers).reload.rewards_treasure))
+    expect(player.reload.handcard.ingamedecks.length).to eql(5 + gameboards(:gameboardFourPlayers).reload.rewards_treasure)
   end
 
   it 'test if throws error if shared rewards are too high' do
@@ -501,5 +501,99 @@ RSpec.describe GameChannel, type: :channel do
       .with(
         hash_including(type: 'ERROR')
       ).exactly(:once)
+  end
+
+  it 'test if throws error if player curses someone without a cursecard' do
+    gameboards(:gameboardFourPlayers).initialize_game_board
+    gameboards(:gameboardFourPlayers).players.each(&:init_player)
+    # assign player to this user
+    users(:one).player = gameboards(:gameboardFourPlayers).players.first
+    stub_connection current_user: users(:one)
+    subscribe
+
+    ingamedeck = Ingamedeck.create!(gameboard: gameboards(:gameboardFourPlayers), card: cards(:test), cardable: users(:one).player.handcard)
+
+    expect do
+      perform('curse_player', {
+                to: 2,
+                unique_card_id: ingamedeck.id
+              })
+    end.to have_broadcasted_to(PlayerChannel.broadcasting_for(connection.current_user))
+      .with(
+        hash_including(type: 'ERROR')
+      ).exactly(:once)
+
+    expect(ingamedeck.cardable).to eql(users(:one).player.handcard)
+  end
+
+  it 'test if curse on player if cursed' do
+    gameboards(:gameboardFourPlayers).initialize_game_board
+    gameboards(:gameboardFourPlayers).players.each(&:init_player)
+    # assign player to this user
+    users(:one).player = gameboards(:gameboardFourPlayers).players.first
+    stub_connection current_user: users(:one)
+    subscribe
+
+    ingamedeck = Ingamedeck.create!(gameboard: gameboards(:gameboardFourPlayers), card: cards(:cursecard), cardable: users(:one).player.handcard)
+
+    expect do
+      perform('curse_player', {
+                to: 2,
+                unique_card_id: ingamedeck.id
+              })
+    end.to have_broadcasted_to("game:#{users(:one).player.gameboard.to_gid_param}")
+      .with(
+        hash_including(type: 'BOARD_UPDATE')
+      ).exactly(:once)
+
+    expect(ingamedeck.reload.cardable).to eql(users(:one).player.playercurse)
+  end
+
+  it 'test if curse in graveyard and activated if cursed with instant curse' do
+    gameboards(:gameboardFourPlayers).initialize_game_board
+    gameboards(:gameboardFourPlayers).players.each(&:init_player)
+    # assign player to this user
+    users(:one).player = gameboards(:gameboardFourPlayers).players.first
+    stub_connection current_user: users(:one)
+    subscribe
+
+    users(:one).player.update(level: 4)
+    ingamedeck = Ingamedeck.create!(gameboard: gameboards(:gameboardFourPlayers), card: cards(:cursecard2), cardable: users(:one).player.handcard)
+
+    expect do
+      perform('curse_player', {
+                to: 2,
+                unique_card_id: ingamedeck.id
+              })
+    end.to have_broadcasted_to("game:#{users(:one).player.gameboard.to_gid_param}")
+      .with(
+        hash_including(type: 'BOARD_UPDATE')
+      ).exactly(:once)
+
+    expect(users(:one).player.reload.level).to eql(3)
+    expect(ingamedeck.reload.cardable).to eql(gameboards(:gameboardFourPlayers).graveyard)
+  end
+
+  it 'test if gains level if cursed with levelcard' do
+    gameboards(:gameboardFourPlayers).initialize_game_board
+    gameboards(:gameboardFourPlayers).players.each(&:init_player)
+    # assign player to this user
+    users(:one).player = gameboards(:gameboardFourPlayers).players.first
+    stub_connection current_user: users(:one)
+    subscribe
+
+    ingamedeck = Ingamedeck.create!(gameboard: gameboards(:gameboardFourPlayers), card: cards(:levelcard), cardable: users(:one).player.handcard)
+
+    expect do
+      perform('curse_player', {
+                to: 2,
+                unique_card_id: ingamedeck.id
+              })
+    end.to have_broadcasted_to("game:#{users(:one).player.gameboard.to_gid_param}")
+      .with(
+        hash_including(type: 'BOARD_UPDATE')
+      ).exactly(:once)
+
+    expect(users(:one).player.reload.level).to eql(2)
   end
 end

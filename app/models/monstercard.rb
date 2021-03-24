@@ -4,7 +4,6 @@ class Monstercard < Card
   validates :title, :description, :image, :action, :draw_chance, :level, :element, :bad_things, :rewards_treasure, :atk_points, :level_amount, :type, presence: true
 
   def self.equip_monster(params, player)
-
     deck_card = Ingamedeck.find_by('id=?', params['unique_equip_id'])
     monsterslot = Ingamedeck.find_by('id=?', params['unique_monster_id'])
 
@@ -79,10 +78,10 @@ class Monstercard < Card
     { type: type, message: message }
   end
 
-  def self.bad_things(card, gameboard)
+  def self.bad_things(ingamedeck, gameboard)
     player = Player.find_by('id = ?', gameboard.current_player)
 
-    case card.action # get the action from card
+    case ingamedeck.card.action # get the action from card
     when 'lose_item_hand'
       monster_arr = []
       monster_slot = []

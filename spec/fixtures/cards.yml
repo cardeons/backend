@@ -377,7 +377,7 @@ buffcard:
 cursecard:
   id: 18
   title: 'The unicorn curse'
-  description: '<p>The unicorn cursed you.</p><p> No one is willing to help you in your next fight...</p>'
+  description: MyString
   image: MyString
   action: 'no_help_next_fight'
   draw_chance: 4
@@ -395,3 +395,289 @@ cursecard:
   has_combination: 1
   level_amount: 1
   type: Cursecard
+
+cursecard2:
+  id: 20
+  title: MyString
+  description: MyString
+  image: MyString
+  action: 'lose_level'
+  draw_chance: 4
+  level: 1
+  element: MyString
+  bad_things: MyString
+  rewards_treasure: MyString
+  good_against: MyString
+  bad_against: MyString
+  good_against_value: 1
+  bad_against_value: 1
+  element_modifier: 1
+  atk_points: 1
+  item_category: MyString
+  has_combination: 1
+  level_amount: 1
+  type: Cursecard
+
+cursecard3:
+  id: 21
+  title: MyString
+  description: MyString
+  image: MyString
+  action: 'lose_item_head'
+  draw_chance: 4
+  level: 1
+  element: MyString
+  bad_things: MyString
+  rewards_treasure: MyString
+  good_against: MyString
+  bad_against: MyString
+  good_against_value: 1
+  bad_against_value: 1
+  element_modifier: 1
+  atk_points: 1
+  item_category: MyString
+  has_combination: 1
+  level_amount: 1
+  type: Cursecard
+
+cursecard4:
+  id: 22
+  title: MyString
+  description: MyString
+  image: MyString
+  action: 'lose_item_hand'
+  draw_chance: 4
+  level: 1
+  element: MyString
+  bad_things: MyString
+  rewards_treasure: MyString
+  good_against: MyString
+  bad_against: MyString
+  good_against_value: 1
+  bad_against_value: 1
+  element_modifier: 1
+  atk_points: 1
+  item_category: MyString
+  has_combination: 1
+  level_amount: 1
+  type: Cursecard
+
+cursecard5:
+  id: 23
+  title: MyString
+  description: MyString
+  image: MyString
+  action: 'lose_atk_points'
+  draw_chance: 4
+  level: 1
+  element: MyString
+  bad_things: MyString
+  rewards_treasure: MyString
+  good_against: MyString
+  bad_against: MyString
+  good_against_value: 1
+  bad_against_value: 1
+  element_modifier: 1
+  atk_points: -1
+  item_category: MyString
+  has_combination: 1
+  level_amount: 1
+  type: Cursecard
+
+cursecard6:
+  id: 24
+  title: MyString
+  description: MyString
+  image: MyString
+  action: 'minus_atk_next_fight'
+  draw_chance: 4
+  level: 1
+  element: MyString
+  bad_things: MyString
+  rewards_treasure: MyString
+  good_against: MyString
+  bad_against: MyString
+  good_against_value: 1
+  bad_against_value: 1
+  element_modifier: 1
+  atk_points: -1
+  item_category: MyString
+  has_combination: 1
+  level_amount: 1
+  type: Cursecard
+
+cursecard7:
+  id: 25
+  title: MyString
+  description: MyString
+  image: MyString
+  action: 'double_attack_double_reward'
+  draw_chance: 4
+  level: 1
+  element: MyString
+  bad_things: MyString
+  rewards_treasure: MyString
+  good_against: MyString
+  bad_against: MyString
+  good_against_value: 1
+  bad_against_value: 1
+  element_modifier: 1
+  atk_points: -1
+  item_category: MyString
+  has_combination: 1
+  level_amount: 1
+  type: Cursecard
+
+levelcard:
+  id: 26
+  title: MyString
+  description: MyString
+  image: MyString
+  action: 'level_up'
+  draw_chance: 4
+  level: 1
+  element: MyString
+  bad_things: MyString
+  rewards_treasure: MyString
+  good_against: MyString
+  bad_against: MyString
+  good_against_value: 1
+  bad_against_value: 1
+  element_modifier: 1
+  atk_points: -1
+  item_category: MyString
+  has_combination: 1
+  level_amount: 1
+  type: Levelcard
+
+buffcard:
+  id: 27
+  title: MyString
+  description: MyString
+  image: MyString
+  action: 'gain_atk'
+  draw_chance: 4
+  level: 1
+  element: MyString
+  bad_things: MyString
+  rewards_treasure: MyString
+  good_against: MyString
+  bad_against: MyString
+  good_against_value: 1
+  bad_against_value: 1
+  element_modifier: 1
+  atk_points: 5
+  item_category: MyString
+  has_combination: 1
+  level_amount: 1
+  type: Levelcard
+
+buffcard2:
+  id: 28
+  title: MyString
+  description: MyString
+  image: MyString
+  action: 'monster_lose_atk'
+  draw_chance: 4
+  level: 1
+  element: MyString
+  bad_things: MyString
+  rewards_treasure: MyString
+  good_against: MyString
+  bad_against: MyString
+  good_against_value: 1
+  bad_against_value: 1
+  element_modifier: 1
+  atk_points: -5
+  item_category: MyString
+  has_combination: 1
+  level_amount: 1
+  type: Levelcard
+
+buffcard3:
+  id: 29
+  title: MyString
+  description: MyString
+  image: MyString
+  action: 'dodge_monster'
+  draw_chance: 4
+  level: 1
+  element: MyString
+  bad_things: MyString
+  rewards_treasure: MyString
+  good_against: MyString
+  bad_against: MyString
+  good_against_value: 1
+  bad_against_value: 1
+  element_modifier: 1
+  atk_points: -5
+  item_category: MyString
+  has_combination: 1
+  level_amount: 1
+  type: Levelcard
+
+buffcard4:
+  id: 30
+  title: MyString
+  description: MyString
+  image: MyString
+  action: 'draw_two_cards'
+  draw_chance: 4
+  level: 1
+  element: MyString
+  bad_things: MyString
+  rewards_treasure: MyString
+  good_against: MyString
+  bad_against: MyString
+  good_against_value: 1
+  bad_against_value: 1
+  element_modifier: 1
+  atk_points: -5
+  item_category: MyString
+  has_combination: 1
+  level_amount: 1
+  type: Levelcard
+
+buffcard5:
+  id: 31
+  title: MyString
+  description: MyString
+  image: MyString
+  action: 'force_help'
+  draw_chance: 4
+  level: 1
+  element: MyString
+  bad_things: MyString
+  rewards_treasure: MyString
+  good_against: MyString
+  bad_against: MyString
+  good_against_value: 1
+  bad_against_value: 1
+  element_modifier: 1
+  atk_points: -5
+  item_category: MyString
+  has_combination: 1
+  level_amount: 1
+  type: Levelcard
+
+buffcard6:
+  id: 32
+  title: MyString
+  description: MyString
+  image: MyString
+  action: 'flee_success'
+  draw_chance: 4
+  level: 1
+  element: MyString
+  bad_things: MyString
+  rewards_treasure: MyString
+  good_against: MyString
+  bad_against: MyString
+  good_against_value: 1
+  bad_against_value: 1
+  element_modifier: 1
+  atk_points: -5
+  item_category: MyString
+  has_combination: 1
+  level_amount: 1
+  type: Levelcard

@@ -3,24 +3,33 @@
 class Buffcard < Card
   validates :title, :description, :image, :action, :draw_chance, :atk_points, :type, presence: true
 
-  def self.activate(card)
-    case card.action # get the action from card
+  def self.activate(ingamedeck, player, gameboard)
+    case ingamedeck.card.action # get the action from card
     when 'gain_atk'
-      puts 'hi'
+      gameboard.update(player_atk: gameboard.player_atk + ingamedeck.card.atk_points)
+
+      ingamedeck.update(cardable: gameboard.graveyard)
     when 'monster_lose_atk'
-      puts 'hi'
+      gameboard.update(monster_atk: gameboard.monster_atk + ingamedeck.card.atk_points)
+
+      ingamedeck.update(cardable: gameboard.graveyard)
     when 'plus_atk'
-      puts 'hi'
+      gameboard.update(player_atk: gameboard.player_atk + ingamedeck.card.atk_points)
+
+      ingamedeck.update(cardable: gameboard.graveyard)
     when 'dodge_monster'
-      puts 'hi'
+      gameboard.update(can_flee: true)
     when 'draw_two_cards'
-      puts 'hi'
+      Handcard.draw_handcards(player.id, gameboard, 2)
     when 'force_help'
-      puts 'hi'
+      helping_player_id = gameboard.helping_player
+      helping_player = Player.find_by('id = ?', helping_player_id)
+
+      gameboard.update(helping_player_atk: helping_player&.attack)
     when 'flee_success'
-      puts 'hi'
+      gameboard.update(can_flee: true)
     else
-      puts "it was something else"
+      puts 'it was something else'
     end
   end
 end

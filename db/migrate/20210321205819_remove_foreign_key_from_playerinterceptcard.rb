@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class RemoveForeignKeyFromPlayerinterceptcard < ActiveRecord::Migration[6.1]
   def change
     remove_reference :playerinterceptcards, :ingamedeck, index: true, foreign_key: true

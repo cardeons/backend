@@ -86,7 +86,7 @@ RSpec.describe Monstercard, type: :model do
     Monsterone.create(player: player1)
     ingamedeck1 = Ingamedeck.create!(gameboard: gameboard_test, card_id: catfish.id, cardable: player1.monsterone)
     ingamedeck2 = Ingamedeck.create!(gameboard: gameboard_test, card_id: item1.id, cardable: player1.handcard)
-    params = { 'unique_monster_id'=>ingamedeck1.id, 'unique_equip_id'=>ingamedeck2.id, 'action'=>'equip_monster' }
+    params = { 'unique_monster_id' => ingamedeck1.id, 'unique_equip_id' => ingamedeck2.id, 'action' => 'equip_monster' }
 
     result = Monstercard.equip_monster(params, player1)
     expect(result == { type: 'GAMEBOARD_UPDATE', message: 'Successfully equipped.' }).to be_truthy
@@ -130,8 +130,8 @@ RSpec.describe Monstercard, type: :model do
     ingamedeck1 = Ingamedeck.create!(gameboard: gameboard_test, card_id: catfish.id, cardable: player1.monsterone)
     ingamedeck2 = Ingamedeck.create!(gameboard: gameboard_test, card_id: item1.id, cardable: player1.handcard)
     ingamedeck3 = Ingamedeck.create!(gameboard: gameboard_test, card_id: item1.id, cardable: player1.handcard)
-    params = { 'unique_monster_id'=>ingamedeck1.id, 'unique_equip_id'=>ingamedeck2.id, 'action'=>'equip_monster' }
-    params2 = { 'unique_monster_id'=>ingamedeck1.id, 'unique_equip_id'=>ingamedeck3.id, 'action'=>'equip_monster' }
+    params = { 'unique_monster_id' => ingamedeck1.id, 'unique_equip_id' => ingamedeck2.id, 'action' => 'equip_monster' }
+    params2 = { 'unique_monster_id' => ingamedeck1.id, 'unique_equip_id' => ingamedeck3.id, 'action' => 'equip_monster' }
     result = Monstercard.equip_monster(params, player1)
     result2 = Monstercard.equip_monster(params2, player1)
     expect(result2 == { type: 'ERROR', message: 'You already have this type of item on your monster! (head)' }).to be_truthy
@@ -319,7 +319,6 @@ RSpec.describe Monstercard, type: :model do
     Monstercard.equip_monster({ 'unique_monster_id' => ingamedeck1.id, 'unique_equip_id' => ingamedeck5.id, 'action' => 'equip_monster' }, player1)
     Monstercard.equip_monster({ 'unique_monster_id' => ingamedeck1.id, 'unique_equip_id' => ingamedeck6.id, 'action' => 'equip_monster' }, player1)
 
-
     params = { 'unique_monster_id' => ingamedeck1.id, 'unique_equip_id' => ingamedeck7.id, 'action' => 'equip_monster' }
     result = Monstercard.equip_monster(params, player1)
     expect(result == { type: 'ERROR', message: "You can't put any more items on this monster." }).to be_truthy
@@ -331,9 +330,10 @@ RSpec.describe Monstercard, type: :model do
 
     current_player = Player.find(gameboards(:gameboardFourPlayers).current_player)
     current_player.update(level: 3)
+    monster = Ingamedeck.create!(gameboard: gameboards(:gameboardFourPlayers), card: cards(:monstercard), cardable: current_player.playercurse)
 
     expect(current_player.level).to eql(3)
-    Monstercard.bad_things(cards(:monstercard), gameboards(:gameboardFourPlayers))
+    Monstercard.bad_things(monster, gameboards(:gameboardFourPlayers))
     expect(current_player.reload.level).to eql(2)
   end
 
@@ -343,9 +343,10 @@ RSpec.describe Monstercard, type: :model do
 
     current_player = Player.find(gameboards(:gameboardFourPlayers).current_player)
     current_player.update(level: 3)
+    monster = Ingamedeck.create!(gameboard: gameboards(:gameboardFourPlayers), card: cards(:monstercard2), cardable: current_player.playercurse)
 
     expect(current_player.level).to eql(3)
-    Monstercard.bad_things(cards(:monstercard2), gameboards(:gameboardFourPlayers))
+    Monstercard.bad_things(monster, gameboards(:gameboardFourPlayers))
     expect(current_player.reload.level).to eql(1)
   end
 
@@ -354,9 +355,10 @@ RSpec.describe Monstercard, type: :model do
     gameboards(:gameboardFourPlayers).players.each(&:init_player)
 
     current_player = Player.find(gameboards(:gameboardFourPlayers).current_player)
+    monster = Ingamedeck.create!(gameboard: gameboards(:gameboardFourPlayers), card: cards(:monstercard3), cardable: current_player.playercurse)
 
     expect(current_player.handcard.ingamedecks.count).to eql(5)
-    Monstercard.bad_things(cards(:monstercard3), gameboards(:gameboardFourPlayers))
+    Monstercard.bad_things(monster, gameboards(:gameboardFourPlayers))
     expect(current_player.reload.handcard.ingamedecks.count).to eql(4)
   end
 
@@ -367,9 +369,10 @@ RSpec.describe Monstercard, type: :model do
     current_player = Player.find(gameboards(:gameboardFourPlayers).current_player)
     Ingamedeck.create!(gameboard: gameboards(:gameboardFourPlayers), card: cards(:monstercard9), cardable: current_player.monstertwo)
     Ingamedeck.create!(gameboard: gameboards(:gameboardFourPlayers), card: cards(:itemcard4), cardable: current_player.monstertwo)
+    monster = Ingamedeck.create!(gameboard: gameboards(:gameboardFourPlayers), card: cards(:monstercard9), cardable: current_player.playercurse)
 
     expect(current_player.monstertwo.ingamedecks.count).to eql(2)
-    Monstercard.bad_things(cards(:monstercard9), gameboards(:gameboardFourPlayers))
+    Monstercard.bad_things(monster, gameboards(:gameboardFourPlayers))
     expect(current_player.reload.monstertwo.ingamedecks.count).to eql(1)
   end
 
@@ -380,9 +383,10 @@ RSpec.describe Monstercard, type: :model do
     current_player = Player.find(gameboards(:gameboardFourPlayers).current_player)
     Ingamedeck.create!(gameboard: gameboards(:gameboardFourPlayers), card: cards(:monstercard9), cardable: current_player.monsterone)
     Ingamedeck.create!(gameboard: gameboards(:gameboardFourPlayers), card: cards(:itemcard4), cardable: current_player.monsterone)
+    monster = Ingamedeck.create!(gameboard: gameboards(:gameboardFourPlayers), card: cards(:monstercard9), cardable: current_player.playercurse)
 
     expect(current_player.monsterone.ingamedecks.count).to eql(2)
-    Monstercard.bad_things(cards(:monstercard9), gameboards(:gameboardFourPlayers))
+    Monstercard.bad_things(monster, gameboards(:gameboardFourPlayers))
     expect(current_player.reload.monsterone.ingamedecks.count).to eql(1)
   end
 
@@ -393,9 +397,10 @@ RSpec.describe Monstercard, type: :model do
     current_player = Player.find(gameboards(:gameboardFourPlayers).current_player)
     Ingamedeck.create!(gameboard: gameboards(:gameboardFourPlayers), card: cards(:monstercard9), cardable: current_player.monstertwo)
     Ingamedeck.create!(gameboard: gameboards(:gameboardFourPlayers), card: cards(:itemcard2), cardable: current_player.monstertwo)
+    monster = Ingamedeck.create!(gameboard: gameboards(:gameboardFourPlayers), card: cards(:monstercard9), cardable: current_player.playercurse)
 
     expect(current_player.monstertwo.ingamedecks.count).to eql(2)
-    Monstercard.bad_things(cards(:monstercard9), gameboards(:gameboardFourPlayers))
+    Monstercard.bad_things(monster, gameboards(:gameboardFourPlayers))
     expect(current_player.reload.monstertwo.ingamedecks.count).to eql(2)
   end
 
@@ -406,9 +411,10 @@ RSpec.describe Monstercard, type: :model do
     current_player = Player.find(gameboards(:gameboardFourPlayers).current_player)
     Ingamedeck.create!(gameboard: gameboards(:gameboardFourPlayers), card: cards(:monstercard9), cardable: current_player.monstertwo)
     Ingamedeck.create!(gameboard: gameboards(:gameboardFourPlayers), card: cards(:itemcard2), cardable: current_player.monstertwo)
+    monster = Ingamedeck.create!(gameboard: gameboards(:gameboardFourPlayers), card: cards(:monstercard7), cardable: current_player.playercurse)
 
     expect(current_player.monstertwo.ingamedecks.count).to eql(2)
-    Monstercard.bad_things(cards(:monstercard7), gameboards(:gameboardFourPlayers))
+    Monstercard.bad_things(monster, gameboards(:gameboardFourPlayers))
     expect(current_player.reload.monstertwo.ingamedecks.count).to eql(1)
   end
 
@@ -419,9 +425,10 @@ RSpec.describe Monstercard, type: :model do
     current_player = Player.find(gameboards(:gameboardFourPlayers).current_player)
     Ingamedeck.create!(gameboard: gameboards(:gameboardFourPlayers), card: cards(:monstercard9), cardable: current_player.monstertwo)
     Ingamedeck.create!(gameboard: gameboards(:gameboardFourPlayers), card: cards(:itemcard3), cardable: current_player.monstertwo)
+    monster = Ingamedeck.create!(gameboard: gameboards(:gameboardFourPlayers), card: cards(:monstercard8), cardable: current_player.playercurse)
 
     expect(current_player.monstertwo.ingamedecks.count).to eql(2)
-    Monstercard.bad_things(cards(:monstercard8), gameboards(:gameboardFourPlayers))
+    Monstercard.bad_things(monster, gameboards(:gameboardFourPlayers))
     expect(current_player.reload.monstertwo.ingamedecks.count).to eql(1)
   end
 
@@ -432,9 +439,10 @@ RSpec.describe Monstercard, type: :model do
     current_player = Player.find(gameboards(:gameboardFourPlayers).current_player)
     Ingamedeck.create!(gameboard: gameboards(:gameboardFourPlayers), card: cards(:monstercard9), cardable: current_player.monstertwo)
     Ingamedeck.create!(gameboard: gameboards(:gameboardFourPlayers), card: cards(:itemcard3), cardable: current_player.monstertwo)
+    monster = Ingamedeck.create!(gameboard: gameboards(:gameboardFourPlayers), card: cards(:monstercard6), cardable: current_player.playercurse)
 
     expect(current_player.monstertwo.ingamedecks.count).to eql(2)
-    Monstercard.bad_things(cards(:monstercard6), gameboards(:gameboardFourPlayers))
+    Monstercard.bad_things(monster, gameboards(:gameboardFourPlayers))
     expect(current_player.reload.monstertwo.ingamedecks.count).to eql(1)
   end
 
@@ -443,9 +451,10 @@ RSpec.describe Monstercard, type: :model do
     gameboards(:gameboardFourPlayers).players.each(&:init_player)
 
     current_player = Player.find(gameboards(:gameboardFourPlayers).current_player)
+    monster = Ingamedeck.create!(gameboard: gameboards(:gameboardFourPlayers), card: cards(:monstercard5), cardable: current_player.playercurse)
 
     expect(current_player.handcard.ingamedecks.count).to eql(5)
-    Monstercard.bad_things(cards(:monstercard5), gameboards(:gameboardFourPlayers))
+    Monstercard.bad_things(monster, gameboards(:gameboardFourPlayers))
     expect(current_player.reload.handcard.ingamedecks.count).to eql(4)
   end
 
@@ -459,9 +468,10 @@ RSpec.describe Monstercard, type: :model do
 
     current_player = Player.find(gameboards(:gameboardFourPlayers).current_player)
     current_player.update(level: 1)
+    monster = Ingamedeck.create!(gameboard: gameboards(:gameboardFourPlayers), card: cards(:monstercard5), cardable: current_player.playercurse)
 
     expect(current_player.handcard.ingamedecks.count).to eql(5)
-    Monstercard.bad_things(cards(:monstercard5), gameboards(:gameboardFourPlayers))
+    Monstercard.bad_things(monster, gameboards(:gameboardFourPlayers))
     gameboards(:gameboardFourPlayers).players.each do |player|
       expect(player.reload.handcard.ingamedecks.count).to eql(5)
     end
@@ -473,9 +483,10 @@ RSpec.describe Monstercard, type: :model do
 
     current_player = Player.find(gameboards(:gameboardFourPlayers).current_player)
     current_player.update(level: 4)
+    monster = Ingamedeck.create!(gameboard: gameboards(:gameboardFourPlayers), card: cards(:monstercard5), cardable: current_player.playercurse)
 
     expect(current_player.handcard.ingamedecks.count).to eql(5)
-    Monstercard.bad_things(cards(:monstercard5), gameboards(:gameboardFourPlayers))
+    Monstercard.bad_things(monster, gameboards(:gameboardFourPlayers))
     expect(current_player.handcard.ingamedecks.count).to eql(4)
   end
 
@@ -484,9 +495,9 @@ RSpec.describe Monstercard, type: :model do
     gameboards(:gameboardFourPlayers).players.each(&:init_player)
 
     current_player = Player.find(gameboards(:gameboardFourPlayers).current_player)
+    monster = Ingamedeck.create!(gameboard: gameboards(:gameboardFourPlayers), card: cards(:monstercard4), cardable: current_player.handcard)
 
-    Monstercard.bad_things(cards(:monstercard4), gameboards(:gameboardFourPlayers))
+    Monstercard.bad_things(monster, gameboards(:gameboardFourPlayers))
     expect(current_player.reload.playercurse.ingamedecks.count).to eql(1)
-
   end
 end

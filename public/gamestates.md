@@ -156,18 +156,18 @@ Gameboard Channel response
 
 
 
-<!-- #ANFRAGE
+#ANFRAGE
 {
   action: "curse_player",
   to: 1,
   unique_card_id: 4
   #to ist die id des anderen Players, der verflucht wird
-} -->
+}
 
-<!-- #ANTWORT
+#ANTWORT
 {
   #GAMEBOARD WIE IMMER
-} -->
+}
 
 
 #ANFRAGE

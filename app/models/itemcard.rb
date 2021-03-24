@@ -6,13 +6,13 @@ class Itemcard < Card
   def self.activate(card)
     case card.action # get the action from card
     when 'plus_3_if_combination'
-      puts "it was 1"
+      puts 'it was 1'
     when 'plus_three'
       puts 'asd'
     when 'plus_two'
       puts 'asd'
     else
-      puts "it was something else"
+      puts 'it was something else'
     end
   end
 end

@@ -121,7 +121,7 @@ class GameChannel < ApplicationCable::Channel
       broadcast_to(@gameboard, { type: BOARD_UPDATE, params: Gameboard.broadcast_game_board(@gameboard) })
     end
 
-    broadcast_to(@gameboard, { type: 'ERROR', params: { message: "Playerattack too low" } }) unless result[:result]
+    broadcast_to(@gameboard, { type: 'ERROR', params: { message: 'Playerattack too low' } }) unless result[:result]
 
     # updated_board = Gameboard.broadcast_game_board(@gameboard)
     # broadcast_to(@gameboard, { type: BOARD_UPDATE, params: updated_board })
@@ -178,7 +178,12 @@ class GameChannel < ApplicationCable::Channel
 
     @gameboard.update(shared_reward: helping_shared_reward, asked_help: true, helping_player: helping_player_id)
 
-    PlayerChannel.broadcast_to(current_user, { type: 'ASK_FOR_HELP', params: { player_id: helping_player_id, player_name: helping_player.name, helping_shared_rewards: helping_shared_reward, helping_player_attack: helping_player.attack } }) unless helping_shared_reward > @gameboard.rewards_treasure
+    unless helping_shared_reward > @gameboard.rewards_treasure
+      PlayerChannel.broadcast_to(current_user,
+                                 { type: 'ASK_FOR_HELP',
+                                   params: { player_id: helping_player_id, player_name: helping_player.name, helping_shared_rewards: helping_shared_reward,
+                                             helping_player_attack: helping_player.attack } })
+    end
   end
 
   def answer_help_call(params)
@@ -246,6 +251,25 @@ class GameChannel < ApplicationCable::Channel
     PlayerChannel.broadcast_to(current_user, { type: 'HANDCARD_UPDATE', params: { handcards: Gameboard.render_cards_array(player.handcard.ingamedecks) } })
 
     broadcast_to(@gameboard, { type: BOARD_UPDATE, params: Gameboard.broadcast_game_board(gameboard) })
+  end
+
+  def curse_player(params)
+    ingamedeck = Ingamedeck.find_by('id = ?', params['unique_card_id'])
+    player_to = Player.find_by('id = ?', params['to'])
+
+    if ingamedeck.card.type == 'Levelcard'
+      Levelcard.activate(ingamedeck, player_to)
+      broadcast_to(@gameboard, { type: BOARD_UPDATE, params: Gameboard.broadcast_game_board(@gameboard) })
+    end
+
+    unless ingamedeck.card.type == 'Cursecard'
+      PlayerChannel.broadcast_to(current_user, { type: 'ERROR', params: { message: "You can't curse someone with a card that is not a cursecard..." } })
+      return
+    end
+
+    ingamedeck.update(cardable: player_to.playercurse)
+    Cursecard.activate(ingamedeck, player_to, @gameboard) if ingamedeck.card.action == 'lose_item_head' || ingamedeck.card.action == 'lose_item_hand' || ingamedeck.card.action == 'lose_level'
+    broadcast_to(@gameboard, { type: BOARD_UPDATE, params: Gameboard.broadcast_game_board(@gameboard) })
   end
 
   def develop_add_buff_card

@@ -47,7 +47,6 @@ class LobbyChannel < ApplicationCable::Channel
 
       @gameboard.initialize_game_board
 
-
       # TODO: Remove after testing i guesss
       createNewTestGame(@gameboard)
 
