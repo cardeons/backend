@@ -158,7 +158,7 @@ class GameChannel < ApplicationCable::Channel
       # buff player
       @gameboard.playerinterceptcard.add_card_with_ingamedeck_id(unique_card_id)
     end
-    
+
     # update this players handcards
     PlayerChannel.broadcast_to(current_user, { type: 'HANDCARD_UPDATE', params: { handcards: Gameboard.render_cards_array(current_user.player.handcard.ingamedecks.reload) } })
     # update board

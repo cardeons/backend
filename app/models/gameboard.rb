@@ -181,6 +181,7 @@ class Gameboard < ApplicationRecord
 
   def self.flee(gameboard)
     roll = rand(1..6)
+
     output = {}
 
     if roll > 4
@@ -191,6 +192,9 @@ class Gameboard < ApplicationRecord
       }
     else
       gameboard.update!(can_flee: false)
+
+      Monstercard.bad_things(gameboard.centercard, gameboard)
+
       output = {
         flee: false,
         value: roll
