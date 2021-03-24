@@ -120,6 +120,8 @@ class Gameboard < ApplicationRecord
       monster_atk: gameboard.monster_atk,
       success: gameboard.success,
       can_flee: gameboard.can_flee,
+      intercept_timestamp: gameboard.intercept_timestamp,
+      current_state: gameboard.current_state,
       rewards_treasure: gameboard.rewards_treasure,
       graveyard: render_cards_array(gameboard.graveyard.ingamedecks)
     }

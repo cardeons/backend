@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_03_23_122123) do
+ActiveRecord::Schema.define(version: 2021_03_24_082723) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -65,6 +65,7 @@ ActiveRecord::Schema.define(version: 2021_03_23_122123) do
     t.integer "current_state", default: 0
     t.bigint "helping_player"
     t.integer "helping_player_atk", default: 0
+    t.datetime "intercept_timestamp"
     t.index ["current_player"], name: "index_gameboards_on_current_player"
   end
 
