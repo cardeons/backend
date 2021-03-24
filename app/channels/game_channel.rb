@@ -29,6 +29,7 @@ class GameChannel < ApplicationCable::Channel
 
     log = { date: Time.new, message: msg }
     broadcast_to(@gameboard, { type: GAME_LOG, params: log })
+    @gameboard.centercard.ingamedeck&.update!(cardable: @gameboard.graveyard)
     updated_board = Gameboard.broadcast_game_board(@gameboard)
     broadcast_to(@gameboard, { type: BOARD_UPDATE, params: updated_board })
   end
