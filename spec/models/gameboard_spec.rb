@@ -105,7 +105,9 @@ RSpec.describe Gameboard, type: :model do
       success: gameboards(:gameboardFourPlayers).success,
       can_flee: gameboards(:gameboardFourPlayers).can_flee,
       rewards_treasure: gameboards(:gameboardFourPlayers).rewards_treasure,
-      graveyard: []
+      graveyard: [],
+      current_state: 'ingame',
+      intercept_timestamp: nil
     }
     starting = Process.clock_gettime(Process::CLOCK_MONOTONIC)
 

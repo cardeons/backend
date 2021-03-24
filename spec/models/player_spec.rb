@@ -33,6 +33,7 @@ RSpec.describe Player, type: :model do
       level: player.level,
       attack: player.attack,
       handcard: player.handcard.cards.count,
+      intercept: false,
       monsters: [],
       playercurse: Gameboard.render_cards_array(player.playercurse.ingamedecks),
       user_id: player.user.id

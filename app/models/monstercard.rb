@@ -20,6 +20,7 @@ class Monstercard < Card
     #     #find "original" card, only advance if found
     unless deck_card.nil?
       card = Card.find_by('id=?', deck_card.card_id)
+
       # TODO: validieren
       cardtype = card.type
       #       # there already are 5 items, you can't put any more (6 because the monster itself is in this table)
@@ -30,8 +31,29 @@ class Monstercard < Card
 
       # category already on monster
       elsif monster_to_equip.cards.where('item_category=?', card.item_category).count.positive?
-        type = 'ERROR'
-        message = "You already have this type of item on your monster! (#{card.item_category})"
+
+        if card.item_category == 'hand' && monster_to_equip.cards.where('item_category=?', card.item_category).count == 1
+          type = 'GAMEBOARD_UPDATE'
+          message = 'Successfully equipped.'
+          deck_card.update(cardable: monster_to_equip)
+
+          attack_obj = Gameboard.attack(player.gameboard)
+
+          monstercards1 = player.monsterone ? player.monsterone.cards.sum(:atk_points) : 0
+          
+          monstercards2 = player.monstertwo ? player.monstertwo.cards.sum(:atk_points) : 0
+          
+          monstercards3 = player.monsterthree ? player.monsterthree.cards.sum(:atk_points) : 0
+          
+          playeratkpoints = monstercards1 + monstercards2 + monstercards3 + player.level
+          
+          player.update!(attack: playeratkpoints)
+          player.gameboard.update(success: attack_obj[:result], player_atk: attack_obj[:playeratk], monster_atk: attack_obj[:monsteratk])
+
+        else
+          type = 'ERROR'
+          message = "You already have this type of item on your monster! (#{card.item_category})"
+        end
       # GameChannel.broadcast_to(gameboard, {type: 'ERROR', params: { message: "You already have this type of item on your monster! (#{card.item_category})" } })
 
       # not an item
@@ -42,9 +64,8 @@ class Monstercard < Card
 
       # yay
       else
-
         type = 'GAMEBOARD_UPDATE'
-        deck_card.update_attribute(:cardable, monster_to_equip)
+        deck_card.update(cardable: monster_to_equip)
 
         # player_atk = monster_to_equip.cards.sum(:atk_points)
 
@@ -63,7 +84,7 @@ class Monstercard < Card
 
         playeratkpoints = monstercards1 + monstercards2 + monstercards3 + player.level
 
-        player.update_attribute(:attack, playeratkpoints)
+        player.update(attack: playeratkpoints)
         player.gameboard.update(success: attack_obj[:result], player_atk: attack_obj[:playeratk], monster_atk: attack_obj[:monsteratk])
         message = 'Successfully equipped.'
       end
