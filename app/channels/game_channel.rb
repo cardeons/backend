@@ -62,6 +62,7 @@ class GameChannel < ApplicationCable::Channel
     player = Player.find_by('user_id = ?', current_user.id)
     msg = "#{player.name} has played #{name} from handcards!"
 
+    @gameboard.reload
     start_intercept_phase(@gameboard)
 
     broadcast_to(@gameboard, { type: GAME_LOG, params: { date: Time.new, message: msg } })
