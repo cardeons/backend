@@ -219,20 +219,21 @@ class Gameboard < ApplicationRecord
   end
 
   def self.attack(gameboard)
-    # gameboard.reload
+    gameboard.reload
     playerid = gameboard.current_player
     playeratkpoints = 1
 
     unless playerid.nil?
 
       player = Player.find_by('id=?', playerid)
-     
-      # x = Monsterone.joins(:player).find_by("player_id=?", playerid).joins
-      # y = Monstertwo.joins(:player).find_by("player_id=?", playerid)
-      # z = Monsterone.joins(:player).find_by("player_id=?", playerid)
-      # pp x
-      # pp Ingamedeck.joins(:card).where(gameboard_id: gameboard.id, cardable_type: "Monsterone")
-      # pp Player.joins(:gameboard).where(gameboard_id: gameboard.id)
+
+      ## with joins - way slower!!
+      # player = Player.includes(monsterone: [:cards], monstertwo: [:cards], monsterthree: [:cards]).find_by('id=?', playerid)
+      # playeratkpoints = player.monsterone.cards.sum(:atk_points) + player.monstertwo.cards.sum(:atk_points) + player.monsterthree.cards.sum(:atk_points) + player.level + gameboard.helping_player_atk
+
+      # gameboard_cards = Gameboard.includes(interceptcard: [:cards], centercard: [:card], playerinterceptcard: [:cards]).find(gameboard.id)
+      # playeratkpoints += gameboard_cards.playerinterceptcard.cards.sum(:atk_points)
+
 
       monstercards1 = player.monsterone.nil? ? 0 : player.monsterone.cards.sum(:atk_points)
 
