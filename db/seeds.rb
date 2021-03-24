@@ -19,10 +19,9 @@ gameboard_test = Gameboard.create!(current_state: 'lobby', player_atk: 5)
 # player6 = Player.create!(name: 'Thomas', gameboard: gameboard_test, user: u2)
 # player7 = Player.create!(name: 'Lorenz', gameboard: gameboard_test, user: u4)
 
-
 ## Monstercards
 
-##bear
+# #bear
 bear_fire = Monstercard.create!(
   title: 'Sir Bear',
   description: '<p><b>*slaps you with his glove*</b> I challenge you to a duel!</p>',
@@ -165,7 +164,7 @@ bear_air = Monstercard.create!(
 #   level_amount: 1
 # )
 
-##catfish
+# #catfish
 catfish_fire = Monstercard.create!(
   title: 'Catfish',
   description: '<p>Is it a cat? Is it a fish? I don’t know! -3 Against Hot Dog</p>',
@@ -238,8 +237,7 @@ catfish_air = Monstercard.create!(
   level_amount: 1
 )
 
-
-##Pit-Bull
+# #Pit-Bull
 pitbull_water = Monstercard.create!(
   title: 'Pit-Bull',
   description: '<p>Only listens to Mister Worldwide. +3 against Fire Monster!</p>',
@@ -312,8 +310,7 @@ pitbull_air = Monstercard.create!(
   level_amount: 1
 )
 
-
-##Buffalo Wings
+# #Buffalo Wings
 buffalowings_water = Monstercard.create!(
   title: 'Buffalo Wings',
   description: '<p>Buffalo wings are an all time favorite, they’re perfect for parties!</p>',
@@ -386,8 +383,7 @@ buffalowings_fire = Monstercard.create!(
   level_amount: 1
 )
 
-
-##Unicorn
+# #Unicorn
 unicorn_water = Monstercard.create!(
   title: 'Unicorn',
   description: '<p>It is the perfect movie partner! It brings its own wet popcorn! +3 Against Buffalo Wings and Hotdogs. It will be the only snack at the party!</p>',
@@ -460,8 +456,16 @@ unicorn_fire = Monstercard.create!(
   level_amount: 1
 )
 
+unicorn_curse = Cursecard.create!(
+  title: 'The unicorn curse',
+  description: '<p>The unicorn cursed you.</p><p> No one is willing to help you in your next fight...</p>',
+  image: '/',
+  action: 'no_help_next_fight',
+  draw_chance: 0,
+  atk_points: 0
+)
 
-##HotDog
+# #HotDog
 hotdog_water = Monstercard.create!(
   title: 'Wet Hot Dog',
   description: '<p>Your Hot Dog fell into a lake! +5 Against Fire Monster</p>',
@@ -534,8 +538,7 @@ unicorn_fire = Monstercard.create!(
   level_amount: 1
 )
 
-
-##Boaring
+# #Boaring
 boaring_water = Monstercard.create!(
   title: 'Boaring',
   description: '<p>He is wet. Still bored.</p>',
@@ -608,8 +611,7 @@ boaring_fire = Monstercard.create!(
   level_amount: 1
 )
 
-
-##Cursecards
+# #Cursecards
 
 curse = Cursecard.create!(
   title: 'Very bad curse',
@@ -683,7 +685,7 @@ curse8 = Cursecard.create!(
   atk_points: 0
 )
 
-##Buffcards
+# #Buffcards
 
 buffcard = Buffcard.create!(
   draw_chance: 1,
@@ -801,9 +803,9 @@ buffcard10 = Buffcard.create!(
 #   has_combination: false
 # )
 
-##Itemcards
+# #Itemcards
 
-##mullet
+# #mullet
 mullet = Itemcard.create!(
   title: 'Mullet',
   description: '<p>Very fancy 80s hair. -3 Stylepoints</p>',
@@ -817,7 +819,7 @@ mullet = Itemcard.create!(
   has_combination: false
 )
 
-##roman helmet
+# #roman helmet
 roman_helmet = Itemcard.create!(
   title: 'Roman Helmet',
   description: '<p>Asterix will hate you! +2 Against Boaring</p>',
@@ -831,7 +833,7 @@ roman_helmet = Itemcard.create!(
   has_combination: false
 )
 
-##pizza
+# #pizza
 tunapizza = Itemcard.create!(
   title: 'Tuna Pizza Shield',
   description: '<p>Mamma mia, molto bene! +3 when combined with a pizza cutter!</p>',
@@ -884,7 +886,7 @@ diavolopizza = Itemcard.create!(
   has_combination: true
 )
 
-##pizza cutter
+# #pizza cutter
 pizzacutter = Itemcard.create!(
   title: 'Pizza Cutter',
   description: '<p>Cuts pizza! +3 if you have a Pizza.</p>',
@@ -898,7 +900,7 @@ pizzacutter = Itemcard.create!(
   has_combination: true
 )
 
-##controller
+# #controller
 controller = Itemcard.create!(
   title: 'Controller',
   description: '<p>You better not use it for this game.</p>',
@@ -912,8 +914,7 @@ controller = Itemcard.create!(
   has_combination: false
 )
 
-
-##the one ring
+# #the one ring
 the_one_ring = Itemcard.create!(
   title: 'The One Ring',
   description: '<p>One Ring to rule them all! The Ring has awoken, it’s heard its master’s call.</p>',
@@ -927,8 +928,7 @@ the_one_ring = Itemcard.create!(
   has_combination: false
 )
 
-
-##german tourist shoes
+# #german tourist shoes
 german_tourist_shoes = Itemcard.create!(
   title: 'German Tourist Shoes',
   description: '<p>Oh no, a german tourist on the run! Hide your towels!</p>',
@@ -942,7 +942,7 @@ german_tourist_shoes = Itemcard.create!(
   has_combination: false
 )
 
-##ironing board
+# #ironing board
 ironing_board = Itemcard.create!(
   title: 'Ironing Board',
   description: '<p>Can handle hot stuff. You can use it as a shield!</p>',
@@ -956,7 +956,7 @@ ironing_board = Itemcard.create!(
   has_combination: false
 )
 
-##Plunger
+# #Plunger
 plunger = Itemcard.create!(
   title: 'Plunger',
   description: '<p>The thing to get things out of the toilet.</p>',
@@ -970,7 +970,7 @@ plunger = Itemcard.create!(
   has_combination: false
 )
 
-##Ladle
+# #Ladle
 ladle = Itemcard.create!(
   title: 'Ladle',
   description: '<p>You can use it to get soup OR to hit your enemies. Maybe your enemies are hungry?</p>',
@@ -984,7 +984,7 @@ ladle = Itemcard.create!(
   has_combination: false
 )
 
-##Rubber ring
+# #Rubber ring
 rubber_ring = Itemcard.create!(
   title: 'Rubber Ring',
   description: '<p>You ain’t afraid of water. +3 against water monster.</p>',
@@ -998,7 +998,7 @@ rubber_ring = Itemcard.create!(
   has_combination: false
 )
 
-##Sunglasses
+# #Sunglasses
 sunglasses = Itemcard.create!(
   title: 'Sunglasses',
   description: '<p>+3 when worn by Pit-Bull, transforms him into Mister World Wide!</p>',
@@ -1012,8 +1012,7 @@ sunglasses = Itemcard.create!(
   has_combination: true
 )
 
-
-##Water Gun
+# #Water Gun
 water_gun = Itemcard.create!(
   title: 'Water Gun',
   description: '<p>+3 against fire monster.</p>',
@@ -1027,7 +1026,7 @@ water_gun = Itemcard.create!(
   has_combination: false
 )
 
-##Wand
+# #Wand
 wand = Itemcard.create!(
   title: 'Wand',
   description: '<p>You are a wizard, player!</p>',
@@ -1041,7 +1040,7 @@ wand = Itemcard.create!(
   has_combination: false
 )
 
-##Whip
+# #Whip
 whip = Itemcard.create!(
   title: 'Whip',
   description: '<p>Use it for your horse or something else ;-). +2 against Unicorns.</p>',
@@ -1055,7 +1054,7 @@ whip = Itemcard.create!(
   has_combination: false
 )
 
-##Dagger
+# #Dagger
 dagger = Itemcard.create!(
   title: 'Dagger',
   description: '<p>Sneaky thief!</p>',
@@ -1069,7 +1068,7 @@ dagger = Itemcard.create!(
   has_combination: false
 )
 
-##hermes
+# #hermes
 item3 = Itemcard.create!(
   title: 'Hermes shoes',
   description: '<p>Damn, WHAT ARE THOOOSE. Hopefully hermes does not mind you took them.</p>',
@@ -1083,7 +1082,7 @@ item3 = Itemcard.create!(
   has_combination: false
 )
 
-##spaghetto_head
+# #spaghetto_head
 spaghetto_head = Itemcard.create!(
   title: 'Spaghetti Head',
   description: '<p>You accept the flying spaghetti monster as your lord and savior!</p>',
@@ -1097,8 +1096,7 @@ spaghetto_head = Itemcard.create!(
   has_combination: false
 )
 
-
-##Berserker axe
+# #Berserker axe
 berserker_axe = Itemcard.create!(
   title: 'Berserker Axe',
   description: '<p>Boy!</p>',
@@ -1112,7 +1110,7 @@ berserker_axe = Itemcard.create!(
   has_combination: false
 )
 
-##Katana
+# #Katana
 katana = Itemcard.create!(
   title: 'Katana',
   description: '<p>+3 against Weebs. Omae wa mou shinderu!</p>',
@@ -1126,7 +1124,7 @@ katana = Itemcard.create!(
   has_combination: false
 )
 
-##Saddle
+# #Saddle
 saddle = Itemcard.create!(
   title: 'Saddle',
   description: '<p>Perfect accessory for a horse girl. BRR! +2 if equipped on a Unicorn</p>',
@@ -1140,8 +1138,7 @@ saddle = Itemcard.create!(
   has_combination: true
 )
 
-
-##Morning star
+# #Morning star
 morning_star = Itemcard.create!(
   title: 'Morning Star',
   description: '<p>The perfect weapon of the devil.</p>',
@@ -1155,7 +1152,7 @@ morning_star = Itemcard.create!(
   has_combination: false
 )
 
-##Toothbrush
+# #Toothbrush
 toothbrush = Itemcard.create!(
   title: 'Toothbrush',
   description: '<p>Slayer of morning breath.</p>',
@@ -1169,7 +1166,7 @@ toothbrush = Itemcard.create!(
   has_combination: false
 )
 
-##Spongebobs Spatula
+# #Spongebobs Spatula
 spongebobs_spatula = Itemcard.create!(
   title: 'Spongebobs Spatula',
   description: '<p>Even the Hash-Slinging Slasher lives in fear of this weapon.</p>',
@@ -1183,7 +1180,7 @@ spongebobs_spatula = Itemcard.create!(
   has_combination: false
 )
 
-##Crown
+# #Crown
 crown = Itemcard.create!(
   title: 'Crown',
   description: '<p>Suits a king. + 3 when Sir Bear wears it.</p>',
@@ -1197,8 +1194,7 @@ crown = Itemcard.create!(
   has_combination: true
 )
 
-
-##Bow and arrow
+# #Bow and arrow
 bow_and_arrow = Itemcard.create!(
   title: 'Bow and Arrow',
   description: '<p></p>',
@@ -1212,7 +1208,7 @@ bow_and_arrow = Itemcard.create!(
   has_combination: false
 )
 
-##Excalibur
+# #Excalibur
 excalibur = Itemcard.create!(
   title: 'Excalibur',
   description: '<p></p>',
@@ -1225,7 +1221,6 @@ excalibur = Itemcard.create!(
   item_category: 'hand',
   has_combination: false
 )
-
 
 # Adds cards to inventory of user1
 # User.find(1).cards << (Card.find(1))

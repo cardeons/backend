@@ -287,6 +287,11 @@ class GameChannel < ApplicationCable::Channel
     broadcast_to(@gameboard, { type: BOARD_UPDATE, params: Gameboard.broadcast_game_board(gameboard) })
   end
 
+  def curse_player(params)
+    Cursecard.handlecurse(params, @gameboard, current_user)
+    broadcast_to(@gameboard, { type: BOARD_UPDATE, params: Gameboard.broadcast_game_board(@gameboard) })
+  end
+
   def develop_add_buff_card
     card = Buffcard.all.first
     current_user.player.handcard.ingamedecks.create(card: card, gameboard: current_user.player.gameboard)

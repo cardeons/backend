@@ -2,7 +2,6 @@
 
 require 'rails_helper'
 
-
 RSpec.describe 'Cards', type: :request do
   describe 'get /cards.json' do
     subject { get '/cards.json' }

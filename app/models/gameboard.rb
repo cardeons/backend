@@ -158,7 +158,7 @@ class Gameboard < ApplicationRecord
     add_cards_to_array(allcards, monstercards)
     # addCardsToArray(allcards, bosscards)
 
-    randomcard = allcards[rand(allcards.length)]
+    randomcard = allcards[rand(allcards.size)]
 
     centercard = Centercard.find_by!('gameboard_id = ?', gameboard.id)
 
@@ -189,6 +189,7 @@ class Gameboard < ApplicationRecord
 
   def self.flee(gameboard)
     roll = rand(1..6)
+
     output = {}
 
     if roll > 4
@@ -199,6 +200,9 @@ class Gameboard < ApplicationRecord
       }
     else
       gameboard.update!(can_flee: false)
+
+      Monstercard.bad_things(gameboard.centercard, gameboard)
+      
       output = {
         flee: false,
         value: roll

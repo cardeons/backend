@@ -98,4 +98,111 @@ class Monstercard < Card
     # type = "equip"
     { type: type, message: message }
   end
+
+  def self.lose_item_by_category(player, gameboard, category)
+    monster_arr = []
+    monster_slot = []
+    if player.monsterone.cards.where(item_category: category).any?
+      monster_arr.push(player.monsterone.cards.where(item_category: category))
+      monster_slot.push(player.monsterone)
+    end
+    if player.monstertwo.cards.where(item_category: category).any?
+      monster_arr.push(player.monstertwo.cards.where(item_category: category))
+      monster_slot.push(player.monstertwo)
+    end
+    if player.monsterthree.cards.where(item_category: category).any?
+      monster_arr.push(player.monsterthree.cards.where(item_category: category))
+      monster_slot.push(player.monsterthree)
+    end
+
+    if monster_arr.size.positive?
+      random = rand(0..monster_arr.size - 1)
+      offset = rand(monster_arr[random].count)
+      random_card_id = monster_arr[random].offset(offset).first.id
+
+      Ingamedeck.where(card_id: random_card_id, cardable: monster_slot[random]).first&.update!(cardable: gameboard.graveyard)
+    end
+  end
+
+  def self.lose_item(player, gameboard)
+    monster_arr = []
+    monster_slot = []
+    if player.monsterone.cards.where(type: 'Itemcard').any?
+      monster_arr.push(player.monsterone.cards.where(type: 'Itemcard'))
+      monster_slot.push(player.monsterone)
+    end
+    if player.monstertwo.cards.where(type: 'Itemcard').any?
+      monster_arr.push(player.monstertwo.cards.where(type: 'Itemcard'))
+      monster_slot.push(player.monstertwo)
+    end
+    if player.monsterthree.cards.where(type: 'Itemcard').any?
+      monster_arr.push(player.monsterthree.cards.where(type: 'Itemcard'))
+      monster_slot.push(player.monsterthree)
+    end
+
+    if monster_arr.size.positive?
+      random = rand(0..monster_arr.size - 1)
+      offset = rand(monster_arr[random].count)
+      random_card_id = monster_arr[random].offset(offset).first.id
+
+      Ingamedeck.where(card_id: random_card_id, cardable: monster_slot[random]).first&.update!(cardable: gameboard.graveyard)
+    end
+  end
+
+  def self.bad_things(ingamedeck, gameboard)   
+    player = Player.find_by('id = ?', gameboard.current_player)
+
+    case ingamedeck.card.action # get the action from card
+    when 'lose_item_hand'
+      lose_item_by_category(player, gameboard, 'hand')
+    when 'lose_item_shoe'
+      lose_item_by_category(player, gameboard, 'shoe')
+    when 'lose_item_head'
+      lose_item_by_category(player, gameboard, 'head')
+    when 'lose_item'
+      lose_item(player, gameboard)
+    when 'random_card_lowest_level'
+      all_players = gameboard.players
+      first = true
+      player_lowest_level = [player]
+
+      all_players.each do |player_temp|
+        if player_temp.id != player.id && player_temp.level <= player.level
+          if first
+            player_lowest_level = [player_temp]
+            first = false
+          else
+            player_lowest_level = [player_temp] if player_lowest_level[0].level > player_temp.level
+            player_lowest_level.push(player_temp) if player_lowest_level[0].level == player_temp.level
+          end
+        end
+      end
+
+      offset = rand(player.handcard.ingamedecks.count)
+
+      random_card = player.handcard.ingamedecks.offset(offset).first
+
+      random = rand(0..player_lowest_level.size - 1)
+
+      random_card&.update!(cardable: player_lowest_level[random].handcard)
+    when 'no_help_next_fight'
+      Ingamedeck.create(card: Cursecard.find_by('title = ?', 'The unicorn curse'), gameboard: gameboard, cardable: player.playercurse)
+    when 'lose_one_card'
+      offset = rand(player.handcard.ingamedecks.count)
+
+      random_card = player.handcard.ingamedecks.offset(offset).first
+
+      random_card&.update!(cardable: gameboard.graveyard)
+    when 'lose_level'
+      player = Player.find_by('id = ?', gameboard.current_player)
+
+      player.update(level: player.level - 1) unless player.level == 1
+    when 'die'
+      player = Player.find_by('id = ?', gameboard.current_player)
+
+      player.update(level: 1)
+    else
+      puts 'action unknown :('
+    end
+  end
 end

@@ -5,7 +5,7 @@ require 'rails_helper'
 RSpec.describe Gameboard, type: :model do
   fixtures :users, :players, :gameboards, :cards, :monsterones, :ingamedecks, :centercards
 
-  before do
+  before :each do
     # initialize connection with identifiers
     users(:userOne).player = players(:playerOne)
     users(:userTwo).player = players(:playerTwo)
@@ -39,6 +39,8 @@ RSpec.describe Gameboard, type: :model do
       has_combination: 1,
       level_amount: 1
     )
+
+    srand(4)
   end
 
   ####### initialize_game_board #######
@@ -192,14 +194,29 @@ RSpec.describe Gameboard, type: :model do
     expect(previous_centercard.reload.id).to_not eql(new_centercard.id)
   end
 
+  # it 'flee returns right value in gameboard if it is successful or not' do
+  #   gameboards(:gameboardFourPlayers).initialize_game_board
+  #   gameboards(:gameboardFourPlayers).players.each(&:init_player)
+
+  #   flee_result = Gameboard.flee(gameboards(:gameboardFourPlayers))
+
+  #   expect(flee_result[:value] < 5).to be_truthy if flee_result[:flee] == false
+  #   expect(flee_result[:value] >= 5).to be_truthy if flee_result[:flee] == true
+  #   expect(gameboards(:gameboardFourPlayers).can_flee).to eql(flee_result[:flee])
+  # end
+
   it 'flee returns right value in gameboard if it is successful or not' do
     gameboards(:gameboardFourPlayers).initialize_game_board
     gameboards(:gameboardFourPlayers).players.each(&:init_player)
 
-    flee_result = Gameboard.flee(gameboards(:gameboardFourPlayers))
+    Ingamedeck.create!(gameboard: gameboards(:gameboardFourPlayers), card: cards(:monstercard), cardable: gameboards(:gameboardFourPlayers).centercard)
+    Player.find_by('id = ?', gameboards(:gameboardFourPlayers).current_player).update(level: 4)
 
-    expect(flee_result[:value] < 5).to be_truthy if flee_result[:flee] == false
-    expect(flee_result[:value] >= 5).to be_truthy if flee_result[:flee] == true
+    flee_result = Gameboard.flee(gameboards(:gameboardFourPlayers))
+    if flee_result[:flee]
+      expect(flee_result[:value] < 5).to be_truthy 
+      expect(Player.find_by('id = ?', gameboards(:gameboardFourPlayers).current_player).level).to eql(3)
+    end
     expect(gameboards(:gameboardFourPlayers).can_flee).to eql(flee_result[:flee])
   end
 
