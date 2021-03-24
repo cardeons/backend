@@ -533,8 +533,8 @@ RSpec.describe GameChannel, type: :channel do
         hash_including(type: 'BOARD_UPDATE')
       ).exactly(:once)
 
-    expect(Player.find(3).handcard.ingamedecks.length).to eql(6)
-    expect(player.reload.handcard.ingamedecks.length).to eql(5 + (gameboards(:gameboardFourPlayers).reload.rewards_treasure - gameboards(:gameboardFourPlayers).reload.shared_reward))
+    expect(Player.find(3).handcard.ingamedecks.size).to eql(6)
+    expect(player.reload.handcard.ingamedecks.size).to eql(5 + (gameboards(:gameboardFourPlayers).reload.rewards_treasure - gameboards(:gameboardFourPlayers).reload.shared_reward))
   end
 
   it 'test if rewards not shared if help is not given' do
@@ -587,8 +587,8 @@ RSpec.describe GameChannel, type: :channel do
         hash_including(type: 'BOARD_UPDATE')
       ).exactly(:once)
 
-    expect(Player.find(3).handcard.ingamedecks.length).to eql(5)
-    expect(player.reload.handcard.ingamedecks.length).to eql(5 + (gameboards(:gameboardFourPlayers).reload.rewards_treasure))
+    expect(Player.find(3).handcard.ingamedecks.size).to eql(5)
+    expect(player.reload.handcard.ingamedecks.size).to eql(5 + (gameboards(:gameboardFourPlayers).reload.rewards_treasure))
   end
 
   it 'test if throws error if shared rewards are too high' do

@@ -11,28 +11,33 @@ class Handcard < ApplicationRecord
 
   def self.addCardsToArray(arr, cards)
     cards.each do |card|
-      x = card.draw_chance
+      x = card[0]
       while x.positive?
-        arr.push card.id
+        arr.push card[1]
         x -= 1
       end
     end
   end
 
   def self.draw_handcards(player_id, gameboard, card_amount = 5)
-    cursecards = Cursecard.all
-    monstercards = Monstercard.all
-    buffcards = Buffcard.all
-    itemcards = Itemcard.all
-    levelcards = Levelcard.all
+
+    ## only select draw_chance & id, not whole model
+    all_cards = Card.all.where.not('type=?', 'Bosscard').pluck(:draw_chance, :id)
+    # pp all_cards
+    # cursecards = Cursecard.all.pluck(:draw_chance, :id)
+    # monstercards = Monstercard.all.pluck(:draw_chance, :id)
+    # buffcards = Buffcard.all.pluck(:draw_chance, :id)
+    # itemcards = Itemcard.all.pluck(:draw_chance, :id)
+    # levelcards = Levelcard.all.pluck(:draw_chance, :id)
 
     allcards = []
-    addCardsToArray(allcards, cursecards)
-    addCardsToArray(allcards, monstercards)
-    addCardsToArray(allcards, buffcards)
-    addCardsToArray(allcards, itemcards)
-    addCardsToArray(allcards, levelcards)
+    # addCardsToArray(allcards, cursecards)
+    # addCardsToArray(allcards, monstercards)
+    # addCardsToArray(allcards, buffcards)
+    # addCardsToArray(allcards, itemcards)
+    addCardsToArray(allcards, all_cards)
 
+    # pp allcards
     player = Player.find(player_id)
     handcard = player.handcard
 
@@ -45,7 +50,7 @@ class Handcard < ApplicationRecord
     # TODO bei keiner mitgenommenen Karte random lvl one als monsterone, ansonsten Handkarten
     x = card_amount
     while x.positive?
-      Ingamedeck.create!(gameboard: gameboard, card_id: allcards[rand(allcards.length)], cardable: handcard)
+      Ingamedeck.create!(gameboard: gameboard, card_id: allcards[rand(allcards.size)], cardable: handcard)
       x -= 1
     end
   end

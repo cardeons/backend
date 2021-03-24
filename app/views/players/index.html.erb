@@ -10,7 +10,6 @@
       <th>Level</th>
       <th>Attack</th>
       <th>Is cursed</th>
-      <th>Belongs to</th>
       <th colspan="3"></th>
     </tr>
   </thead>
@@ -23,7 +22,6 @@
         <td><%= player.level %></td>
         <td><%= player.attack %></td>
         <td><%= player.is_cursed %></td>
-        <td><%= player.belongs_to %></td>
         <td><%= link_to 'Show', player %></td>
         <td><%= link_to 'Edit', edit_player_path(player) %></td>
         <td><%= link_to 'Destroy', player, method: :delete, data: { confirm: 'Are you sure?' } %></td>

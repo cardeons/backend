@@ -42,49 +42,49 @@ RSpec.describe Gameboard, type: :model do
   end
 
   ####### initialize_game_board #######
-  it 'test gameboard should have 4 players' do
-    # gameboard = gameboards(:gameboardFourPlayers)
-    expect(players(:playerOne).gameboard.players.count).to eq 4
-  end
+  # it 'test gameboard should have 4 players' do
+  #   # gameboard = gameboards(:gameboardFourPlayers)
+  #   expect(players(:playerOne).gameboard.players.count).to eq 4
+  # end
 
-  it 'player four with id 5 should be current player because he was the last to join' do
-    gameboards(:gameboardFourPlayers).initialize_game_board
-    expect(gameboards(:gameboardFourPlayers).current_player).to eq 5
-  end
+  # it 'player four with id 5 should be current player because he was the last to join' do
+  #   gameboards(:gameboardFourPlayers).initialize_game_board
+  #   expect(gameboards(:gameboardFourPlayers).current_player).to eq 5
+  # end
 
-  it 'gameboard should have a graveyard' do
-    gameboards(:gameboardFourPlayers).initialize_game_board
-    expect(Graveyard.find_by('gameboard_id = ?', gameboards(:gameboardFourPlayers).id)).to be_present
-  end
+  # it 'gameboard should have a graveyard' do
+  #   gameboards(:gameboardFourPlayers).initialize_game_board
+  #   expect(Graveyard.find_by('gameboard_id = ?', gameboards(:gameboardFourPlayers).id)).to be_present
+  # end
 
-  it 'gameboard should have a centercard' do
-    gameboards(:gameboardFourPlayers).initialize_game_board
-    expect(Centercard.find_by('gameboard_id = ?', gameboards(:gameboardFourPlayers).id)).to be_present
-  end
+  # it 'gameboard should have a centercard' do
+  #   gameboards(:gameboardFourPlayers).initialize_game_board
+  #   expect(Centercard.find_by('gameboard_id = ?', gameboards(:gameboardFourPlayers).id)).to be_present
+  # end
 
-  it 'players should have handcards' do
-    gameboards(:gameboardFourPlayers).initialize_game_board
-    expect(players(:playerOne).handcard).to be_present
-    expect(players(:playerTwo).handcard).to be_present
-    expect(players(:playerThree).handcard).to be_present
-    expect(players(:playerFour).handcard).to be_present
-  end
+  # it 'players should have handcards' do
+  #   gameboards(:gameboardFourPlayers).initialize_game_board
+  #   expect(players(:playerOne).handcard).to be_present
+  #   expect(players(:playerTwo).handcard).to be_present
+  #   expect(players(:playerThree).handcard).to be_present
+  #   expect(players(:playerFour).handcard).to be_present
+  # end
 
-  # TODO: test if every player has 5 cards after draw_handcards!
-  it 'all players should have 5 handcards' do
-    gameboards(:gameboardFourPlayers).initialize_game_board
-    expect(players(:playerOne).handcard.cards.count).to eq 5
-    expect(players(:playerTwo).handcard.cards.count).to eq 5
-    expect(players(:playerThree).handcard.cards.count).to eq 5
-    expect(players(:playerFour).handcard.cards.count).to eq 5
-  end
+  # # TODO: test if every player has 5 cards after draw_handcards!
+  # it 'all players should have 5 handcards' do
+  #   gameboards(:gameboardFourPlayers).initialize_game_board
+  #   expect(players(:playerOne).handcard.cards.count).to eq 5
+  #   expect(players(:playerTwo).handcard.cards.count).to eq 5
+  #   expect(players(:playerThree).handcard.cards.count).to eq 5
+  #   expect(players(:playerFour).handcard.cards.count).to eq 5
+  # end
 
-  ####### renderUserMonsters #######
+  ###### renderUserMonsters #######
   # TODO: add test?
   it 'selects the right monsterslot' do
     # pp gameboards(:gameboardFourPlayers).ingamedeck
     # players(:playerOne).mmonsterone =
-    # result = Gameboard.renderUserMonsters(players(:playerOne), 'Monsterone')
+    # result = Gameboard.render_user_monsters(players(:playerOne), 'Monsterone')
     # expect(result).to be_truthy
   end
 
@@ -206,6 +206,28 @@ RSpec.describe Gameboard, type: :model do
     gameboards(:gameboardFourPlayers).initialize_game_board
     gameboards(:gameboardFourPlayers).players.each(&:init_player)
     Gameboard.draw_door_card(gameboards(:gameboardFourPlayers))
+
+    # users(:userFour).player.monster
+
+    catfish = Monstercard.create!(
+      title: 'Catfish',
+      description: '<p>HA! You got catfished.</p>',
+      image: '/monster/catfish.png',
+      action: 'lose_level',
+      draw_chance: 5,
+      level: 10,
+      element: 'water',
+      bad_things: '<p><b>Bad things:</b>Getting catfished, really? You should know better. Lose one level.</p>',
+      rewards_treasure: 2,
+      good_against: 'fire',
+      bad_against: 'earth',
+      good_against_value: 3,
+      bad_against_value: 1,
+      atk_points: 14,
+      level_amount: 2
+    )
+
+    ingamedeck1 = Ingamedeck.create!(gameboard: gameboards(:gameboardFourPlayers), card_id: catfish.id, cardable: players(:playerFour).monsterone)
 
     playerwin = Gameboard.attack(gameboards(:gameboardFourPlayers))
 

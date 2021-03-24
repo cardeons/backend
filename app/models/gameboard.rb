@@ -21,17 +21,19 @@ class Gameboard < ApplicationRecord
     Playerinterceptcard.create!(gameboard_id: gameboard_id)
     Interceptcard.create!(gameboard_id: gameboard_id)
 
-    # pp Player.find(current_player).gameboard
-    players.each do |player|
-      Handcard.find_or_create_by!(player_id: player.id) # unless player.handcard
-      Handcard.draw_handcards(player.id, self)
+    # only select ids, not whole model
+    playerIds = Player.where(gameboard_id: gameboard_id).pluck(:id)
+
+    playerIds.each do |player|
+      Handcard.find_or_create_by!(player_id: player) # unless player.handcard
+      Handcard.draw_handcards(player, self)
     end
   end
 
   def self.broadcast_game_board(gameboard)
     players_array = []
 
-    gameboard = Gameboard.find(gameboard.id)
+    gameboard = Gameboard.find_by("id = ?", gameboard.id)
 
     gameboard.players.each do |player|
       players_array.push(player.reload.render_player)
@@ -48,6 +50,7 @@ class Gameboard < ApplicationRecord
   def self.render_cards_array(cards)
     card_array = []
 
+    # pp cards
     # return nil if cards are empty
     return nil unless cards
 
@@ -148,7 +151,10 @@ class Gameboard < ApplicationRecord
   def self.draw_door_card(gameboard)
     gameboard.intercept_phase!
     # cursecards = Cursecard.all
-    monstercards = Monstercard.all
+
+    ## only select id and draw chance, add_cards_to_array doesn't need the whole model
+    ## returns  e.g. [3(id), 1(draw_chance)]
+    monstercards = Monstercard.pluck(:id, :draw_chance)
     # bosscards = Bosscard.all
 
     allcards = []
@@ -156,7 +162,7 @@ class Gameboard < ApplicationRecord
     add_cards_to_array(allcards, monstercards)
     # addCardsToArray(allcards, bosscards)
 
-    randomcard = allcards[rand(allcards.length)]
+    randomcard = allcards[rand(allcards.size)]
 
     centercard = Centercard.find_by!('gameboard_id = ?', gameboard.id)
 
@@ -173,6 +179,7 @@ class Gameboard < ApplicationRecord
     new_treasure = Card.find_by('id = ?', randomcard).rewards_treasure
 
     gameboard.update(centercard: new_center, rewards_treasure: new_treasure)
+
 
     attack_obj = attack(gameboard.reload)
 
@@ -210,13 +217,20 @@ class Gameboard < ApplicationRecord
   end
 
   def self.attack(gameboard)
-    gameboard.reload
+    # gameboard.reload
     playerid = gameboard.current_player
     playeratkpoints = 1
 
     unless playerid.nil?
 
       player = Player.find_by('id=?', playerid)
+     
+      # x = Monsterone.joins(:player).find_by("player_id=?", playerid).joins
+      # y = Monstertwo.joins(:player).find_by("player_id=?", playerid)
+      # z = Monsterone.joins(:player).find_by("player_id=?", playerid)
+      # pp x
+      # pp Ingamedeck.joins(:card).where(gameboard_id: gameboard.id, cardable_type: "Monsterone")
+      # pp Player.joins(:gameboard).where(gameboard_id: gameboard.id)
 
       monstercards1 = player.monsterone.nil? ? 0 : player.monsterone.cards.sum(:atk_points)
 
@@ -253,8 +267,11 @@ class Gameboard < ApplicationRecord
   def self.reset_all_game_boards
     Ingamedeck.all.where(cardable_type: 'Centercard').destroy_all
 
-    Gameboard.all.each do |gameboard|
-      player_id_current = gameboard.current_player
+    ## only current player id needed
+    all_current_players = Gameboard.all.pluck(:current_player)
+
+    all_current_players.each do |gameboard|
+      player_id_current = gameboard
 
       next unless player_id_current
 
@@ -281,9 +298,10 @@ class Gameboard < ApplicationRecord
 
   def self.add_cards_to_array(arr, cards)
     cards.each do |card|
-      x = card.draw_chance
+      # pp card
+      x = card[1]
       while x.positive?
-        arr.push card.id
+        arr.push card[0]
         x -= 1
       end
     end
