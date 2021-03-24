@@ -156,10 +156,6 @@ class GameChannel < ApplicationCable::Channel
 
     current_user.player.reload
     @gameboard.reload
-    @gameboard.intercept_phase!
-
-    timestamp = Time.now
-    @gameboard.update!(intercept_timestamp: timestamp)
 
     case to
     when 'center_card'
@@ -168,10 +164,15 @@ class GameChannel < ApplicationCable::Channel
     when 'fighting_player'
       # buff player
       @gameboard.playerinterceptcard.add_card_with_ingamedeck_id(unique_card_id)
+    else
+      PlayerChannel.broadcast_error(current_user, 'This is ont a correct field for to!')
     end
 
-    @gameboard.intercept_timestamp = timestamp
-    @gameboard.save!
+    @gameboard.intercept_phase!
+
+    timestamp = Time.now
+
+    @gameboard.update!(intercept_timestamp: timestamp)
 
     # sets Intercept Timer
     CheckIntercepttimerJob.set(wait: 5.seconds).perform_later(@gameboard, timestamp, 15)
