@@ -45,6 +45,8 @@ Rails.application.configure do
   # Print deprecation notices to the Rails logger.
   config.active_support.deprecation = :log
 
+  old_logger = ActiveRecord::Base.logger
+  ActiveRecord::Base.logger = nil
   # Raise exceptions for disallowed deprecations.
   config.active_support.disallowed_deprecation = :raise
 

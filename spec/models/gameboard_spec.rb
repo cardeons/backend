@@ -104,6 +104,8 @@ RSpec.describe Gameboard, type: :model do
       can_flee: gameboards(:gameboardFourPlayers).can_flee,
       rewards_treasure: gameboards(:gameboardFourPlayers).rewards_treasure,
       graveyard: [],
+      current_state: 'ingame',
+      intercept_timestamp: nil
     }
     starting = Process.clock_gettime(Process::CLOCK_MONOTONIC)
 
@@ -178,14 +180,13 @@ RSpec.describe Gameboard, type: :model do
   it 'gets new centercard' do
     gameboards(:gameboardFourPlayers).initialize_game_board
     gameboards(:gameboardFourPlayers).players.each(&:init_player)
-    
+
     Gameboard.draw_door_card(gameboards(:gameboardFourPlayers))
 
-    
     # create a previous centercard
     previous_centercard = gameboards(:gameboardFourPlayers).centercard.ingamedeck
     Gameboard.draw_door_card(gameboards(:gameboardFourPlayers))
-    
+
     new_centercard = gameboards(:gameboardFourPlayers).centercard.ingamedeck
 
     expect(previous_centercard.reload.id).to_not eql(new_centercard.id)
