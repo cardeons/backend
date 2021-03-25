@@ -8,7 +8,7 @@ class Gameboard < ApplicationRecord
   has_one :graveyard, dependent: :destroy
   has_one :interceptcard, dependent: :destroy
   has_one :playerinterceptcard, dependent: :destroy
-  enum current_state: %i[lobby ingame intercept_phase intercept_finished]
+  enum current_state: %i[lobby ingame intercept_phase intercept_finished game_won]
 
   # has_many :cards, through: :ingame_cards
 
