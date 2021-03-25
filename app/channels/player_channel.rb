@@ -13,6 +13,10 @@ class PlayerChannel < ApplicationCable::Channel
     # Any cleanup needed when channel is unsubscribed
   end
 
+  def broadcast_all_playerhandcards(params)
+    Player.broadcast_all_playerhandcards(params['gameboard'])
+  end
+
   def self.broadcast_error(current_user, message)
     broadcast_to(current_user, { type: 'ERROR', params: { message: message } })
   end
