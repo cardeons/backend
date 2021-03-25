@@ -71,4 +71,17 @@ class Player < ApplicationRecord
     { name: name, player_id: id, inventory: Gameboard.render_cards_array(inventory.ingamedecks), level: level, attack: attack,
       handcard: handcard.cards.count, monsters: monsters, playercurse: Gameboard.render_cards_array(playercurse.ingamedecks), user_id: user.id, intercept: intercept }
   end
+
+  def win_game(current_user)
+    all_monsters = Monstercard.all
+    random_monster = all_monsters.sample
+
+    return if current_user.cards.size == all_monsters.size
+
+    random_monster = all_monsters.sample while current_user.cards.find_by('id = ?', random_monster.id)
+
+    current_user.cards << random_monster
+
+    random_monster.id
+  end
 end

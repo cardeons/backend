@@ -107,9 +107,14 @@ class GameChannel < ApplicationCable::Channel
       player = Player.find_by('user_id = ?', current_user.id)
 
       player_level = player.level
+      player.update!(level: player_level + 1)
 
-      broadcast_to(@gameboard, { type: 'WIN', params: { player: player.id } }) if player_level == 4
-      player.update_attribute(:level, player_level + 1)
+      if player.level == 5
+        monster_id = player.win_game(current_user)
+        @gameboard.game_won!
+        broadcast_to(@gameboard, { type: 'WIN', params: { player: player.id, monster_won: monster_id } })
+        return
+      end
 
       rewards = @gameboard.rewards_treasure
       shared_reward = @gameboard.shared_reward
