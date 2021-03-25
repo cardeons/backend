@@ -205,6 +205,7 @@ class GameChannel < ApplicationCable::Channel
     helping_player = Player.find_by('id = ?', params['helping_player_id'])
     helping_shared_reward = params['helping_shared_rewards']
     helping_player_id = helping_player.id
+    @gameboard = @gameboard.reload
 
     PlayerChannel.broadcast_to(current_user, { type: 'ERROR', params: { message: "It's not your round, you can't ask for help..." } }) unless current_user.id == @gameboard.current_player
 
@@ -214,8 +215,10 @@ class GameChannel < ApplicationCable::Channel
 
     @gameboard.update(shared_reward: helping_shared_reward, asked_help: true, helping_player: helping_player_id)
 
+    user_to_broadcast_to = User.where(player: helping_player).first
+
     unless helping_shared_reward > @gameboard.rewards_treasure
-      PlayerChannel.broadcast_to(current_user,
+      PlayerChannel.broadcast_to(user_to_broadcast_to,
                                  { type: 'ASK_FOR_HELP',
                                    params: { player_id: helping_player_id, player_name: helping_player.name, helping_shared_rewards: helping_shared_reward,
                                              helping_player_attack: helping_player.attack } })
