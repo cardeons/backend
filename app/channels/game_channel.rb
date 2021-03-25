@@ -191,6 +191,7 @@ class GameChannel < ApplicationCable::Channel
 
   def no_interception
     current_user.player.update!(intercept: false)
+    msg = "#{current_user.player.name} does not want to intercept this fight."
 
     if @gameboard.players.where('intercept = ?', false).count == 3
       msg = 'Nobody wants to intercept this turn.'
@@ -223,9 +224,8 @@ class GameChannel < ApplicationCable::Channel
     user_to_broadcast_to = User.where(player: helping_player).first
 
     unless helping_shared_reward > @gameboard.rewards_treasure
-      
-      PlayerChannel.broadcast_to(user_to_broadcast_to,
 
+      PlayerChannel.broadcast_to(user_to_broadcast_to,
                                  { type: 'ASK_FOR_HELP',
                                    params: { player_id: helping_player_id, player_name: helping_player.name, helping_shared_rewards: helping_shared_reward,
                                              helping_player_attack: helping_player.attack } })
@@ -337,6 +337,24 @@ class GameChannel < ApplicationCable::Channel
 
   def unsubscribed
     # Any cleanup needed when channel is unsubscribed
+    # pp current_user.playerpp
+    # pp current_user.player
+    # id = current_user.player.reload.id
+    # pp id
+    # player = Player.find_by('id=?', id)
+
+    # pp player
+
+    # @gameboard.update!(current_player: 0) if @gameboard.current_player == id
+    # pp "destroy player #{player}"
+
+    # pp @gameboard
+    # @gameboard.destroy!
+
+    # @gameboard.destroy! if @gameboard.players.size < 1
+    # player.destroy!
+
+    # pp @gameboard.reload.players
   end
 
   private

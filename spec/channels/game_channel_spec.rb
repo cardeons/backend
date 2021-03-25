@@ -876,4 +876,58 @@ RSpec.describe GameChannel, type: :channel do
 
     expect(users(:userFour).cards.size).to eql(2)
   end
+
+  it 'unsubscribe' do
+    # gameboards(:gameboardFourPlayers).initialize_game_board
+    # gameboards(:gameboardFourPlayers).players.each(&:init_player)
+  
+    # player = users(:userFour).player
+  
+    # ## users subscribe
+  # stub_connection current_user: users(:userFour)
+    # subscribe
+  
+    # stub_connection current_user: users(:userThree)
+    # subscribe
+  
+    # stub_connection current_user: users(:userTwo)
+    # subscribe
+  
+    # ## users unsubscribe
+    # # stub_connection current_user: users(:userFour)
+  
+    # gameboards(:gameboardFourPlayers).update(current_player: users(:userFour).player.id)
+    
+    # pp gameboards(:gameboardFourPlayers).players
+    # pp 'first unsubscribe'
+  
+    # unsubscribe
+  
+    # expect(users(:userFour).reload.player).to be_falsy
+    # expect(gameboards(:gameboardFourPlayers).reload.players.size).to eql(2)
+  
+    # stub_connection current_user: users(:userThree)
+    # unsubscribe
+  
+    # pp 'second unsubscribe'
+  
+    # expect(users(:userThree).reload.player).to be_falsy
+    # expect(gameboards(:gameboardFourPlayers).reload.players.size).to eql(1)
+  
+    # stub_connection current_user: users(:userTwo)
+    # unsubscribe
+  
+    # pp 'third unsubscribe'
+  
+    # expect(users(:userTwo).reload.player).to be_falsy
+    # expect(gameboards(:gameboardFourPlayers).reload.players.size).to eql(0)
+  
+    # pp '--------------------'
+  
+    # # pp users(:userFour).reload.player
+  
+    # player is still referenced in gameboard, gets deleted
+  # end
+end
+  
 end
