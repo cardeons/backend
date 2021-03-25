@@ -90,7 +90,7 @@ class GameChannel < ApplicationCable::Channel
 
     updated_board = Gameboard.broadcast_game_board(@gameboard)
 
-    broadcast_to(current_user, { type: 'ERROR', params: { message: result[:message] } }) if result[:type] == 'ERROR'
+    PlayerChannel.broadcast_to(current_user, { type: 'ERROR', params: { message: result[:message] } }) if result[:type] == 'ERROR'
     broadcast_to(@gameboard, { type: 'BOARD_UPDATE', params: updated_board })
 
     if result[:type] != 'ERROR'
@@ -138,7 +138,7 @@ class GameChannel < ApplicationCable::Channel
       broadcast_to(@gameboard, { type: BOARD_UPDATE, params: Gameboard.broadcast_game_board(@gameboard) })
     end
 
-    broadcast_to(current_user, { type: 'ERROR', params: { message: 'Playerattack too low' } }) unless result[:result]
+    PlayerChannel.broadcast_to(current_user, { type: 'ERROR', params: { message: 'Playerattack too low' } }) unless result[:result]
 
     # updated_board = Gameboard.broadcast_game_board(@gameboard)
     # broadcast_to(@gameboard, { type: BOARD_UPDATE, params: updated_board })

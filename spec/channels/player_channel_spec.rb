@@ -14,7 +14,7 @@ RSpec.describe PlayerChannel, type: :channel do
     srand(1)
   end
 
-  it 'test if flee broadcasts to all players' do
+  it 'test if broadcasts handcards' do
     gameboards(:gameboardFourPlayers).initialize_game_board
     gameboards(:gameboardFourPlayers).players.each(&:init_player)
     # assign player to this user
@@ -24,7 +24,7 @@ RSpec.describe PlayerChannel, type: :channel do
     subscribe
 
     expect do
-      perform('broadcast_all_playerhandcards', { gameboard: gameboards(:gameboardFourPlayers) })
+      Player.broadcast_all_playerhandcards(gameboards(:gameboardFourPlayers))
     end.to have_broadcasted_to(connection.current_user)
       .with(
         hash_including(type: 'HANDCARD_UPDATE')
