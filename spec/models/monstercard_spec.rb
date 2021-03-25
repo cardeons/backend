@@ -592,11 +592,11 @@ RSpec.describe Monstercard, type: :model do
     ingamedeck3 = Ingamedeck.create!(gameboard: gameboard_test, card_id: item1.id, cardable: player1.handcard)
 
     equip_one = Monstercard.equip_monster({ 'unique_monster_id' => ingamedeck1.id, 'unique_equip_id' => ingamedeck2.id, 'action' => 'equip_monster' }, player1)
-    ## attack must be 17 - monster has 14 atk, item 2, player 1
-    expect(player1.attack).to eql(17)
+    ## attack must be 4 - monster has 14 atk but should be calculated as 1, item 2, player 1
+    expect(player1.attack).to eql(4)
 
     equip_two = Monstercard.equip_monster({ 'unique_monster_id' => ingamedeck1.id, 'unique_equip_id' => ingamedeck3.id, 'action' => 'equip_monster' }, player1)
-    ## attack must be 19 - monster has 14 atk, item 2+2, player 1
-    expect(player1.attack).to eql(19)
+    ## attack must be 6 - monster has 14 atk but should be calculated as 1, item 2+2, player 1
+    expect(player1.attack).to eql(6)
   end
 end

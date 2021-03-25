@@ -266,11 +266,9 @@ class GameChannel < ApplicationCable::Channel
       end
     end
 
-    monstercards1 = player.monsterone.cards.sum(:atk_points) if player.monsterone
-
-    monstercards2 = player.monstertwo.cards.sum(:atk_points) if player.monstertwo
-
-    monstercards3 = player.monsterthree.cards.sum(:atk_points) if player.monsterthree
+    monstercards1 = Monstercard.calculate_monsterslot_atk(player.monsterone)
+    monstercards2 = Monstercard.calculate_monsterslot_atk(player.monstertwo)
+    monstercards3 = Monstercard.calculate_monsterslot_atk(player.monsterthree)
 
     playeratkpoints = monstercards1 + monstercards2 + monstercards3 + player.level
 

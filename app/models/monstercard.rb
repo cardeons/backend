@@ -39,11 +39,9 @@ class Monstercard < Card
 
           attack_obj = Gameboard.attack(player.gameboard)
 
-          monstercards1 = player.monsterone ? player.monsterone.cards.sum(:atk_points) : 0
-
-          monstercards2 = player.monstertwo ? player.monstertwo.cards.sum(:atk_points) : 0
-
-          monstercards3 = player.monsterthree ? player.monsterthree.cards.sum(:atk_points) : 0
+          monstercards1 = Monstercard.calculate_monsterslot_atk(player.monsterone)
+          monstercards2 = Monstercard.calculate_monsterslot_atk(player.monstertwo)
+          monstercards3 = Monstercard.calculate_monsterslot_atk(player.monsterthree)
 
           playeratkpoints = monstercards1 + monstercards2 + monstercards3 + player.level
 
@@ -76,11 +74,9 @@ class Monstercard < Card
         # get updatet result of attack
         attack_obj = Gameboard.attack(player.gameboard)
 
-        monstercards1 = player.monsterone ? player.monsterone.cards.sum(:atk_points) : 0
-
-        monstercards2 = player.monstertwo ? player.monstertwo.cards.sum(:atk_points) : 0
-
-        monstercards3 = player.monsterthree ? player.monsterthree.cards.sum(:atk_points) : 0
+        monstercards1 = Monstercard.calculate_monsterslot_atk(player.monsterone)
+        monstercards2 = Monstercard.calculate_monsterslot_atk(player.monstertwo)
+        monstercards3 = Monstercard.calculate_monsterslot_atk(player.monsterthree)
 
         playeratkpoints = monstercards1 + monstercards2 + monstercards3 + player.level
 
@@ -97,6 +93,16 @@ class Monstercard < Card
     end
     # type = "equip"
     { type: type, message: message }
+  end
+
+  def self.calculate_monsterslot_atk(monsterslot)
+    monstercards = 0
+    if monsterslot
+      monstercards = 1 if monsterslot.cards.where(type: 'Monstercard').any?
+      monstercards += monsterslot.cards.where(type: 'Itemcard').sum(:atk_points)
+    end
+
+    monstercards
   end
 
   def self.lose_item_by_category(player, gameboard, category)
