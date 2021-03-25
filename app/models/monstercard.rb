@@ -39,11 +39,24 @@ class Monstercard < Card
 
           attack_obj = Gameboard.attack(player.gameboard)
 
-          monstercards1 = player.monsterone ? player.monsterone.cards.sum(:atk_points) : 0
+          monstercards1 = 0
+          monstercards2 = 0
+          monstercards3 = 0
 
-          monstercards2 = player.monstertwo ? player.monstertwo.cards.sum(:atk_points) : 0
+          if player.monsterone
+            monstercards1 = 1 if player.monsterone.ingamedecks.first
+            monstercards1 += player.monsterone.cards.where(type: 'Itemcard').sum(:atk_points)
+          end
 
-          monstercards3 = player.monsterthree ? player.monsterthree.cards.sum(:atk_points) : 0
+          if player.monstertwo
+            monstercards2 = 1 if player.monstertwo.ingamedecks.first
+            monstercards2 += player.monstertwo.cards.where(type: 'Itemcard').sum(:atk_points)
+          end
+
+          if player.monsterthree
+            monstercards3 = 1 if player.monsterthree.ingamedecks.first
+            monstercards3 += player.monsterthree.cards.where(type: 'Itemcard').sum(:atk_points)
+          end
 
           playeratkpoints = monstercards1 + monstercards2 + monstercards3 + player.level
 
@@ -76,11 +89,24 @@ class Monstercard < Card
         # get updatet result of attack
         attack_obj = Gameboard.attack(player.gameboard)
 
-        monstercards1 = player.monsterone ? player.monsterone.cards.sum(:atk_points) : 0
+        monstercards1 = 0
+        monstercards2 = 0
+        monstercards3 = 0
 
-        monstercards2 = player.monstertwo ? player.monstertwo.cards.sum(:atk_points) : 0
+        if player.monsterone
+          monstercards1 = 1 if player.monsterone.ingamedecks.first
+          monstercards1 += player.monsterone.cards.where(type: 'Itemcard').sum(:atk_points)
+        end
 
-        monstercards3 = player.monsterthree ? player.monsterthree.cards.sum(:atk_points) : 0
+        if player.monstertwo
+          monstercards2 = 1 if player.monstertwo.ingamedecks.first
+          monstercards2 += player.monstertwo.cards.where(type: 'Itemcard').sum(:atk_points)
+        end
+
+        if player.monsterthree
+          monstercards3 = 1 if player.monsterthree.ingamedecks.first
+          monstercards3 += player.monsterthree.cards.where(type: 'Itemcard').sum(:atk_points)
+        end
 
         playeratkpoints = monstercards1 + monstercards2 + monstercards3 + player.level
 
