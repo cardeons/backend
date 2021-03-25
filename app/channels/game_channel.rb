@@ -288,7 +288,9 @@ class GameChannel < ApplicationCable::Channel
   end
 
   def curse_player(params)
+    player = Player.find_by('id=?', current_user.player.id)
     Cursecard.handlecurse(params, @gameboard, current_user)
+    PlayerChannel.broadcast_to(current_user, { type: 'HANDCARD_UPDATE', params: { handcards: Gameboard.render_cards_array(player.handcard.ingamedecks) } })
     broadcast_to(@gameboard, { type: BOARD_UPDATE, params: Gameboard.broadcast_game_board(@gameboard) })
   end
 
