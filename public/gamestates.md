@@ -268,6 +268,7 @@ Gameboard Channel response
   params: 
   { 
     player: player.name 
+    monster_won: id
   }
 }
 
@@ -279,6 +280,7 @@ lobby = spieler befinden sich in der lobby
 ingame = spiel hat gestartet
 intercept_phase = spieler hat ein monster ausgespielt/eine türkarte gezogen. Solange nicht alle spieler no_intercept drücken, ist das spiel in dieser phase.
 intercept_finished = kein spieler wollte intercepten, zug ist "vorbei"
+game_won = ein spieler hat lvl 5 erreicht
 
 
 
