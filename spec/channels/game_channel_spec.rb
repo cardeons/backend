@@ -819,6 +819,8 @@ RSpec.describe GameChannel, type: :channel do
       ).exactly(:once)
 
     expect(users(:userFour).player.reload.level).to eql(5)
+    expect(gameboards(:gameboardFourPlayers).reload.current_state).to eql('game_won')
+
     # playerwin = Gameboard.attack(gameboards(:gameboardFourPlayers))
 
     # expect(playeratk.to(eql))
