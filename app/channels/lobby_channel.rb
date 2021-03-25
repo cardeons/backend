@@ -41,8 +41,6 @@ class LobbyChannel < ApplicationCable::Channel
       create_dummy_players_for_gameboard(@gameboard, params['testplayers'])
     end
 
-    gameboard.update!(current_player: player.id)
-
     lobbyisfull = @gameboard.players.count > 3
 
     stream_for @gameboard
@@ -55,6 +53,8 @@ class LobbyChannel < ApplicationCable::Channel
       broadcast_to(@gameboard, { type: 'DEBUG', params: { message: 'Lobby is full start with game subscribe to Player and GameChannel' } })
 
       @gameboard.initialize_game_board
+
+      gameboard.update!(current_player: player.id)
 
       broadcast_to(@gameboard, { type: 'START_GAME', params: { game_id: @gameboard.id } })
     end
