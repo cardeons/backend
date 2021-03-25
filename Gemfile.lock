@@ -101,6 +101,7 @@ GEM
     fakeredis (0.8.0)
       redis (~> 4.1)
     ffi (1.15.0)
+    foreman (0.87.2)
     formatador (0.2.5)
     globalid (0.4.2)
       activesupport (>= 4.2.0)
@@ -172,6 +173,8 @@ GEM
       rack
     rack-mini-profiler (2.3.1)
       rack (>= 1.2.0)
+    rack-protection (2.1.0)
+      rack
     rack-proxy (0.6.5)
       rack
     rack-test (1.1.0)
@@ -207,7 +210,7 @@ GEM
     rb-fsevent (0.10.4)
     rb-inotify (0.10.1)
       ffi (~> 1.0)
-    redis (4.2.5)
+    redis (4.1.4)
     regexp_parser (2.1.1)
     responders (3.0.1)
       actionpack (>= 5.0)
@@ -274,10 +277,11 @@ GEM
       childprocess (>= 0.5, < 4.0)
       rubyzip (>= 1.2.2)
     shellany (0.0.1)
-    sidekiq (6.2.0)
-      connection_pool (>= 2.2.2)
+    sidekiq (5.2.9)
+      connection_pool (~> 2.2, >= 2.2.2)
       rack (~> 2.0)
-      redis (>= 4.2.0)
+      rack-protection (>= 1.5.0)
+      redis (>= 3.3.5, < 4.2)
     spring (2.1.1)
     sprockets (4.0.2)
       concurrent-ruby (~> 1.0)
@@ -328,6 +332,7 @@ DEPENDENCIES
   devise
   dotenv-rails
   fakeredis
+  foreman
   guard
   guard-livereload (~> 2.5)
   jbuilder (~> 2.7)
@@ -348,7 +353,7 @@ DEPENDENCIES
   rubocop
   sass-rails (>= 6)
   selenium-webdriver
-  sidekiq
+  sidekiq (~> 5.2.8)
   spring
   turbolinks (~> 5)
   tzinfo-data
