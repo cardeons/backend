@@ -121,7 +121,6 @@ class GameChannel < ApplicationCable::Channel
       shared_reward = @gameboard.shared_reward
       current_player_treasure = rewards - shared_reward
 
-      # broadcast_to(current_user, { type: 'ERROR', params: { message: "Can't share more rewards than monster gives" } }) if shared_reward > @gameboard.rewards_treasure
       Handcard.draw_handcards(@gameboard.current_player, @gameboard, current_player_treasure)
       # TODO: add helping player to gameboard? give treasures to helping player
       if @gameboard.helping_player
