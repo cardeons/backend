@@ -108,7 +108,7 @@ class GameChannel < ApplicationCable::Channel
 
       player_level = player.level
 
-      broadcast_to(@gameboard, { type: 'WIN', params: { player: player.name } }) if player_level == 4
+      broadcast_to(@gameboard, { type: 'WIN', params: { player: player.id } }) if player_level == 4
       player.update_attribute(:level, player_level + 1)
 
       rewards = @gameboard.rewards_treasure
