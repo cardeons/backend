@@ -215,8 +215,8 @@ class GameChannel < ApplicationCable::Channel
     @gameboard.update(shared_reward: helping_shared_reward, asked_help: true, helping_player: helping_player_id)
 
     unless helping_shared_reward > @gameboard.rewards_treasure
-      #broadcast to the player that is asked for help
-      PlayerChannel.broadcast_to(User.find_by('player_id=?', helping_player),
+      # broadcast to the player that is asked for help
+      PlayerChannel.broadcast_to(current_user,
                                  { type: 'ASK_FOR_HELP',
                                    params: { player_id: helping_player_id, player_name: helping_player.name, helping_shared_rewards: helping_shared_reward,
                                              helping_player_attack: helping_player.attack } })
