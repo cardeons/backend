@@ -280,6 +280,26 @@ ingame = spiel hat gestartet
 intercept_phase = spieler hat ein monster ausgespielt/eine türkarte gezogen. Solange nicht alle spieler no_intercept drücken, ist das spiel in dieser phase.
 intercept_finished = kein spieler wollte intercepten, zug ist "vorbei"
 
+#ANFRAGE GAME_CHANNEL
+#chatmessage
+{
+  action: "send_chat_message",
+  params:{
+    message: "you are a very nice person :)😁"
+  }
+}
+
+#ANTWORT 
+{
+  type: 'CHAT_MESSAGE', 
+  params: 
+  { 
+    id: player.id
+    name: player.name ,
+    message: "you are a very nice person :)😁"
+  }
+}
+
 
 
 DEV ACTIONS:
@@ -323,3 +343,5 @@ Alle im Game-Chanel
    type: 'develop_broadcast_gameboard_update',
    params: { }  
 }
+
+
