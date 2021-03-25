@@ -164,7 +164,7 @@ RSpec.describe GameChannel, type: :channel do
       ).exactly(0).times
   end
 
-  it 'test if no_intercept sends board update when all players have decided not to intercept' do
+  it 'test if no_interception sends board update when all players have decided not to intercept' do
     gameboards(:gameboardFourPlayers).initialize_game_board
     gameboards(:gameboardFourPlayers).players.each(&:init_player)
     users(:userOne).player = gameboards(:gameboardFourPlayers).players.first
@@ -176,7 +176,7 @@ RSpec.describe GameChannel, type: :channel do
 
 
     # player 2 doesn't want to intercept
-      perform('no_intercept', {
+      perform('no_interception', {
                 player_id: connection.current_user.player.id
               })
 
@@ -186,7 +186,7 @@ RSpec.describe GameChannel, type: :channel do
     subscribe
 
     # player 3 doesn't want to intercept
-    perform('no_intercept', {
+    perform('no_interception', {
         player_id: connection.current_user.player.id
       })
 
@@ -197,7 +197,7 @@ RSpec.describe GameChannel, type: :channel do
 
     # player 4 doesn't want to intercept
       expect do
-        perform('no_intercept', {
+        perform('no_interception', {
         player_id: connection.current_user.player.id
       })
       end.to have_broadcasted_to("game:#{users(:userFour).player.gameboard.to_gid_param}")
@@ -213,14 +213,12 @@ RSpec.describe GameChannel, type: :channel do
      
   end
 
-  it 'test if no_intercept does not send board update when only one players has decided not to intercept' do
+  it 'test if no_interception does not send board update when only one players has decided not to intercept' do
     gameboards(:gameboardFourPlayers).initialize_game_board
     gameboards(:gameboardFourPlayers).players.each(&:init_player)
     users(:userOne).player = gameboards(:gameboardFourPlayers).players.first
 
     Gameboard.draw_door_card(gameboards(:gameboardFourPlayers))
-
-    pp gameboards(:gameboardFourPlayers).players
 
     stub_connection current_user: users(:userOne)
     subscribe
@@ -274,7 +272,7 @@ RSpec.describe GameChannel, type: :channel do
 
     # player 4 doesn't want to intercept
     expect do
-      perform('no_intercept', {
+      perform('no_interception', {
       player_id: connection.current_user.player.id
     })
     end.to have_broadcasted_to("game:#{users(:userFour).player.gameboard.to_gid_param}")
@@ -292,7 +290,7 @@ RSpec.describe GameChannel, type: :channel do
      
   end
 
-  it 'test if all players have their default value back after no_intercept' do
+  it 'test if all players have their default value back after no_interception' do
     gameboards(:gameboardFourPlayers).initialize_game_board
     gameboards(:gameboardFourPlayers).players.each(&:init_player)
     users(:userOne).player = gameboards(:gameboardFourPlayers).players.first
@@ -301,7 +299,7 @@ RSpec.describe GameChannel, type: :channel do
     subscribe
 
     # player 2 doesn't want to intercept
-      perform('no_intercept', {
+      perform('no_interception', {
                 player_id: connection.current_user.player.id
               })
 
@@ -311,7 +309,7 @@ RSpec.describe GameChannel, type: :channel do
     subscribe
 
     # player 3 doesn't want to intercept
-    perform('no_intercept', {
+    perform('no_interception', {
         player_id: connection.current_user.player.id
       })
 
@@ -321,11 +319,11 @@ RSpec.describe GameChannel, type: :channel do
     subscribe
 
     # player 4 doesn't want to intercept
-    perform('no_intercept', {
+    perform('no_interception', {
         player_id: connection.current_user.player.id
       })
 
-      #all players should have the default values back after no_intercept is finished
+      #all players should have the default values back after no_interception is finished
       expect(users(:userOne).player.reload.intercept).to be_falsy
       expect(users(:userTwo).player.reload.intercept).to be_falsy
       expect(users(:userThree).player.reload.intercept).to be_falsy
