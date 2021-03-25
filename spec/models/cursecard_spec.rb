@@ -116,12 +116,12 @@ RSpec.describe Monstercard, type: :model do
     gameboards(:gameboardFourPlayers).players.each(&:init_player)
     current_player = Player.find(gameboards(:gameboardFourPlayers).current_player)
     curse = Ingamedeck.create!(gameboard: gameboards(:gameboardFourPlayers), card: cards(:cursecard7), cardable: current_player.playercurse)
-    gameboards(:gameboardFourPlayers).update(player_atk: 2, rewards_treasure: 2)
+    gameboards(:gameboardFourPlayers).update(monster_atk: 2, rewards_treasure: 2)
 
-    expect(gameboards(:gameboardFourPlayers).player_atk).to eql(2)
+    expect(gameboards(:gameboardFourPlayers).monster_atk).to eql(2)
     expect(gameboards(:gameboardFourPlayers).rewards_treasure).to eql(2)
-    curse_obj = Cursecard.activate(curse, current_player, gameboards(:gameboardFourPlayers), 2)
-    expect(curse_obj[:playeratk]).to eql(4)
+    curse_obj = Cursecard.activate(curse, current_player, gameboards(:gameboardFourPlayers), 2, 2)
+    expect(curse_obj[:monsteratk]).to eql(4)
     expect(gameboards(:gameboardFourPlayers).rewards_treasure).to eql(4)
   end
 

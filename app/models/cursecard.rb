@@ -44,7 +44,7 @@ class Cursecard < Card
     when 'double_attack_double_reward'
       gameboard.update(rewards_treasure: gameboard.rewards_treasure * 2)
 
-      playeratk *= 2
+      monsteratk *= 2
       { playeratk: playeratk, monsteratk: monsteratk }
     else
       puts 'action not found'
