@@ -134,8 +134,6 @@ RSpec.describe Monstercard, type: :model do
 
     expect(gameboards(:gameboardFourPlayers).player_atk).to eql(2)
     curse_obj = Cursecard.activate(curse, current_player, gameboards(:gameboardFourPlayers), 2)
-    pp curse_obj
-    pp curse_obj[:playeratk]
     expect(curse_obj[:playeratk]).to eql(1)
   end
 end
