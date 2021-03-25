@@ -32,5 +32,8 @@
     "lint-staged": "^10.5.3",
     "prettier": "2.2.1",
     "webpack-dev-server": "^3.11.1"
+  },
+  "engines": {
+    "node": ">=10.17.0"
   }
 }
