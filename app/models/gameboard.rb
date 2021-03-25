@@ -228,30 +228,9 @@ class Gameboard < ApplicationRecord
 
       player = Player.find_by('id=?', playerid)
 
-      monstercards1 = 0
-      monstercards2 = 0
-      monstercards3 = 0
-
-      if player.monsterone
-        monstercards1 = 1 if player.monsterone.ingamedecks.first
-        monstercards1 += player.monsterone.cards.where(type: 'Itemcard').sum(:atk_points)
-      end
-
-      if player.monstertwo
-        monstercards2 = 1 if player.monstertwo.ingamedecks.first
-        monstercards2 += player.monstertwo.cards.where(type: 'Itemcard').sum(:atk_points)
-      end
-
-      if player.monsterthree
-        monstercards3 = 1 if player.monsterthree.ingamedecks.first
-        monstercards3 += player.monsterthree.cards.where(type: 'Itemcard').sum(:atk_points)
-      end
-
-      # monstercards1 = player.monsterone.nil? ? 0 : (player.monsterone.cards.where(type: 'Itemcard').sum(:atk_points) + 1)
-
-      # monstercards2 = player.monstertwo.nil? ? 0 : (player.monstertwo.cards.where(type: 'Itemcard').sum(:atk_points) + 1)
-
-      # monstercards3 = player.monsterthree.nil? ? 0 : (player.monsterthree.cards.where(type: 'Itemcard').sum(:atk_points) + 1)
+      monstercards1 = Monstercard.calculate_monsterslot_atk(player.monsterone)
+      monstercards2 = Monstercard.calculate_monsterslot_atk(player.monstertwo)
+      monstercards3 = Monstercard.calculate_monsterslot_atk(player.monsterthree)
 
       playeratkpoints = monstercards1 + monstercards2 + monstercards3 + player.level + gameboard.helping_player_atk
 
