@@ -40,13 +40,13 @@ class Monstercard < Card
           attack_obj = Gameboard.attack(player.gameboard)
 
           monstercards1 = player.monsterone ? player.monsterone.cards.sum(:atk_points) : 0
-          
+
           monstercards2 = player.monstertwo ? player.monstertwo.cards.sum(:atk_points) : 0
-          
+
           monstercards3 = player.monsterthree ? player.monsterthree.cards.sum(:atk_points) : 0
-          
+
           playeratkpoints = monstercards1 + monstercards2 + monstercards3 + player.level
-          
+
           player.update!(attack: playeratkpoints)
           player.gameboard.update(success: attack_obj[:result], player_atk: attack_obj[:playeratk], monster_atk: attack_obj[:monsteratk])
 
@@ -149,7 +149,7 @@ class Monstercard < Card
     end
   end
 
-  def self.bad_things(ingamedeck, gameboard)   
+  def self.bad_things(ingamedeck, gameboard)
     player = Player.find_by('id = ?', gameboard.current_player)
 
     case ingamedeck.card.action # get the action from card

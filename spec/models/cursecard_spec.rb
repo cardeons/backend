@@ -96,8 +96,8 @@ RSpec.describe Monstercard, type: :model do
     curse = Ingamedeck.create!(gameboard: gameboards(:gameboardFourPlayers), card: cards(:cursecard5), cardable: current_player.playercurse)
 
     expect(current_player.attack).to eql(1)
-    Cursecard.activate(curse, current_player, gameboards(:gameboardFourPlayers))
-    expect(current_player.reload.attack).to eql(0)
+    curse_obj = Cursecard.activate(curse, current_player, gameboards(:gameboardFourPlayers), 1)
+    expect(curse_obj[:playeratk]).to eql(0)
   end
 
   it 'set asked_help to true if curse is activated' do
@@ -109,7 +109,6 @@ RSpec.describe Monstercard, type: :model do
     expect(gameboards(:gameboardFourPlayers).asked_help).to eql(false)
     Cursecard.activate(curse, current_player, gameboards(:gameboardFourPlayers))
     expect(gameboards(:gameboardFourPlayers).asked_help).to eql(true)
-    expect(curse.cardable).to eql(gameboards(:gameboardFourPlayers).graveyard)
   end
 
   it 'set rewards *2 and player_atk *2 to true if curse is activated' do
@@ -121,10 +120,9 @@ RSpec.describe Monstercard, type: :model do
 
     expect(gameboards(:gameboardFourPlayers).player_atk).to eql(2)
     expect(gameboards(:gameboardFourPlayers).rewards_treasure).to eql(2)
-    Cursecard.activate(curse, current_player, gameboards(:gameboardFourPlayers))
-    expect(gameboards(:gameboardFourPlayers).player_atk).to eql(4)
+    curse_obj = Cursecard.activate(curse, current_player, gameboards(:gameboardFourPlayers), 2)
+    expect(curse_obj[:playeratk]).to eql(4)
     expect(gameboards(:gameboardFourPlayers).rewards_treasure).to eql(4)
-    expect(curse.cardable).to eql(gameboards(:gameboardFourPlayers).graveyard)
   end
 
   it 'set minus atk next fight if curse is activated' do
@@ -135,8 +133,7 @@ RSpec.describe Monstercard, type: :model do
     curse = Ingamedeck.create!(gameboard: gameboards(:gameboardFourPlayers), card: cards(:cursecard6), cardable: current_player.playercurse)
 
     expect(gameboards(:gameboardFourPlayers).player_atk).to eql(2)
-    Cursecard.activate(curse, current_player, gameboards(:gameboardFourPlayers))
-    expect(gameboards(:gameboardFourPlayers).player_atk).to eql(1)
-    expect(curse.cardable).to eql(gameboards(:gameboardFourPlayers).graveyard)
+    curse_obj = Cursecard.activate(curse, current_player, gameboards(:gameboardFourPlayers), 2)
+    expect(curse_obj[:playeratk]).to eql(1)
   end
 end
