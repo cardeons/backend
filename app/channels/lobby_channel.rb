@@ -31,15 +31,22 @@ class LobbyChannel < ApplicationCable::Channel
     player.init_player(params)
 
     # TODO: only for testing otherwise false
-    lobbyisfull = true
-
-    lobbyisfull = true if gameboard.players.count > 3
 
     @gameboard = gameboard
 
+    # TODO: Remove after testing i guesss
+    if params['testplayers'].nil?
+      create_dummy_players_for_gameboard(@gameboard)
+    else
+      create_dummy_players_for_gameboard(@gameboard, params['testplayers'])
+    end
+
+    lobbyisfull = @gameboard.players.count > 3
+
     stream_for @gameboard
 
-    broadcast_to(@gameboard, { type: 'DEBUG', params: { message: "new Player#{current_user.email} conected to the gameboard id: #{@gameboard.id} players in lobby #{@gameboard.players.count}" } })
+    broadcast_to(@gameboard,
+                 { type: 'DEBUG', params: { message: "new Player#{current_user.email} conected to the gameboard id: #{@gameboard.id} players in lobby #{@gameboard.reload.players.count}" } })
 
     if lobbyisfull
       # Lobby is full tell players to start the game
@@ -47,13 +54,7 @@ class LobbyChannel < ApplicationCable::Channel
 
       @gameboard.initialize_game_board
 
-      # pp params["testplayers"]
-      # TODO: Remove after testing i guesss
-      if params['testplayers'].nil?
-        createNewTestGame(@gameboard)
-      else
-        createNewTestGame(@gameboard, params['testplayers'])
-      end
+      gameboard.update!(current_player: player.id)
 
       broadcast_to(@gameboard, { type: 'START_GAME', params: { game_id: @gameboard.id } })
     end
@@ -65,10 +66,12 @@ class LobbyChannel < ApplicationCable::Channel
 
   private
 
-  def createNewTestGame(gameboard, number_of_players = 3)
+  def create_dummy_players_for_gameboard(gameboard, number_of_players = 3)
+    max_players = 4
     gameboard_test = gameboard
 
-    number_of_players = 3 if number_of_players > 3
+    ## never add more than 4 players to the game
+    number_of_players = max_players - gameboard_test.players.count if (gameboard_test.players.count + number_of_players) > 4
 
     (1..number_of_players).each do
       x = rand(1..1_000_000)
