@@ -217,11 +217,11 @@ class GameChannel < ApplicationCable::Channel
       return
     end
     if @gameboard.asked_help
-      PlayerChannel.broadcast_to(current_user, { type: 'ERROR', params: { message: 'You already asked for help...' } }) 
+      PlayerChannel.broadcast_to(current_user, { type: 'ERROR', params: { message: 'You already asked for help...' } })
       return
     end
     if helping_shared_reward > @gameboard.rewards_treasure
-      PlayerChannel.broadcast_to(current_user, { type: 'ERROR', params: { message: "Can't share more rewards than monster gives" } }) 
+      PlayerChannel.broadcast_to(current_user, { type: 'ERROR', params: { message: "Can't share more rewards than monster gives" } })
       return
     end
 
@@ -339,6 +339,16 @@ class GameChannel < ApplicationCable::Channel
   def develop_set_myself_as_current_player
     current_user.player.gameboard.update!(current_player: current_user.player.id)
     broadcast_to(@gameboard, { type: BOARD_UPDATE, params: Gameboard.broadcast_game_board(@gameboard.reload) })
+  end
+
+  def develop_set_myself_as_winner
+    player = Player.find_by('user_id = ?', current_user.id)
+
+    player.update!(level: 5)
+
+    monster_id = player.win_game(current_user)
+    @gameboard.game_won!
+    broadcast_to(@gameboard, { type: 'WIN', params: { player: player.id, monster_won: monster_id } })
   end
 
   def unsubscribed
