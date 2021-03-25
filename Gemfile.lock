@@ -139,7 +139,7 @@ GEM
     marcel (0.3.3)
       mimemagic (~> 0.3.2)
     method_source (1.0.0)
-    mimemagic (0.3.5)
+    mimemagic (0.3.6)
     mini_mime (1.0.2)
     mini_portile2 (2.5.0)
     minitest (5.14.3)
@@ -324,6 +324,7 @@ PLATFORMS
 DEPENDENCIES
   bcrypt (~> 3.1, >= 3.1.16)
   bootsnap (>= 1.4.4)
+  bundler (~> 2.2.11)
   byebug
   capybara (>= 3.26)
   devise
@@ -361,4 +362,4 @@ RUBY VERSION
    ruby 3.0.0p0
 
 BUNDLED WITH
-   2.2.11
+   2.2.15
