@@ -184,7 +184,7 @@ class GameChannel < ApplicationCable::Channel
     broadcast_to(@gameboard, { type: BOARD_UPDATE, params: Gameboard.broadcast_game_board(@gameboard) })
   end
 
-  def no_intercept(_params)
+  def no_interception
     current_user.player.update!(intercept: false)
 
     if @gameboard.players.where('intercept = ?', false).count == 3
