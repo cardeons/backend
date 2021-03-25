@@ -18,8 +18,8 @@ class Cursecard < Card
     activate(ingamedeck, player_to, gameboard) if ingamedeck.card.action == 'lose_item_head' || ingamedeck.card.action == 'lose_item_hand' || ingamedeck.card.action == 'lose_level'
   end
 
-  def self.broadcast_gamelog(msg)
-    GameChannel.broadcast_to(@gameboard, { type: 'GAME_LOG', params: { date: Time.new, message: msg } })
+  def self.broadcast_gamelog(msg, gameboard)
+    GameChannel.broadcast_to(gameboard, { type: 'GAME_LOG', params: { date: Time.new, message: msg } })
   end
 
   def self.activate(ingamedeck, player, gameboard, playeratk = 0, monsteratk = 0)
@@ -27,7 +27,7 @@ class Cursecard < Card
     when 'lose_atk_points'
       playeratk += ingamedeck.card.atk_points
       msg = "You lost #{ingamedeck.card.atk_points} because of Cursecard #{ingamedeck.card.title}"
-      Cursecard.broadcast_gamelog(msg)
+      Cursecard.broadcast_gamelog(msg, gameboard)
 
       { playeratk: playeratk, monsteratk: monsteratk }
     when 'lose_item_hand'
@@ -35,21 +35,21 @@ class Cursecard < Card
 
       ingamedeck.update(cardable: gameboard.graveyard)
       msg = "You lost an Handitem because of Cursecard #{ingamedeck.card.title}"
-      Cursecard.broadcast_gamelog(msg)
+      Cursecard.broadcast_gamelog(msg, gameboard)
 
       { playeratk: playeratk, monsteratk: monsteratk }
     when 'no_help_next_fight'
       gameboard.update(asked_help: true)
 
       msg = "You can not ask for help because of Cursecard #{ingamedeck.card.title}"
-      Cursecard.broadcast_gamelog(msg)
+      Cursecard.broadcast_gamelog(msg, gameboard)
 
       { playeratk: playeratk, monsteratk: monsteratk }
     when 'minus_atk_next_fight'
       playeratk += ingamedeck.card.atk_points
 
       msg = "You lost #{ingamedeck.card.atk_points} because of Cursecard #{ingamedeck.card.title}"
-      Cursecard.broadcast_gamelog(msg)
+      Cursecard.broadcast_gamelog(msg, gameboard)
 
       { playeratk: playeratk, monsteratk: monsteratk }
     when 'lose_item_head'
@@ -57,7 +57,7 @@ class Cursecard < Card
       ingamedeck.update(cardable: gameboard.graveyard)
 
       msg = "You lost an Headitem because of Cursecard #{ingamedeck.card.title}"
-      Cursecard.broadcast_gamelog(msg)
+      Cursecard.broadcast_gamelog(msg, gameboard)
 
       { playeratk: playeratk, monsteratk: monsteratk }
     when 'lose_level'
@@ -65,14 +65,14 @@ class Cursecard < Card
 
       ingamedeck.update(cardable: gameboard.graveyard)
       msg = "You lost a level because of Cursecard #{ingamedeck.card.title}"
-      Cursecard.broadcast_gamelog(msg)
+      Cursecard.broadcast_gamelog(msg, gameboard)
 
       { playeratk: playeratk, monsteratk: monsteratk }
     when 'double_attack_double_reward'
       gameboard.update(rewards_treasure: gameboard.rewards_treasure * 2)
 
       msg = "The monster has double the attack but also double the reward because of Cursecard #{ingamedeck.card.title}"
-      Cursecard.broadcast_gamelog(msg)
+      Cursecard.broadcast_gamelog(msg, gameboard)
 
       monsteratk *= 2
       { playeratk: playeratk, monsteratk: monsteratk }
