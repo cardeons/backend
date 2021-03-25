@@ -47,7 +47,6 @@ class LobbyChannel < ApplicationCable::Channel
 
       @gameboard.initialize_game_board
 
-
       # pp params["testplayers"]
       # TODO: Remove after testing i guesss
       if params['testplayers'].nil?
@@ -69,11 +68,9 @@ class LobbyChannel < ApplicationCable::Channel
   def createNewTestGame(gameboard, number_of_players = 3)
     gameboard_test = gameboard
 
-    if number_of_players > 3
-      number_of_players = 3
-    end
-    
-    (1..number_of_players). each do
+    number_of_players = 3 if number_of_players > 3
+
+    (1..number_of_players).each do
       x = rand(1..1_000_000)
       u1 = User.create!(email: "#{x}2@2.at", password: '2', name: "#{x}2", password_confirmation: '2')
       player1 = Player.create!(name: "#{x}2", gameboard: gameboard_test, user: u1)
@@ -87,7 +84,6 @@ class LobbyChannel < ApplicationCable::Channel
       # p1c = Ingamedeck.create!(gameboard: gameboard_test, card: Cursecard.first, cardable: playercurse1)
       p1i1 = Ingamedeck.create!(gameboard: gameboard_test, card: Itemcard.first, cardable: p1i)
       p1i2 = Ingamedeck.create!(gameboard: gameboard_test, card: Itemcard.first, cardable: p1i)
-
     end
     # u1 = User.create(email: "#{x}2@2.at", password: '2', name: "#{x}2", password_confirmation: '2')
     # u2 = User.create(email: "#{x}3@3.at", password: '3', name: "#{x}3", password_confirmation: '3')

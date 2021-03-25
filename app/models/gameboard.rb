@@ -129,6 +129,10 @@ class Gameboard < ApplicationRecord
     players = gameboard.players
     current_player_id = gameboard.current_player
 
+    Player.find_by('id = ?', gameboard.current_player).playercurse.ingamedecks.each do |ingamedeck|
+      ingamedeck.update(cardable: gameboard.graveyard) unless ingamedeck.card.action == 'lose_atk_points'
+    end
+
     count = players.count
 
     # search for the index player with this index
@@ -202,7 +206,7 @@ class Gameboard < ApplicationRecord
       gameboard.update!(can_flee: false)
 
       Monstercard.bad_things(gameboard.centercard, gameboard)
-      
+
       output = {
         flee: false,
         value: roll
@@ -240,6 +244,13 @@ class Gameboard < ApplicationRecord
       # #add intercept buffs
       monsteratkpts += gameboard.interceptcard.cards.sum(:atk_points)
 
+      player.playercurse.ingamedecks.each do |curse|
+        curse_obj = Cursecard.activate(curse, player, gameboard, playeratkpoints, monsteratkpts)
+
+        playeratkpoints = curse_obj[:playeratk]
+        monsteratkpts = curse_obj[:monsteratk]
+      end
+
       playerwin = playeratkpoints > monsteratkpts
 
       if playerwin
@@ -252,6 +263,7 @@ class Gameboard < ApplicationRecord
       end
 
     end
+
 
     { result: playerwin, playeratk: playeratkpoints, monsteratk: monsteratkpts }
   end

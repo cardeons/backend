@@ -7,9 +7,7 @@ class Cursecard < Card
     ingamedeck = Ingamedeck.find_by('id = ?', params['unique_card_id'])
     player_to = Player.find_by('id = ?', params['to'])
 
-    if ingamedeck.card.type == 'Levelcard'
-      Levelcard.activate(ingamedeck, player_to)
-    end
+    Levelcard.activate(ingamedeck, player_to) if ingamedeck.card.type == 'Levelcard'
 
     unless ingamedeck.card.type == 'Cursecard'
       PlayerChannel.broadcast_to(current_user, { type: 'ERROR', params: { message: "You can't curse someone with a card that is not a cursecard..." } })
@@ -20,22 +18,22 @@ class Cursecard < Card
     activate(ingamedeck, player_to, gameboard) if ingamedeck.card.action == 'lose_item_head' || ingamedeck.card.action == 'lose_item_hand' || ingamedeck.card.action == 'lose_level'
   end
 
-  def self.activate(ingamedeck, player, gameboard)
+  def self.activate(ingamedeck, player, gameboard, playeratk = 0, monsteratk = 0)
     case ingamedeck.card.action # get the action from card
     when 'lose_atk_points'
-      player.update(attack: player.attack + ingamedeck.card.atk_points)
+      playeratk += ingamedeck.card.atk_points
+
+      { playeratk: playeratk, monsteratk: monsteratk }
     when 'lose_item_hand'
       Monstercard.lose_item_by_category(player, gameboard, 'hand')
 
       ingamedeck.update(cardable: gameboard.graveyard)
     when 'no_help_next_fight'
       gameboard.update(asked_help: true)
-
-      ingamedeck.update(cardable: gameboard.graveyard)
     when 'minus_atk_next_fight'
-      gameboard.update(player_atk: gameboard.player_atk + ingamedeck.card.atk_points)
+      playeratk += ingamedeck.card.atk_points
 
-      ingamedeck.update(cardable: gameboard.graveyard)
+      { playeratk: playeratk, monsteratk: monsteratk }
     when 'lose_item_head'
       Monstercard.lose_item_by_category(player, gameboard, 'head')
       ingamedeck.update(cardable: gameboard.graveyard)
@@ -44,9 +42,10 @@ class Cursecard < Card
 
       ingamedeck.update(cardable: gameboard.graveyard)
     when 'double_attack_double_reward'
-      gameboard.update(player_atk: gameboard.player_atk * 2, rewards_treasure: gameboard.rewards_treasure + 2)
+      gameboard.update(rewards_treasure: gameboard.rewards_treasure * 2)
 
-      ingamedeck.update(cardable: gameboard.graveyard)
+      playeratk *= 2
+      { playeratk: playeratk, monsteratk: monsteratk }
     else
       puts 'action not found'
     end

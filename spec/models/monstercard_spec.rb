@@ -532,7 +532,7 @@ RSpec.describe Monstercard, type: :model do
       item_category: 'hand',
       has_combination: false
     )
-    
+
     u1 = User.create!(email: '1@1.at', password: '1', name: '1', password_confirmation: '1')
     gameboard_test = Gameboard.create!(current_state: 'lobby', player_atk: 5)
     player1 = Player.create(name: 'Gustav', gameboard: gameboard_test, user: u1)
@@ -544,11 +544,10 @@ RSpec.describe Monstercard, type: :model do
     ingamedeck3 = Ingamedeck.create!(gameboard: gameboard_test, card_id: item1.id, cardable: player1.handcard)
 
     equip_one = Monstercard.equip_monster({ 'unique_monster_id' => ingamedeck1.id, 'unique_equip_id' => ingamedeck2.id, 'action' => 'equip_monster' }, player1)
-    expect(equip_one == { type: 'GAMEBOARD_UPDATE', message: "Successfully equipped." }).to be_truthy
+    expect(equip_one == { type: 'GAMEBOARD_UPDATE', message: 'Successfully equipped.' }).to be_truthy
 
     equip_two = Monstercard.equip_monster({ 'unique_monster_id' => ingamedeck1.id, 'unique_equip_id' => ingamedeck3.id, 'action' => 'equip_monster' }, player1)
-    expect(equip_two == { type: 'GAMEBOARD_UPDATE', message: "Successfully equipped." }).to be_truthy
-
+    expect(equip_two == { type: 'GAMEBOARD_UPDATE', message: 'Successfully equipped.' }).to be_truthy
   end
   it 'attack points are calculated correctly' do
     catfish = Monstercard.create!(
@@ -581,7 +580,7 @@ RSpec.describe Monstercard, type: :model do
       item_category: 'hand',
       has_combination: false
     )
-    
+
     u1 = User.create!(email: '1@1.at', password: '1', name: '1', password_confirmation: '1')
     gameboard_test = Gameboard.create!(current_state: 'lobby', player_atk: 5)
     player1 = Player.create(name: 'Gustav', gameboard: gameboard_test, user: u1)
@@ -599,6 +598,5 @@ RSpec.describe Monstercard, type: :model do
     equip_two = Monstercard.equip_monster({ 'unique_monster_id' => ingamedeck1.id, 'unique_equip_id' => ingamedeck3.id, 'action' => 'equip_monster' }, player1)
     ## attack must be 19 - monster has 14 atk, item 2+2, player 1
     expect(player1.attack).to eql(19)
-
   end
 end
