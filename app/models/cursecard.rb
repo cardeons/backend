@@ -28,8 +28,12 @@ class Cursecard < Card
       Monstercard.lose_item_by_category(player, gameboard, 'hand')
 
       ingamedeck.update(cardable: gameboard.graveyard)
+
+      { playeratk: playeratk, monsteratk: monsteratk }
     when 'no_help_next_fight'
       gameboard.update(asked_help: true)
+
+      { playeratk: playeratk, monsteratk: monsteratk }
     when 'minus_atk_next_fight'
       playeratk += ingamedeck.card.atk_points
 
@@ -37,10 +41,14 @@ class Cursecard < Card
     when 'lose_item_head'
       Monstercard.lose_item_by_category(player, gameboard, 'head')
       ingamedeck.update(cardable: gameboard.graveyard)
+
+      { playeratk: playeratk, monsteratk: monsteratk }
     when 'lose_level'
       player.update(level: player.level - 1) unless player.level == 1
 
       ingamedeck.update(cardable: gameboard.graveyard)
+
+      { playeratk: playeratk, monsteratk: monsteratk }
     when 'double_attack_double_reward'
       gameboard.update(rewards_treasure: gameboard.rewards_treasure * 2)
 
