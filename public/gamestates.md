@@ -267,7 +267,7 @@ Gameboard Channel response
   type: 'WIN', 
   params: 
   { 
-    player: player.name 
+    player: player.id 
     monster_won: id
   }
 }
