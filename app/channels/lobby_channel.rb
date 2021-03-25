@@ -31,7 +31,7 @@ class LobbyChannel < ApplicationCable::Channel
     player.init_player(params)
 
     # TODO: only for testing otherwise false
-    lobbyisfull = true
+    lobbyisfull = false
 
     lobbyisfull = true if gameboard.players.count > 3
 
