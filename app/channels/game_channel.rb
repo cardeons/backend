@@ -213,7 +213,7 @@ class GameChannel < ApplicationCable::Channel
     helping_player_id = helping_player.id
     @gameboard = @gameboard.reload
 
-    unless current_user.id == @gameboard.current_player
+    unless current_user.player.id == @gameboard.current_player
       PlayerChannel.broadcast_to(current_user, { type: 'ERROR', params: { message: "It's not your round, you can't ask for help..." } })
       return
     end
