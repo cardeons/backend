@@ -123,7 +123,7 @@ RSpec.describe LobbyChannel, type: :channel do
 
   it 'if no testplayers are sent default 3 and 4 players should be in game' do
     stub_connection current_user: users(:one)
-    subscribe()
+    subscribe
 
     expect(users(:one).player.gameboard.players.size).to eql(4)
   end

@@ -214,7 +214,7 @@ RSpec.describe Gameboard, type: :model do
 
     flee_result = Gameboard.flee(gameboards(:gameboardFourPlayers))
     if flee_result[:flee]
-      expect(flee_result[:value] < 5).to be_truthy 
+      expect(flee_result[:value] < 5).to be_truthy
       expect(Player.find_by('id = ?', gameboards(:gameboardFourPlayers).current_player).level).to eql(3)
     end
     expect(gameboards(:gameboardFourPlayers).can_flee).to eql(flee_result[:flee])
@@ -230,5 +230,35 @@ RSpec.describe Gameboard, type: :model do
     # expect(playeratk.to(eql))
     expect(gameboards(:gameboardFourPlayers).success).to be_truthy if playerwin[:result]
     expect(gameboards(:gameboardFourPlayers).success).to be_falsy unless playerwin[:result]
+  end
+
+  it 'test if get_next_player deletes curse cards' do
+    gameboards(:gameboardFourPlayers).initialize_game_board
+    gameboards(:gameboardFourPlayers).players.each(&:init_player)
+
+    player = Player.find_by('id = ?', gameboards(:gameboardFourPlayers).current_player)
+    Ingamedeck.create!(gameboard: gameboards(:gameboardFourPlayers), card: cards(:cursecard), cardable: player.playercurse)
+    Ingamedeck.create!(gameboard: gameboards(:gameboardFourPlayers), card: cards(:cursecard), cardable: player.playercurse)
+    Ingamedeck.create!(gameboard: gameboards(:gameboardFourPlayers), card: cards(:cursecard), cardable: player.playercurse)
+    Ingamedeck.create!(gameboard: gameboards(:gameboardFourPlayers), card: cards(:cursecard), cardable: player.playercurse)
+
+    expect(player.playercurse.ingamedecks.count).to eql(4)
+    Gameboard.get_next_player(gameboards(:gameboardFourPlayers))
+    expect(player.playercurse.ingamedecks.count).to eql(0)
+  end
+
+  it 'test if get_next_player deletes curse cards but not sticky one' do
+    gameboards(:gameboardFourPlayers).initialize_game_board
+    gameboards(:gameboardFourPlayers).players.each(&:init_player)
+
+    player = Player.find_by('id = ?', gameboards(:gameboardFourPlayers).current_player)
+    Ingamedeck.create!(gameboard: gameboards(:gameboardFourPlayers), card: cards(:cursecard), cardable: player.playercurse)
+    Ingamedeck.create!(gameboard: gameboards(:gameboardFourPlayers), card: cards(:cursecard5), cardable: player.playercurse)
+    Ingamedeck.create!(gameboard: gameboards(:gameboardFourPlayers), card: cards(:cursecard), cardable: player.playercurse)
+    Ingamedeck.create!(gameboard: gameboards(:gameboardFourPlayers), card: cards(:cursecard), cardable: player.playercurse)
+
+    expect(player.playercurse.ingamedecks.count).to eql(4)
+    Gameboard.get_next_player(gameboards(:gameboardFourPlayers))
+    expect(player.playercurse.ingamedecks.count).to eql(1)
   end
 end

@@ -14,7 +14,7 @@ class Buffcard < Card
 
       ingamedeck.update(cardable: gameboard.graveyard)
     when 'plus_atk'
-      # TODO Check if monster or player gets buff??
+      # TODO: Check if monster or player gets buff??
       gameboard.update(player_atk: gameboard.player_atk + ingamedeck.card.atk_points)
 
       ingamedeck.update(cardable: gameboard.graveyard)

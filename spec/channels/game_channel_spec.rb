@@ -80,8 +80,7 @@ RSpec.describe GameChannel, type: :channel do
         hash_including(type: 'BOARD_UPDATE')
       ).exactly(:once)
 
-      expect(player.gameboard.current_state).to eql('intercept_phase')
-
+    expect(player.gameboard.current_state).to eql('intercept_phase')
   end
 
   it 'test if intercept broadcasts to all players when buffing player' do
@@ -174,43 +173,41 @@ RSpec.describe GameChannel, type: :channel do
     stub_connection current_user: users(:userTwo)
     subscribe
 
-
     # player 2 doesn't want to intercept
-      perform('no_intercept', {
-                player_id: connection.current_user.player.id
-              })
+    perform('no_intercept', {
+              player_id: connection.current_user.player.id
+            })
 
-      expect(connection.current_user.player.intercept).to be_falsy   
+    expect(connection.current_user.player.intercept).to be_falsy
 
     stub_connection current_user: users(:userThree)
     subscribe
 
     # player 3 doesn't want to intercept
     perform('no_intercept', {
-        player_id: connection.current_user.player.id
-      })
+              player_id: connection.current_user.player.id
+            })
 
-    expect(connection.current_user.player.intercept).to be_falsy   
+    expect(connection.current_user.player.intercept).to be_falsy
 
     stub_connection current_user: users(:userFour)
     subscribe
 
     # player 4 doesn't want to intercept
-      expect do
-        perform('no_intercept', {
-        player_id: connection.current_user.player.id
-      })
-      end.to have_broadcasted_to("game:#{users(:userFour).player.gameboard.to_gid_param}")
+    expect do
+      perform('no_intercept', {
+                player_id: connection.current_user.player.id
+              })
+    end.to have_broadcasted_to("game:#{users(:userFour).player.gameboard.to_gid_param}")
       .with(
         # should now send broadcast because all 3 players do not want to intercept
         hash_including(type: 'BOARD_UPDATE')
       ).exactly(1).times
 
-      #game state should change to intercept finished if nobody wanted to intercept
-      expect(users(:userFour).player.gameboard.reload.current_state).to eql('intercept_finished')
+    # game state should change to intercept finished if nobody wanted to intercept
+    expect(users(:userFour).player.gameboard.reload.current_state).to eql('intercept_finished')
 
-      # pp users(:userOne).player.reload
-     
+    # pp users(:userOne).player.reload
   end
 
   it 'test if no_intercept does not send board update when only one players has decided not to intercept' do
@@ -243,7 +240,7 @@ RSpec.describe GameChannel, type: :channel do
       .with(
         hash_including(type: 'BOARD_UPDATE')
       ).exactly(:once)
-    expect(connection.current_user.player.intercept).to be_truthy   
+    expect(connection.current_user.player.intercept).to be_truthy
 
     stub_connection current_user: users(:userThree)
     subscribe
@@ -263,11 +260,11 @@ RSpec.describe GameChannel, type: :channel do
         hash_including(type: 'HANDCARD_UPDATE')
       ).exactly(:once)
       .and have_broadcasted_to("game:#{users(:userThree).player.gameboard.to_gid_param}")
-          .with(
+      .with(
         hash_including(type: 'BOARD_UPDATE')
       ).exactly(:once)
-    
-     expect(connection.current_user.player.intercept).to be_truthy   
+
+    expect(connection.current_user.player.intercept).to be_truthy
 
     stub_connection current_user: users(:userFour)
     subscribe
@@ -275,21 +272,20 @@ RSpec.describe GameChannel, type: :channel do
     # player 4 doesn't want to intercept
     expect do
       perform('no_intercept', {
-      player_id: connection.current_user.player.id
-    })
+                player_id: connection.current_user.player.id
+              })
     end.to have_broadcasted_to("game:#{users(:userFour).player.gameboard.to_gid_param}")
-    .with(
-      # should now send broadcast because all 3 players do not want to intercept
-      hash_including(type: 'BOARD_UPDATE')
-    ).exactly(0).times
+      .with(
+        # should now send broadcast because all 3 players do not want to intercept
+        hash_including(type: 'BOARD_UPDATE')
+      ).exactly(0).times
 
-    expect(connection.current_user.player.intercept).to be_falsy   
+    expect(connection.current_user.player.intercept).to be_falsy
 
-    #game state should change to intercept finished if nobody wanted to intercept
+    # game state should change to intercept finished if nobody wanted to intercept
     expect(users(:userFour).player.gameboard.reload.current_state).to eql('intercept_phase')
 
-      # pp users(:userOne).player.reload
-     
+    # pp users(:userOne).player.reload
   end
 
   it 'test if all players have their default value back after no_intercept' do
@@ -301,39 +297,37 @@ RSpec.describe GameChannel, type: :channel do
     subscribe
 
     # player 2 doesn't want to intercept
-      perform('no_intercept', {
-                player_id: connection.current_user.player.id
-              })
+    perform('no_intercept', {
+              player_id: connection.current_user.player.id
+            })
 
-      expect(connection.current_user.player.intercept).to be_falsy   
+    expect(connection.current_user.player.intercept).to be_falsy
 
     stub_connection current_user: users(:userThree)
     subscribe
 
     # player 3 doesn't want to intercept
     perform('no_intercept', {
-        player_id: connection.current_user.player.id
-      })
+              player_id: connection.current_user.player.id
+            })
 
-    expect(connection.current_user.player.intercept).to be_falsy   
+    expect(connection.current_user.player.intercept).to be_falsy
 
     stub_connection current_user: users(:userFour)
     subscribe
 
     # player 4 doesn't want to intercept
     perform('no_intercept', {
-        player_id: connection.current_user.player.id
-      })
+              player_id: connection.current_user.player.id
+            })
 
-      #all players should have the default values back after no_intercept is finished
-      expect(users(:userOne).player.reload.intercept).to be_falsy
-      expect(users(:userTwo).player.reload.intercept).to be_falsy
-      expect(users(:userThree).player.reload.intercept).to be_falsy
-      expect(users(:userFour).player.reload.intercept).to be_falsy
-     
-  end  
+    # all players should have the default values back after no_intercept is finished
+    expect(users(:userOne).player.reload.intercept).to be_falsy
+    expect(users(:userTwo).player.reload.intercept).to be_falsy
+    expect(users(:userThree).player.reload.intercept).to be_falsy
+    expect(users(:userFour).player.reload.intercept).to be_falsy
+  end
 
-  
   it 'all players have default value false in intercept' do
     gameboards(:gameboardFourPlayers).initialize_game_board
     gameboards(:gameboardFourPlayers).players.each(&:init_player)
