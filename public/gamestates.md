@@ -279,3 +279,47 @@ lobby = spieler befinden sich in der lobby
 ingame = spiel hat gestartet
 intercept_phase = spieler hat ein monster ausgespielt/eine türkarte gezogen. Solange nicht alle spieler no_intercept drücken, ist das spiel in dieser phase.
 intercept_finished = kein spieler wollte intercepten, zug ist "vorbei"
+
+
+
+DEV ACTIONS:
+
+Alle im Game-Chanel
+
+{
+   type: 'develop_add_buff_card',
+   params: { }  
+}
+
+{
+   type: 'develop_add_curse_card',
+   params: { }  
+}
+
+{
+   type: 'develop_add_card_with_id',
+   params: 
+   { 
+     # CARD ID not unique_card_id so you can add every card from our db to your hand
+     card_id: 1
+   }  
+}
+
+{
+   type: 'develop_set_myself_as_current_player',
+   params: { }  
+}
+
+
+#rebroadcasts handcard update
+{
+   type: 'develop_broadcast_handcard_update',
+   params: { }  
+}
+
+
+#rebroadcasts board update
+{
+   type: 'develop_broadcast_gameboard_update',
+   params: { }  
+}

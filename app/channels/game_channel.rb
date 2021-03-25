@@ -300,6 +300,31 @@ class GameChannel < ApplicationCable::Channel
     PlayerChannel.broadcast_to(current_user, { type: 'HANDCARD_UPDATE', params: { handcards: Gameboard.render_cards_array(current_user.player.handcard.ingamedecks) } })
   end
 
+  def develop_add_curse_card
+    card = Cursecard.all.last
+    current_user.player.handcard.ingamedecks.create(card: card, gameboard: current_user.player.gameboard)
+    PlayerChannel.broadcast_to(current_user, { type: 'HANDCARD_UPDATE', params: { handcards: Gameboard.render_cards_array(current_user.player.handcard.ingamedecks) } })
+  end
+
+  def develop_add_card_with_id(params)
+    card = Card.find_by('id=?', params['card_id'])
+    current_user.player.handcard.ingamedecks.create(card: card, gameboard: current_user.player.gameboard)
+    PlayerChannel.broadcast_to(current_user, { type: 'HANDCARD_UPDATE', params: { handcards: Gameboard.render_cards_array(current_user.player.handcard.ingamedecks) } })
+  end
+
+  def develop_broadcast_handcard_update
+    PlayerChannel.broadcast_to(current_user, { type: 'HANDCARD_UPDATE', params: { handcards: Gameboard.render_cards_array(current_user.player.handcard.ingamedecks) } })
+  end
+
+  def develop_broadcast_gameboard_update
+    broadcast_to(@gameboard, { type: BOARD_UPDATE, params: Gameboard.broadcast_game_board(@gameboard.reload) })
+  end
+
+  def develop_set_myself_as_current_player
+    current_user.player.gameboard.update!(current_player: current_user.player.id)
+    broadcast_to(@gameboard, { type: BOARD_UPDATE, params: Gameboard.broadcast_game_board(@gameboard.reload) })
+  end
+
   def unsubscribed
     # Any cleanup needed when channel is unsubscribed
   end
