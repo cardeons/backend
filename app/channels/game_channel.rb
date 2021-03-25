@@ -218,7 +218,9 @@ class GameChannel < ApplicationCable::Channel
     user_to_broadcast_to = User.where(player: helping_player).first
 
     unless helping_shared_reward > @gameboard.rewards_treasure
+      
       PlayerChannel.broadcast_to(user_to_broadcast_to,
+
                                  { type: 'ASK_FOR_HELP',
                                    params: { player_id: helping_player_id, player_name: helping_player.name, helping_shared_rewards: helping_shared_reward,
                                              helping_player_attack: helping_player.attack } })

@@ -22,14 +22,20 @@ We are using foreman to start redis/sidekiq and puma in one shell:
 
 - gem install foreman
 
-<!-- - redis-server --daemonize yes -->
-<!-- || -->
-<!-- - bundle exec sidekiq --environment development -->
+
+
 
 // you need to install redis before you can use the dev env
-
 // sudo apt install redis-server 
-- foreman start -p 3000
+- foreman start -f Procfile.dev
+
+
+  runs these commands :
+//- redis-server --daemonize yes
+//- bundle exec sidekiq --environment development
+//- rails s -p 3000
+
+
 
 
 Happy Coding😘
