@@ -1,3 +1,1 @@
-web:  bundle exec rails s
-redis:  redis-server
-worker: bundle exec sidekiq -v
+web: bundle exec foreman start -f Procfile.real

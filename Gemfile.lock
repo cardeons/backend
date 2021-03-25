@@ -101,6 +101,7 @@ GEM
     fakeredis (0.8.0)
       redis (~> 4.1)
     ffi (1.15.0)
+    foreman (0.87.2)
     formatador (0.2.5)
     globalid (0.4.2)
       activesupport (>= 4.2.0)
@@ -328,6 +329,7 @@ DEPENDENCIES
   devise
   dotenv-rails
   fakeredis
+  foreman
   guard
   guard-livereload (~> 2.5)
   jbuilder (~> 2.7)
