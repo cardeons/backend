@@ -70,23 +70,13 @@ class Cursecard < Card
       { playeratk: playeratk, monsteratk: monsteratk }
     when 'double_attack_double_reward'
 
-      pp 'am i in lmao??'
-      pp monsteratk
-      pp '******************************'
-      pp '******************************'
-
       msg = "The monster has double the attack but also double the reward because of Cursecard #{ingamedeck.card.title}"
       Cursecard.broadcast_gamelog(msg, gameboard) if gamelog
 
       monstercard = gameboard.centercard.card
 
       monsteratk = monstercard.atk_points * 2 if monstercard
-      pp 'updated monsteratk'
-      pp monsteratk
 
-      pp monstercard.rewards_treasure
-      pp 'updated rewards'
-      pp monstercard.rewards_treasure.to_i * 2
       gameboard.update(rewards_treasure: monstercard.rewards_treasure.to_i * 2, monster_atk: monsteratk) if monstercard
       { playeratk: playeratk, monsteratk: monsteratk }
     else

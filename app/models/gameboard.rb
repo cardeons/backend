@@ -204,7 +204,6 @@ class Gameboard < ApplicationRecord
       }
     else
       gameboard.update!(can_flee: false)
-        pp "bad things"
       Monstercard.bad_things(gameboard.centercard, gameboard)
 
       output = {

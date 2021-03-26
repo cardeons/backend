@@ -157,12 +157,6 @@ class Monstercard < Card
 
   def self.bad_things(ingamedeck, gameboard)
     player = Player.find_by('id = ?', gameboard.current_player)
-    pp '--------------------------------------------------------'
-    pp 'bad things happen'
-    pp ingamedeck.card.action
-    pp '--------------------------------------------------------'
-    pp '~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~'
-    pp '********************************************************'
 
     case ingamedeck.card.action # get the action from card
     when 'lose_item_hand'

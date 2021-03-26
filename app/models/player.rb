@@ -69,8 +69,6 @@ class Player < ApplicationRecord
       )
     end
 
-    pp "************************************++"
-    pp intercept
     { name: name, player_id: id, inventory: Gameboard.render_cards_array(inventory.ingamedecks), level: level, attack: attack,
       handcard: handcard.cards.count, monsters: monsters, playercurse: Gameboard.render_cards_array(playercurse.ingamedecks), user_id: user.id, intercept: intercept }
   end
