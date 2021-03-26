@@ -27,7 +27,7 @@ bear_fire = Monstercard.create!(
   description: '<p><b>*slaps you with his glove*</b> I challenge you to a duel!</p>',
   image: '/monster/Baer_Orange.png',
   action: 'lose_item_hand',
-  draw_chance: 10,
+  draw_chance: 5,
   level: 5,
   element: 'fire',
   bad_things: '<p><b>Bad things: </b>Oh no, you disrespected the Sir!</p><p> Lose one hand thing.</p>',
@@ -45,7 +45,7 @@ bear_water = Monstercard.create!(
   description: '<p><b>*slaps you with his glove*</b> I challenge you to a duel! -3 Against Hot Dog and Buffalo Wings. He is not willing to touch those.</p>',
   image: '/monster/Baer_Dunkelblau.png',
   action: 'lose_item_shoe',
-  draw_chance: 10,
+  draw_chance: 5,
   level: 10,
   element: 'water',
   bad_things: '<p><b>Bad things: </b>Oh no, you disrespected the Sir!</p><p> Lose your shoes.</p>',
@@ -63,7 +63,7 @@ bear_earth = Monstercard.create!(
   description: '<p><b>*slaps you with his glove*</b> I challenge you to a duel! +2 against Water</p>',
   image: '/monster/Baer_Gruen.png',
   action: 'lose_item_shoe',
-  draw_chance: 10,
+  draw_chance: 5,
   level: 7,
   element: 'earth',
   bad_things: '<p><b>Bad things: </b>Oh no, you disrespected the Sir!</p><p> Lose one hand thing.</p>',
@@ -81,7 +81,7 @@ bear_air = Monstercard.create!(
   description: '<p><b>*slaps you with his glove*</b> I challenge you to a duel!</p>',
   image: '/monster/Baer_Hellblau.png',
   action: 'lose_item_shoe',
-  draw_chance: 10,
+  draw_chance: 5,
   level: 15,
   element: 'air',
   bad_things: '<p><b>Bad things: </b>Oh no, you disrespected the Sir!</p><p> Lose your shoes.</p>',
@@ -618,7 +618,7 @@ curse = Cursecard.create!(
   description: '<p>This curse is very bad.</p><p> Actually, it is so bad that this curse will stick to you and weaken your fighting ability as long as you do not find a way to remove it</p>',
   image: '/',
   action: 'lose_atk_points',
-  draw_chance: 4,
+  draw_chance: 6,
   atk_points: -1
 )
 
@@ -627,7 +627,7 @@ curse2 = Cursecard.create!(
   description: '<p>A spider scared you, you dropped something you held in your hand!</p>',
   image: '/',
   action: 'lose_item_hand',
-  draw_chance: 4,
+  draw_chance: 6,
   atk_points: 0
 )
 
@@ -636,7 +636,7 @@ curse3 = Cursecard.create!(
   description: '<p>You stepped in Pit-Bull poo.. you stink, nobody wants to help you for a round.</p>',
   image: '/',
   action: 'no_help_next_fight',
-  draw_chance: 4,
+  draw_chance: 6,
   atk_points: 0
 )
 
@@ -645,7 +645,7 @@ curse4 = Cursecard.create!(
   description: '<p>You did not finish your thesis in time… -3 for you in the next Fight.</p>',
   image: '/',
   action: 'minus_atk_next_fight',
-  draw_chance: 4,
+  draw_chance: 6,
   atk_points: -3
 )
 
@@ -654,7 +654,7 @@ curse5 = Cursecard.create!(
   description: '<p>Lose a headpiece!</p>',
   image: '/',
   action: 'lose_item_head',
-  draw_chance: 4,
+  draw_chance: 6,
   atk_points: 0
 )
 
@@ -663,7 +663,7 @@ curse6 = Cursecard.create!(
   description: '<p>Your waifu disappointed you. Commit sudoko! Lose a level.</p>',
   image: '/',
   action: 'lose_level',
-  draw_chance: 4,
+  draw_chance: 6,
   atk_points: 0
 )
 
@@ -672,7 +672,7 @@ curse7 = Cursecard.create!(
   description: '<p>Lose a level.</p>',
   image: '/',
   action: 'lose_level',
-  draw_chance: 4,
+  draw_chance: 6,
   atk_points: 0
 )
 
@@ -681,14 +681,14 @@ curse8 = Cursecard.create!(
   description: '<p>The monsters attack get doubled but gives double the rewards!</p>',
   image: '/',
   action: 'double_attack_double_reward',
-  draw_chance: 4,
+  draw_chance: 6,
   atk_points: 0
 )
 
 # #Buffcards
 
 buffcard = Buffcard.create!(
-  draw_chance: 1,
+  draw_chance: 10,
   title: 'Buffing yourself up, eh?',
   description: '<p>You are getting stronger and stronger. Gain 2 extra attack points</p>',
   image: '/',
@@ -697,7 +697,7 @@ buffcard = Buffcard.create!(
 )
 
 buffcard2 = Buffcard.create!(
-  draw_chance: 1,
+  draw_chance: 10,
   title: 'Slippery slope',
   description: '<p>The monster slipped, it looses 5 attack points.</p>',
   image: '/',
@@ -706,7 +706,7 @@ buffcard2 = Buffcard.create!(
 )
 
 buffcard3 = Buffcard.create!(
-  draw_chance: 1,
+  draw_chance: 10,
   title: 'Extremely cool potion',
   description: '<p>+5 for any side!</p>',
   image: '/',
@@ -715,7 +715,7 @@ buffcard3 = Buffcard.create!(
 )
 
 buffcard4 = Buffcard.create!(
-  draw_chance: 1,
+  draw_chance: 10,
   title: 'Yeet',
   description: '<p>You send the monster to the shadow realm. You do not get any rewards or levels!</p>',
   image: '/',
@@ -724,7 +724,7 @@ buffcard4 = Buffcard.create!(
 )
 
 buffcard5 = Buffcard.create!(
-  draw_chance: 1,
+  draw_chance: 10,
   title: 'Pot of Greed',
   description: '<p>Time for a duel: Draw two additional cards!</p>',
   image: '/',
@@ -733,7 +733,7 @@ buffcard5 = Buffcard.create!(
 )
 
 buffcard6 = Buffcard.create!(
-  draw_chance: 1,
+  draw_chance: 10,
   title: 'Chloroform',
   description: '<p>You can force a chosen player to help you!</p>',
   image: '/',
@@ -742,7 +742,7 @@ buffcard6 = Buffcard.create!(
 )
 
 buffcard7 = Buffcard.create!(
-  draw_chance: 1,
+  draw_chance: 10,
   title: 'Greater potion of Awesomeness',
   description: '<p>+6 for any side</p>',
   image: '/',
@@ -751,7 +751,7 @@ buffcard7 = Buffcard.create!(
 )
 
 buffcard8 = Buffcard.create!(
-  draw_chance: 1,
+  draw_chance: 10,
   title: 'Invisibility potion',
   description: '<p>You can flee without a problem!</p>',
   image: '/',
@@ -760,7 +760,7 @@ buffcard8 = Buffcard.create!(
 )
 
 buffcard9 = Buffcard.create!(
-  draw_chance: 1,
+  draw_chance: 10,
   title: 'Lick',
   description: '<p>You paralyzed the monster, it hurts itself and loses 3 ATP</p>',
   image: '/',
@@ -769,7 +769,7 @@ buffcard9 = Buffcard.create!(
 )
 
 buffcard10 = Buffcard.create!(
-  draw_chance: 1,
+  draw_chance: 10,
   title: 'Over 9000!',
   description: '<p>Your hair starts glowing! +5 for any side!</p>',
   image: '/',
