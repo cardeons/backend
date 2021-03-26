@@ -13,6 +13,7 @@ u7 = User.create!(email: '4@4.at', password: '4', name: '4', password_confirmati
 u8 = User.create!(email: '5@5.at', password: '5', name: '5', password_confirmation: '5')
 u9 = User.create!(email: '1@1.at', password: '1', name: '1', password_confirmation: '1')
 
+# TODO: Delete?
 gameboard_test = Gameboard.create!(current_state: 'lobby', player_atk: 5)
 
 # player5 = Player.create!(name: 'Gustav', gameboard: gameboard_test, user: u3)
