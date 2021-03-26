@@ -38,6 +38,22 @@ class GameChannel < ApplicationCable::Channel
 
   def play_monster(params)
     # move all centercard to graveyard
+
+    if gamebaord.reload.current_player.id != current_user.player.id
+      PlayerChannel.broadcast_error(current_user, 'Only the the Player whos turn it is can play a Monster')
+      return
+    end
+
+    unique_card_id = params['unique_card_id']
+
+    ingame_card = check_if_player_owns_card(unique_card_id) || return
+
+    if ingame_card.card.type != 'Monstercard'
+      # only buffcards are allowed alteast i think
+      PlayerChannel.broadcast_error(current_user, "You can't fight against this card!")
+      return
+    end
+
     centercard = Centercard.find_by('gameboard_id = ?', @gameboard.id)
 
     # centercard.ingamedecks.each do |ingamedeck|
@@ -47,8 +63,10 @@ class GameChannel < ApplicationCable::Channel
     centercard.ingamedeck&.update(cardable: Graveyard.find_by('gameboard_id = ?', @gameboard.id))
 
     # update handcard to centercard
-    Ingamedeck.find_by('id=?', params['unique_card_id']).update(cardable: Centercard.find_by('gameboard_id = ?', @gameboard.id))
-    monsteratk = Ingamedeck.find_by('id=?', params['unique_card_id']).card.atk_points
+    ingame_card.update(cardable: Centercard.find_by('gameboard_id = ?', @gameboard.id))
+
+    # TODO: Do we even need this anymore? is this ont already handelt i attack?
+    monsteratk = ingame_card.card.atk_points
     centercard = Centercard.find_by('gameboard_id = ?', @gameboard.id)
 
     @gameboard.update(centercard: centercard, monster_atk: monsteratk)
