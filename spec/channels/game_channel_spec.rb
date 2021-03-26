@@ -880,54 +880,99 @@ RSpec.describe GameChannel, type: :channel do
   it 'unsubscribe' do
     # gameboards(:gameboardFourPlayers).initialize_game_board
     # gameboards(:gameboardFourPlayers).players.each(&:init_player)
-  
+
     # player = users(:userFour).player
-  
+
     # ## users subscribe
-  # stub_connection current_user: users(:userFour)
+    # stub_connection current_user: users(:userFour)
     # subscribe
-  
+
     # stub_connection current_user: users(:userThree)
     # subscribe
-  
+
     # stub_connection current_user: users(:userTwo)
     # subscribe
-  
+
     # ## users unsubscribe
     # # stub_connection current_user: users(:userFour)
-  
+
     # gameboards(:gameboardFourPlayers).update(current_player: users(:userFour).player.id)
-    
+
     # pp gameboards(:gameboardFourPlayers).players
     # pp 'first unsubscribe'
-  
+
     # unsubscribe
-  
+
     # expect(users(:userFour).reload.player).to be_falsy
     # expect(gameboards(:gameboardFourPlayers).reload.players.size).to eql(2)
-  
+
     # stub_connection current_user: users(:userThree)
     # unsubscribe
-  
+
     # pp 'second unsubscribe'
-  
+
     # expect(users(:userThree).reload.player).to be_falsy
     # expect(gameboards(:gameboardFourPlayers).reload.players.size).to eql(1)
-  
+
     # stub_connection current_user: users(:userTwo)
     # unsubscribe
-  
+
     # pp 'third unsubscribe'
-  
+
     # expect(users(:userTwo).reload.player).to be_falsy
     # expect(gameboards(:gameboardFourPlayers).reload.players.size).to eql(0)
-  
+
     # pp '--------------------'
-  
+
     # # pp users(:userFour).reload.player
-  
+
     # player is still referenced in gameboard, gets deleted
-  # end
-end
-  
+    # end
+  end
+
+  it 'test if buffcards get removed after turn is over' do
+    gameboards(:gameboardFourPlayers).initialize_game_board
+    gameboards(:gameboardFourPlayers).players.each(&:init_player)
+
+    stub_connection current_user: users(:userFour)
+    subscribe
+
+    Gameboard.draw_door_card(gameboards(:gameboardFourPlayers))
+
+    player = Player.find_by('id = ?', gameboards(:gameboardFourPlayers).current_player)
+    player.handcard.ingamedecks.create(card: cards(:buffcard), gameboard: gameboards(:gameboardFourPlayers))
+    player.handcard.ingamedecks.create(card: cards(:buffcard3), gameboard: gameboards(:gameboardFourPlayers))
+
+    ## buff monster two times
+    perform('intercept', {
+              unique_card_id: player.handcard.ingamedecks.find_by('card_id=?', cards(:buffcard).id),
+              to: 'center_card'
+            })
+
+    perform('intercept', {
+              unique_card_id: player.handcard.ingamedecks.find_by('card_id=?', cards(:buffcard3).id),
+              to: 'center_card'
+            })
+
+    player.handcard.ingamedecks.create(card: cards(:buffcard2), gameboard: gameboards(:gameboardFourPlayers))
+    player.handcard.ingamedecks.create(card: cards(:buffcard5), gameboard: gameboards(:gameboardFourPlayers))
+
+    ## buff player two times
+    perform('intercept', {
+              unique_card_id: player.handcard.ingamedecks.find_by('card_id=?', cards(:buffcard2).id),
+              to: 'current_player'
+            })
+
+    perform('intercept', {
+              unique_card_id: player.handcard.ingamedecks.find_by('card_id=?', cards(:buffcard5).id),
+              to: 'current_player'
+            })
+
+    perform('attack', {})
+
+    expect(Ingamedeck.find_by('card_id=?', cards(:buffcard).id).cardable_type).to eql('Graveyard')
+    expect(Ingamedeck.find_by('card_id=?', cards(:buffcard2).id).cardable_type).to eql('Graveyard')
+    expect(Ingamedeck.find_by('card_id=?', cards(:buffcard3).id).cardable_type).to eql('Graveyard')
+    expect(Ingamedeck.find_by('card_id=?', cards(:buffcard5).id).cardable_type).to eql('Graveyard')
+  end
 end

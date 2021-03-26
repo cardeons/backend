@@ -128,6 +128,8 @@ class GameChannel < ApplicationCable::Channel
         Handcard.draw_handcards(helping_player, @gameboard, shared_reward)
       end
       @gameboard.centercard.ingamedeck&.update!(cardable: @gameboard.graveyard)
+      pp @gameboard.centercard.card
+
       msg = "#{current_user.player.name} has killed #{@gameboard.centercard.card.title}"
       broadcast_to(@gameboard, { type: GAME_LOG, params: { date: Time.new, message: msg } })
 

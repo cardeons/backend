@@ -215,7 +215,7 @@ class Gameboard < ApplicationRecord
 
     # TODO: add bad things if flee does not succeed
     get_next_player(gameboard)
-
+    clear_buffcards(gameboard)
     output
   end
 
@@ -260,8 +260,9 @@ class Gameboard < ApplicationRecord
         #   # broadcast: flee or use cards!
       end
 
-    end
+      clear_buffcards(gameboard.reload)
 
+    end
 
     { result: playerwin, playeratk: playeratkpoints, monsteratk: monsteratkpts }
   end
@@ -301,6 +302,20 @@ class Gameboard < ApplicationRecord
       while x.positive?
         arr.push card.id
         x -= 1
+      end
+    end
+  end
+
+  def self.clear_buffcards(gameboard)
+    if gameboard.interceptcard
+      gameboard.interceptcard.ingamedecks.each do |card|
+        card.update!(cardable: gameboard.graveyard)
+      end
+    end
+
+    if gameboard.playerinterceptcard
+      gameboard.playerinterceptcard.ingamedecks.each do |card|
+        card.update!(cardable: gameboard.graveyard)
       end
     end
   end
