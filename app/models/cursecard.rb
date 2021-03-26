@@ -19,19 +19,15 @@ class Cursecard < Card
   end
 
   def self.broadcast_gamelog(msg, gameboard)
-    pp '222222222222222222222222222222222222222222'
-    pp '222222222222222222222222222222222222222222'
-    pp msg
-    pp "222222222222222222222222222222222222222222"
     GameChannel.broadcast_to(gameboard, { type: 'GAME_LOG', params: { date: Time.new, message: msg } })
   end
 
-  def self.activate(ingamedeck, player, gameboard, playeratk = 0, monsteratk = 0)
+  def self.activate(ingamedeck, player, gameboard, playeratk = 0, monsteratk = 0, gamelog = false)
     case ingamedeck.card.action # get the action from card
     when 'lose_atk_points'
       playeratk += ingamedeck.card.atk_points
       msg = "You lost #{ingamedeck.card.atk_points} because of Cursecard #{ingamedeck.card.title}"
-      Cursecard.broadcast_gamelog(msg, gameboard)
+      Cursecard.broadcast_gamelog(msg, gameboard) if gamelog
 
       { playeratk: playeratk, monsteratk: monsteratk }
     when 'lose_item_hand'
@@ -39,21 +35,21 @@ class Cursecard < Card
 
       ingamedeck.update(cardable: gameboard.graveyard)
       msg = "You lost an Handitem because of Cursecard #{ingamedeck.card.title}"
-      Cursecard.broadcast_gamelog(msg, gameboard)
+      Cursecard.broadcast_gamelog(msg, gameboard) if gamelog
 
       { playeratk: playeratk, monsteratk: monsteratk }
     when 'no_help_next_fight'
       gameboard.update(asked_help: true)
 
       msg = "You can not ask for help because of Cursecard #{ingamedeck.card.title}"
-      Cursecard.broadcast_gamelog(msg, gameboard)
+      Cursecard.broadcast_gamelog(msg, gameboard) if gamelog
 
       { playeratk: playeratk, monsteratk: monsteratk }
     when 'minus_atk_next_fight'
       playeratk += ingamedeck.card.atk_points
 
       msg = "You lost #{ingamedeck.card.atk_points} because of Cursecard #{ingamedeck.card.title}"
-      Cursecard.broadcast_gamelog(msg, gameboard)
+      Cursecard.broadcast_gamelog(msg, gameboard) if gamelog
 
       { playeratk: playeratk, monsteratk: monsteratk }
     when 'lose_item_head'
@@ -61,7 +57,7 @@ class Cursecard < Card
       ingamedeck.update(cardable: gameboard.graveyard)
 
       msg = "You lost an Headitem because of Cursecard #{ingamedeck.card.title}"
-      Cursecard.broadcast_gamelog(msg, gameboard)
+      Cursecard.broadcast_gamelog(msg, gameboard) if gamelog
 
       { playeratk: playeratk, monsteratk: monsteratk }
     when 'lose_level'
@@ -69,16 +65,29 @@ class Cursecard < Card
 
       ingamedeck.update(cardable: gameboard.graveyard)
       msg = "You lost a level because of Cursecard #{ingamedeck.card.title}"
-      Cursecard.broadcast_gamelog(msg, gameboard)
+      Cursecard.broadcast_gamelog(msg, gameboard) if gamelog
 
       { playeratk: playeratk, monsteratk: monsteratk }
     when 'double_attack_double_reward'
-      gameboard.update(rewards_treasure: gameboard.rewards_treasure * 2)
+
+      pp 'am i in lmao??'
+      pp monsteratk
+      pp '******************************'
+      pp '******************************'
 
       msg = "The monster has double the attack but also double the reward because of Cursecard #{ingamedeck.card.title}"
-      Cursecard.broadcast_gamelog(msg, gameboard)
+      Cursecard.broadcast_gamelog(msg, gameboard) if gamelog
 
-      monsteratk *= 2
+      monstercard = gameboard.centercard.card
+
+      monsteratk = monstercard.atk_points * 2 if monstercard
+      pp 'updated monsteratk'
+      pp monsteratk
+
+      pp monstercard.rewards_treasure
+      pp 'updated rewards'
+      pp monstercard.rewards_treasure.to_i * 2
+      gameboard.update(rewards_treasure: monstercard.rewards_treasure.to_i * 2, monster_atk: monsteratk) if monstercard
       { playeratk: playeratk, monsteratk: monsteratk }
     else
       puts 'action not found'

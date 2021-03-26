@@ -190,12 +190,8 @@ class GameChannel < ApplicationCable::Channel
   end
 
   def no_interception
-    pp "#######################"
-    pp "in no intercept"
-    pp "#######################"
     current_user.reload
     current_user.player.update!(intercept: false)
-    pp current_user.player.intercept
     msg = "#{current_user.player.name} does not want to intercept this fight."
     @gameboard.reload
 
@@ -350,7 +346,7 @@ class GameChannel < ApplicationCable::Channel
     current_user.player.gameboard.update!(current_player: current_user.player.id)
     broadcast_to(@gameboard, { type: BOARD_UPDATE, params: Gameboard.broadcast_game_board(@gameboard.reload) })
   end
- 
+
   def develop_set_intercept_false
     @gameboard.players.each do |player|
       player.reload.update!(intercept: false)

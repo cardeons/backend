@@ -180,7 +180,7 @@ class Gameboard < ApplicationRecord
 
     gameboard.update(centercard: new_center, rewards_treasure: new_treasure)
 
-    attack_obj = attack(gameboard.reload)
+    attack_obj = attack(gameboard.reload, true)
 
     gameboard.update(success: attack_obj[:result], player_atk: attack_obj[:playeratk], monster_atk: attack_obj[:monsteratk])
 
@@ -219,7 +219,7 @@ class Gameboard < ApplicationRecord
     output
   end
 
-  def self.attack(gameboard)
+  def self.attack(gameboard, curse_log = false)
     gameboard.reload
     playerid = gameboard.current_player
     playeratkpoints = 1
@@ -243,11 +243,12 @@ class Gameboard < ApplicationRecord
       monsteratkpts += gameboard.interceptcard.cards.sum(:atk_points)
 
       player.playercurse.ingamedecks.each do |curse|
-        curse_obj = Cursecard.activate(curse, player, gameboard, playeratkpoints, monsteratkpts)
+        curse_obj = Cursecard.activate(curse, player, gameboard, playeratkpoints, monsteratkpts, curse_log)
 
         playeratkpoints = curse_obj[:playeratk]
         monsteratkpts = curse_obj[:monsteratk]
       end
+
 
       playerwin = playeratkpoints > monsteratkpts
 
