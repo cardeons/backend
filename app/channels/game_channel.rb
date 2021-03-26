@@ -38,8 +38,7 @@ class GameChannel < ApplicationCable::Channel
 
   def play_monster(params)
     # move all centercard to graveyard
-
-    if gamebaord.reload.current_player.id != current_user.player.id
+    if @gameboard.reload.current_player != current_user.player.id
       PlayerChannel.broadcast_error(current_user, 'Only the the Player whos turn it is can play a Monster')
       return
     end
