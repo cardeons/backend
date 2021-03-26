@@ -276,7 +276,7 @@ RSpec.describe GameChannel, type: :channel do
       .with(
         # should now send broadcast because all 3 players do not want to intercept
         hash_including(type: 'BOARD_UPDATE')
-      ).exactly(0).times
+      ).exactly(:once)
 
     expect(connection.current_user.player.intercept).to be_falsy
 

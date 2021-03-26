@@ -33,7 +33,7 @@ class Gameboard < ApplicationRecord
 
     gameboard = Gameboard.find(gameboard.id)
 
-    gameboard.players.each do |player|
+    gameboard.players.order(:id).each do |player|
       players_array.push(player.reload.render_player)
     end
 
@@ -126,7 +126,7 @@ class Gameboard < ApplicationRecord
 
   def self.get_next_player(gameboard)
     gameboard = Gameboard.find_by('id = ?', gameboard.id)
-    players = gameboard.players
+    players = gameboard.players.order(:id)
     current_player_id = gameboard.current_player
 
     Player.find_by('id = ?', gameboard.current_player).playercurse.ingamedecks.each do |ingamedeck|
@@ -142,7 +142,7 @@ class Gameboard < ApplicationRecord
     index_of_next_player = (index_of_player + 1) % count
 
     # get the next Player from array of players
-    next_player = gameboard.players[index_of_next_player]
+    next_player = players[index_of_next_player]
 
     # save it to gameboard
     gameboard.current_player = next_player.id
@@ -180,7 +180,7 @@ class Gameboard < ApplicationRecord
 
     gameboard.update(centercard: new_center, rewards_treasure: new_treasure)
 
-    attack_obj = attack(gameboard.reload)
+    attack_obj = attack(gameboard.reload, true)
 
     gameboard.update(success: attack_obj[:result], player_atk: attack_obj[:playeratk], monster_atk: attack_obj[:monsteratk])
 
@@ -204,7 +204,6 @@ class Gameboard < ApplicationRecord
       }
     else
       gameboard.update!(can_flee: false)
-
       Monstercard.bad_things(gameboard.centercard, gameboard)
 
       output = {
@@ -219,7 +218,7 @@ class Gameboard < ApplicationRecord
     output
   end
 
-  def self.attack(gameboard)
+  def self.attack(gameboard, curse_log = false)
     gameboard.reload
     playerid = gameboard.current_player
     playeratkpoints = 1
@@ -243,11 +242,12 @@ class Gameboard < ApplicationRecord
       monsteratkpts += gameboard.interceptcard.cards.sum(:atk_points)
 
       player.playercurse.ingamedecks.each do |curse|
-        curse_obj = Cursecard.activate(curse, player, gameboard, playeratkpoints, monsteratkpts)
+        curse_obj = Cursecard.activate(curse, player, gameboard, playeratkpoints, monsteratkpts, curse_log)
 
         playeratkpoints = curse_obj[:playeratk]
         monsteratkpts = curse_obj[:monsteratk]
       end
+
 
       playerwin = playeratkpoints > monsteratkpts
 
