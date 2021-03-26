@@ -260,8 +260,6 @@ class Gameboard < ApplicationRecord
         #   # broadcast: flee or use cards!
       end
 
-      clear_buffcards(gameboard.reload)
-
     end
 
     { result: playerwin, playeratk: playeratkpoints, monsteratk: monsteratkpts }
