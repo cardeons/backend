@@ -15,7 +15,8 @@
     }
   },
   "scripts": {
-    "precommit": "lint-staged"
+    "precommit": "lint-staged",
+    "start": "foreman start -f Procfile.dev"
   },
   "lint-staged": {
     "app/**/*.{js,es6,jsx,scss,css}": [
