@@ -156,7 +156,7 @@ class LobbyChannel < ApplicationCable::Channel
       if old_gameboard.current_player == player.id
         Gameboard.get_next_player(old_gameboard) if old_gameboard.current_player == player.id
         old_gameboard.reload
-        if old_gameboard.current_player == player.id || old_gameboard.players < 3
+        if old_gameboard.current_player == player.id || old_gameboard.players.count < 3
           old_gameboard.current_player = nil
           old_gameboard.save!
           old_gameboard.destroy!
