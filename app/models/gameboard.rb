@@ -33,7 +33,7 @@ class Gameboard < ApplicationRecord
 
     gameboard = Gameboard.find(gameboard.id)
 
-    gameboard.players.each do |player|
+    gameboard.players.order(:id).each do |player|
       players_array.push(player.reload.render_player)
     end
 
@@ -126,7 +126,7 @@ class Gameboard < ApplicationRecord
 
   def self.get_next_player(gameboard)
     gameboard = Gameboard.find_by('id = ?', gameboard.id)
-    players = gameboard.players
+    players = gameboard.players.order(:id)
     current_player_id = gameboard.current_player
 
     Player.find_by('id = ?', gameboard.current_player).playercurse.ingamedecks.each do |ingamedeck|
@@ -142,7 +142,7 @@ class Gameboard < ApplicationRecord
     index_of_next_player = (index_of_player + 1) % count
 
     # get the next Player from array of players
-    next_player = gameboard.players[index_of_next_player]
+    next_player = players[index_of_next_player]
 
     # save it to gameboard
     gameboard.current_player = next_player.id

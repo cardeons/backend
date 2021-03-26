@@ -176,7 +176,7 @@ class Monstercard < Card
       msg = "You lost 1 item because of Monstercards bad things #{ingamedeck.card.title}"
       Cursecard.broadcast_gamelog(msg)
     when 'random_card_lowest_level'
-      all_players = gameboard.players
+      all_players = gameboard.players.order(:id)
       first = true
       player_lowest_level = [player]
 
