@@ -154,7 +154,6 @@ class LobbyChannel < ApplicationCable::Channel
       # if its the current players turn get the next one in line
       old_gameboard = player.gameboard
       if old_gameboard.current_player == player.id
-        pp 'player is current_player'
         Gameboard.get_next_player(old_gameboard) if old_gameboard.current_player == player.id
         old_gameboard.reload
         if old_gameboard.current_player == player.id || old_gameboard.players < 3
