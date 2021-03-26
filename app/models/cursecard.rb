@@ -15,7 +15,7 @@ class Cursecard < Card
     end
 
     ingamedeck.update(cardable: player_to.playercurse)
-    activate(ingamedeck, player_to, gameboard) if ingamedeck.card.action == 'lose_item_head' || ingamedeck.card.action == 'lose_item_hand' || ingamedeck.card.action == 'lose_level'
+    activate(ingamedeck, player_to, gameboard, true) if ingamedeck.card.action == 'lose_item_head' || ingamedeck.card.action == 'lose_item_hand' || ingamedeck.card.action == 'lose_level'
   end
 
   def self.broadcast_gamelog(msg, gameboard)

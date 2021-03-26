@@ -18,17 +18,9 @@ class GameChannel < ApplicationCable::Channel
   end
 
   def flee
-    output = Gameboard.flee(@gameboard)
+    output = Gameboard.flee(@gameboard, current_user)
     broadcast_to(@gameboard, { type: FLEE, params: output })
-    name = current_user.name
-    msg = if output[:flee] == true
-            "Nice! #{name} rolled #{output[:value]}, #{name} managed to escape :)"
-          else
-            "Oh no! #{name} only rolled #{output[:value]}. That's a fine mess!"
-          end
 
-    log = { date: Time.new, message: msg }
-    broadcast_to(@gameboard, { type: GAME_LOG, params: log })
     @gameboard.centercard.ingamedeck&.update!(cardable: @gameboard.graveyard)
     @gameboard.ingame!
     updated_board = Gameboard.broadcast_game_board(@gameboard)

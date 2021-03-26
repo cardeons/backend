@@ -228,7 +228,7 @@ class Monstercard < Card
 
       player.update(level: 1)
 
-      msg = "You lost died because of Monstercards bad things #{ingamedeck.card.title}"
+      msg = "You died because of Monstercards bad things #{ingamedeck.card.title}"
       Cursecard.broadcast_gamelog(msg, gameboard)
     else
       puts 'action unknown :('

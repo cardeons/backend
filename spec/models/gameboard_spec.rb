@@ -212,7 +212,7 @@ RSpec.describe Gameboard, type: :model do
     Ingamedeck.create!(gameboard: gameboards(:gameboardFourPlayers), card: cards(:monstercard), cardable: gameboards(:gameboardFourPlayers).centercard)
     Player.find_by('id = ?', gameboards(:gameboardFourPlayers).current_player).update(level: 4)
 
-    flee_result = Gameboard.flee(gameboards(:gameboardFourPlayers))
+    flee_result = Gameboard.flee(gameboards(:gameboardFourPlayers), User.where(player: gameboards(:gameboardFourPlayers).current_player))
     if flee_result[:flee]
       expect(flee_result[:value] < 5).to be_truthy
       expect(Player.find_by('id = ?', gameboards(:gameboardFourPlayers).current_player).level).to eql(3)
