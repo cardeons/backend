@@ -49,4 +49,20 @@ class Handcard < ApplicationRecord
       x -= 1
     end
   end
+
+  def self.draw_one_monster(player_id, gameboard)
+    monstercards = Monstercard.all
+
+    allcards = []
+    addCardsToArray(allcards, monstercards)
+
+    player = Player.find(player_id)
+    handcard = player.handcard
+
+    x = 1
+    while x.positive?
+      Ingamedeck.create!(gameboard: gameboard, card_id: allcards[rand(allcards.size)], cardable: handcard)
+      x -= 1
+    end
+  end
 end

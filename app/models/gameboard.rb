@@ -24,7 +24,8 @@ class Gameboard < ApplicationRecord
     # pp Player.find(current_player).gameboard
     players.each do |player|
       Handcard.find_or_create_by!(player_id: player.id) # unless player.handcard
-      Handcard.draw_handcards(player.id, self)
+      Handcard.draw_handcards(player.id, self, 4)
+      Handcard.draw_one_monster(player.id, self)
     end
   end
 
