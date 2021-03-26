@@ -145,6 +145,7 @@ class GameChannel < ApplicationCable::Channel
         Handcard.draw_handcards(helping_player, @gameboard, shared_reward)
       end
       @gameboard.centercard.ingamedeck&.update!(cardable: @gameboard.graveyard)
+
       msg = "#{current_user.player.name} has killed #{@gameboard.centercard.card.title}"
       broadcast_to(@gameboard, { type: GAME_LOG, params: { date: Time.new, message: msg } })
 
@@ -154,7 +155,7 @@ class GameChannel < ApplicationCable::Channel
       @gameboard.ingame!
       broadcast_to(@gameboard, { type: BOARD_UPDATE, params: Gameboard.broadcast_game_board(@gameboard) })
     end
-
+    Gameboard.clear_buffcards(@gameboard)
     PlayerChannel.broadcast_to(current_user, { type: 'ERROR', params: { message: 'Playerattack too low' } }) unless result[:result]
 
     # updated_board = Gameboard.broadcast_game_board(@gameboard)
@@ -207,8 +208,10 @@ class GameChannel < ApplicationCable::Channel
   end
 
   def no_interception
+    current_user.reload
     current_user.player.update!(intercept: false)
     msg = "#{current_user.player.name} does not want to intercept this fight."
+    @gameboard.reload
 
     if @gameboard.players.where('intercept = ?', false).count == 3
       msg = 'Nobody wants to intercept this turn.'
@@ -219,9 +222,12 @@ class GameChannel < ApplicationCable::Channel
         player.update!(intercept: false)
       end
 
-      broadcast_to(@gameboard, { type: GAME_LOG, params: { date: Time.new, message: msg } })
-      broadcast_to(@gameboard, { type: BOARD_UPDATE, params: Gameboard.broadcast_game_board(@gameboard) })
     end
+
+    @gameboard.reload
+
+    broadcast_to(@gameboard, { type: GAME_LOG, params: { date: Time.new, message: msg } })
+    broadcast_to(@gameboard, { type: BOARD_UPDATE, params: Gameboard.broadcast_game_board(@gameboard) })
   end
 
   def help_call(params)
@@ -359,6 +365,14 @@ class GameChannel < ApplicationCable::Channel
     broadcast_to(@gameboard, { type: BOARD_UPDATE, params: Gameboard.broadcast_game_board(@gameboard.reload) })
   end
 
+  def develop_set_intercept_false
+    @gameboard.players.each do |player|
+      player.reload.update!(intercept: false)
+    end
+
+    broadcast_to(@gameboard, { type: BOARD_UPDATE, params: Gameboard.broadcast_game_board(@gameboard.reload) })
+  end
+
   def develop_set_myself_as_winner
     player = Player.find_by('user_id = ?', current_user.id)
 
@@ -418,6 +432,6 @@ class GameChannel < ApplicationCable::Channel
     gameboard.update!(intercept_timestamp: timestamp)
 
     # sets Intercept Timer
-    CheckIntercepttimerJob.set(wait: 10.seconds).perform_later(@gameboard, timestamp, 15)
+    CheckIntercepttimerJob.set(wait: 40.seconds).perform_later(@gameboard, timestamp, 45)
   end
 end

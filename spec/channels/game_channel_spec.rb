@@ -276,7 +276,7 @@ RSpec.describe GameChannel, type: :channel do
       .with(
         # should now send broadcast because all 3 players do not want to intercept
         hash_including(type: 'BOARD_UPDATE')
-      ).exactly(0).times
+      ).exactly(:once)
 
     expect(connection.current_user.player.intercept).to be_falsy
 
@@ -969,5 +969,98 @@ RSpec.describe GameChannel, type: :channel do
 
     # player is still referenced in gameboard, gets deleted
     # end
+  end
+
+
+  it 'test if buffcards get removed after attack is over' do
+    gameboards(:gameboardFourPlayers).initialize_game_board
+    gameboards(:gameboardFourPlayers).players.each(&:init_player)
+
+    stub_connection current_user: users(:userFour)
+    subscribe
+
+    Gameboard.draw_door_card(gameboards(:gameboardFourPlayers))
+
+    player = Player.find_by('id = ?', gameboards(:gameboardFourPlayers).current_player)
+    unique_card = player.handcard.ingamedecks.create(card: cards(:buffcard), gameboard: gameboards(:gameboardFourPlayers))
+    unique_card2 = player.handcard.ingamedecks.create(card: cards(:buffcard3), gameboard: gameboards(:gameboardFourPlayers))
+
+    ## buff monster two times
+    perform('intercept', {
+              unique_card_id: player.handcard.ingamedecks.find_by('id=?', unique_card.id),
+              to: 'center_card'
+            })
+
+    perform('intercept', {
+              unique_card_id: player.handcard.ingamedecks.find_by('id=?', unique_card2.id),
+              to: 'center_card'
+            })
+
+    unique_card3 = player.handcard.ingamedecks.create(card: cards(:buffcard2), gameboard: gameboards(:gameboardFourPlayers))
+    unique_card4 = player.handcard.ingamedecks.create(card: cards(:buffcard5), gameboard: gameboards(:gameboardFourPlayers))
+
+    ## buff player two times
+    perform('intercept', {
+              unique_card_id: player.handcard.ingamedecks.find_by('id=?', unique_card3.id),
+              to: 'current_player'
+            })
+
+    perform('intercept', {
+              unique_card_id: player.handcard.ingamedecks.find_by('id=?', unique_card4.id),
+              to: 'current_player'
+            })
+
+    perform('attack', {})
+
+    expect(Ingamedeck.find_by('id=?', unique_card.id).cardable_type).to eql('Graveyard')
+    expect(Ingamedeck.find_by('id=?', unique_card2.id).cardable_type).to eql('Graveyard')
+    expect(Ingamedeck.find_by('id=?', unique_card3.id).cardable_type).to eql('Graveyard')
+    expect(Ingamedeck.find_by('id=?', unique_card4.id).cardable_type).to eql('Graveyard')
+  end
+
+  it 'test if buffcards get removed after flee is over' do
+    gameboards(:gameboardFourPlayers).initialize_game_board
+    gameboards(:gameboardFourPlayers).players.each(&:init_player)
+
+    stub_connection current_user: users(:userFour)
+    subscribe
+
+    Gameboard.draw_door_card(gameboards(:gameboardFourPlayers))
+
+    player = Player.find_by('id = ?', gameboards(:gameboardFourPlayers).current_player)
+    unique_card = player.handcard.ingamedecks.create(card: cards(:buffcard), gameboard: gameboards(:gameboardFourPlayers))
+    unique_card2 = player.handcard.ingamedecks.create(card: cards(:buffcard3), gameboard: gameboards(:gameboardFourPlayers))
+
+    ## buff monster two times
+    perform('intercept', {
+              unique_card_id: player.handcard.ingamedecks.find_by('id=?', unique_card.id),
+              to: 'center_card'
+            })
+
+    perform('intercept', {
+              unique_card_id: player.handcard.ingamedecks.find_by('id=?', unique_card2.id),
+              to: 'center_card'
+            })
+
+    unique_card3 = player.handcard.ingamedecks.create(card: cards(:buffcard2), gameboard: gameboards(:gameboardFourPlayers))
+    unique_card4 = player.handcard.ingamedecks.create(card: cards(:buffcard5), gameboard: gameboards(:gameboardFourPlayers))
+
+    ## buff player two times
+    perform('intercept', {
+              unique_card_id: player.handcard.ingamedecks.find_by('id=?', unique_card3.id),
+              to: 'current_player'
+            })
+
+    perform('intercept', {
+              unique_card_id: player.handcard.ingamedecks.find_by('id=?', unique_card4.id),
+              to: 'current_player'
+            })
+
+    perform('flee', {})
+
+    expect(Ingamedeck.find_by('id=?', unique_card.id).cardable_type).to eql('Graveyard')
+    expect(Ingamedeck.find_by('id=?', unique_card2.id).cardable_type).to eql('Graveyard')
+    expect(Ingamedeck.find_by('id=?', unique_card3.id).cardable_type).to eql('Graveyard')
+    expect(Ingamedeck.find_by('id=?', unique_card4.id).cardable_type).to eql('Graveyard')
   end
 end
