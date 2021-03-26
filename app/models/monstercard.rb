@@ -168,7 +168,7 @@ class Monstercard < Card
     when 'lose_item'
       lose_item(player, gameboard)
     when 'random_card_lowest_level'
-      all_players = gameboard.players
+      all_players = gameboard.players.order(:id)
       first = true
       player_lowest_level = [player]
 
