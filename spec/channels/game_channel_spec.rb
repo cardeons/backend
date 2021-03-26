@@ -897,6 +897,27 @@ RSpec.describe GameChannel, type: :channel do
       ).exactly(:once)
   end
 
+  it 'player receives error if using something else than a monstercard' do
+    gameboards(:gameboardFourPlayers).initialize_game_board
+    gameboards(:gameboardFourPlayers).players.each(&:init_player)
+
+    # set myself as current player
+    gameboards(:gameboardFourPlayers).update!(current_player: users(:userThree).player.id)
+
+    stub_connection current_user: users(:userThree)
+    subscribe
+
+    ingamedeck = Ingamedeck.create!(gameboard: gameboards(:gameboardFourPlayers), card: cards(:buffcard), cardable: users(:userThree).player.handcard)
+
+    # expects that it is not user three turn
+    expect do
+      perform('play_monster', { unique_card_id: ingamedeck.id })
+    end.to have_broadcasted_to(PlayerChannel.broadcasting_for(connection.current_user))
+      .with(
+        hash_including(type: 'ERROR', params: { message: "You can't fight against this card!" })
+      ).exactly(:once)
+  end
+
   it 'unsubscribe' do
     # gameboards(:gameboardFourPlayers).initialize_game_board
     # gameboards(:gameboardFourPlayers).players.each(&:init_player)
