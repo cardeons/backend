@@ -144,6 +144,8 @@ class Gameboard < ApplicationRecord
     # get the next Player from array of players
     next_player = players[index_of_next_player]
 
+    gameboard.update(asked_help: false, helping_player: nil, helping_player_atk: 0)
+
     # save it to gameboard
     gameboard.current_player = next_player.id
     gameboard.save!
@@ -191,7 +193,7 @@ class Gameboard < ApplicationRecord
     gameboard.centercard.card.title
   end
 
-  def self.flee(gameboard)
+  def self.flee(gameboard, current_user)
     roll = rand(1..6)
 
     output = {}
@@ -200,7 +202,8 @@ class Gameboard < ApplicationRecord
       gameboard.update!(can_flee: true)
       output = {
         flee: true,
-        value: roll
+        value: roll,
+        player_name: current_user.name
       }
     else
       gameboard.update!(can_flee: false)
@@ -208,7 +211,8 @@ class Gameboard < ApplicationRecord
 
       output = {
         flee: false,
-        value: roll
+        value: roll,
+        player_name: current_user.name
       }
     end
 
@@ -247,7 +251,6 @@ class Gameboard < ApplicationRecord
         playeratkpoints = curse_obj[:playeratk]
         monsteratkpts = curse_obj[:monsteratk]
       end
-
 
       playerwin = playeratkpoints > monsteratkpts
 

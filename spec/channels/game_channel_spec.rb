@@ -31,15 +31,11 @@ RSpec.describe GameChannel, type: :channel do
     expect do
       perform('flee', {})
     end
-      .to have_broadcasted_to("game:#{users(:usernorbert).player.gameboard.to_gid_param}")
+      .to have_broadcasted_to("game:#{connection.current_user.player.gameboard.to_gid_param}")
       .with(
-        type: 'FLEE', params: { flee: true, value: 6 }
+        hash_including(type: 'FLEE')
       ).exactly(:once)
-      .and have_broadcasted_to("game:#{users(:usernorbert).player.gameboard.to_gid_param}")
-      .with(
-        hash_including(type: 'GAME_LOG')
-      ).exactly(:once)
-      .and have_broadcasted_to("game:#{users(:usernorbert).player.gameboard.to_gid_param}")
+      .and have_broadcasted_to("game:#{connection.current_user.player.gameboard.to_gid_param}")
       .with(
         hash_including(type: 'BOARD_UPDATE')
       ).exactly(:once)
@@ -970,7 +966,6 @@ RSpec.describe GameChannel, type: :channel do
     # player is still referenced in gameboard, gets deleted
     # end
   end
-
 
   it 'test if buffcards get removed after attack is over' do
     gameboards(:gameboardFourPlayers).initialize_game_board
