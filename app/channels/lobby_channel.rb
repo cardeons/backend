@@ -153,8 +153,19 @@ class LobbyChannel < ApplicationCable::Channel
     old_players.each do |player|
       # if its the current players turn get the next one in line
       old_gameboard = player.gameboard
-      Gameboard.get_next_player(old_gameboard) if old_gameboard.current_player == player.id
-      player.destroy
+      if old_gameboard.current_player == player.id
+        Gameboard.get_next_player(old_gameboard) if old_gameboard.current_player == player.id
+        old_gameboard.reload
+        if old_gameboard.current_player == player.id || old_gameboard.players < 3
+          old_gameboard.current_player = nil
+          old_gameboard.save!
+          old_gameboard.destroy!
+          next
+        end
+        # just set current_player to il for now
+        # old_gameboard.current_player = nil
+      end
+      player.destroy!
     end
   end
 end
