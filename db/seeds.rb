@@ -689,7 +689,7 @@ curse8 = Cursecard.create!(
 # #Buffcards
 
 buffcard = Buffcard.create!(
-  draw_chance: 10,
+  draw_chance: 6,
   title: 'Buffing yourself up, eh?',
   description: '<p>You are getting stronger and stronger. Gain 2 extra attack points</p>',
   image: '/icon/Buff.png',
@@ -698,7 +698,7 @@ buffcard = Buffcard.create!(
 )
 
 buffcard2 = Buffcard.create!(
-  draw_chance: 10,
+  draw_chance: 6,
   title: 'Slippery slope',
   description: '<p>The monster slipped, it looses 5 attack points.</p>',
   image: '/icon/Buff.png',
@@ -707,7 +707,7 @@ buffcard2 = Buffcard.create!(
 )
 
 buffcard3 = Buffcard.create!(
-  draw_chance: 10,
+  draw_chance: 6,
   title: 'Extremely cool potion',
   description: '<p>+5 for any side!</p>',
   image: '/icon/Buff.png',
@@ -716,7 +716,7 @@ buffcard3 = Buffcard.create!(
 )
 
 buffcard4 = Buffcard.create!(
-  draw_chance: 10,
+  draw_chance: 6,
   title: 'Yeet',
   description: '<p>You send the monster to the shadow realm. You do not get any rewards or levels!</p>',
   image: '/icon/Buff.png',
@@ -725,7 +725,7 @@ buffcard4 = Buffcard.create!(
 )
 
 buffcard5 = Buffcard.create!(
-  draw_chance: 10,
+  draw_chance: 6,
   title: 'Pot of Greed',
   description: '<p>Time for a duel: Draw two additional cards!</p>',
   image: '/icon/Buff.png',
@@ -734,7 +734,7 @@ buffcard5 = Buffcard.create!(
 )
 
 buffcard6 = Buffcard.create!(
-  draw_chance: 10,
+  draw_chance: 6,
   title: 'Chloroform',
   description: '<p>You can force a chosen player to help you!</p>',
   image: '/icon/Buff.png',
@@ -743,7 +743,7 @@ buffcard6 = Buffcard.create!(
 )
 
 buffcard7 = Buffcard.create!(
-  draw_chance: 10,
+  draw_chance: 6,
   title: 'Greater potion of Awesomeness',
   description: '<p>+6 for any side</p>',
   image: '/icon/Buff.png',
@@ -752,7 +752,7 @@ buffcard7 = Buffcard.create!(
 )
 
 buffcard8 = Buffcard.create!(
-  draw_chance: 10,
+  draw_chance: 6,
   title: 'Invisibility potion',
   description: '<p>You can flee without a problem!</p>',
   image: '/icon/Buff.png',
@@ -761,7 +761,7 @@ buffcard8 = Buffcard.create!(
 )
 
 buffcard9 = Buffcard.create!(
-  draw_chance: 10,
+  draw_chance: 6,
   title: 'Lick',
   description: '<p>You paralyzed the monster, it hurts itself and loses 3 ATP</p>',
   image: '/icon/Buff.png',
@@ -770,7 +770,7 @@ buffcard9 = Buffcard.create!(
 )
 
 buffcard10 = Buffcard.create!(
-  draw_chance: 10,
+  draw_chance: 6,
   title: 'Over 9000!',
   description: '<p>Your hair starts glowing! +5 for any side!</p>',
   image: '/icon/Buff.png',
