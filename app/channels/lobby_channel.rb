@@ -156,9 +156,15 @@ class LobbyChannel < ApplicationCable::Channel
       if old_gameboard.current_player == player.id
         pp 'player is current_player'
         Gameboard.get_next_player(old_gameboard) if old_gameboard.current_player == player.id
+        old_gameboard.reload
+        if old_gameboard.current_player == player.id || old_gameboard.players < 3
+          old_gameboard.current_player = nil
+          old_gameboard.save!
+          old_gameboard.destroy!
+          next
+        end
         # just set current_player to il for now
-        old_gameboard.current_player = nil
-        old_gameboard.save!
+        # old_gameboard.current_player = nil
       end
       player.destroy!
     end
