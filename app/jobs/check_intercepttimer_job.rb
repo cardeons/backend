@@ -3,7 +3,7 @@
 class CheckIntercepttimerJob < ApplicationJob
   queue_as :default
 
-  def perform(gameboard, timestamp, intercept_delay = 15)
+  def perform(gameboard, timestamp, intercept_delay = 45)
     gameboard.reload
 
     # TODO: Prevent Race Conditions!!!
