@@ -350,6 +350,14 @@ class GameChannel < ApplicationCable::Channel
     current_user.player.gameboard.update!(current_player: current_user.player.id)
     broadcast_to(@gameboard, { type: BOARD_UPDATE, params: Gameboard.broadcast_game_board(@gameboard.reload) })
   end
+ 
+  def develop_set_intercept_false
+    @gameboard.players.each do |player|
+      player.reload.update!(intercept: false)
+    end
+
+    broadcast_to(@gameboard, { type: BOARD_UPDATE, params: Gameboard.broadcast_game_board(@gameboard.reload) })
+  end
 
   def develop_set_myself_as_winner
     player = Player.find_by('user_id = ?', current_user.id)

@@ -19,6 +19,10 @@ class Cursecard < Card
   end
 
   def self.broadcast_gamelog(msg, gameboard)
+    pp '222222222222222222222222222222222222222222'
+    pp '222222222222222222222222222222222222222222'
+    pp msg
+    pp "222222222222222222222222222222222222222222"
     GameChannel.broadcast_to(gameboard, { type: 'GAME_LOG', params: { date: Time.new, message: msg } })
   end
 
