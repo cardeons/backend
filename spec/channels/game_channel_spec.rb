@@ -1058,4 +1058,18 @@ RSpec.describe GameChannel, type: :channel do
     expect(Ingamedeck.find_by('id=?', unique_card3.id).cardable_type).to eql('Graveyard')
     expect(Ingamedeck.find_by('id=?', unique_card4.id).cardable_type).to eql('Graveyard')
   end
+  it 'user is set to inactive if he unsubscribes from the game_channel' do
+    gameboards(:gameboardFourPlayers).initialize_game_board
+    gameboards(:gameboardFourPlayers).players.each(&:init_player)
+
+    stub_connection current_user: users(:userFour)
+    subscribe
+
+    # player is set to inactive = false on subscribe
+    expect(users(:userFour).player.inactive).to be_falsy
+    unsubscribe
+
+    # player is set to inactive = true on unsubscribe
+    expect(users(:userFour).player.inactive).to be_truthy
+  end
 end

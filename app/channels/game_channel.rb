@@ -10,6 +10,7 @@ class GameChannel < ApplicationCable::Channel
 
   def subscribed
     @gameboard = current_user.player.gameboard
+    current_user.player.update!(inactive: false)
     stream_for @gameboard
 
     broadcast_to(@gameboard, { type: DEBUG, params: { message: "you are now subscribed to the game_channel #{@gameboard.id}" } })
@@ -376,6 +377,9 @@ class GameChannel < ApplicationCable::Channel
   end
 
   def unsubscribed
+
+
+    current_user.player.update!(inactive: true)
     # Any cleanup needed when channel is unsubscribed
     # pp current_user.playerpp
     # pp current_user.player
