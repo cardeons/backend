@@ -19,7 +19,7 @@ RSpec.describe Monstercard, type: :model do
     gameboards(:gameboardFourPlayers).initialize_game_board
     gameboards(:gameboardFourPlayers).players.each(&:init_player)
 
-    current_player = Player.find(gameboards(:gameboardFourPlayers).current_player)
+    current_player = gameboards(:gameboardFourPlayers).current_player
 
     buff = Ingamedeck.create!(gameboard: gameboards(:gameboardFourPlayers), card: cards(:buffcard), cardable: current_player.playercurse)
     gameboards(:gameboardFourPlayers).update(player_atk: 5)
@@ -31,7 +31,7 @@ RSpec.describe Monstercard, type: :model do
     gameboards(:gameboardFourPlayers).initialize_game_board
     gameboards(:gameboardFourPlayers).players.each(&:init_player)
 
-    current_player = Player.find(gameboards(:gameboardFourPlayers).current_player)
+    current_player = gameboards(:gameboardFourPlayers).current_player
 
     buff = Ingamedeck.create!(gameboard: gameboards(:gameboardFourPlayers), card: cards(:buffcard2), cardable: current_player.playercurse)
     gameboards(:gameboardFourPlayers).update(monster_atk: 15)
@@ -43,7 +43,7 @@ RSpec.describe Monstercard, type: :model do
     gameboards(:gameboardFourPlayers).initialize_game_board
     gameboards(:gameboardFourPlayers).players.each(&:init_player)
 
-    current_player = Player.find(gameboards(:gameboardFourPlayers).current_player)
+    current_player = gameboards(:gameboardFourPlayers).current_player
 
     buff = Ingamedeck.create!(gameboard: gameboards(:gameboardFourPlayers), card: cards(:buffcard3), cardable: current_player.playercurse)
     expect(gameboards(:gameboardFourPlayers).can_flee).to eql(false)
@@ -55,7 +55,7 @@ RSpec.describe Monstercard, type: :model do
     gameboards(:gameboardFourPlayers).initialize_game_board
     gameboards(:gameboardFourPlayers).players.each(&:init_player)
 
-    current_player = Player.find(gameboards(:gameboardFourPlayers).current_player)
+    current_player = gameboards(:gameboardFourPlayers).current_player
 
     buff = Ingamedeck.create!(gameboard: gameboards(:gameboardFourPlayers), card: cards(:buffcard6), cardable: current_player.playercurse)
     expect(gameboards(:gameboardFourPlayers).can_flee).to eql(false)
@@ -67,7 +67,7 @@ RSpec.describe Monstercard, type: :model do
     gameboards(:gameboardFourPlayers).initialize_game_board
     gameboards(:gameboardFourPlayers).players.each(&:init_player)
 
-    current_player = Player.find(gameboards(:gameboardFourPlayers).current_player)
+    current_player = gameboards(:gameboardFourPlayers).current_player
 
     buff = Ingamedeck.create!(gameboard: gameboards(:gameboardFourPlayers), card: cards(:buffcard4), cardable: current_player.playercurse)
     expect(current_player.handcard.ingamedecks.count).to eql(5)
@@ -79,7 +79,7 @@ RSpec.describe Monstercard, type: :model do
     gameboards(:gameboardFourPlayers).initialize_game_board
     gameboards(:gameboardFourPlayers).players.each(&:init_player)
 
-    current_player = Player.find(gameboards(:gameboardFourPlayers).current_player)
+    current_player = gameboards(:gameboardFourPlayers).current_player
     gameboards(:gameboardFourPlayers).update(helping_player: 3, helping_player_atk: 0)
 
     buff = Ingamedeck.create!(gameboard: gameboards(:gameboardFourPlayers), card: cards(:buffcard5), cardable: current_player.playercurse)

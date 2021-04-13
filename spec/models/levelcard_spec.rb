@@ -59,7 +59,7 @@ RSpec.describe Levelcard, type: :model do
     gameboards(:gameboardFourPlayers).initialize_game_board
     gameboards(:gameboardFourPlayers).players.each(&:init_player)
 
-    current_player = Player.find(gameboards(:gameboardFourPlayers).current_player)
+    current_player = gameboards(:gameboardFourPlayers).current_player
     levelcard = Ingamedeck.create!(gameboard: gameboards(:gameboardFourPlayers), card: subject, cardable: current_player.playercurse)
 
     expect(current_player.level).to eql(1)
@@ -71,7 +71,7 @@ RSpec.describe Levelcard, type: :model do
     gameboards(:gameboardFourPlayers).initialize_game_board
     gameboards(:gameboardFourPlayers).players.each(&:init_player)
 
-    current_player = Player.find(gameboards(:gameboardFourPlayers).current_player)
+    current_player = gameboards(:gameboardFourPlayers).current_player
     current_player.update(level: 4)
     levelcard = Ingamedeck.create!(gameboard: gameboards(:gameboardFourPlayers), card: subject, cardable: current_player.playercurse)
 

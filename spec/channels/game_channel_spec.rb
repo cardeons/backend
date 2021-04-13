@@ -26,7 +26,7 @@ RSpec.describe GameChannel, type: :channel do
 
   it 'test if flee broadcasts to all players' do
     subscribe
-    connection.current_user.player.gameboard.update(current_player: players(:singleplayer).id)
+    connection.current_user.player.gameboard.update(current_player: players(:singleplayer))
 
     expect do
       perform('flee', {})
@@ -587,7 +587,7 @@ RSpec.describe GameChannel, type: :channel do
     gameboards(:gameboardFourPlayers).players.each(&:init_player)
     # assign player to this user
     users(:one).player = gameboards(:gameboardFourPlayers).players.first
-    gameboards(:gameboardFourPlayers).update(current_player: 1)
+    gameboards(:gameboardFourPlayers).update(current_player: users(:one).player)
     stub_connection current_user: users(:one)
     subscribe
 
@@ -655,7 +655,7 @@ RSpec.describe GameChannel, type: :channel do
     gameboards(:gameboardFourPlayers).players.each(&:init_player)
     # assign player to this user
     users(:one).player = gameboards(:gameboardFourPlayers).players.first
-    gameboards(:gameboardFourPlayers).update(current_player: 5)
+    gameboards(:gameboardFourPlayers).update(current_player: players(:playerFour))
     stub_connection current_user: users(:one)
     subscribe
 
@@ -877,7 +877,7 @@ RSpec.describe GameChannel, type: :channel do
     gameboards(:gameboardFourPlayers).initialize_game_board
     gameboards(:gameboardFourPlayers).players.each(&:init_player)
 
-    gameboards(:gameboardFourPlayers).update!(current_player: users(:userFour).player.id)
+    gameboards(:gameboardFourPlayers).update!(current_player: users(:userFour).player)
 
     stub_connection current_user: users(:userThree)
     subscribe
@@ -898,7 +898,7 @@ RSpec.describe GameChannel, type: :channel do
     gameboards(:gameboardFourPlayers).players.each(&:init_player)
 
     # set myself as current player
-    gameboards(:gameboardFourPlayers).update!(current_player: users(:userThree).player.id)
+    gameboards(:gameboardFourPlayers).update!(current_player: users(:userThree).player)
 
     stub_connection current_user: users(:userThree)
     subscribe
@@ -976,7 +976,7 @@ RSpec.describe GameChannel, type: :channel do
 
     Gameboard.draw_door_card(gameboards(:gameboardFourPlayers))
 
-    player = Player.find_by('id = ?', gameboards(:gameboardFourPlayers).current_player)
+    player = gameboards(:gameboardFourPlayers).current_player
     unique_card = player.handcard.ingamedecks.create(card: cards(:buffcard), gameboard: gameboards(:gameboardFourPlayers))
     unique_card2 = player.handcard.ingamedecks.create(card: cards(:buffcard3), gameboard: gameboards(:gameboardFourPlayers))
 
@@ -1022,7 +1022,7 @@ RSpec.describe GameChannel, type: :channel do
 
     Gameboard.draw_door_card(gameboards(:gameboardFourPlayers))
 
-    player = Player.find_by('id = ?', gameboards(:gameboardFourPlayers).current_player)
+    player = gameboards(:gameboardFourPlayers).current_player
     unique_card = player.handcard.ingamedecks.create(card: cards(:buffcard), gameboard: gameboards(:gameboardFourPlayers))
     unique_card2 = player.handcard.ingamedecks.create(card: cards(:buffcard3), gameboard: gameboards(:gameboardFourPlayers))
 

@@ -51,7 +51,7 @@ RSpec.describe Gameboard, type: :model do
 
   it 'player four with id 5 should be current player because he was the last to join' do
     gameboards(:gameboardFourPlayers).initialize_game_board
-    expect(gameboards(:gameboardFourPlayers).current_player).to eq 5
+    expect(gameboards(:gameboardFourPlayers).current_player).to eq players(:playerFour)
   end
 
   it 'gameboard should have a graveyard' do
@@ -96,7 +96,7 @@ RSpec.describe Gameboard, type: :model do
     centercard = (Gameboard.render_card_from_id(gameboards(:gameboardFourPlayers).centercard.ingamedeck.id) if gameboards(:gameboardFourPlayers).centercard.ingamedeck)
     gameboard_obj = {
       gameboard_id: gameboards(:gameboardFourPlayers).id,
-      current_player: gameboards(:gameboardFourPlayers).current_player,
+      current_player: gameboards(:gameboardFourPlayers).current_player.id,
       center_card: centercard,
       interceptcards: [],
       player_interceptcards: [],
@@ -210,12 +210,12 @@ RSpec.describe Gameboard, type: :model do
     gameboards(:gameboardFourPlayers).players.each(&:init_player)
 
     Ingamedeck.create!(gameboard: gameboards(:gameboardFourPlayers), card: cards(:monstercard), cardable: gameboards(:gameboardFourPlayers).centercard)
-    Player.find_by('id = ?', gameboards(:gameboardFourPlayers).current_player).update(level: 4)
+    gameboards(:gameboardFourPlayers).current_player.update(level: 4)
 
     flee_result = Gameboard.flee(gameboards(:gameboardFourPlayers), User.where(player: gameboards(:gameboardFourPlayers).current_player))
     if flee_result[:flee]
       expect(flee_result[:value] >= 5).to be_truthy
-      expect(Player.find_by('id = ?', gameboards(:gameboardFourPlayers).current_player).level).to eql(4)
+      expect(gameboards(:gameboardFourPlayers).current_player.level).to eql(4)
     end
     expect(gameboards(:gameboardFourPlayers).can_flee).to eql(flee_result[:flee])
   end
@@ -236,7 +236,7 @@ RSpec.describe Gameboard, type: :model do
     gameboards(:gameboardFourPlayers).initialize_game_board
     gameboards(:gameboardFourPlayers).players.each(&:init_player)
 
-    player = Player.find_by('id = ?', gameboards(:gameboardFourPlayers).current_player)
+    player = gameboards(:gameboardFourPlayers).current_player
     Ingamedeck.create!(gameboard: gameboards(:gameboardFourPlayers), card: cards(:cursecard), cardable: player.playercurse)
     Ingamedeck.create!(gameboard: gameboards(:gameboardFourPlayers), card: cards(:cursecard), cardable: player.playercurse)
     Ingamedeck.create!(gameboard: gameboards(:gameboardFourPlayers), card: cards(:cursecard), cardable: player.playercurse)
@@ -251,7 +251,7 @@ RSpec.describe Gameboard, type: :model do
     gameboards(:gameboardFourPlayers).initialize_game_board
     gameboards(:gameboardFourPlayers).players.each(&:init_player)
 
-    player = Player.find_by('id = ?', gameboards(:gameboardFourPlayers).current_player)
+    player = gameboards(:gameboardFourPlayers).current_player
     Ingamedeck.create!(gameboard: gameboards(:gameboardFourPlayers), card: cards(:cursecard), cardable: player.playercurse)
     Ingamedeck.create!(gameboard: gameboards(:gameboardFourPlayers), card: cards(:cursecard5), cardable: player.playercurse)
     Ingamedeck.create!(gameboard: gameboards(:gameboardFourPlayers), card: cards(:cursecard), cardable: player.playercurse)

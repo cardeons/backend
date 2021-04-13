@@ -30,7 +30,7 @@ class GameChannel < ApplicationCable::Channel
 
   def play_monster(params)
     # move all centercard to graveyard
-    if @gameboard.reload.current_player != current_user.player.id
+    if @gameboard.reload.current_player != current_user.player
       PlayerChannel.broadcast_error(current_user, 'Only the the Player whos turn it is can play a Monster')
       return
     end
@@ -130,7 +130,7 @@ class GameChannel < ApplicationCable::Channel
       shared_reward = @gameboard.shared_reward
       current_player_treasure = rewards - shared_reward
 
-      Handcard.draw_handcards(@gameboard.current_player, @gameboard, current_player_treasure)
+      Handcard.draw_handcards(@gameboard.current_player.id, @gameboard, current_player_treasure)
       # TODO: add helping player to gameboard? give treasures to helping player
       if @gameboard.helping_player
         helping_player = @gameboard.helping_player
@@ -228,7 +228,7 @@ class GameChannel < ApplicationCable::Channel
     helping_player_id = helping_player.id
     @gameboard = @gameboard.reload
 
-    unless current_user.player.id == @gameboard.current_player
+    unless current_user.player == @gameboard.current_player
       PlayerChannel.broadcast_to(current_user, { type: 'ERROR', params: { message: "It's not your round, you can't ask for help..." } })
       return
     end
@@ -353,7 +353,7 @@ class GameChannel < ApplicationCable::Channel
   end
 
   def develop_set_myself_as_current_player
-    current_user.player.gameboard.update!(current_player: current_user.player.id)
+    current_user.player.gameboard.update!(current_player: current_user.player)
     broadcast_to(@gameboard, { type: BOARD_UPDATE, params: Gameboard.broadcast_game_board(@gameboard.reload) })
   end
 
