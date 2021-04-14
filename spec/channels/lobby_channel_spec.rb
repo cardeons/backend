@@ -134,4 +134,17 @@ RSpec.describe LobbyChannel, type: :channel do
 
     expect(users(:one).player.gameboard.players.size).to eql(4)
   end
+
+  it 'player is kicked from game if he unsubscribes in lobby' do
+    # user has no player
+    expect(users(:one).player).to be_falsy
+    stub_connection current_user: users(:one)
+    subscribe(testplayers: 0)
+
+    expect(users(:one).player).to be_truthy
+    unsubscribe
+    users(:one).reload
+    expect(users(:one).player).to be_falsy
+
+  end
 end

@@ -32,8 +32,6 @@ class LobbyChannel < ApplicationCable::Channel
 
     gameboard.update!(current_player: player)
 
-    # TODO: only for testing otherwise false
-
     @gameboard = gameboard
 
     # TODO: Remove after testing i guesss
@@ -62,6 +60,13 @@ class LobbyChannel < ApplicationCable::Channel
 
   def unsubscribed
     # Any cleanup needed when channel is unsubscribed
+    if @gameboard.reload.lobby?
+      current_user.player.destroy!
+      # pp current_user.player.id
+      # Player.destroy(current_user.player.id)
+      # pp current_user.player.reload
+      broadcast_to(@gameboard, { type: 'DEBUG', params: { message: 'User leaved the lobby and got destroyed' } })
+    end
   end
 
   private
