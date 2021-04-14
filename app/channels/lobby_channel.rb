@@ -30,6 +30,8 @@ class LobbyChannel < ApplicationCable::Channel
 
     player.init_player(params)
 
+    gameboard.update!(current_player: player)
+
     # TODO: only for testing otherwise false
 
     @gameboard = gameboard
@@ -53,8 +55,6 @@ class LobbyChannel < ApplicationCable::Channel
       broadcast_to(@gameboard, { type: 'DEBUG', params: { message: 'Lobby is full start with game subscribe to Player and GameChannel' } })
 
       @gameboard.initialize_game_board
-
-      gameboard.update!(current_player: player.id)
 
       broadcast_to(@gameboard, { type: 'START_GAME', params: { game_id: @gameboard.id } })
     end
@@ -153,10 +153,10 @@ class LobbyChannel < ApplicationCable::Channel
     old_players.each do |player|
       # if its the current players turn get the next one in line
       old_gameboard = player.gameboard
-      if old_gameboard.current_player == player.id
-        Gameboard.get_next_player(old_gameboard) if old_gameboard.current_player == player.id
+      if old_gameboard.current_player == player
+        Gameboard.get_next_player(old_gameboard) if old_gameboard.current_player == player
         old_gameboard.reload
-        if old_gameboard.current_player == player.id || old_gameboard.players.count < 3
+        if old_gameboard.current_player == player || old_gameboard.players.count < 3
           old_gameboard.current_player = nil
           old_gameboard.save!
           old_gameboard.destroy!

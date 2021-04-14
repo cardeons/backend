@@ -328,7 +328,7 @@ RSpec.describe Monstercard, type: :model do
     gameboards(:gameboardFourPlayers).initialize_game_board
     gameboards(:gameboardFourPlayers).players.each(&:init_player)
 
-    current_player = Player.find(gameboards(:gameboardFourPlayers).current_player)
+    current_player = gameboards(:gameboardFourPlayers).current_player
     current_player.update(level: 3)
     monster = Ingamedeck.create!(gameboard: gameboards(:gameboardFourPlayers), card: cards(:monstercard), cardable: current_player.playercurse)
 
@@ -341,7 +341,7 @@ RSpec.describe Monstercard, type: :model do
     gameboards(:gameboardFourPlayers).initialize_game_board
     gameboards(:gameboardFourPlayers).players.each(&:init_player)
 
-    current_player = Player.find(gameboards(:gameboardFourPlayers).current_player)
+    current_player = gameboards(:gameboardFourPlayers).current_player
     current_player.update(level: 3)
     monster = Ingamedeck.create!(gameboard: gameboards(:gameboardFourPlayers), card: cards(:monstercard2), cardable: current_player.playercurse)
 
@@ -354,7 +354,7 @@ RSpec.describe Monstercard, type: :model do
     gameboards(:gameboardFourPlayers).initialize_game_board
     gameboards(:gameboardFourPlayers).players.each(&:init_player)
 
-    current_player = Player.find(gameboards(:gameboardFourPlayers).current_player)
+    current_player = gameboards(:gameboardFourPlayers).current_player
     monster = Ingamedeck.create!(gameboard: gameboards(:gameboardFourPlayers), card: cards(:monstercard3), cardable: current_player.playercurse)
 
     expect(current_player.handcard.ingamedecks.count).to eql(5)
@@ -366,7 +366,7 @@ RSpec.describe Monstercard, type: :model do
     gameboards(:gameboardFourPlayers).initialize_game_board
     gameboards(:gameboardFourPlayers).players.each(&:init_player)
 
-    current_player = Player.find(gameboards(:gameboardFourPlayers).current_player)
+    current_player = gameboards(:gameboardFourPlayers).current_player
     Ingamedeck.create!(gameboard: gameboards(:gameboardFourPlayers), card: cards(:monstercard9), cardable: current_player.monstertwo)
     Ingamedeck.create!(gameboard: gameboards(:gameboardFourPlayers), card: cards(:itemcard4), cardable: current_player.monstertwo)
     monster = Ingamedeck.create!(gameboard: gameboards(:gameboardFourPlayers), card: cards(:monstercard9), cardable: current_player.playercurse)
@@ -380,7 +380,7 @@ RSpec.describe Monstercard, type: :model do
     gameboards(:gameboardFourPlayers).initialize_game_board
     gameboards(:gameboardFourPlayers).players.each(&:init_player)
 
-    current_player = Player.find(gameboards(:gameboardFourPlayers).current_player)
+    current_player = gameboards(:gameboardFourPlayers).current_player
     Ingamedeck.create!(gameboard: gameboards(:gameboardFourPlayers), card: cards(:monstercard9), cardable: current_player.monsterone)
     Ingamedeck.create!(gameboard: gameboards(:gameboardFourPlayers), card: cards(:itemcard4), cardable: current_player.monsterone)
     monster = Ingamedeck.create!(gameboard: gameboards(:gameboardFourPlayers), card: cards(:monstercard9), cardable: current_player.playercurse)
@@ -394,7 +394,7 @@ RSpec.describe Monstercard, type: :model do
     gameboards(:gameboardFourPlayers).initialize_game_board
     gameboards(:gameboardFourPlayers).players.each(&:init_player)
 
-    current_player = Player.find(gameboards(:gameboardFourPlayers).current_player)
+    current_player = gameboards(:gameboardFourPlayers).current_player
     Ingamedeck.create!(gameboard: gameboards(:gameboardFourPlayers), card: cards(:monstercard9), cardable: current_player.monstertwo)
     Ingamedeck.create!(gameboard: gameboards(:gameboardFourPlayers), card: cards(:itemcard2), cardable: current_player.monstertwo)
     monster = Ingamedeck.create!(gameboard: gameboards(:gameboardFourPlayers), card: cards(:monstercard9), cardable: current_player.playercurse)
@@ -408,7 +408,7 @@ RSpec.describe Monstercard, type: :model do
     gameboards(:gameboardFourPlayers).initialize_game_board
     gameboards(:gameboardFourPlayers).players.each(&:init_player)
 
-    current_player = Player.find(gameboards(:gameboardFourPlayers).current_player)
+    current_player = gameboards(:gameboardFourPlayers).current_player
     Ingamedeck.create!(gameboard: gameboards(:gameboardFourPlayers), card: cards(:monstercard9), cardable: current_player.monstertwo)
     Ingamedeck.create!(gameboard: gameboards(:gameboardFourPlayers), card: cards(:itemcard2), cardable: current_player.monstertwo)
     monster = Ingamedeck.create!(gameboard: gameboards(:gameboardFourPlayers), card: cards(:monstercard7), cardable: current_player.playercurse)
@@ -422,7 +422,7 @@ RSpec.describe Monstercard, type: :model do
     gameboards(:gameboardFourPlayers).initialize_game_board
     gameboards(:gameboardFourPlayers).players.each(&:init_player)
 
-    current_player = Player.find(gameboards(:gameboardFourPlayers).current_player)
+    current_player = gameboards(:gameboardFourPlayers).current_player
     Ingamedeck.create!(gameboard: gameboards(:gameboardFourPlayers), card: cards(:monstercard9), cardable: current_player.monstertwo)
     Ingamedeck.create!(gameboard: gameboards(:gameboardFourPlayers), card: cards(:itemcard3), cardable: current_player.monstertwo)
     monster = Ingamedeck.create!(gameboard: gameboards(:gameboardFourPlayers), card: cards(:monstercard8), cardable: current_player.playercurse)
@@ -436,7 +436,7 @@ RSpec.describe Monstercard, type: :model do
     gameboards(:gameboardFourPlayers).initialize_game_board
     gameboards(:gameboardFourPlayers).players.each(&:init_player)
 
-    current_player = Player.find(gameboards(:gameboardFourPlayers).current_player)
+    current_player = gameboards(:gameboardFourPlayers).current_player
     Ingamedeck.create!(gameboard: gameboards(:gameboardFourPlayers), card: cards(:monstercard9), cardable: current_player.monstertwo)
     Ingamedeck.create!(gameboard: gameboards(:gameboardFourPlayers), card: cards(:itemcard3), cardable: current_player.monstertwo)
     monster = Ingamedeck.create!(gameboard: gameboards(:gameboardFourPlayers), card: cards(:monstercard6), cardable: current_player.playercurse)
@@ -450,7 +450,7 @@ RSpec.describe Monstercard, type: :model do
     gameboards(:gameboardFourPlayers).initialize_game_board
     gameboards(:gameboardFourPlayers).players.each(&:init_player)
 
-    current_player = Player.find(gameboards(:gameboardFourPlayers).current_player)
+    current_player = gameboards(:gameboardFourPlayers).current_player
     monster = Ingamedeck.create!(gameboard: gameboards(:gameboardFourPlayers), card: cards(:monstercard5), cardable: current_player.playercurse)
 
     expect(current_player.handcard.ingamedecks.count).to eql(5)
@@ -466,7 +466,7 @@ RSpec.describe Monstercard, type: :model do
       player.update(level: 4)
     end
 
-    current_player = Player.find(gameboards(:gameboardFourPlayers).current_player)
+    current_player = gameboards(:gameboardFourPlayers).current_player
     current_player.update(level: 1)
     monster = Ingamedeck.create!(gameboard: gameboards(:gameboardFourPlayers), card: cards(:monstercard5), cardable: current_player.playercurse)
 
@@ -481,7 +481,7 @@ RSpec.describe Monstercard, type: :model do
     gameboards(:gameboardFourPlayers).initialize_game_board
     gameboards(:gameboardFourPlayers).players.each(&:init_player)
 
-    current_player = Player.find(gameboards(:gameboardFourPlayers).current_player)
+    current_player = gameboards(:gameboardFourPlayers).current_player
     current_player.update(level: 4)
     monster = Ingamedeck.create!(gameboard: gameboards(:gameboardFourPlayers), card: cards(:monstercard5), cardable: current_player.playercurse)
 
@@ -494,7 +494,7 @@ RSpec.describe Monstercard, type: :model do
     gameboards(:gameboardFourPlayers).initialize_game_board
     gameboards(:gameboardFourPlayers).players.each(&:init_player)
 
-    current_player = Player.find(gameboards(:gameboardFourPlayers).current_player)
+    current_player = gameboards(:gameboardFourPlayers).current_player
     monster = Ingamedeck.create!(gameboard: gameboards(:gameboardFourPlayers), card: cards(:monstercard4), cardable: current_player.handcard)
 
     Monstercard.bad_things(monster, gameboards(:gameboardFourPlayers))

@@ -19,7 +19,7 @@ RSpec.describe Monstercard, type: :model do
     gameboards(:gameboardFourPlayers).initialize_game_board
     gameboards(:gameboardFourPlayers).players.each(&:init_player)
 
-    current_player = Player.find(gameboards(:gameboardFourPlayers).current_player)
+    current_player = gameboards(:gameboardFourPlayers).current_player
     current_player.update(level: 3)
     curse = Ingamedeck.create!(gameboard: gameboards(:gameboardFourPlayers), card: cards(:cursecard2), cardable: current_player.playercurse)
 
@@ -33,7 +33,7 @@ RSpec.describe Monstercard, type: :model do
     gameboards(:gameboardFourPlayers).initialize_game_board
     gameboards(:gameboardFourPlayers).players.each(&:init_player)
 
-    current_player = Player.find(gameboards(:gameboardFourPlayers).current_player)
+    current_player = gameboards(:gameboardFourPlayers).current_player
     Ingamedeck.create!(gameboard: gameboards(:gameboardFourPlayers), card: cards(:monstercard9), cardable: current_player.monstertwo)
     Ingamedeck.create!(gameboard: gameboards(:gameboardFourPlayers), card: cards(:itemcard4), cardable: current_player.monstertwo)
     curse = Ingamedeck.create!(gameboard: gameboards(:gameboardFourPlayers), card: cards(:cursecard4), cardable: current_player.playercurse)
@@ -48,7 +48,7 @@ RSpec.describe Monstercard, type: :model do
     gameboards(:gameboardFourPlayers).initialize_game_board
     gameboards(:gameboardFourPlayers).players.each(&:init_player)
 
-    current_player = Player.find(gameboards(:gameboardFourPlayers).current_player)
+    current_player = gameboards(:gameboardFourPlayers).current_player
     Ingamedeck.create!(gameboard: gameboards(:gameboardFourPlayers), card: cards(:monstercard9), cardable: current_player.monsterone)
     Ingamedeck.create!(gameboard: gameboards(:gameboardFourPlayers), card: cards(:itemcard4), cardable: current_player.monsterone)
     curse = Ingamedeck.create!(gameboard: gameboards(:gameboardFourPlayers), card: cards(:cursecard4), cardable: current_player.playercurse)
@@ -63,7 +63,7 @@ RSpec.describe Monstercard, type: :model do
     gameboards(:gameboardFourPlayers).initialize_game_board
     gameboards(:gameboardFourPlayers).players.each(&:init_player)
 
-    current_player = Player.find(gameboards(:gameboardFourPlayers).current_player)
+    current_player = gameboards(:gameboardFourPlayers).current_player
     Ingamedeck.create!(gameboard: gameboards(:gameboardFourPlayers), card: cards(:monstercard9), cardable: current_player.monstertwo)
     Ingamedeck.create!(gameboard: gameboards(:gameboardFourPlayers), card: cards(:itemcard2), cardable: current_player.monstertwo)
     curse = Ingamedeck.create!(gameboard: gameboards(:gameboardFourPlayers), card: cards(:cursecard4), cardable: current_player.playercurse)
@@ -78,7 +78,7 @@ RSpec.describe Monstercard, type: :model do
     gameboards(:gameboardFourPlayers).initialize_game_board
     gameboards(:gameboardFourPlayers).players.each(&:init_player)
 
-    current_player = Player.find(gameboards(:gameboardFourPlayers).current_player)
+    current_player = gameboards(:gameboardFourPlayers).current_player
     Ingamedeck.create!(gameboard: gameboards(:gameboardFourPlayers), card: cards(:monstercard9), cardable: current_player.monstertwo)
     Ingamedeck.create!(gameboard: gameboards(:gameboardFourPlayers), card: cards(:itemcard2), cardable: current_player.monstertwo)
     curse = Ingamedeck.create!(gameboard: gameboards(:gameboardFourPlayers), card: cards(:cursecard3), cardable: current_player.playercurse)
@@ -92,7 +92,7 @@ RSpec.describe Monstercard, type: :model do
   it 'lose atk_points if curse is activated' do
     gameboards(:gameboardFourPlayers).initialize_game_board
     gameboards(:gameboardFourPlayers).players.each(&:init_player)
-    current_player = Player.find(gameboards(:gameboardFourPlayers).current_player)
+    current_player = gameboards(:gameboardFourPlayers).current_player
     curse = Ingamedeck.create!(gameboard: gameboards(:gameboardFourPlayers), card: cards(:cursecard5), cardable: current_player.playercurse)
 
     expect(current_player.attack).to eql(1)
@@ -103,7 +103,7 @@ RSpec.describe Monstercard, type: :model do
   it 'set asked_help to true if curse is activated' do
     gameboards(:gameboardFourPlayers).initialize_game_board
     gameboards(:gameboardFourPlayers).players.each(&:init_player)
-    current_player = Player.find(gameboards(:gameboardFourPlayers).current_player)
+    current_player = gameboards(:gameboardFourPlayers).current_player
     curse = Ingamedeck.create!(gameboard: gameboards(:gameboardFourPlayers), card: cards(:cursecard), cardable: current_player.playercurse)
 
     expect(gameboards(:gameboardFourPlayers).asked_help).to eql(false)
@@ -114,7 +114,7 @@ RSpec.describe Monstercard, type: :model do
   it 'set rewards *2 and player_atk *2 to true if curse is activated' do
     gameboards(:gameboardFourPlayers).initialize_game_board
     gameboards(:gameboardFourPlayers).players.each(&:init_player)
-    current_player = Player.find(gameboards(:gameboardFourPlayers).current_player)
+    current_player = gameboards(:gameboardFourPlayers).current_player
     curse = Ingamedeck.create!(gameboard: gameboards(:gameboardFourPlayers), card: cards(:cursecard7), cardable: current_player.playercurse)
     ingamedeck1 = Ingamedeck.create!(gameboard: gameboards(:gameboardFourPlayers), card: cards(:monstercard), cardable: gameboards(:gameboardFourPlayers).centercard)
     # gameboards(:gameboardFourPlayers).update(centercard: ingamedeck1)
@@ -128,7 +128,7 @@ RSpec.describe Monstercard, type: :model do
     gameboards(:gameboardFourPlayers).initialize_game_board
     gameboards(:gameboardFourPlayers).players.each(&:init_player)
     gameboards(:gameboardFourPlayers).update(player_atk: 2, rewards_treasure: 2)
-    current_player = Player.find(gameboards(:gameboardFourPlayers).current_player)
+    current_player = gameboards(:gameboardFourPlayers).current_player
     curse = Ingamedeck.create!(gameboard: gameboards(:gameboardFourPlayers), card: cards(:cursecard6), cardable: current_player.playercurse)
 
     expect(gameboards(:gameboardFourPlayers).player_atk).to eql(2)

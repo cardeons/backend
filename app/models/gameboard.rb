@@ -3,7 +3,8 @@
 class Gameboard < ApplicationRecord
   has_many :players, dependent: :destroy
   has_many :ingamedeck, dependent: :destroy
-  has_one :player, foreign_key: 'current_player'
+  # has_one :player, foreign_key: 'current_player'
+  belongs_to :current_player, class_name: 'Player', foreign_key: 'player_id', optional: true
   has_one :centercard, dependent: :destroy
   has_one :graveyard, dependent: :destroy
   has_one :interceptcard, dependent: :destroy
@@ -13,7 +14,7 @@ class Gameboard < ApplicationRecord
   # has_many :cards, through: :ingame_cards
 
   def initialize_game_board
-    current_player = players.last.id
+    current_player = players.last
     gameboard_id = id
     update(current_player: current_player, current_state: 'ingame')
     Centercard.create!(gameboard_id: gameboard_id)
@@ -110,7 +111,7 @@ class Gameboard < ApplicationRecord
     centercard = (render_card_from_id(gameboard.centercard.ingamedeck.id) if gameboard.centercard.ingamedeck)
     {
       gameboard_id: gameboard.id,
-      current_player: gameboard.current_player,
+      current_player: gameboard.current_player&.id,
       center_card: centercard,
       interceptcards: render_cards_array(gameboard.interceptcard&.ingamedecks),
       player_interceptcards: render_cards_array(gameboard.playerinterceptcard&.ingamedecks),
@@ -128,17 +129,16 @@ class Gameboard < ApplicationRecord
   def self.get_next_player(gameboard)
     gameboard = Gameboard.find_by('id = ?', gameboard.id)
     players = gameboard.players.order(:id)
-    current_player_id = gameboard.current_player
+    current_player_id = gameboard.current_player.id
 
-    Player.find_by('id = ?', gameboard.current_player).playercurse.ingamedecks.each do |ingamedeck|
+    gameboard.current_player.reload.playercurse.ingamedecks.each do |ingamedeck|
       ingamedeck.update(cardable: gameboard.graveyard) unless ingamedeck.card.action == 'lose_atk_points'
     end
-
-    count = players.count
 
     # search for the index player with this index
     index_of_player = players.find_index { |player| player.id == current_player_id }
 
+    count = players.count
     # if index is bigger than player count start with first player
     index_of_next_player = (index_of_player + 1) % count
 
@@ -148,7 +148,7 @@ class Gameboard < ApplicationRecord
     gameboard.update(asked_help: false, helping_player: nil, helping_player_atk: 0)
 
     # save it to gameboard
-    gameboard.current_player = next_player.id
+    gameboard.current_player = next_player
     gameboard.save!
 
     next_player
@@ -225,12 +225,10 @@ class Gameboard < ApplicationRecord
 
   def self.attack(gameboard, curse_log = false)
     gameboard.reload
-    playerid = gameboard.current_player
+    player = gameboard.current_player
     playeratkpoints = 1
 
-    unless playerid.nil?
-
-      player = Player.find_by('id=?', playerid)
+    unless player.nil?
 
       monstercards1 = Monstercard.calculate_monsterslot_atk(player.monsterone)
       monstercards2 = Monstercard.calculate_monsterslot_atk(player.monstertwo)
@@ -273,11 +271,10 @@ class Gameboard < ApplicationRecord
     Ingamedeck.all.where(cardable_type: 'Centercard').destroy_all
 
     Gameboard.all.each do |gameboard|
-      player_id_current = gameboard.current_player
+      current_player = gameboard.current_player
 
-      next unless player_id_current
+      next unless current_player
 
-      current_player = Player.find_by!('id=?', player_id_current)
       current_player.handcard.ingamedecks.delete_all
 
       current_player.inventory.ingamedecks.delete_all if current_player.inventory&.ingamedecks

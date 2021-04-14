@@ -156,7 +156,7 @@ class Monstercard < Card
   end
 
   def self.bad_things(ingamedeck, gameboard)
-    player = Player.find_by('id = ?', gameboard.current_player)
+    player = gameboard.current_player
 
     case ingamedeck.card.action # get the action from card
     when 'lose_item_hand'
@@ -217,14 +217,14 @@ class Monstercard < Card
       Cursecard.broadcast_gamelog(msg, gameboard)
       Player.broadcast_all_playerhandcards(gameboard)
     when 'lose_level'
-      player = Player.find_by('id = ?', gameboard.current_player)
+      player = gameboard.current_player
 
       player.update(level: player.level - 1) unless player.level == 1
 
       msg = "You lost 1 level because of Monstercards bad things #{ingamedeck.card.title}"
       Cursecard.broadcast_gamelog(msg, gameboard)
     when 'die'
-      player = Player.find_by('id = ?', gameboard.current_player)
+      player = gameboard.current_player
 
       player.update(level: 1)
 
