@@ -133,8 +133,11 @@ class GameChannel < ApplicationCable::Channel
       Handcard.draw_handcards(@gameboard.current_player.id, @gameboard, current_player_treasure)
       # TODO: add helping player to gameboard? give treasures to helping player
       if @gameboard.helping_player
-        helping_player = @gameboard.helping_player
-        Handcard.draw_handcards(helping_player, @gameboard, shared_reward)
+        helping_player_id = @gameboard.helping_player
+        helping_player = Player.find(helping_player_id)
+        Handcard.draw_handcards(helping_player_id, @gameboard, shared_reward)
+
+        PlayerChannel.broadcast_to(helping_player.user, { type: 'HANDCARD_UPDATE', params: { handcards: Gameboard.render_cards_array(helping_player.handcard.ingamedecks) } })
       end
       @gameboard.centercard.ingamedeck&.update!(cardable: @gameboard.graveyard)
 
@@ -142,7 +145,7 @@ class GameChannel < ApplicationCable::Channel
       broadcast_to(@gameboard, { type: GAME_LOG, params: { date: Time.new, message: msg } })
 
       PlayerChannel.broadcast_to(current_user.reload, { type: 'HANDCARD_UPDATE', params: { handcards: Gameboard.render_cards_array(player.handcard.ingamedecks) } })
-
+      
       Gameboard.get_next_player(@gameboard)
       @gameboard.ingame!
       broadcast_to(@gameboard, { type: BOARD_UPDATE, params: Gameboard.broadcast_game_board(@gameboard) })
