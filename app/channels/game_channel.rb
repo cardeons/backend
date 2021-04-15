@@ -258,9 +258,6 @@ class GameChannel < ApplicationCable::Channel
     if params['help'] && @gameboard.reload.helping_player
       helping_player_id = @gameboard.helping_player
       helping_player = Player.find_by('id = ?', helping_player_id)
-
-      pp helping_player
-      pp "#############################################"
       
       if(@gameboard.monster_atk < (@gameboard.player_atk + helping_player.attack))
         @gameboard.update(success: true, helping_player_atk: helping_player.attack)
