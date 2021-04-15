@@ -255,14 +255,23 @@ class GameChannel < ApplicationCable::Channel
   end
 
   def answer_help_call(params)
-    if params['help'] && @gameboard.helping_player
+    if params['help'] && @gameboard.reload.helping_player
       helping_player_id = @gameboard.helping_player
       helping_player = Player.find_by('id = ?', helping_player_id)
 
-      @gameboard.update(helping_player_atk: helping_player.attack)
+      pp helping_player
+      pp "#############################################"
+      
+      if(@gameboard.monster_atk < (@gameboard.player_atk + helping_player.attack))
+        @gameboard.update(success: true, helping_player_atk: helping_player.attack)
+      else
+        @gameboard.update(helping_player_atk: helping_player.attack)
+      end
     end
 
     @gameboard.update(shared_reward: 0) unless params['help']
+
+    @gameboard.reload
 
     broadcast_to(@gameboard, { type: BOARD_UPDATE, params: Gameboard.broadcast_game_board(@gameboard) })
   end

@@ -122,7 +122,10 @@ class Gameboard < ApplicationRecord
       intercept_timestamp: gameboard.intercept_timestamp,
       current_state: gameboard.current_state,
       rewards_treasure: gameboard.rewards_treasure,
-      graveyard: render_cards_array(gameboard.graveyard.ingamedecks)
+      graveyard: render_cards_array(gameboard.graveyard.ingamedecks),
+      helping_player_atk: gameboard.helping_player_atk,
+      shared_reward: gameboard.shared_reward,
+      helping_player: gameboard.helping_player
     }
   end
 
@@ -145,7 +148,7 @@ class Gameboard < ApplicationRecord
     # get the next Player from array of players
     next_player = players[index_of_next_player]
 
-    gameboard.update(asked_help: false, helping_player: nil, helping_player_atk: 0)
+    gameboard.update(asked_help: false, helping_player: nil, helping_player_atk: 0, shared_reward: 0)
 
     # save it to gameboard
     gameboard.current_player = next_player
