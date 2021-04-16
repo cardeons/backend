@@ -10,6 +10,8 @@ services:
     environment:
       SERVICE: sidekiq
       REDIS_URL: redis://redis/1
+      RAILS_ENV: production
+      SECRET_KEY_BASE: test
     depends_on:
       - db
       - redis
@@ -24,6 +26,8 @@ services:
       SERVICE: web
       REDIS_URL: redis://redis/1
       DATABASE_URL: postgres://postgres:password@db/cardeons-production
+      RAILS_ENV: production
+      SECRET_KEY_BASE: test
     ports:
       - 3000:3000
     depends_on:
