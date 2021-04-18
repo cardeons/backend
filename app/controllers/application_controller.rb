@@ -5,7 +5,9 @@ class ApplicationController < ActionController::Base
   include ExceptionHandler
 
   def encode_token(payload)
-    JWT.encode(payload, 's3cr3t')
+    raise 'ENV[ENC_KEY] is not set' unless ENV['ENC_KEY']
+
+    JWT.encode(payload, ENV['ENC_KEY'])
   end
 
   def auth_header
@@ -18,7 +20,9 @@ class ApplicationController < ActionController::Base
       token = auth_header.split[1]
       # header: { 'Authorization': 'Bearer <token>' }
       begin
-        JWT.decode(token, 's3cr3t', true, algorithm: 'HS256')
+        raise JWT::DecodeError 'ENV[ENC_KEY] is not set' unless ENV['ENC_KEY']
+
+        JWT.decode(token, ENV['ENC_KEY'], true, algorithm: 'HS256')
       rescue JWT::DecodeError
         nil
       end

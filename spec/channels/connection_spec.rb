@@ -6,7 +6,8 @@ RSpec.describe ApplicationCable::Connection, type: :channel do
   fixtures :users
 
   it 'successfully connects with valid JWT' do
-    connect '/cable', headers: { 'HTTP_SEC_WEBSOCKET_PROTOCOL' => JWT.encode({ user_id: 1 }, 's3cr3t') }
+    expect(ENV['ENC_KEY']).to be_truthy
+    connect '/cable', headers: { 'HTTP_SEC_WEBSOCKET_PROTOCOL' => JWT.encode({ user_id: 1 }, ENV['ENC_KEY']) }
     expect(connection.current_user.id).to eq 1
   end
 
