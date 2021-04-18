@@ -13,6 +13,7 @@ services:
       DATABASE_URL: postgres://postgres:password@db/cardeons-production
       RAILS_ENV: production
       SECRET_KEY_BASE: test
+      ENC_KEY: test
     depends_on:
       - db
       - redis
@@ -29,6 +30,7 @@ services:
       DATABASE_URL: postgres://postgres:password@db/cardeons-production
       RAILS_ENV: production
       SECRET_KEY_BASE: test
+      ENC_KEY: test
     ports:
       - 3000:3000
     depends_on:
