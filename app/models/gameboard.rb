@@ -115,7 +115,7 @@ class Gameboard < ApplicationRecord
       center_card: centercard,
       interceptcards: render_cards_array(gameboard.interceptcard&.ingamedecks),
       player_interceptcards: render_cards_array(gameboard.playerinterceptcard&.ingamedecks),
-      player_atk: gameboard.player_atk,
+      player_atk: gameboard.player_atk + gameboard.helping_player_atk,
       monster_atk: gameboard.monster_atk,
       success: gameboard.success,
       can_flee: gameboard.can_flee,
@@ -123,7 +123,7 @@ class Gameboard < ApplicationRecord
       current_state: gameboard.current_state,
       rewards_treasure: gameboard.rewards_treasure,
       graveyard: render_cards_array(gameboard.graveyard.ingamedecks),
-      helping_player_atk: gameboard.helping_player_atk,
+      # helping_player_atk: gameboard.helping_player_atk,
       shared_reward: gameboard.shared_reward,
       helping_player: gameboard.helping_player
     }
