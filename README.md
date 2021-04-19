@@ -49,8 +49,7 @@ Reset DB: rails db:reset
 
 ## Backend: 
 
-https://cardeons-develop.herokuapp.com/
-
+https://cardeon.projects.multimediatechnology.at/
 ## Frontend: 
 
 https://cardeons-develop.netlify.app/

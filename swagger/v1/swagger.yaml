@@ -4,60 +4,6 @@ info:
   title: API V1
   version: v1
 paths:
-  "/users.json":
-    get:
-      summary: list all the users
-      tags:
-      - User
-      responses:
-        '200':
-          description: successful
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  type: object
-                  properties:
-                    id:
-                      type: integer
-                    name:
-                      type: string
-                    email:
-                      type: string
-                  required:
-                  - id
-                  - name
-                  - email
-  "/users/{id}.json":
-    get:
-      summary: show user
-      tags:
-      - User
-      parameters:
-      - name: id
-        in: path
-        required: true
-        schema:
-          type: string
-      responses:
-        '200':
-          description: successful
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  id:
-                    type: integer
-                  name:
-                    type: string
-                  email:
-                    type: string
-                required:
-                - id
-                - name
-                - email
   "/registrations":
     post:
       summary: Creates a user
@@ -256,4 +202,7 @@ servers:
   variables:
     defaultHost:
       default: localhost:3000
+- url: https://cardeon.projects.multimediatechnology.at/
 - url: https://cardeons-develop.herokuapp.com/
+- url: https://cardeons-master.herokuapp.com/
+
