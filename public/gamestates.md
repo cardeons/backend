@@ -51,7 +51,6 @@ ANTWORT
       shared_reward: int,
       helping_player: id | nil,
       intercept_timestamp: timestamp | nil,
-      <!-- helping_player_atk: int, -->
       current_state: lobby | ingame | intercept_phase | intercept_finished
     },
     players: [{

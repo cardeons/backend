@@ -123,7 +123,6 @@ class Gameboard < ApplicationRecord
       current_state: gameboard.current_state,
       rewards_treasure: gameboard.rewards_treasure,
       graveyard: render_cards_array(gameboard.graveyard.ingamedecks),
-      # helping_player_atk: gameboard.helping_player_atk,
       shared_reward: gameboard.shared_reward,
       helping_player: gameboard.helping_player
     }
