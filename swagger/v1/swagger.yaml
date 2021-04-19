@@ -204,5 +204,5 @@ servers:
       default: localhost:3000
 - url: https://cardeon.projects.multimediatechnology.at/
 - url: https://cardeons-develop.herokuapp.com/
-- url: https://cardeons-master.herokuapp.com/
+- url: https://cardeons.herokuapp.com/
 
