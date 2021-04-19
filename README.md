@@ -35,6 +35,20 @@ We are using foreman to start redis/sidekiq and puma in one shell:
 //- bundle exec sidekiq --environment development
 //- rails s -p 3000
 
+deploy:
+
+- git remote add dokku ssh://dokku@projects.multimediatechnology.at:5412/cardeon
+
+- gem install dokku-cli
+
+- git push dokku develop:master
+
+temp env variablen setzen:
+
+- dokku run rails db:reset DISABLE_DATABASE_ENVIRONMENT_CHECK=1
+
+Für das deployen braucht man einen private key
+
 
 
 

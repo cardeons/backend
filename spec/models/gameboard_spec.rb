@@ -106,6 +106,8 @@ RSpec.describe Gameboard, type: :model do
       can_flee: gameboards(:gameboardFourPlayers).can_flee,
       rewards_treasure: gameboards(:gameboardFourPlayers).rewards_treasure,
       graveyard: [],
+      shared_reward: gameboards(:gameboardFourPlayers).shared_reward,
+      helping_player: gameboards(:gameboardFourPlayers).helping_player,
       current_state: 'ingame',
       intercept_timestamp: nil
     }
