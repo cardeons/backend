@@ -125,7 +125,7 @@ class Gameboard < ApplicationRecord
       rewards_treasure: gameboard.rewards_treasure,
       graveyard: render_cards_array(gameboard.graveyard.ingamedecks),
       shared_reward: gameboard.shared_reward,
-      helping_player: gameboard.helping_player
+      helping_player: gameboard.helping_player&.id
     }
   end
 

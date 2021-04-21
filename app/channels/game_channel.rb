@@ -134,9 +134,8 @@ class GameChannel < ApplicationCable::Channel
       Handcard.draw_handcards(@gameboard.current_player.id, @gameboard, current_player_treasure)
       # TODO: add helping player to gameboard? give treasures to helping player
       if @gameboard.helping_player
-        helping_player_id = @gameboard.helping_player
-        helping_player = Player.find(helping_player_id)
-        Handcard.draw_handcards(helping_player_id, @gameboard, shared_reward)
+        helping_player = @gameboard.helping_player
+        Handcard.draw_handcards(helping_player.id, @gameboard, shared_reward)
 
         PlayerChannel.broadcast_to(helping_player.user, { type: 'HANDCARD_UPDATE', params: { handcards: Gameboard.render_cards_array(helping_player.handcard.ingamedecks) } })
       end
@@ -146,7 +145,7 @@ class GameChannel < ApplicationCable::Channel
       broadcast_to(@gameboard, { type: GAME_LOG, params: { date: Time.new, message: msg } })
 
       PlayerChannel.broadcast_to(current_user.reload, { type: 'HANDCARD_UPDATE', params: { handcards: Gameboard.render_cards_array(player.handcard.ingamedecks) } })
-      
+
       Gameboard.get_next_player(@gameboard)
       @gameboard.ingame!
       broadcast_to(@gameboard, { type: BOARD_UPDATE, params: Gameboard.broadcast_game_board(@gameboard) })
@@ -245,7 +244,7 @@ class GameChannel < ApplicationCable::Channel
       return
     end
 
-    @gameboard.update(shared_reward: helping_shared_reward, asked_help: true, helping_player: helping_player_id)
+    @gameboard.update(shared_reward: helping_shared_reward, asked_help: true, helping_player: helping_player)
 
     user_to_broadcast_to = User.where(player: helping_player).first
 
@@ -257,10 +256,9 @@ class GameChannel < ApplicationCable::Channel
 
   def answer_help_call(params)
     if params['help'] && @gameboard.reload.helping_player
-      helping_player_id = @gameboard.helping_player
-      helping_player = Player.find_by('id = ?', helping_player_id)
-      
-      if(@gameboard.monster_atk < (@gameboard.player_atk + helping_player.attack))
+      helping_player = @gameboard.helping_player
+
+      if @gameboard.monster_atk < (@gameboard.player_atk + helping_player.attack)
         @gameboard.update(success: true, helping_player_atk: helping_player.attack)
       else
         @gameboard.update(helping_player_atk: helping_player.attack)
