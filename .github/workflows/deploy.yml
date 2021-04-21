@@ -1,4 +1,4 @@
-name: Deploy dokku
+name: 'deploy'
 
 on:
   push:
@@ -7,14 +7,15 @@ on:
 
 jobs:
   deploy:
-    name: Deploy
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@master
-      - id: deploy
-        name: Deploy to dokku
-        uses: idoberko2/dokku-deploy-github-action@v1
+      - name: Cloning repo
+        uses: actions/checkout@v2
         with:
-            ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
-            dokku-host: 'projects.multimediatechnology.at:5412'
-            app-name: 'cardeon-develop'
+          fetch-depth: 0
+
+      - name: Push to dokku
+        uses: dokku/github-action@master
+        with:
+          git_remote_url: 'ssh://dokku@projects.multimediatechnology.at:5412/cardeon-develop'
+          ssh_private_key: ${{ secrets.SSH_PRIVATE_KEY }}
