@@ -5,6 +5,7 @@ class Gameboard < ApplicationRecord
   has_many :ingamedeck, dependent: :destroy
   # has_one :player, foreign_key: 'current_player'
   belongs_to :current_player, class_name: 'Player', foreign_key: 'player_id', optional: true
+  belongs_to :helping_player, class_name: 'Player', foreign_key: 'helping_player_id', optional: true
   has_one :centercard, dependent: :destroy
   has_one :graveyard, dependent: :destroy
   has_one :interceptcard, dependent: :destroy
@@ -124,7 +125,7 @@ class Gameboard < ApplicationRecord
       rewards_treasure: gameboard.rewards_treasure,
       graveyard: render_cards_array(gameboard.graveyard.ingamedecks),
       shared_reward: gameboard.shared_reward,
-      helping_player: gameboard.helping_player
+      helping_player: gameboard.helping_player&.id
     }
   end
 
