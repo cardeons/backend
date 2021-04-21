@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_04_13_203222) do
+ActiveRecord::Schema.define(version: 2021_04_21_153318) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -61,11 +61,11 @@ ActiveRecord::Schema.define(version: 2021_04_13_203222) do
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
     t.integer "rewards_treasure", default: 0
-    t.bigint "helping_player"
     t.integer "current_state", default: 0
     t.integer "helping_player_atk", default: 0
     t.datetime "intercept_timestamp"
     t.bigint "player_id"
+    t.bigint "helping_player_id"
     t.index ["player_id"], name: "index_gameboards_on_player_id"
   end
 

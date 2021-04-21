@@ -5,6 +5,7 @@ class Gameboard < ApplicationRecord
   has_many :ingamedeck, dependent: :destroy
   # has_one :player, foreign_key: 'current_player'
   belongs_to :current_player, class_name: 'Player', foreign_key: 'player_id', optional: true
+  belongs_to :helping_player, class_name: 'Player', foreign_key: 'helping_player_id', optional: true
   has_one :centercard, dependent: :destroy
   has_one :graveyard, dependent: :destroy
   has_one :interceptcard, dependent: :destroy
