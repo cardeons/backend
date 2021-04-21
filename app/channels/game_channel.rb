@@ -133,7 +133,7 @@ class GameChannel < ApplicationCable::Channel
 
       Handcard.draw_handcards(@gameboard.current_player.id, @gameboard, current_player_treasure)
       # TODO: add helping player to gameboard? give treasures to helping player
-      if @gameboard.helping_player
+      if @gameboard.reload.helping_player
         helping_player = @gameboard.helping_player
         Handcard.draw_handcards(helping_player.id, @gameboard, shared_reward)
 
