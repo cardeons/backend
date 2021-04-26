@@ -139,11 +139,12 @@ class GameChannel < ApplicationCable::Channel
 
         PlayerChannel.broadcast_to(helping_player.user, { type: 'HANDCARD_UPDATE', params: { handcards: Gameboard.render_cards_array(helping_player.handcard.ingamedecks) } })
       end
-      @gameboard.centercard.ingamedeck&.update!(cardable: @gameboard.graveyard)
-
+      
       msg = "#{current_user.player.name} has killed #{@gameboard.centercard.card.title}"
       broadcast_to(@gameboard, { type: GAME_LOG, params: { date: Time.new, message: msg } })
-
+      
+      @gameboard.centercard.ingamedeck&.update!(cardable: @gameboard.graveyard)
+      
       PlayerChannel.broadcast_to(current_user.reload, { type: 'HANDCARD_UPDATE', params: { handcards: Gameboard.render_cards_array(player.handcard.ingamedecks) } })
 
       Gameboard.get_next_player(@gameboard)
