@@ -66,7 +66,12 @@ rspec -> runs all tests
 ## Backend: 
 
 https://cardeon.projects.multimediatechnology.at/
+https://cardeon-develop.projects.multimediatechnology.at/
+
+yes its cardeon not cardeons :(
 
 ## Frontend: 
+
+https://cardeons.netlify.app/ 
 
 https://cardeons-develop.netlify.app/
