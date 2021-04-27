@@ -55,7 +55,7 @@ dokku run rails db:reset DISABLE_DATABASE_ENVIRONMENT_CHECK=1
 **A private key is needed for deploying!**
 
 
-Happy Coding😘
+Happy Coding😘👩‍💻
 
 Reset DB: rails db:reset
 
