@@ -83,4 +83,5 @@ production:
   <<: *default
   database: cardeons_backend_production
   username: cardeons_backend
+  url: <%= ENV["DATABASE_URL"] %>
   password:

@@ -18,6 +18,10 @@ class RegistrationsController < ApplicationController
         status: :created,
         user: user_frontend
       }
+
+      monster = Monstercard.first
+      user.cards << monster
+
     else
       render json: { errors: user.errors.as_json }, status: 420
     end

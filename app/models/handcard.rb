@@ -19,7 +19,7 @@ class Handcard < ApplicationRecord
     end
   end
 
-  def self.draw_handcards(player_id, gameboard)
+  def self.draw_handcards(player_id, gameboard, card_amount = 5)
     cursecards = Cursecard.all
     monstercards = Monstercard.all
     buffcards = Buffcard.all
@@ -33,21 +33,35 @@ class Handcard < ApplicationRecord
     addCardsToArray(allcards, itemcards)
     addCardsToArray(allcards, levelcards)
 
-
     player = Player.find(player_id)
     handcard = player.handcard
 
-    Ingamedeck.create!(gameboard: gameboard, card_id: Itemcard.first.id, cardable: handcard)
-
+    # Ingamedeck.create!(gameboard: gameboard, card_id: Itemcard.first.id, cardable: handcard)
 
     # Ingamedeck.where(cardable_type: 'Handcard', cardable_id: handcard.id).delete_all
 
     # TODO: draw lvl one card if no Inventory cards
     # TODO die x variable ändern je nachdem wie viele Karten Spieler mit ins Game nimmt :)
     # TODO bei keiner mitgenommenen Karte random lvl one als monsterone, ansonsten Handkarten
-    x = 4
+    x = card_amount
     while x.positive?
-      Ingamedeck.create!(gameboard: gameboard, card_id: allcards[rand(allcards.length)], cardable: handcard)
+      Ingamedeck.create!(gameboard: gameboard, card_id: allcards[rand(allcards.size)], cardable: handcard)
+      x -= 1
+    end
+  end
+
+  def self.draw_one_monster(player_id, gameboard)
+    monstercards = Monstercard.all
+
+    allcards = []
+    addCardsToArray(allcards, monstercards)
+
+    player = Player.find(player_id)
+    handcard = player.handcard
+
+    x = 1
+    while x.positive?
+      Ingamedeck.create!(gameboard: gameboard, card_id: allcards[rand(allcards.size)], cardable: handcard)
       x -= 1
     end
   end

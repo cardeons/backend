@@ -33,11 +33,25 @@ ANTWORT
       center_card: card_id,
       player_atk: integer,
       monster_atk: integer,
+      interceptcards: [
+        {
+          card_id: int,
+          unique_card_id: int
+        }
+      ]
+      player_interceptcards: [
+        {
+          card_id: int,
+          unique_card_id: int
+        }
+      ]
       success: bool,
       can_flee: bool,
       asked_help: bool,
       shared_reward: int,
-      helping_player: nil
+      helping_player: id | nil,
+      intercept_timestamp: timestamp | nil,
+      current_state: lobby | ingame | intercept_phase | intercept_finished
     },
     players: [{
       player_id: ,
@@ -144,18 +158,18 @@ Gameboard Channel response
 
 
 
-<!-- #ANFRAGE
+#ANFRAGE
 {
   action: "curse_player",
   to: 1,
   unique_card_id: 4
   #to ist die id des anderen Players, der verflucht wird
-} -->
+}
 
-<!-- #ANTWORT
+#ANTWORT
 {
   #GAMEBOARD WIE IMMER
-} -->
+}
 
 
 #ANFRAGE
@@ -205,7 +219,7 @@ Gameboard Channel response
    { 
      player_id: 1,
      player_name: "gustav"
-    helping_shared_rewards: 1,
+     helping_shared_rewards: 1,
     }  
 }
 
@@ -226,7 +240,7 @@ Gameboard Channel response
 
 
 #ANFRAGE
-#kein player möchte nicht in den kampf eingreifen
+#kein player möchte in den kampf eingreifen
 {
   action: "no_interception",
 }
@@ -245,4 +259,69 @@ Gameboard Channel response
      player_id: 1,
      handcards: []
     }  
+}
+
+
+#GEWINNEN
+{ 
+  type: 'WIN', 
+  params: 
+  { 
+    player: player.id 
+    monster_won: id
+  }
+}
+
+CURRENT_STATE
+
+available values: lobby | ingame | intercept_phase | intercept_finished
+
+lobby = spieler befinden sich in der lobby
+ingame = spiel hat gestartet
+intercept_phase = spieler hat ein monster ausgespielt/eine türkarte gezogen. Solange nicht alle spieler no_intercept drücken, ist das spiel in dieser phase.
+intercept_finished = kein spieler wollte intercepten, zug ist "vorbei"
+game_won = ein spieler hat lvl 5 erreicht
+
+
+
+DEV ACTIONS:
+
+Alle im Game-Chanel
+
+{
+   type: 'develop_add_buff_card',
+   params: { }  
+}
+
+{
+   type: 'develop_add_curse_card',
+   params: { }  
+}
+
+{
+   type: 'develop_add_card_with_id',
+   params: 
+   { 
+     # CARD ID not unique_card_id so you can add every card from our db to your hand
+     card_id: 1
+   }  
+}
+
+{
+   type: 'develop_set_myself_as_current_player',
+   params: { }  
+}
+
+
+#rebroadcasts handcard update
+{
+   type: 'develop_broadcast_handcard_update',
+   params: { }  
+}
+
+
+#rebroadcasts board update
+{
+   type: 'develop_broadcast_gameboard_update',
+   params: { }  
 }

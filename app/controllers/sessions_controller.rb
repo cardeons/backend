@@ -2,7 +2,6 @@
 
 class SessionsController < ApplicationController
   def create
-    # params kommen später vom Frontend
     registration_input = request.raw_post
     registration_input = JSON.parse(registration_input)
 
@@ -11,7 +10,6 @@ class SessionsController < ApplicationController
     registration_input = request.raw_post
     registration_input = JSON.parse(registration_input)
 
-    # user.valid? später einbauen, wenn alles in der db steht!
     if user
       session[:user_id] = user.id
       token = encode_token({ user_id: user.id })

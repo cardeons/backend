@@ -5,7 +5,7 @@
     "@rails/actioncable": "^6.0.0",
     "@rails/activestorage": "^6.0.0",
     "@rails/ujs": "^6.0.0",
-    "@rails/webpacker": "5.2.1",
+    "@rails/webpacker": "4.2.2",
     "jquery": "^3.5.1",
     "turbolinks": "^5.2.0"
   },
@@ -15,7 +15,8 @@
     }
   },
   "scripts": {
-    "precommit": "lint-staged"
+    "precommit": "lint-staged",
+    "start": "foreman start -f Procfile.dev"
   },
   "lint-staged": {
     "app/**/*.{js,es6,jsx,scss,css}": [
@@ -29,9 +30,11 @@
   },
   "devDependencies": {
     "git-format-staged": "^2.1.1",
-    "husky": "^4.3.7",
     "lint-staged": "^10.5.3",
     "prettier": "2.2.1",
     "webpack-dev-server": "^3.11.1"
+  },
+  "engines": {
+    "node": ">=10.15.3"
   }
 }

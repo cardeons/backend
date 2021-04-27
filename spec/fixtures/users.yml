@@ -1,0 +1,71 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  id: 1
+  email: test@test.com
+  name : UserOne
+  password_digest: MyString
+
+two:
+  id: 2
+  email: test2@test.com
+  name : UserTwo
+  password_digest: MyString
+
+three:
+  id: 3
+  email: test3@test.com
+  name : UserThree
+  password_digest: MyString
+
+four:
+  id: 4
+  email: test4@test.com
+  name : UserFour
+  password_digest: MyString
+
+usernorbert:
+  email: game@test.com
+  name : UserFour
+  password_digest: MyString
+
+userlobbyone:
+  email: game1@test.com
+  name : UserGameOne
+  password_digest: MyString
+
+userlobbytwo:
+  email: game2@test.com
+  name : UserGameTwo
+  password_digest: MyString
+
+
+userlobbythree:
+  email: game3@test.com
+  name : UserGameThree
+  password_digest: MyString
+
+
+
+userOne:
+  # id: 1
+  email: u1@test.com
+  name : U1
+  password_digest: MyString
+
+userTwo:
+  # id: 2
+  email: u2@test.com
+  name : U2
+  password_digest: MyString
+
+userThree:
+  # id: 3
+  email: u3@test.com
+  name : U3
+  password_digest: MyString
+
+userFour:
+  email: u4@test.com
+  name : U4
+  password_digest: MyString

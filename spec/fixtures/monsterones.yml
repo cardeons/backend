@@ -1,0 +1,17 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  # ingamedeck: one
+  player: one
+
+two:
+  player: two
+
+
+three:
+  # ingamedeck: three
+  player: playerOne
+
+# four:
+#   # ingamedeck: three
+#   player: playerOne
