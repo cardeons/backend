@@ -61,7 +61,8 @@ dokku run rails db:migrate --remote=dokku-develop
 ```
 
 
-temp env variablen setzen:
+reset db/set temp env variables:
+pls never do this on our production server
 ```sh
 dokku run rails db:reset DISABLE_DATABASE_ENVIRONMENT_CHECK=1
 ```
