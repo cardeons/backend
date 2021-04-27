@@ -23,8 +23,14 @@ You need to install redis before you can use the dev env:
 
 ```sh
 sudo apt install redis-server 
+```
+
+
+## RUN Dev Server:
+```sh
 foreman start -f Procfile.dev
 ```
+
 
 ## Deploying:
 
@@ -40,16 +46,30 @@ git remote add dokku-develop ssh://dokku@projects.multimediatechnology.at:5412/c
 
 Code gets pushed automatically as soon as you push to the master in the corresponding repo.
 
-if in any case you need to push manually, use:
+if in any case you need to push manuallyuse:
 
 ```sh
 gem install dokku-cli
-git push dokku --branch--:master --remote=dokku/--remote=dokku-develop
+git push dokku YOUR_BRANCH_TO_PUSH:master
+git push dokku-develop YOUR_BRANCH_TO_PUSH:master
 ```
+
+if in any case you need to run commands on dokku:
+```sh
+dokku run rails db:migrate
+dokku run rails db:migrate --remote=dokku-develop
+```
+
 
 temp env variablen setzen:
 ```sh
 dokku run rails db:reset DISABLE_DATABASE_ENVIRONMENT_CHECK=1
+```
+
+env variablen setzen::
+```sh
+dokku config:set MY_ENV="myvalue" 
+dokku config:set MY_ENV="myvalue" --remote=dokku-develop
 ```
 
 **A private key is needed for deploying!**
