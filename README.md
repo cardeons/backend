@@ -57,8 +57,6 @@ dokku run rails db:reset DISABLE_DATABASE_ENVIRONMENT_CHECK=1
 
 Happy Coding😘👩‍💻
 
-Reset DB: rails db:reset
-
 
 ## For Testing
 ```sh 
