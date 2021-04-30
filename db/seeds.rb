@@ -26,7 +26,7 @@ u9 = User.create!(email: '1@1.at', password: '1', name: '1', password_confirmati
 bear_fire = Monstercard.create!(
   title: 'Sir Bear',
   description: '<p><b>*slaps you with his glove*</b> I challenge you to a duel!</p>',
-  image: '/monster/Baer_Orange.png',
+  image: '/cardeons/cards/monster/sirbear/fire.png',
   action: 'lose_item_hand',
   draw_chance: 5,
   level: 5,
@@ -44,7 +44,7 @@ bear_fire = Monstercard.create!(
 bear_water = Monstercard.create!(
   title: 'Sir Bear',
   description: '<p><b>*slaps you with his glove*</b> I challenge you to a duel! -3 Against Hot Dog and Buffalo Wings. He is not willing to touch those.</p>',
-  image: '/monster/Baer_Dunkelblau.png',
+  image: '/cardeons/cards/monster/sirbear/water.png',
   action: 'lose_item_shoe',
   draw_chance: 5,
   level: 10,
@@ -62,7 +62,7 @@ bear_water = Monstercard.create!(
 bear_earth = Monstercard.create!(
   title: 'Sir Bear',
   description: '<p><b>*slaps you with his glove*</b> I challenge you to a duel! +2 against Water</p>',
-  image: '/monster/Baer_Gruen.png',
+  image: '/cardeons/cards/monster/sirbear/earth.png',
   action: 'lose_item_shoe',
   draw_chance: 5,
   level: 7,
@@ -80,7 +80,7 @@ bear_earth = Monstercard.create!(
 bear_air = Monstercard.create!(
   title: 'Sir Bear',
   description: '<p><b>*slaps you with his glove*</b> I challenge you to a duel!</p>',
-  image: '/monster/Baer_Hellblau.png',
+  image: '/cardeons/cards/monster/sirbear/air.png',
   action: 'lose_item_shoe',
   draw_chance: 5,
   level: 15,
@@ -169,7 +169,7 @@ bear_air = Monstercard.create!(
 catfish_fire = Monstercard.create!(
   title: 'Catfish',
   description: '<p>Is it a cat? Is it a fish? I don’t know! -3 Against Hot Dog</p>',
-  image: '/monster/CatFish_Orange.png',
+  image: '/cardeons/cards/monster/catfish/fire.png',
   action: 'random_card_lowest_level',
   draw_chance: 5,
   level: 7,
@@ -187,7 +187,7 @@ catfish_fire = Monstercard.create!(
 catfish_earth = Monstercard.create!(
   title: 'Catfish',
   description: '<p>Is it a cat? Is it a fish? I don’t know! -3 Against Hot Dog</p>',
-  image: '/monster/CatFish_Gruen.png',
+  image: '/cardeons/cards/monster/catfish/earth.png',
   action: 'lose_one_card',
   draw_chance: 5,
   level: 10,
@@ -205,7 +205,7 @@ catfish_earth = Monstercard.create!(
 catfish_water = Monstercard.create!(
   title: 'Catfish',
   description: '<p>I don’t think cats like water so it’s probably a fish? +3 Against Fire Hot Dog</p>',
-  image: '/monster/CatFish_Dunkelblau.png',
+  image: '/cardeons/cards/monster/catfish/water.png',
   action: 'random_card_lowest_level',
   draw_chance: 5,
   level: 4,
@@ -223,7 +223,7 @@ catfish_water = Monstercard.create!(
 catfish_air = Monstercard.create!(
   title: 'Catfish',
   description: '<p>Is it a cat? Is it a fish? Love is not in the air! -3 Against Hot Dog</p>',
-  image: '/monster/CatFish_Hellblau.png',
+  image: '/cardeons/cards/monster/catfish/air.png',
   action: 'lose_level',
   draw_chance: 5,
   level: 18,
@@ -242,7 +242,7 @@ catfish_air = Monstercard.create!(
 pitbull_water = Monstercard.create!(
   title: 'Pit-Bull',
   description: '<p>Only listens to Mister Worldwide. +3 against Fire Monster!</p>',
-  image: '/monster/PitBull_Dunkelblau.png',
+  image: '/cardeons/cards/monster/pitbull/water.png',
   action: 'lose_item_head',
   draw_chance: 5,
   level: 5,
@@ -260,7 +260,7 @@ pitbull_water = Monstercard.create!(
 pitbull_earth = Monstercard.create!(
   title: 'Pit-Bull',
   description: '<p>Only listens to Mister Worldwide. +1 against Water Monster!</p>',
-  image: '/monster/PitBull_Gruen.png',
+  image: '/cardeons/cards/monster/pitbull/earth.png',
   action: 'lose_item_head',
   draw_chance: 5,
   level: 3,
@@ -278,7 +278,7 @@ pitbull_earth = Monstercard.create!(
 pitbull_fire = Monstercard.create!(
   title: 'Pit-Bull',
   description: '<p>Only listens to Mister Worldwide. +5 against Air Monster!</p>',
-  image: '/monster/PitBull_Orange.png',
+  image: '/cardeons/cards/monster/pitbull/fire.png',
   action: 'lose_item_head',
   draw_chance: 5,
   level: 8,
@@ -296,7 +296,7 @@ pitbull_fire = Monstercard.create!(
 pitbull_air = Monstercard.create!(
   title: 'Pit-Bull',
   description: '<p>Only listens to Mister Worldwide. +7 against Earth Monster!</p>',
-  image: '/monster/PitBull_Hellblau.png',
+  image: '/cardeons/cards/monster/pitbull/air.png',
   action: 'lose_item_head',
   draw_chance: 5,
   level: 12,
@@ -315,7 +315,7 @@ pitbull_air = Monstercard.create!(
 buffalowings_water = Monstercard.create!(
   title: 'Buffalo Wings',
   description: '<p>Buffalo wings are an all time favorite, they’re perfect for parties!</p>',
-  image: '/monster/BuffaloWings_Dunkelblau.png',
+  image: '/cardeons/cards/monster/buffalowings/water.png',
   action: 'lose_level',
   draw_chance: 5,
   level: 3,
@@ -333,7 +333,7 @@ buffalowings_water = Monstercard.create!(
 buffalowings_earth = Monstercard.create!(
   title: 'Buffalo Wings',
   description: '<p>Buffalo wings are an all time favorite, they’re perfect for parties! +3 Against Fire Monster!</p>',
-  image: '/monster/BuffaloWings_Gruen.png',
+  image: '/cardeons/cards/monster/buffalowings/earth.png',
   action: 'lose_level',
   draw_chance: 5,
   level: 9,
@@ -351,7 +351,7 @@ buffalowings_earth = Monstercard.create!(
 buffalowings_air = Monstercard.create!(
   title: 'Buffalo Wings',
   description: '<p>Buffalo wings are an all time favorite, they’re perfect for parties! -2 Against Fire Monster!</p>',
-  image: '/monster/BuffaloWings_Hellblau.png',
+  image: '/cardeons/cards/monster/buffalowings/air.png',
   action: 'lose_level',
   draw_chance: 5,
   level: 5,
@@ -369,7 +369,7 @@ buffalowings_air = Monstercard.create!(
 buffalowings_fire = Monstercard.create!(
   title: 'Buffalo Wings',
   description: '<p>Buffalo wings are an all time favorite, they’re perfect for parties! +7 Against Water Monster, -3 Against Earth Monster! Won’t follow a Player under Level 3.</p>',
-  image: '/monster/BuffaloWings_Orange.png',
+  image: '/cardeons/cards/monster/buffalowings/fire.png',
   action: 'die',
   draw_chance: 5,
   level: 16,
@@ -388,7 +388,7 @@ buffalowings_fire = Monstercard.create!(
 unicorn_water = Monstercard.create!(
   title: 'Unicorn',
   description: '<p>It is the perfect movie partner! It brings its own wet popcorn! +3 Against Buffalo Wings and Hotdogs. It will be the only snack at the party!</p>',
-  image: '/monster/UniCorn_Dunkelblau.png',
+  image: '/cardeons/cards/monster/unicorn/water.png',
   action: 'lose_level',
   draw_chance: 5,
   level: 10,
@@ -406,7 +406,7 @@ unicorn_water = Monstercard.create!(
 unicorn_earth = Monstercard.create!(
   title: 'Unicorn',
   description: '<p>It is just a horse with corn stuck on its head. What did you expect?</p>',
-  image: '/monster/UniCorn_Gruen.png',
+  image: '/cardeons/cards/monster/unicorn/earth.png',
   action: 'lose_item_hand',
   draw_chance: 5,
   level: 7,
@@ -424,7 +424,7 @@ unicorn_earth = Monstercard.create!(
 unicorn_air = Monstercard.create!(
   title: 'Unicorn',
   description: '<p>Ever tried Popcorn out of an Airfryer? Me neither. +3 Against Air Monster</p>',
-  image: '/monster/UniCorn_Hellblau.png',
+  image: '/cardeons/cards/monster/unicorn/air.png',
   action: 'lose_level',
   draw_chance: 5,
   level: 15,
@@ -442,7 +442,7 @@ unicorn_air = Monstercard.create!(
 unicorn_fire = Monstercard.create!(
   title: 'Unicorn',
   description: '<p>The corn is ready to pop! Wanna try some? +3 Against Water Monster</p>',
-  image: '/monster/UniCorn_Orange.png',
+  image: '/cardeons/cards/monster/unicorn/fire.png',
   action: 'no_help_next_fight',
   draw_chance: 5,
   level: 5,
@@ -460,7 +460,7 @@ unicorn_fire = Monstercard.create!(
 unicorn_curse = Cursecard.create!(
   title: 'The unicorn curse',
   description: '<p>The unicorn cursed you.</p><p> No one is willing to help you in your next fight...</p>',
-  image: '/icon/Curse.png',
+  image: '/cardeons/cards/icons/curse.png',
   action: 'no_help_next_fight',
   draw_chance: 0,
   atk_points: 0
@@ -470,7 +470,7 @@ unicorn_curse = Cursecard.create!(
 hotdog_water = Monstercard.create!(
   title: 'Wet Hot Dog',
   description: '<p>Your Hot Dog fell into a lake! +5 Against Fire Monster</p>',
-  image: '/monster/HotDog_Dunkelblau.png',
+  image: '/cardeons/cards/monster/hotdog/water.png',
   action: 'lose_level',
   draw_chance: 5,
   level: 15,
@@ -488,7 +488,7 @@ hotdog_water = Monstercard.create!(
 hotdog_earth = Monstercard.create!(
   title: 'Dirty Hot Dog',
   description: '<p>Dirty Talk? No, I said dirty dog! -3 Against Boaring, he just doesn’t care if it’s dirty.</p>',
-  image: '/monster/HotDog_Gruen.png',
+  image: '/cardeons/cards/monster/hotdog/earth.png',
   action: 'lose_item_hand',
   draw_chance: 5,
   level: 9,
@@ -506,7 +506,7 @@ hotdog_earth = Monstercard.create!(
 hotdog_air = Monstercard.create!(
   title: 'Flying Hot Dog',
   description: '<p>Is it a bird? Is it a plane? No it’s a Hot Dog! Is it falling or flying? We don’t know yet!</p>',
-  image: '/monster/HotDog_Hellblau.png',
+  image: '/cardeons/cards/monster/hotdog/air.png',
   action: 'lose_item',
   draw_chance: 5,
   level: 4,
@@ -524,7 +524,7 @@ hotdog_air = Monstercard.create!(
 unicorn_fire = Monstercard.create!(
   title: 'Hawt Dog',
   description: '<p>Would you like some chili sauce for your hotdog? +3 Against Buffalo Wings, there can only be one.</p>',
-  image: '/monster/HotDog_Orange.png',
+  image: '/cardeons/cards/monster/hotdog/fire.png',
   action: 'lose_item_hand',
   draw_chance: 5,
   level: 6,
@@ -543,7 +543,7 @@ unicorn_fire = Monstercard.create!(
 boaring_water = Monstercard.create!(
   title: 'Boaring',
   description: '<p>He is wet. Still bored.</p>',
-  image: '/monster/Willdschwein_Dunkelblau.png',
+  image: '/cardeons/cards/monster/boaring/water.png',
   action: 'lose_level',
   draw_chance: 5,
   level: 13,
@@ -561,7 +561,7 @@ boaring_water = Monstercard.create!(
 boaring_earth = Monstercard.create!(
   title: 'Boaring',
   description: '<p>He is dirty. Still bored. +4 Against Water Monster!</p>',
-  image: '/monster/Willdschwein_Gruen.png',
+  image: '/cardeons/cards/monster/boaring/earth.png',
   action: 'lose_item_hand',
   draw_chance: 5,
   level: 11,
@@ -579,7 +579,7 @@ boaring_earth = Monstercard.create!(
 boaring_air = Monstercard.create!(
   title: 'Boaring',
   description: '<p>He is flying. Still bored. +3 for every fire monster he fights.</p>',
-  image: '/monster/Willdschwein_Hellblau.png',
+  image: '/cardeons/cards/monster/boaring/air.png',
   action: 'die',
   draw_chance: 5,
   level: 18,
@@ -597,7 +597,7 @@ boaring_air = Monstercard.create!(
 boaring_fire = Monstercard.create!(
   title: 'Boaring',
   description: '<p>He is on fire. Still bored.</p>',
-  image: '/monster/Willdschwein_Orange.png',
+  image: '/cardeons/cards/monster/boaring/fire.png',
   action: 'no_action',
   draw_chance: 5,
   level: 6,
@@ -617,7 +617,7 @@ boaring_fire = Monstercard.create!(
 curse = Cursecard.create!(
   title: 'Very bad curse',
   description: '<p>This curse is very bad.</p><p> Actually, it is so bad that this curse will stick to you and weaken your fighting ability as long as you do not find a way to remove it</p>',
-  image: '/icon/Curse.png',
+  image: '/cardeons/cards/icons/curse.png',
   action: 'lose_atk_points',
   draw_chance: 6,
   atk_points: -1
@@ -626,7 +626,7 @@ curse = Cursecard.create!(
 curse2 = Cursecard.create!(
   title: 'Eight-legged curse',
   description: '<p>A spider scared you, you dropped something you held in your hand!</p>',
-  image: '/icon/Curse.png',
+  image: '/cardeons/cards/icons/curse.png',
   action: 'lose_item_hand',
   draw_chance: 6,
   atk_points: 0
@@ -635,7 +635,7 @@ curse2 = Cursecard.create!(
 curse3 = Cursecard.create!(
   title: 'Pretty shitty curse',
   description: '<p>You stepped in Pit-Bull poo.. you stink, nobody wants to help you for a round.</p>',
-  image: '/icon/Curse.png',
+  image: '/cardeons/cards/icons/curse.png',
   action: 'no_help_next_fight',
   draw_chance: 6,
   atk_points: 0
@@ -644,7 +644,7 @@ curse3 = Cursecard.create!(
 curse4 = Cursecard.create!(
   title: 'Student life curse',
   description: '<p>You did not finish your thesis in time… -3 for you in the next Fight.</p>',
-  image: '/icon/Curse.png',
+  image: '/cardeons/cards/icons/curse.png',
   action: 'minus_atk_next_fight',
   draw_chance: 6,
   atk_points: -3
@@ -653,7 +653,7 @@ curse4 = Cursecard.create!(
 curse5 = Cursecard.create!(
   title: 'You got cursed!',
   description: '<p>Lose a headpiece!</p>',
-  image: '/icon/Curse.png',
+  image: '/cardeons/cards/icons/curse.png',
   action: 'lose_item_head',
   draw_chance: 6,
   atk_points: 0
@@ -662,7 +662,7 @@ curse5 = Cursecard.create!(
 curse6 = Cursecard.create!(
   title: 'Uh oh.',
   description: '<p>Your waifu disappointed you. Commit sudoko! Lose a level.</p>',
-  image: '/icon/Curse.png',
+  image: '/cardeons/cards/icons/curse.png',
   action: 'lose_level',
   draw_chance: 6,
   atk_points: 0
@@ -671,7 +671,7 @@ curse6 = Cursecard.create!(
 curse7 = Cursecard.create!(
   title: 'Bad Luck Brian',
   description: '<p>Lose a level.</p>',
-  image: '/icon/Curse.png',
+  image: '/cardeons/cards/icons/curse.png',
   action: 'lose_level',
   draw_chance: 6,
   atk_points: 0
@@ -680,7 +680,7 @@ curse7 = Cursecard.create!(
 curse8 = Cursecard.create!(
   title: 'Is this really bad?',
   description: '<p>The monsters attack get doubled but gives double the rewards!</p>',
-  image: '/icon/Curse.png',
+  image: '/cardeons/cards/icons/curse.png',
   action: 'double_attack_double_reward',
   draw_chance: 6,
   atk_points: 0
@@ -692,7 +692,7 @@ buffcard = Buffcard.create!(
   draw_chance: 6,
   title: 'Buffing yourself up, eh?',
   description: '<p>You are getting stronger and stronger. Gain 2 extra attack points</p>',
-  image: '/icon/Buff.png',
+  image: '/cardeons/cards/icons/buff.png',
   action: 'gain_atk',
   atk_points: 2
 )
@@ -701,7 +701,7 @@ buffcard2 = Buffcard.create!(
   draw_chance: 6,
   title: 'Slippery slope',
   description: '<p>The monster slipped, it looses 5 attack points.</p>',
-  image: '/icon/Buff.png',
+  image: '/cardeons/cards/icons/buff.png',
   action: 'monster_lose_atk',
   atk_points: -5
 )
@@ -710,7 +710,7 @@ buffcard3 = Buffcard.create!(
   draw_chance: 6,
   title: 'Extremely cool potion',
   description: '<p>+5 for any side!</p>',
-  image: '/icon/Buff.png',
+  image: '/cardeons/cards/icons/buff.png',
   action: 'plus_atk',
   atk_points: 5
 )
@@ -719,7 +719,7 @@ buffcard4 = Buffcard.create!(
   draw_chance: 6,
   title: 'Yeet',
   description: '<p>You send the monster to the shadow realm. You do not get any rewards or levels!</p>',
-  image: '/icon/Buff.png',
+  image: '/cardeons/cards/icons/buff.png',
   action: 'dodge_monster',
   atk_points: 0
 )
@@ -728,7 +728,7 @@ buffcard5 = Buffcard.create!(
   draw_chance: 6,
   title: 'Pot of Greed',
   description: '<p>Time for a duel: Draw two additional cards!</p>',
-  image: '/icon/Buff.png',
+  image: '/cardeons/cards/icons/buff.png',
   action: 'draw_two_cards',
   atk_points: 0
 )
@@ -737,7 +737,7 @@ buffcard6 = Buffcard.create!(
   draw_chance: 6,
   title: 'Chloroform',
   description: '<p>You can force a chosen player to help you!</p>',
-  image: '/icon/Buff.png',
+  image: '/cardeons/cards/icons/buff.png',
   action: 'force_help',
   atk_points: 0
 )
@@ -746,7 +746,7 @@ buffcard7 = Buffcard.create!(
   draw_chance: 6,
   title: 'Greater potion of Awesomeness',
   description: '<p>+6 for any side</p>',
-  image: '/icon/Buff.png',
+  image: '/cardeons/cards/icons/buff.png',
   action: 'plus_atk',
   atk_points: 6
 )
@@ -755,7 +755,7 @@ buffcard8 = Buffcard.create!(
   draw_chance: 6,
   title: 'Invisibility potion',
   description: '<p>You can flee without a problem!</p>',
-  image: '/icon/Buff.png',
+  image: '/cardeons/cards/icons/buff.png',
   action: 'flee_success',
   atk_points: 0
 )
@@ -764,7 +764,7 @@ buffcard9 = Buffcard.create!(
   draw_chance: 6,
   title: 'Lick',
   description: '<p>You paralyzed the monster, it hurts itself and loses 3 ATP</p>',
-  image: '/icon/Buff.png',
+  image: '/cardeons/cards/icons/buff.png',
   action: 'monster_lose_atk',
   atk_points: 3
 )
@@ -773,7 +773,7 @@ buffcard10 = Buffcard.create!(
   draw_chance: 6,
   title: 'Over 9000!',
   description: '<p>Your hair starts glowing! +5 for any side!</p>',
-  image: '/icon/Buff.png',
+  image: '/cardeons/cards/icons/buff.png',
   action: 'plus_atk',
   atk_points: 5
 )
@@ -810,7 +810,7 @@ buffcard10 = Buffcard.create!(
 mullet = Itemcard.create!(
   title: 'Mullet',
   description: '<p>Very fancy 80s hair. -3 Stylepoints</p>',
-  image: '/item/Vokuhila_Hellblau.png',
+  image: '/cardeons/cards/items/vokuhila.png',
   action: 'no_action',
   draw_chance: 5,
   element: 'no_element',
@@ -824,7 +824,7 @@ mullet = Itemcard.create!(
 roman_helmet = Itemcard.create!(
   title: 'Roman Helmet',
   description: '<p>Asterix will hate you! +2 Against Boaring</p>',
-  image: '/item/Helm_Orange.png',
+  image: '/cardeons/cards/items/helmet.png',
   action: 'no_action',
   draw_chance: 5,
   element: 'no_element',
@@ -838,7 +838,7 @@ roman_helmet = Itemcard.create!(
 tunapizza = Itemcard.create!(
   title: 'Tuna Pizza Shield',
   description: '<p>Mamma mia, molto bene! +3 when combined with a pizza cutter!</p>',
-  image: '/item/Pizza_Dunkelblau.png',
+  image: '/cardeons/cards/items/pizza_water.png',
   action: 'no_action',
   draw_chance: 5,
   element: 'water',
@@ -851,10 +851,10 @@ tunapizza = Itemcard.create!(
 veggiepizza = Itemcard.create!(
   title: 'Veggie Pizza Shield',
   description: '<p>Mamma mia, molto bene! +3 when combined with a pizza cutter!</p>',
-  image: '/item/Pizza_Gruen.png',
+  image: '/cardeons/cards/items/pizza_earth.png',
   action: 'no_action',
   draw_chance: 5,
-  element: 'water',
+  element: 'earth',
   element_modifier: 0,
   atk_points: 3,
   item_category: 'hand',
@@ -864,7 +864,7 @@ veggiepizza = Itemcard.create!(
 chickenpizza = Itemcard.create!(
   title: 'Chicken Pizza Shield',
   description: '<p>Mamma mia, prosciutto? no chickerino! +3 when combined with a pizza cutter!</p>',
-  image: '/item/Pizza_Hellblau.png',
+  image: '/cardeons/cards/items/pizza_air.png',
   action: 'no_action',
   draw_chance: 5,
   element: 'air',
@@ -877,7 +877,7 @@ chickenpizza = Itemcard.create!(
 diavolopizza = Itemcard.create!(
   title: 'Diavolo Pizza Shield',
   description: '<p>Mamma mia, oh mio dio, che caldo! +3 when combined with a pizza cutter!</p>',
-  image: '/item/Pizza_Orange.png',
+  image: '/cardeons/cards/items/pizza_fire.png',
   action: 'no_action',
   draw_chance: 5,
   element: 'fire',
@@ -891,7 +891,7 @@ diavolopizza = Itemcard.create!(
 pizzacutter = Itemcard.create!(
   title: 'Pizza Cutter',
   description: '<p>Cuts pizza! +3 if you have a Pizza.</p>',
-  image: '/item/Pizzaschneider.png',
+  image: '/cardeons/cards/items/pizzacutter.png',
   action: 'plus_3_if_combination',
   draw_chance: 5,
   element: 'no_element',
@@ -905,7 +905,7 @@ pizzacutter = Itemcard.create!(
 controller = Itemcard.create!(
   title: 'Controller',
   description: '<p>You better not use it for this game.</p>',
-  image: '/item/Controller_Dunkelblau.png',
+  image: '/cardeons/cards/items/controller.png',
   action: 'no_action',
   draw_chance: 5,
   element: 'no_element',
@@ -919,7 +919,7 @@ controller = Itemcard.create!(
 the_one_ring = Itemcard.create!(
   title: 'The One Ring',
   description: '<p>One Ring to rule them all! The Ring has awoken, it’s heard its master’s call.</p>',
-  image: '/item/Ring_Hellblau.png',
+  image: '/cardeons/cards/items/ring.png',
   action: 'no_action',
   draw_chance: 5,
   element: 'no_element',
@@ -933,7 +933,7 @@ the_one_ring = Itemcard.create!(
 german_tourist_shoes = Itemcard.create!(
   title: 'German Tourist Shoes',
   description: '<p>Oh no, a german tourist on the run! Hide your towels!</p>',
-  image: '/item/Sandalen_Dunkelblau.png',
+  image: '/cardeons/cards/items/sandals.png',
   action: 'no_action',
   draw_chance: 5,
   element: 'no_element',
@@ -947,7 +947,7 @@ german_tourist_shoes = Itemcard.create!(
 ironing_board = Itemcard.create!(
   title: 'Ironing Board',
   description: '<p>Can handle hot stuff. You can use it as a shield!</p>',
-  image: '/item/Buegelbrett.png',
+  image: '/cardeons/cards/items/ironing_board.png',
   action: 'no_action',
   draw_chance: 5,
   element: 'no_element',
@@ -961,7 +961,7 @@ ironing_board = Itemcard.create!(
 plunger = Itemcard.create!(
   title: 'Plunger',
   description: '<p>The thing to get things out of the toilet.</p>',
-  image: '/item/Puempel.png',
+  image: '/cardeons/cards/items/plumb.png',
   action: 'no_action',
   draw_chance: 5,
   element: 'no_element',
@@ -975,7 +975,7 @@ plunger = Itemcard.create!(
 ladle = Itemcard.create!(
   title: 'Ladle',
   description: '<p>You can use it to get soup OR to hit your enemies. Maybe your enemies are hungry?</p>',
-  image: '/item/Schoepfkelle.png',
+  image: '/cardeons/cards/items/ladle.png',
   action: 'no_action',
   draw_chance: 5,
   element: 'no_element',
@@ -989,7 +989,7 @@ ladle = Itemcard.create!(
 rubber_ring = Itemcard.create!(
   title: 'Rubber Ring',
   description: '<p>You ain’t afraid of water. +3 against water monster.</p>',
-  image: '/item/Schwimmreifen_Gruen.png',
+  image: '/cardeons/cards/items/floatingtire.png',
   action: 'plus_three',
   draw_chance: 5,
   element: 'water',
@@ -1003,7 +1003,7 @@ rubber_ring = Itemcard.create!(
 sunglasses = Itemcard.create!(
   title: 'Sunglasses',
   description: '<p>+3 when worn by Pit-Bull, transforms him into Mister World Wide!</p>',
-  image: '/item/Sonnenbrille_Hellblau.png',
+  image: '/cardeons/cards/items/sunglasses.png',
   action: 'plus_three_if_combination',
   draw_chance: 5,
   element: 'no_element',
@@ -1017,7 +1017,7 @@ sunglasses = Itemcard.create!(
 water_gun = Itemcard.create!(
   title: 'Water Gun',
   description: '<p>+3 against fire monster.</p>',
-  image: '/item/Wasserpistole.png',
+  image: '/cardeons/cards/items/watergun.png',
   action: 'plus_three',
   draw_chance: 5,
   element: 'water',
@@ -1031,7 +1031,7 @@ water_gun = Itemcard.create!(
 wand = Itemcard.create!(
   title: 'Wand',
   description: '<p>You are a wizard, player!</p>',
-  image: '/item/Zauberstab_Orange.png',
+  image: '/cardeons/cards/items/wand.png',
   action: 'no_action',
   draw_chance: 5,
   element: 'no_element',
@@ -1045,7 +1045,7 @@ wand = Itemcard.create!(
 whip = Itemcard.create!(
   title: 'Whip',
   description: '<p>Use it for your horse or something else ;-). +2 against Unicorns.</p>',
-  image: '/item/Gerte.png',
+  image: '/cardeons/cards/items/whip.png',
   action: 'plus_two',
   draw_chance: 5,
   element: 'no_element',
@@ -1059,7 +1059,7 @@ whip = Itemcard.create!(
 dagger = Itemcard.create!(
   title: 'Dagger',
   description: '<p>Sneaky thief!</p>',
-  image: '/item/Dolch_Dunkelblau.png',
+  image: '/cardeons/cards/items/dagger.png',
   action: 'no_action',
   draw_chance: 5,
   element: 'no_element',
@@ -1073,7 +1073,7 @@ dagger = Itemcard.create!(
 item3 = Itemcard.create!(
   title: 'Hermes shoes',
   description: '<p>Damn, WHAT ARE THOOOSE. Hopefully hermes does not mind you took them.</p>',
-  image: '/item/shoes.png',
+  image: '/cardeons/cards/items/shoes.png',
   action: 'no_action',
   draw_chance: 5,
   element: 'no_element',
@@ -1087,7 +1087,7 @@ item3 = Itemcard.create!(
 spaghetto_head = Itemcard.create!(
   title: 'Spaghetti Head',
   description: '<p>You accept the flying spaghetti monster as your lord and savior!</p>',
-  image: '/item/Nudelsieb.png',
+  image: '/cardeons/cards/items/sieve.png',
   action: 'no_action',
   draw_chance: 5,
   element: 'no_element',
@@ -1101,7 +1101,7 @@ spaghetto_head = Itemcard.create!(
 berserker_axe = Itemcard.create!(
   title: 'Berserker Axe',
   description: '<p>Boy!</p>',
-  image: '/item/Axt_Orange.png',
+  image: '/cardeons/cards/items/axe.png',
   action: 'no_action',
   draw_chance: 5,
   element: 'no_element',
@@ -1115,7 +1115,7 @@ berserker_axe = Itemcard.create!(
 katana = Itemcard.create!(
   title: 'Katana',
   description: '<p>+3 against Weebs. Omae wa mou shinderu!</p>',
-  image: '/item/Katana.png',
+  image: '/cardeons/cards/items/katana.png',
   action: 'no_action',
   draw_chance: 5,
   element: 'no_element',
@@ -1129,7 +1129,7 @@ katana = Itemcard.create!(
 saddle = Itemcard.create!(
   title: 'Saddle',
   description: '<p>Perfect accessory for a horse girl. BRR! +2 if equipped on a Unicorn</p>',
-  image: '/item/Sattel_Hellblau.png',
+  image: '/cardeons/cards/items/saddle.png',
   action: 'no_action',
   draw_chance: 5,
   element: 'no_element',
@@ -1143,7 +1143,7 @@ saddle = Itemcard.create!(
 morning_star = Itemcard.create!(
   title: 'Morning Star',
   description: '<p>The perfect weapon of the devil.</p>',
-  image: '/item/Morgenstern.png',
+  image: '/cardeons/cards/items/morning_star.png',
   action: 'no_action',
   draw_chance: 5,
   element: 'no_element',
@@ -1157,7 +1157,7 @@ morning_star = Itemcard.create!(
 toothbrush = Itemcard.create!(
   title: 'Toothbrush',
   description: '<p>Slayer of morning breath.</p>',
-  image: '/item/Zahnbuerste_Gruen.png',
+  image: '/cardeons/cards/items/toothbrush.png',
   action: 'no_action',
   draw_chance: 5,
   element: 'no_element',
@@ -1171,7 +1171,7 @@ toothbrush = Itemcard.create!(
 spongebobs_spatula = Itemcard.create!(
   title: 'Spongebobs Spatula',
   description: '<p>Even the Hash-Slinging Slasher lives in fear of this weapon.</p>',
-  image: '/item/Pfannenwender.png',
+  image: '/cardeons/cards/items/spatula.png',
   action: 'no_action',
   draw_chance: 5,
   element: 'no_element',
@@ -1185,7 +1185,7 @@ spongebobs_spatula = Itemcard.create!(
 crown = Itemcard.create!(
   title: 'Crown',
   description: '<p>Suits a king. + 3 when Sir Bear wears it.</p>',
-  image: '/item/Krone.png',
+  image: '/cardeons/cards/items/crown.png',
   action: 'no_action',
   draw_chance: 5,
   element: 'no_element',
@@ -1199,7 +1199,7 @@ crown = Itemcard.create!(
 bow_and_arrow = Itemcard.create!(
   title: 'Bow and Arrow',
   description: '<p></p>',
-  image: '/item/Pfeil_Und_Bogen_Gruen.png',
+  image: '/cardeons/cards/items/bow_and_arrow.png',
   action: 'no_action',
   draw_chance: 5,
   element: 'no_element',
@@ -1213,7 +1213,7 @@ bow_and_arrow = Itemcard.create!(
 excalibur = Itemcard.create!(
   title: 'Excalibur',
   description: '<p></p>',
-  image: '/item/Schwert_Hellblau.png',
+  image: '/cardeons/cards/items/sword.png',
   action: 'no_action',
   draw_chance: 5,
   element: 'no_element',
@@ -1267,7 +1267,7 @@ u7.cards << (Card.find(3))
 u8.cards << (Card.find(3))
 u9.cards << (Card.find(3))
 
-levelcard = Levelcard.create!(title: 'Level up!', draw_chance: 5, description: 'Get one level', image: '/icon/Level.png', action: 'level_up', level_amount: 1)
+levelcard = Levelcard.create!(title: 'Level up!', draw_chance: 5, description: 'Get one level', image: '/cardeons/cards/icons/level.png', action: 'level_up', level_amount: 1)
 
 # gameboard = Gameboard.create!(current_state: 'fight', player_atk: 5)
 
