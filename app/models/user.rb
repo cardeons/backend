@@ -14,4 +14,9 @@ class User < ApplicationRecord
   has_one :player
   has_many :friendships, dependent: :destroy
   has_many :friends, through: :friendships, class_name: 'User'
+
+  def self.add_friend(user1, user2)
+    user2.friends << user1
+    user1.friends << user2
+  end
 end
