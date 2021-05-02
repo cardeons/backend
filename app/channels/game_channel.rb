@@ -120,7 +120,7 @@ class GameChannel < ApplicationCable::Channel
       player_level = player.level
       player.update!(level: player_level + 1)
 
-      if player.level == 5
+      if player.level >= 5
         monster_id = player.win_game(current_user)
         @gameboard.game_won!
         broadcast_to(@gameboard, { type: 'WIN', params: { player: player.id, monster_won: monster_id } })
@@ -139,12 +139,12 @@ class GameChannel < ApplicationCable::Channel
 
         PlayerChannel.broadcast_to(helping_player.user, { type: 'HANDCARD_UPDATE', params: { handcards: Gameboard.render_cards_array(helping_player.handcard.ingamedecks) } })
       end
-      
+
       msg = "#{current_user.player.name} has killed #{@gameboard.centercard.card.title}"
       broadcast_to(@gameboard, { type: GAME_LOG, params: { date: Time.new, message: msg } })
-      
+
       @gameboard.centercard.ingamedeck&.update!(cardable: @gameboard.graveyard)
-      
+
       PlayerChannel.broadcast_to(current_user.reload, { type: 'HANDCARD_UPDATE', params: { handcards: Gameboard.render_cards_array(player.handcard.ingamedecks) } })
 
       Gameboard.get_next_player(@gameboard)
@@ -250,9 +250,9 @@ class GameChannel < ApplicationCable::Channel
     user_to_broadcast_to = User.where(player: helping_player).first
 
     PlayerChannel.broadcast_to(user_to_broadcast_to,
-                                { type: 'ASK_FOR_HELP',
-                                  params: { player_id: helping_player_id, player_name: current_user.player.name, helping_shared_rewards: helping_shared_reward,
-                                            helping_player_attack: helping_player.attack } })
+                               { type: 'ASK_FOR_HELP',
+                                 params: { player_id: helping_player_id, player_name: current_user.player.name, helping_shared_rewards: helping_shared_reward,
+                                           helping_player_attack: helping_player.attack } })
   end
 
   def answer_help_call(params)
@@ -382,8 +382,6 @@ class GameChannel < ApplicationCable::Channel
   end
 
   def unsubscribed
-
-
     current_user.player.update!(inactive: true)
     # Any cleanup needed when channel is unsubscribed
     # pp current_user.playerpp
