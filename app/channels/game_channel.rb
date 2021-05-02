@@ -333,7 +333,7 @@ class GameChannel < ApplicationCable::Channel
   end
 
   def develop_add_buff_card
-    return unless developer_env?
+    return unless developer_actions_enabled?
 
     card = Buffcard.all.first
     current_user.player.handcard.ingamedecks.create(card: card, gameboard: current_user.player.gameboard)
@@ -341,7 +341,7 @@ class GameChannel < ApplicationCable::Channel
   end
 
   def develop_add_curse_card
-    return unless developer_env?
+    return unless developer_actions_enabled?
 
     card = Cursecard.all.last
     current_user.player.handcard.ingamedecks.create(card: card, gameboard: current_user.player.gameboard)
@@ -349,7 +349,7 @@ class GameChannel < ApplicationCable::Channel
   end
 
   def develop_add_card_with_id(params)
-    return unless developer_env?
+    return unless developer_actions_enabled?
 
     card = Card.find_by('id=?', params['card_id'])
     current_user.player.handcard.ingamedecks.create(card: card, gameboard: current_user.player.gameboard)
@@ -357,26 +357,26 @@ class GameChannel < ApplicationCable::Channel
   end
 
   def develop_broadcast_handcard_update
-    return unless developer_env?
+    return unless developer_actions_enabled?
 
     PlayerChannel.broadcast_to(current_user, { type: 'HANDCARD_UPDATE', params: { handcards: Gameboard.render_cards_array(current_user.player.handcard.ingamedecks) } })
   end
 
   def develop_broadcast_gameboard_update
-    return unless developer_env?
+    return unless developer_actions_enabled?
 
     broadcast_to(@gameboard, { type: BOARD_UPDATE, params: Gameboard.broadcast_game_board(@gameboard.reload) })
   end
 
   def develop_set_myself_as_current_player
-    return unless developer_env?
+    return unless developer_actions_enabled?
 
     current_user.player.gameboard.update!(current_player: current_user.player)
     broadcast_to(@gameboard, { type: BOARD_UPDATE, params: Gameboard.broadcast_game_board(@gameboard.reload) })
   end
 
   def develop_set_intercept_false
-    return unless developer_env?
+    return unless developer_actions_enabled?
 
     @gameboard.players.each do |player|
       player.reload.update!(intercept: false)
@@ -386,7 +386,7 @@ class GameChannel < ApplicationCable::Channel
   end
 
   def develop_set_myself_as_winner
-    return unless developer_env?
+    return unless developer_actions_enabled?
 
     player = Player.find_by('user_id = ?', current_user.id)
 
@@ -426,9 +426,9 @@ class GameChannel < ApplicationCable::Channel
     # broadcast_to(@gameboard, _e)
   end
 
-  def developer_env?
+  def developer_actions_enabled?
     # returns true if ENV['DEV_TOOL_ENABLED'] is set
-    return true if ENV['DEV_TOOL_ENABLED']
+    return true if ENV['DEV_TOOL_ENABLED'] == 'enabled'
 
     PlayerChannel.broadcast_error(current_user, "You can't use developer actions in this Environment")
     false
