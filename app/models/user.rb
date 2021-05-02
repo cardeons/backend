@@ -19,4 +19,12 @@ class User < ApplicationRecord
     user2.friends << user1
     user1.friends << user2
   end
+
+  def self.remove_friend(user1, user2)
+    friendship1 = Friendship.where(['user_id = ? and friend_id = ?', user1.id, user2.id]).first
+    friendship2 = Friendship.where(['user_id = ? and friend_id = ?', user2.id, user1.id]).first
+
+    Friendship.destroy(friendship1.id)
+    Friendship.destroy(friendship2.id)
+  end
 end
