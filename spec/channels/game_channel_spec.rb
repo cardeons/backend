@@ -794,18 +794,18 @@ RSpec.describe GameChannel, type: :channel do
     expect(users(:one).player.reload.level).to eql(2)
   end
 
-  it 'succesfull attack triggers WIN broadcast if player is now level 5' do
+  it 'succesfull attack triggers WIN broadcast if player is now exactly level 5' do
     gameboards(:gameboardFourPlayers).initialize_game_board
     gameboards(:gameboardFourPlayers).players.each(&:init_player)
 
     stub_connection current_user: users(:userFour)
     subscribe
 
-    # player_to_win = Player.find(gameboards(:gameboardFourPlayers).current_player)
     users(:userFour).player.update!(attack: 999)
     users(:userFour).player.update!(level: 4)
 
-    Gameboard.draw_door_card(gameboards(:gameboardFourPlayers))
+    # set centercard with one level reward because srand always chooses a card with 2
+    Ingamedeck.create!(gameboard: gameboards(:gameboardFourPlayers), card: cards(:monstercard9), cardable: gameboards(:gameboardFourPlayers).centercard)
 
     expect do
       perform('attack', {})
@@ -816,12 +816,30 @@ RSpec.describe GameChannel, type: :channel do
 
     expect(users(:userFour).player.reload.level).to eql(5)
     expect(gameboards(:gameboardFourPlayers).reload.current_state).to eql('game_won')
+  end
 
-    # playerwin = Gameboard.attack(gameboards(:gameboardFourPlayers))
+  it 'succesfull attack triggers WIN broadcast if player is higher than level 5 because monsters can give 2 levels' do
+    gameboards(:gameboardFourPlayers).initialize_game_board
+    gameboards(:gameboardFourPlayers).players.each(&:init_player)
 
-    # expect(playeratk.to(eql))
-    # expect(gameboards(:gameboardFourPlayers).success).to be_truthy if playerwin[:result]
-    # expect(gameboards(:gameboardFourPlayers).success).to be_falsy unless playerwin[:result]
+    stub_connection current_user: users(:userFour)
+    subscribe
+
+    users(:userFour).player.update!(attack: 999)
+    users(:userFour).player.update!(level: 4)
+
+    # simulate centercard with double level reward
+    Ingamedeck.create!(gameboard: gameboards(:gameboardFourPlayers), card: cards(:monstercard10), cardable: gameboards(:gameboardFourPlayers).centercard)
+
+    expect do
+      perform('attack', {})
+    end.to have_broadcasted_to("game:#{users(:userFour).player.gameboard.to_gid_param}")
+      .with(
+        hash_including(type: 'WIN')
+      ).exactly(:once)
+
+    expect(users(:userFour).player.reload.level).to eql(6)
+    expect(gameboards(:gameboardFourPlayers).reload.current_state).to eql('game_won')
   end
 
   it 'user gets a new monster' do
@@ -831,11 +849,11 @@ RSpec.describe GameChannel, type: :channel do
     stub_connection current_user: users(:userFour)
     subscribe
 
-    # player_to_win = Player.find(gameboards(:gameboardFourPlayers).current_player)
     users(:userFour).player.update!(attack: 999)
     users(:userFour).player.update!(level: 4)
 
-    Gameboard.draw_door_card(gameboards(:gameboardFourPlayers))
+    # set centercard with one level reward because srand always chooses a card with 2
+    Ingamedeck.create!(gameboard: gameboards(:gameboardFourPlayers), card: cards(:monstercard9), cardable: gameboards(:gameboardFourPlayers).centercard)
 
     expect do
       perform('attack', {})
@@ -846,11 +864,6 @@ RSpec.describe GameChannel, type: :channel do
 
     expect(users(:userFour).player.reload.level).to eql(5)
     expect(users(:userFour).cards.size).to eql(1)
-    # playerwin = Gameboard.attack(gameboards(:gameboardFourPlayers))
-
-    # expect(playeratk.to(eql))
-    # expect(gameboards(:gameboardFourPlayers).success).to be_truthy if playerwin[:result]
-    # expect(gameboards(:gameboardFourPlayers).success).to be_falsy unless playerwin[:result]
   end
 
   it 'user gets a new monster if he already owns the first' do
@@ -860,7 +873,6 @@ RSpec.describe GameChannel, type: :channel do
     stub_connection current_user: users(:userFour)
     subscribe
 
-    # player_to_win = Player.find(gameboards(:gameboardFourPlayers).current_player)
     users(:userFour).player.update!(attack: 999)
     users(:userFour).player.update!(level: 4)
 
