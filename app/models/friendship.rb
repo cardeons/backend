@@ -22,4 +22,12 @@ class Friendship < ApplicationRecord
     friendship1.update!(pending: false)
     friendship2.update!(pending: false)
   end
+
+  def self.broadcast_pending_requests(current_user)
+    pending_requests = Friendship.where(['user_id = ? and pending = ?', current_user.id, true])
+
+    pending_requests.each do |request|
+      FriendlistChannel.broadcast_to(current_user, { type: 'FRIEND_REQUEST', params: { inquirer: request.friend.id, inquirer_name: request.friend.name } })
+    end
+  end
 end

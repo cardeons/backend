@@ -30,6 +30,16 @@ RSpec.describe FriendlistChannel, type: :channel do
       .with(
         hash_including(type: 'FRIEND_LOG', params: { message: "You sent a friendrequest to #{users(:usernorbert).name}" })
       ).exactly(:once)
+
+    unsubscribe
+
+    stub_connection current_user: users(:usernorbert)
+    expect do
+      subscribe
+    end.to have_broadcasted_to(FriendlistChannel.broadcasting_for(connection.current_user))
+      .with(
+        hash_including(type: 'FRIEND_REQUEST', params: { inquirer: users(:one).id, inquirer_name: users(:one).name })
+      ).exactly(:once)
   end
 
   it 'test if friendrequest is accepted' do

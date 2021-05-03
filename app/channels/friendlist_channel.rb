@@ -5,6 +5,8 @@ class FriendlistChannel < ApplicationCable::Channel
     stream_for current_user
 
     current_user.update(online: true)
+
+    Friendship.broadcast_pending_requests(current_user)
   end
 
   def unsubscribed
@@ -19,6 +21,7 @@ class FriendlistChannel < ApplicationCable::Channel
 
     broadcast_to(current_user, { type: 'FRIEND_LOG', params: { message: "You sent a friendrequest to #{future_friend.name}" } })
     broadcast_to(future_friend, { type: 'FRIEND_LOG', params: { message: "#{current_user.name} sent you a friendrequest" } })
+    broadcast_to(future_friend, { type: 'FRIEND_REQUEST', params: { inquirer: current_user.id, inquirer_name: current_user.name } })
   end
 
   def accept_friend_request(data)
