@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_05_02_133200) do
+ActiveRecord::Schema.define(version: 2021_05_03_085759) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -22,11 +22,11 @@ ActiveRecord::Schema.define(version: 2021_05_02_133200) do
     t.string "action"
     t.integer "draw_chance"
     t.integer "level"
-    t.string "element"
+    t.decimal "element"
     t.string "bad_things"
     t.string "rewards_treasure"
-    t.string "good_against"
-    t.string "bad_against"
+    t.decimal "good_against"
+    t.decimal "bad_against"
     t.integer "good_against_value"
     t.integer "bad_against_value"
     t.integer "element_modifier"
