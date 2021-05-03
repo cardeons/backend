@@ -62,7 +62,6 @@ class Monstercard < Card
       # yay
       else
         type = 'GAMEBOARD_UPDATE'
-        pp monster_to_equip
         deck_card.update(cardable: monster_to_equip)
 
         # get updatet result of attack
@@ -71,10 +70,6 @@ class Monstercard < Card
         monstercards1 = Monstercard.calculate_monsterslot_atk(player.monsterone)
         monstercards2 = Monstercard.calculate_monsterslot_atk(player.monstertwo)
         monstercards3 = Monstercard.calculate_monsterslot_atk(player.monsterthree)
-
-        pp monstercards3
-        pp monstercards2
-        pp monstercards1
 
         playeratkpoints = monstercards1 + monstercards2 + monstercards3 + player.level
         player.update(attack: playeratkpoints)

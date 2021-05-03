@@ -274,7 +274,7 @@ Gameboard Channel response
 
 CURRENT_STATE
 
-available values: lobby | ingame | intercept_phase | intercept_finished | boss_phase | game_won
+available values: lobby | ingame | intercept_phase | intercept_finished | boss_phase | boss_phase_finished | game_won
 
 lobby = spieler befinden sich in der lobby
 ingame = spiel hat gestartet

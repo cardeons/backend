@@ -112,7 +112,7 @@ class GameChannel < ApplicationCable::Channel
   end
 
   def attack
-    result = Gameboard.attack(@gameboard)
+    result = Gameboard.attack(@gameboard.reload)
 
     if result[:result]
 
@@ -134,7 +134,6 @@ class GameChannel < ApplicationCable::Channel
         shared_reward = @gameboard.shared_reward
         current_player_treasure = rewards - shared_reward
         Handcard.draw_handcards(@gameboard.current_player.id, @gameboard, current_player_treasure)
-
       end
 
       # TODO: add helping player to gameboard? give treasures to helping player
@@ -156,6 +155,7 @@ class GameChannel < ApplicationCable::Channel
       @gameboard.ingame!
       broadcast_to(@gameboard, { type: BOARD_UPDATE, params: Gameboard.broadcast_game_board(@gameboard) })
     end
+
     Gameboard.clear_buffcards(@gameboard)
     PlayerChannel.broadcast_to(current_user, { type: 'ERROR', params: { message: 'Playerattack too low' } }) unless result[:result]
 
@@ -167,45 +167,48 @@ class GameChannel < ApplicationCable::Channel
   end
 
   def intercept(params)
+    @gameboard.reload
     # params={
     # action: "intercept",
     # unique_card_id: 1,
     # to: 'center_card' | 'current_player'
     # }
 
-    unique_card_id = params['unique_card_id']
-    to = params['to']
+    if @gameboard.intercept_phase? || @gameboard.boss_phase?
+      unique_card_id = params['unique_card_id']
+      to = params['to']
 
-    # return if player does not own this card
-    ingame_card = check_if_player_owns_card(unique_card_id) || return
+      # return if player does not own this card
+      ingame_card = check_if_player_owns_card(unique_card_id) || return
 
-    if ingame_card.card.type != 'Buffcard'
-      # only buffcards are allowed alteast i think
-      PlayerChannel.broadcast_error(current_user, 'This card cannot be used to intercept')
-      return
+      if ingame_card.card.type != 'Buffcard'
+        # only buffcards are allowed alteast i think
+        PlayerChannel.broadcast_error(current_user, 'This card cannot be used to intercept')
+        return
+      end
+
+      current_user.player.reload
+      @gameboard.reload
+
+      case to
+      when 'center_card'
+        @gameboard.interceptcard.add_card_with_ingamedeck_id(unique_card_id)
+
+      when 'current_player'
+        # buff player
+        @gameboard.playerinterceptcard.add_card_with_ingamedeck_id(unique_card_id)
+      else
+        PlayerChannel.broadcast_error(current_user, 'This is not a correct field to play your card!')
+        return
+      end
+
+      start_intercept_phase(@gameboard)
+
+      # update this players handcards
+      PlayerChannel.broadcast_to(current_user, { type: 'HANDCARD_UPDATE', params: { handcards: Gameboard.render_cards_array(current_user.player.handcard.ingamedecks.reload) } })
+      # update board
+      broadcast_to(@gameboard, { type: BOARD_UPDATE, params: Gameboard.broadcast_game_board(@gameboard) })
     end
-
-    current_user.player.reload
-    @gameboard.reload
-
-    case to
-    when 'center_card'
-      @gameboard.interceptcard.add_card_with_ingamedeck_id(unique_card_id)
-
-    when 'current_player'
-      # buff player
-      @gameboard.playerinterceptcard.add_card_with_ingamedeck_id(unique_card_id)
-    else
-      PlayerChannel.broadcast_error(current_user, 'This is not a correct field to play your card!')
-      return
-    end
-
-    start_intercept_phase(@gameboard)
-
-    # update this players handcards
-    PlayerChannel.broadcast_to(current_user, { type: 'HANDCARD_UPDATE', params: { handcards: Gameboard.render_cards_array(current_user.player.handcard.ingamedecks.reload) } })
-    # update board
-    broadcast_to(@gameboard, { type: BOARD_UPDATE, params: Gameboard.broadcast_game_board(@gameboard) })
   end
 
   def no_interception

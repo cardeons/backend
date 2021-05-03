@@ -61,7 +61,7 @@ RSpec.describe GameChannel, type: :channel do
 
     # give player a buffcard
     player.handcard.ingamedecks.create(card: cards(:buffcard), gameboard: gameboards(:gameboardFourPlayers))
-
+    Gameboard.draw_door_card(gameboards(:gameboardFourPlayers))
     expect do
       perform('intercept', {
                 unique_card_id: player.handcard.ingamedecks.find_by('card_id=?', cards(:buffcard).id),
@@ -98,6 +98,7 @@ RSpec.describe GameChannel, type: :channel do
 
     # give player a buffcard
     player.handcard.ingamedecks.create(card: cards(:buffcard), gameboard: gameboards(:gameboardFourPlayers))
+    Gameboard.draw_door_card(gameboards(:gameboardFourPlayers))
 
     expect do
       perform('intercept', {
@@ -122,6 +123,7 @@ RSpec.describe GameChannel, type: :channel do
 
     stub_connection current_user: users(:one)
     subscribe
+    Gameboard.draw_door_card(gameboards(:gameboardFourPlayers))
 
     expect do
       perform('intercept', {
@@ -986,12 +988,11 @@ RSpec.describe GameChannel, type: :channel do
     stub_connection current_user: users(:userFour)
     subscribe
 
-    Gameboard.draw_door_card(gameboards(:gameboardFourPlayers))
-
     player = gameboards(:gameboardFourPlayers).current_player
     unique_card = player.handcard.ingamedecks.create(card: cards(:buffcard), gameboard: gameboards(:gameboardFourPlayers))
     unique_card2 = player.handcard.ingamedecks.create(card: cards(:buffcard3), gameboard: gameboards(:gameboardFourPlayers))
 
+    Gameboard.draw_door_card(gameboards(:gameboardFourPlayers))
     ## buff monster two times
     perform('intercept', {
               unique_card_id: player.handcard.ingamedecks.find_by('id=?', unique_card.id),
@@ -1032,11 +1033,11 @@ RSpec.describe GameChannel, type: :channel do
     stub_connection current_user: users(:userFour)
     subscribe
 
-    Gameboard.draw_door_card(gameboards(:gameboardFourPlayers))
-
     player = gameboards(:gameboardFourPlayers).current_player
     unique_card = player.handcard.ingamedecks.create(card: cards(:buffcard), gameboard: gameboards(:gameboardFourPlayers))
     unique_card2 = player.handcard.ingamedecks.create(card: cards(:buffcard3), gameboard: gameboards(:gameboardFourPlayers))
+
+    Gameboard.draw_door_card(gameboards(:gameboardFourPlayers))
 
     ## buff monster two times
     perform('intercept', {
