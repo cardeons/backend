@@ -132,12 +132,8 @@ RSpec.describe FriendlistChannel, type: :channel do
   end
 
   it 'test if friends get broadcastet on subscribe' do
-    users(:usernorbert).friends << users(:two)
-    users(:usernorbert).friends << users(:one)
-
-    users(:usernorbert).friendships.each do |friendship|
-      friendship.update(pending: false)
-    end
+    Friendship.create(user: users(:usernorbert), friend: users(:two), inquirer: users(:usernorbert), pending: false)
+    Friendship.create(user: users(:usernorbert), friend: users(:one), inquirer: users(:usernorbert), pending: false)
 
     stub_connection current_user: users(:usernorbert)
     expect do
@@ -145,6 +141,39 @@ RSpec.describe FriendlistChannel, type: :channel do
     end.to have_broadcasted_to(FriendlistChannel.broadcasting_for(connection.current_user))
       .with(
         hash_including(type: 'FRIENDLIST')
+      ).exactly(:once)
+  end
+
+  it 'test if friendrequest is broadcasted to the right user' do
+    stub_connection current_user: users(:one)
+    subscribe
+
+    expect do
+      perform('send_friend_request', {
+                friend: users(:usernorbert).id
+              })
+    end.to have_broadcasted_to(FriendlistChannel.broadcasting_for(connection.current_user))
+      .with(
+        hash_including(type: 'FRIEND_LOG', params: { message: "You sent a friendrequest to #{users(:usernorbert).name}" })
+      ).exactly(:once)
+
+    unsubscribe
+
+    expect do
+      subscribe
+    end.to have_broadcasted_to(FriendlistChannel.broadcasting_for(connection.current_user))
+      .with(
+        hash_including(type: 'FRIEND_REQUEST', params: { inquirer: users(:one).id, inquirer_name: users(:one).name })
+      ).exactly(0)
+
+    unsubscribe
+
+    stub_connection current_user: users(:usernorbert)
+    expect do
+      subscribe
+    end.to have_broadcasted_to(FriendlistChannel.broadcasting_for(connection.current_user))
+      .with(
+        hash_including(type: 'FRIEND_REQUEST', params: { inquirer: users(:one).id, inquirer_name: users(:one).name })
       ).exactly(:once)
   end
 end

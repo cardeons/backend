@@ -5,7 +5,7 @@ RSpec.describe Friendship, type: :model do
 
   it 'user should have 1 friend' do
     # gameboard = gameboards(:gameboardFourPlayers)
-    users(:userOne).friends << users(:userTwo)
+    Friendship.create(user: users(:userOne), friend: users(:userTwo), inquirer: users(:userOne))
 
     expect(users(:userOne).friends.count).to eq 1
     expect(users(:userOne).friendships.first.pending).to be_truthy

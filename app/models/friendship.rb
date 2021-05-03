@@ -1,10 +1,14 @@
 class Friendship < ApplicationRecord
   belongs_to :user
   belongs_to :friend, class_name: 'User'
+  belongs_to :inquirer, class_name: 'User'
 
   def self.add_friend(user1, user2)
-    user2.friends << user1
-    user1.friends << user2
+    # user2.friends << user1
+    # user1.friends << user2
+
+    Friendship.create(user: user1, friend: user2, inquirer: user1)
+    Friendship.create(user: user2, friend: user1, inquirer: user1)
   end
 
   def self.remove_friend(user1, user2)
@@ -27,7 +31,7 @@ class Friendship < ApplicationRecord
     pending_requests = Friendship.where(['user_id = ? and pending = ?', current_user.id, true])
 
     pending_requests.each do |request|
-      FriendlistChannel.broadcast_to(current_user, { type: 'FRIEND_REQUEST', params: { inquirer: request.friend.id, inquirer_name: request.friend.name } })
+      FriendlistChannel.broadcast_to(current_user, { type: 'FRIEND_REQUEST', params: { inquirer: request.friend.id, inquirer_name: request.friend.name } }) if request.inquirer != current_user
     end
   end
 

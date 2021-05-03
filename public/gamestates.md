@@ -334,3 +334,7 @@ Alle im Game-Chanel
    type: 'develop_set_myself_as_winner',
    params: { }  
 }
+
+
+#FRIENDLISTCHANNEL
+
