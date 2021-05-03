@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require 'pp'
+
 class Gameboard < ApplicationRecord
   has_many :players, dependent: :destroy
   has_many :ingamedeck, dependent: :destroy
@@ -10,7 +12,7 @@ class Gameboard < ApplicationRecord
   has_one :graveyard, dependent: :destroy
   has_one :interceptcard, dependent: :destroy
   has_one :playerinterceptcard, dependent: :destroy
-  enum current_state: %i[lobby ingame intercept_phase intercept_finished game_won]
+  enum current_state: %i[lobby ingame intercept_phase intercept_finished game_won boss_phase boss_phase_finished]
 
   # has_many :cards, through: :ingame_cards
 
@@ -158,15 +160,14 @@ class Gameboard < ApplicationRecord
   end
 
   def self.draw_door_card(gameboard)
-    gameboard.intercept_phase!
     # cursecards = Cursecard.all
     monstercards = Monstercard.all
-    # bosscards = Bosscard.all
+    bosscards = Bosscard.all
 
     allcards = []
     # addCardsToArray(allcards, cursecards)
     add_cards_to_array(allcards, monstercards)
-    # addCardsToArray(allcards, bosscards)
+    add_cards_to_array(allcards, bosscards)
 
     randomcard = allcards[rand(allcards.size)]
 
@@ -186,7 +187,14 @@ class Gameboard < ApplicationRecord
 
     gameboard.update(centercard: new_center, rewards_treasure: new_treasure)
 
-    attack_obj = attack(gameboard.reload, true)
+    # if bosscard is drawn, phase is boss_phase, otherwise always intercept_phase
+    if gameboard.centercard.card.type == 'Bosscard'
+      gameboard.boss_phase!
+      attack_obj = attack(gameboard.reload, true, true)
+    else
+      gameboard.intercept_phase!
+      attack_obj = attack(gameboard.reload, true)
+    end
 
     gameboard.update(success: attack_obj[:result], player_atk: attack_obj[:playeratk], monster_atk: attack_obj[:monsteratk])
 
@@ -226,26 +234,44 @@ class Gameboard < ApplicationRecord
     output
   end
 
-  def self.attack(gameboard, curse_log = false)
+  # def self.calculate_all_player_atk(gameboard)
+  #   gameboard.reload
+  #   calculated_attack = 0
+  #   gameboard.players.each do |player|
+  #     monstercards1 = Monstercard.calculate_monsterslot_atk(player.monsterone)
+  #     monstercards2 = Monstercard.calculate_monsterslot_atk(player.monstertwo)
+  #     monstercards3 = Monstercard.calculate_monsterslot_atk(player.monsterthree)
+
+  #     calculated_attack = monstercards1 + monstercards2 + monstercards3 + player.level
+
+  #     calculated_attack += gameboard.playerinterceptcard.cards.sum(:atk_points)
+  #   end
+  # end
+
+  def self.attack(gameboard, curse_log = false, boss_phase = false)
     gameboard.reload
-    player = gameboard.current_player
-    playeratkpoints = 1
+    # pp '--------------'
+    # pp gameboard.players
 
-    unless player.nil?
+    players = if boss_phase
+                gameboard.players
+              else
+                [gameboard.current_player]
+              end
 
+    playeratkpoints = 0
+    playerwin = false
+    monsteratkpts = 0
+
+    players.each do |player|
+      # pp player
       monstercards1 = Monstercard.calculate_monsterslot_atk(player.monsterone)
       monstercards2 = Monstercard.calculate_monsterslot_atk(player.monstertwo)
       monstercards3 = Monstercard.calculate_monsterslot_atk(player.monsterthree)
 
-      playeratkpoints = monstercards1 + monstercards2 + monstercards3 + player.level + gameboard.helping_player_atk
+      playeratkpoints += monstercards1 + monstercards2 + monstercards3 + player.level + gameboard.helping_player_atk
 
       playeratkpoints += gameboard.playerinterceptcard.cards.sum(:atk_points)
-
-      ## monsteratk points get set to 0 if cards.first is nil => no centercard
-      monsteratkpts = gameboard.centercard.card&.atk_points || 0
-
-      # #add intercept buffs
-      monsteratkpts += gameboard.interceptcard.cards.sum(:atk_points)
 
       player.playercurse.ingamedecks.each do |curse|
         curse_obj = Cursecard.activate(curse, player, gameboard, playeratkpoints, monsteratkpts, curse_log)
@@ -253,21 +279,26 @@ class Gameboard < ApplicationRecord
         playeratkpoints = curse_obj[:playeratk]
         monsteratkpts = curse_obj[:monsteratk]
       end
-
-      playerwin = playeratkpoints > monsteratkpts
-
-      if playerwin
-        #   message = "SUCCESS"
-        gameboard.update(success: true, player_atk: playeratkpoints, monster_atk: monsteratkpts)
-      else
-        #   message = "FAIL"
-        gameboard.update(success: false, player_atk: playeratkpoints, monster_atk: monsteratkpts)
-        #   # broadcast: flee or use cards!
-      end
-
     end
 
-    { result: playerwin, playeratk: playeratkpoints, monsteratk: monsteratkpts }
+    ## monsteratk points get set to 0 if cards.first is nil => no centercard
+    monsteratkpts += gameboard.centercard.card&.atk_points || 0
+
+    # #add intercept buffs
+    monsteratkpts += gameboard.interceptcard.cards.sum(:atk_points)
+
+    playerwin = playeratkpoints > monsteratkpts
+
+    if playerwin
+      #   message = "SUCCESS"
+      gameboard.update(success: true, player_atk: playeratkpoints, monster_atk: monsteratkpts)
+    else
+      #   message = "FAIL"
+      gameboard.update(success: false, player_atk: playeratkpoints, monster_atk: monsteratkpts)
+      #   # broadcast: flee or use cards!
+    end
+
+    { result: playerwin, playeratk: playeratkpoints, monsteratk: monsteratkpts, bossphase: boss_phase }
   end
 
   def self.reset_all_game_boards
