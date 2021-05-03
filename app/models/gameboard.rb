@@ -234,24 +234,8 @@ class Gameboard < ApplicationRecord
     output
   end
 
-  # def self.calculate_all_player_atk(gameboard)
-  #   gameboard.reload
-  #   calculated_attack = 0
-  #   gameboard.players.each do |player|
-  #     monstercards1 = Monstercard.calculate_monsterslot_atk(player.monsterone)
-  #     monstercards2 = Monstercard.calculate_monsterslot_atk(player.monstertwo)
-  #     monstercards3 = Monstercard.calculate_monsterslot_atk(player.monsterthree)
-
-  #     calculated_attack = monstercards1 + monstercards2 + monstercards3 + player.level
-
-  #     calculated_attack += gameboard.playerinterceptcard.cards.sum(:atk_points)
-  #   end
-  # end
-
   def self.attack(gameboard, curse_log = false, boss_phase = false)
     gameboard.reload
-    # pp '--------------'
-    # pp gameboard.players
 
     players = if boss_phase
                 gameboard.players
@@ -264,7 +248,6 @@ class Gameboard < ApplicationRecord
     monsteratkpts = 0
 
     players.each do |player|
-      # pp player
       monstercards1 = Monstercard.calculate_monsterslot_atk(player.monsterone)
       monstercards2 = Monstercard.calculate_monsterslot_atk(player.monstertwo)
       monstercards3 = Monstercard.calculate_monsterslot_atk(player.monsterthree)
