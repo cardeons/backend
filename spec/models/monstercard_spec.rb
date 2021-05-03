@@ -74,7 +74,6 @@ RSpec.describe Monstercard, type: :model do
       action: 'plus_one',
       draw_chance: 13,
       element: 'fire',
-      element_modifier: 2,
       atk_points: 2,
       item_category: 'head',
       has_combination: false
@@ -117,7 +116,6 @@ RSpec.describe Monstercard, type: :model do
       action: 'plus_one',
       draw_chance: 13,
       element: 'fire',
-      element_modifier: 2,
       atk_points: 2,
       item_category: 'head',
       has_combination: false
@@ -232,7 +230,6 @@ RSpec.describe Monstercard, type: :model do
       action: 'plus_one',
       draw_chance: 13,
       element: 'fire',
-      element_modifier: 2,
       atk_points: 2,
       item_category: 'head',
       has_combination: false
@@ -245,7 +242,6 @@ RSpec.describe Monstercard, type: :model do
       action: 'plus_one',
       draw_chance: 14,
       element: 'fire',
-      element_modifier: 2,
       atk_points: 2,
       item_category: 'hand_one',
       has_combination: false
@@ -257,7 +253,6 @@ RSpec.describe Monstercard, type: :model do
       action: 'plus_3',
       draw_chance: 5,
       element: 'earth',
-      element_modifier: 3,
       atk_points: 4,
       item_category: 'shoes',
       has_combination: false
@@ -269,7 +264,6 @@ RSpec.describe Monstercard, type: :model do
       action: 'plus_one',
       draw_chance: 13,
       element: 'fire',
-      element_modifier: 2,
       atk_points: 2,
       item_category: 'hand_two',
       has_combination: false
@@ -282,7 +276,6 @@ RSpec.describe Monstercard, type: :model do
       action: 'plus_one',
       draw_chance: 14,
       element: 'fire',
-      element_modifier: 2,
       atk_points: 2,
       item_category: 'none',
       has_combination: false
@@ -294,7 +287,6 @@ RSpec.describe Monstercard, type: :model do
       action: 'plus_3',
       draw_chance: 5,
       element: 'earth',
-      element_modifier: 3,
       atk_points: 4,
       item_category: 'back',
       has_combination: false
@@ -527,7 +519,6 @@ RSpec.describe Monstercard, type: :model do
       action: 'plus_one',
       draw_chance: 14,
       element: 'fire',
-      element_modifier: 2,
       atk_points: 2,
       item_category: 'hand',
       has_combination: false
@@ -575,7 +566,6 @@ RSpec.describe Monstercard, type: :model do
       action: 'plus_one',
       draw_chance: 14,
       element: 'fire',
-      element_modifier: 2,
       atk_points: 2,
       item_category: 'hand',
       has_combination: false

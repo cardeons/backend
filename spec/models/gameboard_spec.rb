@@ -30,7 +30,6 @@ RSpec.describe Gameboard, type: :model do
       rewards_treasure: 'MyString',
       good_against_value: 1,
       bad_against_value: 1,
-      element_modifier: 1,
       atk_points: 1,
       item_category: 'MyString',
       has_combination: 1,

@@ -9,8 +9,17 @@ class Card < ApplicationRecord
   enum good_against: %i[fire water air earth], _suffix: true
   enum bad_against: %i[fire water air earth], _suffix: true
   enum element: %i[fire water air earth]
-  enum animal: %i[bull buffalo bear unicorn catfish hotdog boar]
+  enum synergy_type: %i[bull buffalo bear unicorn catfish hotdog boar pizza]
 
   # has_many :ingamedecks
   # has_many :monsterthrees, through: :ingamedecks, source: :cardable, source_type: 'Monsterthree'
+
+  def calculate_self_element_modifiers(other_card)
+    modifier = 0
+
+    modifier += good_against_value if good_against == other_card.element
+    modifier -= bad_against_value if bad_against == other_card.element
+
+    modifier
+  end
 end

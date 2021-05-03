@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_05_03_085759) do
+ActiveRecord::Schema.define(version: 2021_05_03_160530) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -29,7 +29,6 @@ ActiveRecord::Schema.define(version: 2021_05_03_085759) do
     t.decimal "bad_against"
     t.integer "good_against_value"
     t.integer "bad_against_value"
-    t.integer "element_modifier"
     t.integer "atk_points"
     t.string "item_category"
     t.integer "has_combination"
@@ -38,6 +37,8 @@ ActiveRecord::Schema.define(version: 2021_05_03_085759) do
     t.datetime "updated_at", precision: 6, null: false
     t.string "type"
     t.integer "animal"
+    t.integer "synergy_type"
+    t.integer "synergy_value", default: 0
   end
 
   create_table "cards_users", id: false, force: :cascade do |t|

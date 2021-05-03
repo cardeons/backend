@@ -52,7 +52,7 @@ if ENV['cards']
 
   bear_water = Monstercard.create!(
     title: 'Sir Bear',
-    description: '<p><b>*slaps you with his glove*</b> I challenge you to a duel! -3 Against Hot Dog and Buffalo Wings. He is not willing to touch those.</p>',
+    description: '<p><b>*slaps you with his glove*</b> I challenge you to a duel! -3 Against Hot Dog. He is not willing to touch those.</p>',
     image: '/cardeons/cards/monster/sirbear/water.png',
     action: 'lose_item_shoe',
     animal: 'bear',
@@ -65,6 +65,8 @@ if ENV['cards']
     bad_against: '',
     good_against_value: 0,
     bad_against_value: 3,
+    synergy_type: "hotdog",
+    synergy_value: -3,
     atk_points: 10,
     level_amount: 1
   )
@@ -189,10 +191,12 @@ if ENV['cards']
     element: 'fire',
     bad_things: '<p><b>Bad things: </b>Got catfished, really? You should know better.. Give a random card to the player with the lowest level. </p>',
     rewards_treasure: 1,
-    good_against: 'fire',
-    bad_against: 'earth',
+    good_against: '',
+    bad_against: '',
     good_against_value: 0,
-    bad_against_value: 3,
+    bad_against_value: 0,
+    synergy_type: 'hotdog',
+    synergy_value: -3,
     atk_points: 7,
     level_amount: 1
   )
@@ -211,14 +215,16 @@ if ENV['cards']
     good_against: '',
     bad_against: '',
     good_against_value: 0,
-    bad_against_value: 3,
+    bad_against_value: 0,
+    synergy_type: 'hotdog',
+    synergy_value: -3,
     atk_points: 10,
     level_amount: 1
   )
 
   catfish_water = Monstercard.create!(
     title: 'Catfish',
-    description: '<p>I don’t think cats like water so it’s probably a fish? +3 Against Fire Hot Dog</p>',
+    description: '<p>I don’t think cats like water so it’s probably a fish? +3 Against Hot Dog</p>',
     image: '/cardeons/cards/monster/catfish/water.png',
     action: 'random_card_lowest_level',
     animal: 'catfish',
@@ -229,8 +235,10 @@ if ENV['cards']
     rewards_treasure: 1,
     good_against: '',
     bad_against: '',
-    good_against_value: 3,
+    good_against_value: 0,
     bad_against_value: 0,
+    synergy_type: 'hotdog',
+    synergy_value: 3,
     atk_points: 4,
     level_amount: 1
   )
@@ -250,6 +258,8 @@ if ENV['cards']
     bad_against: '',
     good_against_value: 0,
     bad_against_value: 3,
+    synergy_type: 'hotdog',
+    synergy_value: -3,
     atk_points: 18,
     level_amount: 1
   )
@@ -323,10 +333,9 @@ if ENV['cards']
     element: 'air',
     bad_things: '<p><b>Bad things: </b>Picture that with a Kodak: Lose some cool sunglasses or your headpiece!</p>',
     rewards_treasure: 3,
-    good_against: '',
+    good_against: 'earth',
     bad_against: '',
-    good_against_value: 0,
-    bad_against_value: 3,
+    good_against_value: 7,
     atk_points: 12,
     level_amount: 1
   )
@@ -400,10 +409,10 @@ if ENV['cards']
     element: 'fire',
     bad_things: '<p><b>Bad things: </b>Too hot to handle! You die, lose all your Levels!</p>',
     rewards_treasure: 3,
-    good_against: '',
-    bad_against: '',
-    good_against_value: 0,
-    bad_against_value: 0,
+    good_against: 'water',
+    bad_against: 'earth',
+    good_against_value: 7,
+    bad_against_value: -3,
     atk_points: 16,
     level_amount: 1
   )
@@ -411,7 +420,7 @@ if ENV['cards']
   # #Unicorn
   unicorn_water = Monstercard.create!(
     title: 'Unicorn',
-    description: '<p>It is the perfect movie partner! It brings its own wet popcorn! +3 Against Buffalo Wings and Hotdogs. It will be the only snack at the party!</p>',
+    description: '<p>It is the perfect movie partner! It brings its own wet popcorn! +3 Against Buffalo Wings. It will be the only snack at the party!</p>',
     image: '/cardeons/cards/monster/unicorn/water.png',
     action: 'lose_level',
     animal: 'unicorn',
@@ -422,6 +431,8 @@ if ENV['cards']
     rewards_treasure: 3,
     good_against: '',
     bad_against: '',
+    synergy_type: 'buffalo',
+    synergy_value: 3,
     good_against_value: 0,
     bad_against_value: 0,
     atk_points: 10,
@@ -439,7 +450,7 @@ if ENV['cards']
     element: 'earth',
     bad_things: '<p><b>Bad things: </b>The Corn is not done and still on the fields… You lose one hand thing!</p>',
     rewards_treasure: 2,
-    good_against: 'fire',
+    good_against: '',
     bad_against: '',
     good_against_value: 0,
     bad_against_value: 0,
@@ -527,6 +538,8 @@ if ENV['cards']
     rewards_treasure: 2,
     good_against: '',
     bad_against: '',
+    synergy_type: 'boar',
+    synergy_value: -3,
     good_against_value: 0,
     bad_against_value: 3,
     atk_points: 9,
@@ -565,8 +578,10 @@ if ENV['cards']
     rewards_treasure: 2,
     good_against: '',
     bad_against: '',
-    good_against_value: 3,
+    good_against_value: 0,
     bad_against_value: 0,
+    synergy_type: 'buffalo',
+    synergy_value: 3,
     atk_points: 6,
     level_amount: 1
   )
@@ -612,7 +627,7 @@ if ENV['cards']
 
   boaring_air = Monstercard.create!(
     title: 'Boaring',
-    description: '<p>He is flying. Still bored. +3 for every fire monster he fights.</p>',
+    description: '<p>He is flying. Still bored. +6 for a fire monster he fights.</p>',
     image: '/cardeons/cards/monster/boaring/air.png',
     animal: 'boar',
     action: 'die',
@@ -623,7 +638,7 @@ if ENV['cards']
     rewards_treasure: 4,
     good_against: 'fire',
     bad_against: '',
-    good_against_value: 3,
+    good_against_value: 6,
     bad_against_value: 0,
     atk_points: 18,
     level_amount: 1
@@ -821,7 +836,6 @@ if ENV['cards']
   #   action: 'plus_one',
   #   draw_chance: 13,
   #   element: 'fire',
-  #   element_modifier: 2,
   #   atk_points: 2,
   #   item_category: 'head',
   #   has_combination: false
@@ -834,7 +848,6 @@ if ENV['cards']
   #   action: 'plus_one',
   #   draw_chance: 14,
   #   element: 'fire',
-  #   element_modifier: 2,
   #   atk_points: 2,
   #   item_category: 'hand_one',
   #   has_combination: false
@@ -849,7 +862,6 @@ if ENV['cards']
     image: '/cardeons/cards/items/vokuhila.png',
     action: 'no_action',
     draw_chance: 5,
-    element_modifier: 0,
     atk_points: 3,
     item_category: 'head',
     has_combination: false
@@ -858,14 +870,15 @@ if ENV['cards']
   # #roman helmet
   roman_helmet = Itemcard.create!(
     title: 'Roman Helmet',
-    description: '<p>Asterix will hate you! +2 Against Boaring</p>',
+    description: '<p>Asterix will hate you! +2 with a Boar</p>',
     image: '/cardeons/cards/items/helmet.png',
     action: 'no_action',
     draw_chance: 5,
-    element_modifier: 0,
+    synergy_type: 'boar',
+    synergy_value: 2,
     atk_points: 1,
+    has_combination: false,
     item_category: 'head',
-    has_combination: false
   )
 
   # #pizza
@@ -876,7 +889,6 @@ if ENV['cards']
     action: 'no_action',
     draw_chance: 5,
     element: 'water',
-    element_modifier: 0,
     atk_points: 3,
     item_category: 'hand',
     has_combination: true
@@ -889,7 +901,6 @@ if ENV['cards']
     action: 'no_action',
     draw_chance: 5,
     element: 'earth',
-    element_modifier: 0,
     atk_points: 3,
     item_category: 'hand',
     has_combination: true
@@ -902,7 +913,6 @@ if ENV['cards']
     action: 'no_action',
     draw_chance: 5,
     element: 'air',
-    element_modifier: 0,
     atk_points: 3,
     item_category: 'hand',
     has_combination: true
@@ -915,7 +925,6 @@ if ENV['cards']
     action: 'no_action',
     draw_chance: 5,
     element: 'fire',
-    element_modifier: 0,
     atk_points: 3,
     item_category: 'hand',
     has_combination: true
@@ -928,7 +937,8 @@ if ENV['cards']
     image: '/cardeons/cards/items/pizzacutter.png',
     action: 'plus_3_if_combination',
     draw_chance: 5,
-    element_modifier: 3,
+    synergy_type: 'pizza',
+    synergy_value: 3,
     atk_points: 3,
     item_category: 'hand',
     has_combination: true
@@ -941,7 +951,6 @@ if ENV['cards']
     image: '/cardeons/cards/items/controller.png',
     action: 'no_action',
     draw_chance: 5,
-    element_modifier: 0,
     atk_points: 2,
     item_category: 'hand',
     has_combination: false
@@ -954,7 +963,6 @@ if ENV['cards']
     image: '/cardeons/cards/items/ring.png',
     action: 'no_action',
     draw_chance: 5,
-    element_modifier: 0,
     atk_points: 1,
     item_category: 'none',
     has_combination: false
@@ -967,7 +975,6 @@ if ENV['cards']
     image: '/cardeons/cards/items/sandals.png',
     action: 'no_action',
     draw_chance: 5,
-    element_modifier: 0,
     atk_points: 3,
     item_category: 'shoe',
     has_combination: false
@@ -980,7 +987,6 @@ if ENV['cards']
     image: '/cardeons/cards/items/ironing_board.png',
     action: 'no_action',
     draw_chance: 5,
-    element_modifier: 0,
     atk_points: 2,
     item_category: 'hand',
     has_combination: false
@@ -993,7 +999,6 @@ if ENV['cards']
     image: '/cardeons/cards/items/plumb.png',
     action: 'no_action',
     draw_chance: 5,
-    element_modifier: 0,
     atk_points: 2,
     item_category: 'hand',
     has_combination: false
@@ -1006,7 +1011,6 @@ if ENV['cards']
     image: '/cardeons/cards/items/ladle.png',
     action: 'no_action',
     draw_chance: 5,
-    element_modifier: 0,
     atk_points: 2,
     item_category: 'hand',
     has_combination: false
@@ -1019,8 +1023,8 @@ if ENV['cards']
     image: '/cardeons/cards/items/floatingtire.png',
     action: 'plus_three',
     draw_chance: 5,
-    element: 'water',
-    element_modifier: 3,
+    good_against: 'water',
+    good_against_value: 3,
     atk_points: 2,
     item_category: 'none',
     has_combination: false
@@ -1033,7 +1037,8 @@ if ENV['cards']
     image: '/cardeons/cards/items/sunglasses.png',
     action: 'plus_three_if_combination',
     draw_chance: 5,
-    element_modifier: 3,
+    synergy_type: 'bull',
+    synergy_value: 3,
     atk_points: 2,
     item_category: 'none',
     has_combination: true
@@ -1046,8 +1051,8 @@ if ENV['cards']
     image: '/cardeons/cards/items/watergun.png',
     action: 'plus_three',
     draw_chance: 5,
-    element: 'water',
-    element_modifier: 3,
+    good_against: 'fire',
+    good_against_value: 3,
     atk_points: 2,
     item_category: 'hand',
     has_combination: false
@@ -1060,7 +1065,6 @@ if ENV['cards']
     image: '/cardeons/cards/items/wand.png',
     action: 'no_action',
     draw_chance: 5,
-    element_modifier: 0,
     atk_points: 3,
     item_category: 'hand',
     has_combination: false
@@ -1069,12 +1073,13 @@ if ENV['cards']
   # #Whip
   whip = Itemcard.create!(
     title: 'Whip',
-    description: '<p>Use it for your horse or something else ;-). +2 against Unicorns.</p>',
+    description: '<p>Use it for your horse or something else ;-). +2 if used on a Unicorn.</p>',
     image: '/cardeons/cards/items/whip.png',
     action: 'plus_two',
     draw_chance: 5,
-    element_modifier: 2,
     atk_points: 3,
+    synergy_type: 'unicorn',
+    synergy_value: 2,
     item_category: 'hand',
     has_combination: false
   )
@@ -1086,7 +1091,6 @@ if ENV['cards']
     image: '/cardeons/cards/items/dagger.png',
     action: 'no_action',
     draw_chance: 5,
-    element_modifier: 0,
     atk_points: 3,
     item_category: 'hand',
     has_combination: false
@@ -1099,7 +1103,6 @@ if ENV['cards']
     image: '/cardeons/cards/items/shoes.png',
     action: 'no_action',
     draw_chance: 5,
-    element_modifier: 0,
     atk_points: 3,
     item_category: 'shoes',
     has_combination: false
@@ -1112,7 +1115,6 @@ if ENV['cards']
     image: '/cardeons/cards/items/sieve.png',
     action: 'no_action',
     draw_chance: 5,
-    element_modifier: 0,
     atk_points: 2,
     item_category: 'head',
     has_combination: false
@@ -1125,7 +1127,6 @@ if ENV['cards']
     image: '/cardeons/cards/items/axe.png',
     action: 'no_action',
     draw_chance: 5,
-    element_modifier: 0,
     atk_points: 3,
     item_category: 'hand',
     has_combination: false
@@ -1138,7 +1139,6 @@ if ENV['cards']
     image: '/cardeons/cards/items/katana.png',
     action: 'no_action',
     draw_chance: 5,
-    element_modifier: 0,
     atk_points: 3,
     item_category: 'hand',
     has_combination: false
@@ -1151,8 +1151,9 @@ if ENV['cards']
     image: '/cardeons/cards/items/saddle.png',
     action: 'no_action',
     draw_chance: 5,
-    element_modifier: 2,
     atk_points: 1,
+    synergy_type: 'unicorn',
+    synergy_value: 2,
     item_category: 'hand',
     has_combination: true
   )
@@ -1164,7 +1165,6 @@ if ENV['cards']
     image: '/cardeons/cards/items/morning_star.png',
     action: 'no_action',
     draw_chance: 5,
-    element_modifier: 0,
     atk_points: 3,
     item_category: 'hand',
     has_combination: false
@@ -1177,7 +1177,6 @@ if ENV['cards']
     image: '/cardeons/cards/items/toothbrush.png',
     action: 'no_action',
     draw_chance: 5,
-    element_modifier: 0,
     atk_points: 1,
     item_category: 'hand',
     has_combination: false
@@ -1190,7 +1189,6 @@ if ENV['cards']
     image: '/cardeons/cards/items/spatula.png',
     action: 'no_action',
     draw_chance: 5,
-    element_modifier: 0,
     atk_points: 2,
     item_category: 'hand',
     has_combination: false
@@ -1203,7 +1201,8 @@ if ENV['cards']
     image: '/cardeons/cards/items/crown.png',
     action: 'no_action',
     draw_chance: 5,
-    element_modifier: 3,
+    synergy_type: 'bear',
+    synergy_value: 3,
     atk_points: 2,
     item_category: 'hand',
     has_combination: true
@@ -1216,7 +1215,6 @@ if ENV['cards']
     image: '/cardeons/cards/items/bow_and_arrow.png',
     action: 'no_action',
     draw_chance: 5,
-    element_modifier: 0,
     atk_points: 3,
     item_category: 'hand',
     has_combination: false
@@ -1229,7 +1227,6 @@ if ENV['cards']
     image: '/cardeons/cards/items/sword.png',
     action: 'no_action',
     draw_chance: 5,
-    element_modifier: 0,
     atk_points: 2,
     item_category: 'hand',
     has_combination: false

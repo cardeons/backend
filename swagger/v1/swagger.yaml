@@ -111,8 +111,6 @@ paths:
                             type: string
                           bad_against_value:
                             type: string
-                          element_modifier:
-                            type: string
                           atk_points:
                             type: string
                           item_category:
@@ -176,8 +174,6 @@ paths:
                         good_against_value:
                           type: string
                         bad_against_value:
-                          type: string
-                        element_modifier:
                           type: string
                         atk_points:
                           type: string
