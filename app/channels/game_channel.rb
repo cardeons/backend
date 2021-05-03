@@ -88,7 +88,7 @@ class GameChannel < ApplicationCable::Channel
     start_intercept_phase(@gameboard.reload)
 
     # attack()
-    broadcast_to(@gameboard, { type: BOARD_UPDATE, params: Gameboard.broadcast_game_board(@gameboard) })
+    broadcast_to(@gameboard, { type: BOARD_UPDATE, params: Gameboard.broadcast_game_board(@gameboard.reload) })
     msg = "#{current_user.player.name} has drawn #{name}"
     broadcast_to(@gameboard, { type: GAME_LOG, params: { date: Time.new, message: msg } })
   end
