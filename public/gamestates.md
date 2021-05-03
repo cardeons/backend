@@ -307,21 +307,30 @@ Alle im Game-Chanel
    }  
 }
 
-{
-   type: 'develop_set_myself_as_current_player',
-   params: { }  
-}
-
-
 #rebroadcasts handcard update
 {
    type: 'develop_broadcast_handcard_update',
    params: { }  
 }
 
-
 #rebroadcasts board update
 {
    type: 'develop_broadcast_gameboard_update',
+   params: { }  
+}
+
+{
+   type: 'develop_set_myself_as_current_player',
+   params: { }  
+}
+
+#set all players intercept to false
+{
+   type: 'develop_set_intercept_false',
+   params: { }  
+}
+
+{
+   type: 'develop_set_myself_as_winner',
    params: { }  
 }

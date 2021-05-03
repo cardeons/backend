@@ -139,12 +139,12 @@ class GameChannel < ApplicationCable::Channel
 
         PlayerChannel.broadcast_to(helping_player.user, { type: 'HANDCARD_UPDATE', params: { handcards: Gameboard.render_cards_array(helping_player.handcard.ingamedecks) } })
       end
-      
+
       msg = "#{current_user.player.name} has killed #{@gameboard.centercard.card.title}"
       broadcast_to(@gameboard, { type: GAME_LOG, params: { date: Time.new, message: msg } })
-      
+
       @gameboard.centercard.ingamedeck&.update!(cardable: @gameboard.graveyard)
-      
+
       PlayerChannel.broadcast_to(current_user.reload, { type: 'HANDCARD_UPDATE', params: { handcards: Gameboard.render_cards_array(player.handcard.ingamedecks) } })
 
       Gameboard.get_next_player(@gameboard)
@@ -250,9 +250,9 @@ class GameChannel < ApplicationCable::Channel
     user_to_broadcast_to = User.where(player: helping_player).first
 
     PlayerChannel.broadcast_to(user_to_broadcast_to,
-                                { type: 'ASK_FOR_HELP',
-                                  params: { player_id: helping_player_id, player_name: current_user.player.name, helping_shared_rewards: helping_shared_reward,
-                                            helping_player_attack: helping_player.attack } })
+                               { type: 'ASK_FOR_HELP',
+                                 params: { player_id: helping_player_id, player_name: current_user.player.name, helping_shared_rewards: helping_shared_reward,
+                                           helping_player_attack: helping_player.attack } })
   end
 
   def answer_help_call(params)
@@ -333,37 +333,51 @@ class GameChannel < ApplicationCable::Channel
   end
 
   def develop_add_buff_card
+    return unless developer_actions_enabled?
+
     card = Buffcard.all.first
     current_user.player.handcard.ingamedecks.create(card: card, gameboard: current_user.player.gameboard)
     PlayerChannel.broadcast_to(current_user, { type: 'HANDCARD_UPDATE', params: { handcards: Gameboard.render_cards_array(current_user.player.handcard.ingamedecks) } })
   end
 
   def develop_add_curse_card
+    return unless developer_actions_enabled?
+
     card = Cursecard.all.last
     current_user.player.handcard.ingamedecks.create(card: card, gameboard: current_user.player.gameboard)
     PlayerChannel.broadcast_to(current_user, { type: 'HANDCARD_UPDATE', params: { handcards: Gameboard.render_cards_array(current_user.player.handcard.ingamedecks) } })
   end
 
   def develop_add_card_with_id(params)
+    return unless developer_actions_enabled?
+
     card = Card.find_by('id=?', params['card_id'])
     current_user.player.handcard.ingamedecks.create(card: card, gameboard: current_user.player.gameboard)
     PlayerChannel.broadcast_to(current_user, { type: 'HANDCARD_UPDATE', params: { handcards: Gameboard.render_cards_array(current_user.player.handcard.ingamedecks) } })
   end
 
   def develop_broadcast_handcard_update
+    return unless developer_actions_enabled?
+
     PlayerChannel.broadcast_to(current_user, { type: 'HANDCARD_UPDATE', params: { handcards: Gameboard.render_cards_array(current_user.player.handcard.ingamedecks) } })
   end
 
   def develop_broadcast_gameboard_update
+    return unless developer_actions_enabled?
+
     broadcast_to(@gameboard, { type: BOARD_UPDATE, params: Gameboard.broadcast_game_board(@gameboard.reload) })
   end
 
   def develop_set_myself_as_current_player
+    return unless developer_actions_enabled?
+
     current_user.player.gameboard.update!(current_player: current_user.player)
     broadcast_to(@gameboard, { type: BOARD_UPDATE, params: Gameboard.broadcast_game_board(@gameboard.reload) })
   end
 
   def develop_set_intercept_false
+    return unless developer_actions_enabled?
+
     @gameboard.players.each do |player|
       player.reload.update!(intercept: false)
     end
@@ -372,6 +386,8 @@ class GameChannel < ApplicationCable::Channel
   end
 
   def develop_set_myself_as_winner
+    return unless developer_actions_enabled?
+
     player = Player.find_by('user_id = ?', current_user.id)
 
     player.update!(level: 5)
@@ -382,8 +398,6 @@ class GameChannel < ApplicationCable::Channel
   end
 
   def unsubscribed
-
-
     current_user.player.update!(inactive: true)
     # Any cleanup needed when channel is unsubscribed
     # pp current_user.playerpp
@@ -410,6 +424,14 @@ class GameChannel < ApplicationCable::Channel
 
   def deliver_error_message(_e)
     # broadcast_to(@gameboard, _e)
+  end
+
+  def developer_actions_enabled?
+    # returns true if ENV['DEV_TOOL_ENABLED'] is set
+    return true if ENV['DEV_TOOL_ENABLED'] == 'enabled'
+
+    PlayerChannel.broadcast_error(current_user, "You can't use developer actions in this Environment")
+    false
   end
 
   def check_if_player_owns_card(ingame_deck_id)

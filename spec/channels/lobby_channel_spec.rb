@@ -10,6 +10,10 @@ RSpec.describe LobbyChannel, type: :channel do
     stub_connection current_user: users(:one)
   end
 
+  after(:each) do
+    ENV['DEV_TOOL_ENABLED'] = nil
+  end
+
   it 'user does not already have a player before the game' do
     expect(users(:one).player).to be_nil
   end
@@ -116,20 +120,22 @@ RSpec.describe LobbyChannel, type: :channel do
 
   it 'create new test game accepts params for how many players to add to game' do
     stub_connection current_user: users(:one)
+    ENV['DEV_TOOL_ENABLED'] = 'enabled'
     subscribe(testplayers: 2)
 
     expect(users(:one).player.gameboard.players.size).to eql(3)
   end
 
-  it 'if no testplayers are sent default 3 and 4 players should be in game' do
+  it 'if no testplayers are sent 1 player should be in lobby' do
     stub_connection current_user: users(:one)
     subscribe
 
-    expect(users(:one).player.gameboard.players.size).to eql(4)
+    expect(users(:one).player.gameboard.players.size).to eql(1)
   end
 
   it 'if testplayer count is higher than 3 use 3 for a full game' do
     stub_connection current_user: users(:one)
+    ENV['DEV_TOOL_ENABLED'] = 'enabled'
     subscribe(testplayers: 4)
 
     expect(users(:one).player.gameboard.players.size).to eql(4)
@@ -139,12 +145,11 @@ RSpec.describe LobbyChannel, type: :channel do
     # user has no player
     expect(users(:one).player).to be_falsy
     stub_connection current_user: users(:one)
-    subscribe(testplayers: 0)
+    subscribe
 
     expect(users(:one).player).to be_truthy
     unsubscribe
     users(:one).reload
     expect(users(:one).player).to be_falsy
-
   end
 end
