@@ -23,11 +23,10 @@ class Monstercard < Card
 
       # TODO: validieren
       cardtype = card.type
-      #       # there already are 5 items, you can't put any more (6 because the monster itself is in this table)
+      # there already are 5 items, you can't put any more (6 because the monster itself is in this table)
       if monster_to_equip.cards.count == 6
         type = 'ERROR'
         message = "You can't put any more items on this monster."
-      # GameChannel.broadcast_to(gameboard, {type: 'ERROR', params: { message: "You can't put any more items on this monster." } })
 
       # category already on monster
       elsif monster_to_equip.cards.where('item_category=?', card.item_category).count.positive?
@@ -63,13 +62,8 @@ class Monstercard < Card
       # yay
       else
         type = 'GAMEBOARD_UPDATE'
+        pp monster_to_equip
         deck_card.update(cardable: monster_to_equip)
-
-        # player_atk = monster_to_equip.cards.sum(:atk_points)
-
-        # result = player.gameboard.monster_atk < player_atk
-        # player.gameboard.update_attribute(:success, result)
-        # GameChannel.broadcast_to(gameboard, {type: 'GAMEBOARD_UPDATE', params: Gameboard.broadcast_game_board(gameboard) })
 
         # get updatet result of attack
         attack_obj = Gameboard.attack(player.gameboard)
@@ -78,11 +72,15 @@ class Monstercard < Card
         monstercards2 = Monstercard.calculate_monsterslot_atk(player.monstertwo)
         monstercards3 = Monstercard.calculate_monsterslot_atk(player.monsterthree)
 
-        playeratkpoints = monstercards1 + monstercards2 + monstercards3 + player.level
+        pp monstercards3
+        pp monstercards2
+        pp monstercards1
 
+        playeratkpoints = monstercards1 + monstercards2 + monstercards3 + player.level
         player.update(attack: playeratkpoints)
         player.gameboard.update(success: attack_obj[:result], player_atk: attack_obj[:playeratk], monster_atk: attack_obj[:monsteratk])
         message = 'Successfully equipped.'
+
       end
     end
 
@@ -98,6 +96,8 @@ class Monstercard < Card
   def self.calculate_monsterslot_atk(monsterslot)
     monstercards = 0
     if monsterslot
+      # pp '-----------'
+      # pp monsterslot.cards.where(type: 'Monstercard')
       monstercards = 1 if monsterslot.cards.where(type: 'Monstercard').any?
       monstercards += monsterslot.cards.where(type: 'Itemcard').sum(:atk_points)
     end

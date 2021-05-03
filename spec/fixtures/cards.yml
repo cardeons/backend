@@ -263,8 +263,6 @@ monstercard10:
   level_amount: 2
   type: Monstercard
 
-
-
 itemcard:
   id: 12
   title: MyString
@@ -348,6 +346,28 @@ itemcard4:
   bad_against_value: 1
   element_modifier: 1
   atk_points: 1
+  item_category: 'hand'
+  has_combination: 1
+  level_amount: 1
+  type: Itemcard
+
+itemcard5:
+  id: 150
+  title: Overpowered Item
+  description: MyString
+  image: MyString
+  action: MyString
+  draw_chance: 1
+  level: 1
+  element: MyString
+  bad_things: MyString
+  rewards_treasure: MyString
+  good_against: MyString
+  bad_against: MyString
+  good_against_value: 1
+  bad_against_value: 1
+  element_modifier: 1
+  atk_points: 100
   item_category: 'hand'
   has_combination: 1
   level_amount: 1
@@ -704,3 +724,25 @@ buffcard6:
   has_combination: 1
   level_amount: 1
   type: Buffcard
+
+bosscard:
+  id: 33
+  title: MyString
+  description: MyString
+  image: MyString
+  action: 'lose_level'
+  draw_chance: 1
+  level: 40
+  element: MyString
+  bad_things: MyString
+  rewards_treasure: 1
+  good_against: MyString
+  bad_against: MyString
+  good_against_value: 1
+  bad_against_value: 1
+  element_modifier: 1
+  atk_points: 40
+  item_category: MyString
+  has_combination: 0
+  level_amount: 2
+  type: Bosscard

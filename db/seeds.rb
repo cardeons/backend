@@ -1232,7 +1232,7 @@ bear_fireboss = Bosscard.create!(
   action: 'lose_level',
   draw_chance: 1000,
   level: 40,
-  element: 'fire',
+  element: '',
   bad_things: '<p><b>Bad things: </b>All players lose one level.</p>',
   rewards_treasure: 1,
   good_against: '',

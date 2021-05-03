@@ -79,11 +79,12 @@ RSpec.describe Monstercard, type: :model do
       item_category: 'head',
       has_combination: false
     )
-    u1 = User.create!(email: '1@1.at', password: '1', name: '1', password_confirmation: '1')
-    gameboard_test = Gameboard.create!(current_state: 'lobby', player_atk: 5)
-    player1 = Player.create(name: 'Gustav', gameboard: gameboard_test, user: u1)
-    Handcard.create(player_id: player1.id)
-    Monsterone.create(player: player1)
+    gameboard_test = gameboards(:gameboardFourPlayers)
+    player1 = players(:playerOne)
+    gameboards(:gameboardFourPlayers).initialize_game_board
+    gameboards(:gameboardFourPlayers).players.each(&:init_player)
+    gameboards(:gameboardFourPlayers).update(current_player: player1)
+
     ingamedeck1 = Ingamedeck.create!(gameboard: gameboard_test, card_id: catfish.id, cardable: player1.monsterone)
     ingamedeck2 = Ingamedeck.create!(gameboard: gameboard_test, card_id: item1.id, cardable: player1.handcard)
     params = { 'unique_monster_id' => ingamedeck1.id, 'unique_equip_id' => ingamedeck2.id, 'action' => 'equip_monster' }
@@ -122,11 +123,12 @@ RSpec.describe Monstercard, type: :model do
       item_category: 'head',
       has_combination: false
     )
-    u1 = User.create!(email: '1@1.at', password: '1', name: '1', password_confirmation: '1')
-    gameboard_test = Gameboard.create!(current_state: 'lobby', player_atk: 5)
-    player1 = Player.create(name: 'Gustav', gameboard: gameboard_test, user: u1)
-    Handcard.create(player_id: player1.id)
-    Monsterone.create(player: player1)
+    gameboard_test = gameboards(:gameboardFourPlayers)
+    player1 = players(:playerOne)
+    gameboards(:gameboardFourPlayers).initialize_game_board
+    gameboards(:gameboardFourPlayers).players.each(&:init_player)
+    gameboards(:gameboardFourPlayers).update(current_player: player1)
+
     ingamedeck1 = Ingamedeck.create!(gameboard: gameboard_test, card_id: catfish.id, cardable: player1.monsterone)
     ingamedeck2 = Ingamedeck.create!(gameboard: gameboard_test, card_id: item1.id, cardable: player1.handcard)
     ingamedeck3 = Ingamedeck.create!(gameboard: gameboard_test, card_id: item1.id, cardable: player1.handcard)
@@ -156,11 +158,12 @@ RSpec.describe Monstercard, type: :model do
       level_amount: 2
     )
 
-    u1 = User.create!(email: '1@1.at', password: '1', name: '1', password_confirmation: '1')
-    gameboard_test = Gameboard.create!(current_state: 'lobby', player_atk: 5)
-    player1 = Player.create(name: 'Gustav', gameboard: gameboard_test, user: u1)
-    Handcard.create(player_id: player1.id)
-    Monsterone.create(player: player1)
+    gameboard_test = gameboards(:gameboardFourPlayers)
+    player1 = players(:playerOne)
+    gameboards(:gameboardFourPlayers).initialize_game_board
+    gameboards(:gameboardFourPlayers).players.each(&:init_player)
+    gameboards(:gameboardFourPlayers).update(current_player: player1)
+
     ingamedeck1 = Ingamedeck.create!(gameboard: gameboard_test, card_id: catfish.id, cardable: player1.monsterone)
 
     params = { 'unique_monster_id' => ingamedeck1.id, 'unique_equip_id' => 303, 'action' => 'equip_monster' }
@@ -195,11 +198,12 @@ RSpec.describe Monstercard, type: :model do
       atk_points: -1
     )
 
-    u1 = User.create!(email: '1@1.at', password: '1', name: '1', password_confirmation: '1')
-    gameboard_test = Gameboard.create!(current_state: 'lobby', player_atk: 5)
-    player1 = Player.create(name: 'Gustav', gameboard: gameboard_test, user: u1)
-    Handcard.create(player_id: player1.id)
-    Monsterone.create(player: player1)
+    gameboard_test = gameboards(:gameboardFourPlayers)
+    player1 = players(:playerOne)
+    gameboards(:gameboardFourPlayers).initialize_game_board
+    gameboards(:gameboardFourPlayers).players.each(&:init_player)
+    gameboards(:gameboardFourPlayers).update(current_player: player1)
+
     ingamedeck1 = Ingamedeck.create!(gameboard: gameboard_test, card_id: catfish.id, cardable: player1.monsterone)
     ingamedeck2 = Ingamedeck.create!(gameboard: gameboard_test, card_id: curse.id, cardable: player1.handcard)
 
@@ -300,11 +304,12 @@ RSpec.describe Monstercard, type: :model do
       has_combination: false
     )
 
-    u1 = User.create!(email: '1@1.at', password: '1', name: '1', password_confirmation: '1')
-    gameboard_test = Gameboard.create!(current_state: 'lobby', player_atk: 5)
-    player1 = Player.create(name: 'Gustav', gameboard: gameboard_test, user: u1)
-    Handcard.create(player_id: player1.id)
-    Monsterone.create(player: player1)
+    gameboard_test = gameboards(:gameboardFourPlayers)
+    player1 = players(:playerOne)
+    gameboards(:gameboardFourPlayers).initialize_game_board
+    gameboards(:gameboardFourPlayers).players.each(&:init_player)
+    gameboards(:gameboardFourPlayers).update(current_player: player1)
+
     ingamedeck1 = Ingamedeck.create!(gameboard: gameboard_test, card_id: catfish.id, cardable: player1.monsterone)
     ingamedeck2 = Ingamedeck.create!(gameboard: gameboard_test, card_id: item1.id, cardable: player1.handcard)
     ingamedeck3 = Ingamedeck.create!(gameboard: gameboard_test, card_id: item2.id, cardable: player1.handcard)
@@ -533,12 +538,12 @@ RSpec.describe Monstercard, type: :model do
       has_combination: false
     )
 
-    u1 = User.create!(email: '1@1.at', password: '1', name: '1', password_confirmation: '1')
-    gameboard_test = Gameboard.create!(current_state: 'lobby', player_atk: 5)
-    player1 = Player.create(name: 'Gustav', gameboard: gameboard_test, user: u1)
+    gameboard_test = gameboards(:gameboardFourPlayers)
+    player1 = players(:playerOne)
+    gameboards(:gameboardFourPlayers).initialize_game_board
+    gameboards(:gameboardFourPlayers).players.each(&:init_player)
+    gameboards(:gameboardFourPlayers).update(current_player: player1)
 
-    Handcard.create(player_id: player1.id)
-    Monsterone.create(player: player1)
     ingamedeck1 = Ingamedeck.create!(gameboard: gameboard_test, card_id: catfish.id, cardable: player1.monsterone)
     ingamedeck2 = Ingamedeck.create!(gameboard: gameboard_test, card_id: item1.id, cardable: player1.handcard)
     ingamedeck3 = Ingamedeck.create!(gameboard: gameboard_test, card_id: item1.id, cardable: player1.handcard)
@@ -581,19 +586,21 @@ RSpec.describe Monstercard, type: :model do
       has_combination: false
     )
 
-    u1 = User.create!(email: '1@1.at', password: '1', name: '1', password_confirmation: '1')
-    gameboard_test = Gameboard.create!(current_state: 'lobby', player_atk: 5)
-    player1 = Player.create(name: 'Gustav', gameboard: gameboard_test, user: u1)
+    gameboard_test = gameboards(:gameboardFourPlayers)
+    player1 = players(:playerOne)
+    gameboards(:gameboardFourPlayers).initialize_game_board
+    gameboards(:gameboardFourPlayers).players.each(&:init_player)
+    gameboards(:gameboardFourPlayers).update(current_player: player1)
 
-    Handcard.create(player_id: player1.id)
-    Monsterone.create(player: player1)
     ingamedeck1 = Ingamedeck.create!(gameboard: gameboard_test, card_id: catfish.id, cardable: player1.monsterone)
     ingamedeck2 = Ingamedeck.create!(gameboard: gameboard_test, card_id: item1.id, cardable: player1.handcard)
     ingamedeck3 = Ingamedeck.create!(gameboard: gameboard_test, card_id: item1.id, cardable: player1.handcard)
 
+    pp players(:playerOne)
+
     equip_one = Monstercard.equip_monster({ 'unique_monster_id' => ingamedeck1.id, 'unique_equip_id' => ingamedeck2.id, 'action' => 'equip_monster' }, player1)
     ## attack must be 4 - monster has 14 atk but should be calculated as 1, item 2, player 1
-    expect(player1.attack).to eql(4)
+    expect(player1.reload.attack).to eql(4)
 
     equip_two = Monstercard.equip_monster({ 'unique_monster_id' => ingamedeck1.id, 'unique_equip_id' => ingamedeck3.id, 'action' => 'equip_monster' }, player1)
     ## attack must be 6 - monster has 14 atk but should be calculated as 1, item 2+2, player 1

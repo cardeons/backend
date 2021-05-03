@@ -1084,4 +1084,78 @@ RSpec.describe GameChannel, type: :channel do
     # player is set to inactive = true on unsubscribe
     expect(users(:userFour).player.inactive).to be_truthy
   end
+
+  it 'develop draw boss card sets bosscard as centercard' do
+    gameboards(:gameboardFourPlayers).initialize_game_board
+    gameboards(:gameboardFourPlayers).players.each(&:init_player)
+
+    stub_connection current_user: users(:userFour)
+    subscribe
+
+    ENV['DEV_TOOL_ENABLED'] = 'enabled'
+
+    perform('develop_draw_boss_card', {})
+
+    expect(gameboards(:gameboardFourPlayers).reload.centercard.card.type).to eql('Bosscard')
+    expect(gameboards(:gameboardFourPlayers).reload.current_state).to eql('boss_phase')
+  end
+
+  it 'develop draw boss card sets bosscard as centercard and deletes old centercard if neccessary' do
+    gameboards(:gameboardFourPlayers).initialize_game_board
+    gameboards(:gameboardFourPlayers).players.each(&:init_player)
+
+    stub_connection current_user: users(:userFour)
+    subscribe
+
+    ENV['DEV_TOOL_ENABLED'] = 'enabled'
+
+    perform('draw_door_card', {})
+    expect(gameboards(:gameboardFourPlayers).reload.centercard.card.type).to eql('Monstercard')
+    expect(gameboards(:gameboardFourPlayers).reload.current_state).to eql('intercept_phase')
+
+    perform('develop_draw_boss_card', {})
+    expect(gameboards(:gameboardFourPlayers).reload.centercard.card.type).to eql('Bosscard')
+    expect(gameboards(:gameboardFourPlayers).reload.current_state).to eql('boss_phase')
+  end
+
+  it 'attack in bossphase when player attack is too low' do
+    gameboards(:gameboardFourPlayers).initialize_game_board
+    gameboards(:gameboardFourPlayers).players.each(&:init_player)
+
+    stub_connection current_user: users(:userFour)
+    subscribe
+
+    ENV['DEV_TOOL_ENABLED'] = 'enabled'
+    perform('develop_draw_boss_card', {})
+
+    playerwin = Gameboard.attack(gameboards(:gameboardFourPlayers), true, true)
+
+    # player should not have a chance against the monster
+    expect(gameboards(:gameboardFourPlayers).success).to be_falsy
+    expect(playerwin[:result]).to be_falsy
+    # expect(gameboards(:gameboardFourPlayers).success).to be_falsy unless playerwin[:result]
+  end
+
+  it 'attack in bossphase when player attack is high enough' do
+    gameboards(:gameboardFourPlayers).initialize_game_board
+    gameboards(:gameboardFourPlayers).players.each(&:init_player)
+
+    stub_connection current_user: users(:userOne)
+    subscribe
+
+    # give player one enough attack to defeat monster
+    Ingamedeck.create!(gameboard: gameboards(:gameboardFourPlayers), card: cards(:monstercard10), cardable: players(:playerOne).monsterone)
+    # monster level 1 + item with 100 attack
+    Ingamedeck.create!(gameboard: gameboards(:gameboardFourPlayers), card: cards(:itemcard5), cardable: players(:playerOne).monsterone)
+
+    ENV['DEV_TOOL_ENABLED'] = 'enabled'
+    perform('develop_draw_boss_card', {})
+
+    playerwin = Gameboard.attack(gameboards(:gameboardFourPlayers), true, true)
+    # player should not have a chance against the monster
+    expect(gameboards(:gameboardFourPlayers).success).to be_truthy
+    expect(playerwin[:result]).to be_truthy
+    expect(playerwin[:playeratk]).to eql(105)
+    # expect(gameboards(:gameboardFourPlayers).success).to be_falsy unless playerwin[:result]
+  end
 end
