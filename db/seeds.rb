@@ -1230,7 +1230,7 @@ bear_fireboss = Bosscard.create!(
   description: '<p>You never stand a chance against my ultimate form!</p>',
   image: '/cardeons/cards/monster/sirbear/fire.png',
   action: 'lose_level',
-  draw_chance: 1000,
+  draw_chance: 1,
   level: 40,
   element: '',
   bad_things: '<p><b>Bad things: </b>All players lose one level.</p>',

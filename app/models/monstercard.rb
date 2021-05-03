@@ -212,14 +212,19 @@ class Monstercard < Card
       Cursecard.broadcast_gamelog(msg, gameboard)
       Player.broadcast_all_playerhandcards(gameboard)
     when 'lose_level'
-      player = gameboard.current_player
-
-      player.update(level: player.level - 1) unless player.level == 1
+      if gameboard.intercept_finished?
+        player.update(level: player.level - 1) unless player.level == 1
+      else
+        gameboard.reload.players.each do |player_individual|
+          pp player_individual
+          player_individual.update(level: player_individual.level - 1) unless player_individual.level == 1
+        end
+      end
 
       msg = "You lost 1 level because of Monstercards bad things #{ingamedeck.card.title}"
       Cursecard.broadcast_gamelog(msg, gameboard)
     when 'die'
-      player = gameboard.current_player
+      # player = gameboard.current_player
 
       player.update(level: 1)
 

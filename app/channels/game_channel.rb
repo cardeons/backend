@@ -19,7 +19,7 @@ class GameChannel < ApplicationCable::Channel
   end
 
   def flee
-    output = Gameboard.flee(@gameboard, current_user)
+    output = Gameboard.flee(@gameboard.reload, current_user)
     broadcast_to(@gameboard, { type: FLEE, params: output })
 
     @gameboard.centercard.ingamedeck&.update!(cardable: @gameboard.graveyard)

@@ -1137,6 +1137,29 @@ RSpec.describe GameChannel, type: :channel do
     # expect(gameboards(:gameboardFourPlayers).success).to be_falsy unless playerwin[:result]
   end
 
+  it 'all players should lose a level if attack is too low' do
+    gameboards(:gameboardFourPlayers).initialize_game_board
+    gameboards(:gameboardFourPlayers).players.each(&:init_player)
+
+    stub_connection current_user: users(:userFour)
+    subscribe
+
+    players(:playerOne).update(level: 3)
+    players(:playerTwo).update(level: 4)
+
+    ENV['DEV_TOOL_ENABLED'] = 'enabled'
+    perform('develop_draw_boss_card', {})
+    playerwin = Gameboard.attack(gameboards(:gameboardFourPlayers), true, true)
+    perform('flee', {})
+
+    # all players should now be one level lower than in the beginning
+    expect(players(:playerOne).reload.level).to eql(2)
+    expect(players(:playerTwo).reload.level).to eql(3)
+    expect(players(:playerThree).reload.level).to eql(1)
+    expect(players(:playerFour).reload.level).to eql(1)
+    # expect(gameboards(:gameboardFourPlayers).success).to be_falsy unless playerwin[:result]
+  end
+
   it 'attack in bossphase when player attack is high enough' do
     gameboards(:gameboardFourPlayers).initialize_game_board
     gameboards(:gameboardFourPlayers).players.each(&:init_player)
