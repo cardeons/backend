@@ -13,9 +13,9 @@ RSpec.describe FriendlistChannel, type: :channel do
   it 'test if current user is online after subscribe & offline after unsubscribe' do
     stub_connection current_user: users(:one)
     subscribe
-    expect(connection.current_user.online).to be_truthy
+    expect(connection.current_user.status).to eq 'online'
     unsubscribe
-    expect(connection.current_user.online).to be_falsy
+    expect(connection.current_user.status).to eq 'offline'
   end
 
   it 'test if friendrequest is broadcastet' do

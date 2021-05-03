@@ -4,15 +4,14 @@ class FriendlistChannel < ApplicationCable::Channel
   def subscribed
     stream_for current_user
 
-    current_user.update(online: true)
+    current_user.update(status: :online)
 
     Friendship.broadcast_friends(current_user)
     Friendship.broadcast_pending_requests(current_user)
   end
 
   def unsubscribed
-    # Any cleanup needed when channel is unsubscribed
-    current_user.update(online: false)
+    current_user.update(status: :offline)
   end
 
   def send_friend_request(data)

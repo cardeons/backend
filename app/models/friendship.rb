@@ -41,7 +41,7 @@ class Friendship < ApplicationRecord
     friends_obj = []
 
     friendships.each do |friendship|
-      friends_obj.push({ name: friendship.friend.name, online: friendship.friend.online })
+      friends_obj.push({ name: friendship.friend.name, status: friendship.friend.status })
     end
 
     FriendlistChannel.broadcast_to(current_user, { type: 'FRIENDLIST', params: { friends: friends_obj } })
