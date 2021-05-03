@@ -337,7 +337,72 @@ Alle im Game-Chanel
    params: { }  
 }
 
+
 {
    type: 'develop_draw_boss_card',
    params: { }  
+}
+
+# FRIENDLISTCHANNEL
+
+#on subscribe to channel kriegst du
+
+{
+  type: 'FRIENDLIST',
+  params: {
+    friends: [ {name: '', status: ''}]
+  }
+}
+
+#wenn man ausstehende Freundschaftsanfragen hat
+{
+  type: 'FRIEND_REQUEST',
+  params: { inquirer: id, inquirer_name: string }
+}
+
+#send request
+{
+  action: "send_friend_request",
+  params:{
+    friend: user_id #vom Spieler den man anfragen will
+    }
+}
+#Antwort
+{
+  type: 'FRIEND_LOG', params: { message: string }
+}
+#Antwort beim angefragten spieler
+{
+  type: 'FRIEND_LOG', params: { message: string }
+}
+{
+   type: 'FRIEND_REQUEST', params: { inquirer: id, inquirer_name: string }
+}
+
+#accept request
+{
+  action: "accept_friend_request",
+  params:{
+    inquirer: user_id #vom Spieler den man anfragen will
+    }
+}
+#Antwort
+{
+  type: 'FRIEND_LOG', params: { message: string }
+}
+#Antwort beim anfragenden spieler
+{
+  type: 'FRIEND_LOG', params: { message: string }
+}
+
+#decline request
+{
+  action: "decline_friend_request",
+  params:{
+    inquirer: user_id #vom Spieler den man anfragen will
+    }
+}
+#Antwort
+{
+  type: 'FRIEND_LOG', params: { message: string }
 }
