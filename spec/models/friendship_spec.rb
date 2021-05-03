@@ -8,11 +8,12 @@ RSpec.describe Friendship, type: :model do
     users(:userOne).friends << users(:userTwo)
 
     expect(users(:userOne).friends.count).to eq 1
+    expect(users(:userOne).friendships.first.pending).to be_truthy
   end
 
   it 'user should have 1 friend' do
     # gameboard = gameboards(:gameboardFourPlayers)
-    User.add_friend(users(:userOne), users(:userTwo))
+    Friendship.add_friend(users(:userOne), users(:userTwo))
 
     expect(users(:userTwo).friends.count).to eq 1
     expect(users(:userOne).friends.count).to eq 1
@@ -20,8 +21,8 @@ RSpec.describe Friendship, type: :model do
 
   it 'user should have 0 friend' do
     # gameboard = gameboards(:gameboardFourPlayers)
-    User.add_friend(users(:userOne), users(:userTwo))
-    User.remove_friend(users(:userOne), users(:userTwo))
+    Friendship.add_friend(users(:userOne), users(:userTwo))
+    Friendship.remove_friend(users(:userOne), users(:userTwo))
 
     expect(users(:userTwo).friends.reload.count).to eq 0
     expect(users(:userOne).friends.reload.count).to eq 0
