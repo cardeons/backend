@@ -39,4 +39,16 @@ class FriendlistChannel < ApplicationCable::Channel
     Friendship.remove_friend(current_user, inquirer)
     broadcast_to(current_user, { type: 'FRIEND_LOG', params: { message: "You declined a friendrequest from #{inquirer.name}" } })
   end
+
+  def invite(data)
+    friend = User.find_by('id=?', data['friend'])
+
+    broadcast_to(friend, { type: 'GAME_INVITE', params: { inviter: current_user.id, inviter_name: current_user.name } })
+  end
+
+  def accept_invite(data)
+    inquirer = User.find_by('id=?', data['inquirer'])
+
+    current_user.update!(lobby: inquirer.lobby)
+  end
 end

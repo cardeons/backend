@@ -176,4 +176,34 @@ RSpec.describe FriendlistChannel, type: :channel do
         hash_including(type: 'FRIEND_REQUEST', params: { inquirer: users(:one).id, inquirer_name: users(:one).name })
       ).exactly(:once)
   end
+
+  it 'test if user to lobby after successfull invitation' do
+    stub_connection current_user: users(:one)
+    subscribe
+
+    perform('invite', {
+              friend: users(:usernorbert).id
+            })
+
+    firstlobby = Lobby.create
+
+    users(:one).lobby = firstlobby
+
+    unsubscribe
+
+    stub_connection current_user: users(:usernorbert)
+    subscribe
+
+    perform('accept_invite', {
+              inquirer: users(:one).id
+            })
+
+    expect(users(:usernorbert).lobby).to eq users(:one).lobby
+
+    pp users(:usernorbert).lobby.users.count
+
+    pp firstlobby.users
+
+    expect(Lobby.find(firstlobby.id).users.count).to eq 2
+  end
 end

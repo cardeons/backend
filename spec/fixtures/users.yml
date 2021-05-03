@@ -21,7 +21,7 @@ three:
 four:
   id: 4
   email: test4@test.com
-  name : UserFour
+  name : UserFour2
   password_digest: MyString
 
 usernorbert:
