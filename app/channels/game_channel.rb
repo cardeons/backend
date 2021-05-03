@@ -87,7 +87,6 @@ class GameChannel < ApplicationCable::Channel
 
     start_intercept_phase(@gameboard.reload)
 
-    # attack()
     broadcast_to(@gameboard, { type: BOARD_UPDATE, params: Gameboard.broadcast_game_board(@gameboard.reload) })
     msg = "#{current_user.player.name} has drawn #{name}"
     broadcast_to(@gameboard, { type: GAME_LOG, params: { date: Time.new, message: msg } })
@@ -422,9 +421,16 @@ class GameChannel < ApplicationCable::Channel
     @gameboard.update(centercard: new_center)
 
     @gameboard.boss_phase!
+    result = Gameboard.attack(@gameboard, false, true)
+    pp 'frejfirjfejirejieor'
+    pp result
+    pp 'joifehirhgigehreo'
+    @gameboard.update(success: result[:result], player_atk: result[:playeratk], monster_atk: result[:monsteratk])
+    updated_board = Gameboard.broadcast_game_board(@gameboard.reload)
+    broadcast_to(@gameboard, { type: BOARD_UPDATE, params: updated_board })
     start_intercept_phase(@gameboard.reload)
 
-    broadcast_to(@gameboard, { type: BOARD_UPDATE, params: Gameboard.broadcast_game_board(@gameboard.reload) })
+    # broadcast_to(@gameboard, { type: BOARD_UPDATE, params: Gameboard.broadcast_game_board(@gameboard.reload) })
     msg = "#{current_user.player.name} has drawn #{card.title}"
     broadcast_to(@gameboard, { type: GAME_LOG, params: { date: Time.new, message: msg } })
   end
