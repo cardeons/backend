@@ -1223,6 +1223,26 @@ excalibur = Itemcard.create!(
   has_combination: false
 )
 
+## Bosscard
+
+bear_fireboss = Bosscard.create!(
+  title: 'Sir Bear of Destruction',
+  description: '<p>You never stand a chance against my ultimate form!</p>',
+  image: '/cardeons/cards/monster/sirbear/fire.png',
+  action: 'lose_level',
+  draw_chance: 1000,
+  level: 40,
+  element: 'fire',
+  bad_things: '<p><b>Bad things: </b>All players lose one level.</p>',
+  rewards_treasure: 1,
+  good_against: '',
+  bad_against: '',
+  good_against_value: 0,
+  bad_against_value: 0,
+  atk_points: 40,
+  level_amount: 0
+)
+
 # Adds cards to inventory of user1
 # User.find(1).cards << (Card.find(1))
 # User.find(1).cards << (Card.find(2))
