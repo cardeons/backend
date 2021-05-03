@@ -37,6 +37,7 @@ ActiveRecord::Schema.define(version: 2021_05_03_085759) do
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
     t.string "type"
+    t.integer "animal"
   end
 
   create_table "cards_users", id: false, force: :cascade do |t|

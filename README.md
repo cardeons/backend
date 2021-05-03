@@ -14,6 +14,18 @@ CREATE DATABASE cardeons_backend_development;
 CREATE DATABASE cardeons_backend_test;
 rails db:migrate
 ```
+
+### Add Cards:
+```sh
+rails db:seed cards=cards
+```
+
+### Add Dummy Users:
+```sh
+rails db:seed users=users
+```
+
+
 We are using foreman to start redis/sidekiq and puma in one shell:
 ```sh
 gem install foreman

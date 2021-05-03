@@ -234,4 +234,13 @@ class Monstercard < Card
       puts 'action unknown :('
     end
   end
+
+  def calculate_self_element_modifiers(other_card)
+    modifier = 0
+
+    modifier += good_against_value if good_against == other_card.element
+    modifier -= bad_against_value if bad_against == other_card.element
+
+    modifier
+  end
 end
