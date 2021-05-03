@@ -34,12 +34,8 @@ class LobbyChannel < ApplicationCable::Channel
 
     @gameboard = gameboard
 
-    # TODO: Remove after testing i guesss
-    if params['testplayers'].nil?
-      create_dummy_players_for_gameboard(@gameboard)
-    else
-      create_dummy_players_for_gameboard(@gameboard, params['testplayers'])
-    end
+    # Should only be usable if ENV is set
+    ENV['DEV_TOOL_ENABLED'] == 'enabled' && create_dummy_players_for_gameboard(@gameboard, params['testplayers'])
 
     lobbyisfull = @gameboard.players.count > 3
 
@@ -71,7 +67,10 @@ class LobbyChannel < ApplicationCable::Channel
 
   private
 
-  def create_dummy_players_for_gameboard(gameboard, number_of_players = 3)
+  def create_dummy_players_for_gameboard(gameboard, number_of_players)
+    # number of players could be nil if a user deletes it from the form
+    number_of_players = 0 if number_of_players.nil?
+
     max_players = 4
     gameboard_test = gameboard
 

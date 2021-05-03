@@ -11,6 +11,7 @@ Rails.application.configure do
   config.cache_classes = false
 
   ENV['ENC_KEY'] = 'dev_secret'
+  ENV['DEV_TOOL_ENABLED'] = 'enabled'
 
   # Do not eager load code on boot.
   config.eager_load = false
