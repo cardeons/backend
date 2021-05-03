@@ -616,8 +616,8 @@ boaring_fire = Monstercard.create!(
 
 curse = Cursecard.create!(
   title: 'Very bad curse',
-  description: '<p>This curse is very bad.</p><p> Actually, it is so bad that this curse will stick to you and weaken your fighting ability as long as you do not find a way to remove it</p>',
-  image: '/cardeons/cards/icons/curse.png',
+  description: '<p>This curse is very bad.</p><p> Actually, it is so bad that this curse will stick to you and weaken your fighting ability as long as you do not find a way to remove it! -1 attack points.</p>',
+  image: '/icon/Curse.png',
   action: 'lose_atk_points',
   draw_chance: 6,
   atk_points: -1
@@ -679,8 +679,8 @@ curse7 = Cursecard.create!(
 
 curse8 = Cursecard.create!(
   title: 'Is this really bad?',
-  description: '<p>The monsters attack get doubled but gives double the rewards!</p>',
-  image: '/cardeons/cards/icons/curse.png',
+  description: '<p>The monsters attack gets doubled but gives double the rewards!</p>',
+  image: '/icon/Curse.png',
   action: 'double_attack_double_reward',
   draw_chance: 6,
   atk_points: 0
@@ -736,10 +736,10 @@ buffcard5 = Buffcard.create!(
 buffcard6 = Buffcard.create!(
   draw_chance: 6,
   title: 'Chloroform',
-  description: '<p>You can force a chosen player to help you!</p>',
-  image: '/cardeons/cards/icons/buff.png',
-  action: 'force_help',
-  atk_points: 0
+  description: '<p>You severely weaken the monster. It looses 3 attack points.</p>',
+  image: '/icon/Buff.png',
+  action: 'monster_lose_atk',
+  atk_points: -3
 )
 
 buffcard7 = Buffcard.create!(

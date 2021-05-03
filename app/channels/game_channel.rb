@@ -118,9 +118,9 @@ class GameChannel < ApplicationCable::Channel
       player = Player.find_by('user_id = ?', current_user.id)
 
       player_level = player.level
-      player.update!(level: player_level + 1)
+      player.update!(level: player_level + @gameboard.reload.centercard.card.level_amount)
 
-      if player.level == 5
+      if player.level >= 5
         monster_id = player.win_game(current_user)
         @gameboard.game_won!
         broadcast_to(@gameboard, { type: 'WIN', params: { player: player.id, monster_won: monster_id } })
