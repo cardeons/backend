@@ -6,6 +6,7 @@ class FriendlistChannel < ApplicationCable::Channel
 
     current_user.update(online: true)
 
+    Friendship.broadcast_friends(current_user)
     Friendship.broadcast_pending_requests(current_user)
   end
 

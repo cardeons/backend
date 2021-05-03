@@ -30,4 +30,16 @@ class Friendship < ApplicationRecord
       FriendlistChannel.broadcast_to(current_user, { type: 'FRIEND_REQUEST', params: { inquirer: request.friend.id, inquirer_name: request.friend.name } })
     end
   end
+
+  def self.broadcast_friends(current_user)
+    friendships = Friendship.where(['user_id = ? and pending = ?', current_user.id, false])
+
+    friends_obj = []
+
+    friendships.each do |friendship|
+      friends_obj.push({ name: friendship.friend.name, online: friendship.friend.online })
+    end
+
+    FriendlistChannel.broadcast_to(current_user, { type: 'FRIENDLIST', params: { friends: friends_obj } })
+  end
 end

@@ -130,4 +130,21 @@ RSpec.describe FriendlistChannel, type: :channel do
         hash_including(type: 'FRIEND_LOG', params: { message: "You declined a friendrequest from #{users(:one).name}" })
       ).exactly(0)
   end
+
+  it 'test if friends get broadcastet on subscribe' do
+    users(:usernorbert).friends << users(:two)
+    users(:usernorbert).friends << users(:one)
+
+    users(:usernorbert).friendships.each do |friendship|
+      friendship.update(pending: false)
+    end
+
+    stub_connection current_user: users(:usernorbert)
+    expect do
+      subscribe
+    end.to have_broadcasted_to(FriendlistChannel.broadcasting_for(connection.current_user))
+      .with(
+        hash_including(type: 'FRIENDLIST')
+      ).exactly(:once)
+  end
 end
