@@ -26,13 +26,13 @@ four:
 
 five:
   id: 5
-  email: test4@test.com
+  email: test5@test.com
   name : UserFive
   password_digest: MyString
 
 six:
   id: 6
-  email: test4@test.com
+  email: test6@test.com
   name : UserSix
   password_digest: MyString
 

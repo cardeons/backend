@@ -11,12 +11,14 @@ class LobbyChannel < ApplicationCable::Channel
       lobby = Lobby.create!
 
       current_user.update!(lobby: lobby)
-    else
+    elsif params['inquirer']
       inquirer = User.find_by('id=?', params['inquirer'])
 
       FriendlistChannel.broadcast_to(current_user, { type: 'LOBBY_ERROR', params: { message: 'Lobby is full...' } }) if inquirer.lobby.users.count == 4
       reject if inquirer.lobby.users.count == 4
       current_user.update!(lobby: inquirer.lobby) if inquirer.lobby.users.count < 4
+    else
+      reject
     end
   end
 
@@ -71,7 +73,9 @@ class LobbyChannel < ApplicationCable::Channel
   def unsubscribed
     # Any cleanup needed when channel is unsubscribed
     # kann des probleme machen beim reload? weil man dann keine params mehr hat?? :thinking:
-    current_user.update(lobby: nil)
+    # current_user.update(lobby: nil)
+    return unless @gameboard
+
     if @gameboard.reload.lobby?
       current_user.player.destroy!
       # pp current_user.player.id

@@ -22,9 +22,9 @@ class Player < ApplicationRecord
 
     # add the monsters from the player to his handcards
     # TODO: Check if player actually posesses these cards
-    Ingamedeck.create(card_id: params[:monsterone], gameboard: gameboard, cardable: handcard) if params[:monsterone]
-    Ingamedeck.create(card_id: params[:monstertwo], gameboard: gameboard, cardable: handcard) if params[:monstertwo]
-    Ingamedeck.create(card_id: params[:monsterthree], gameboard: gameboard, cardable: handcard) if params[:monsterthree]
+    Ingamedeck.create(card_id: params['monsterone'], gameboard: gameboard, cardable: handcard) if params['monsterone']
+    Ingamedeck.create(card_id: params['monstertwo'], gameboard: gameboard, cardable: handcard) if params['monstertwo']
+    Ingamedeck.create(card_id: params['monsterthree'], gameboard: gameboard, cardable: handcard) if params['monsterthree']
   end
 
   def self.draw_five_cards(player)
