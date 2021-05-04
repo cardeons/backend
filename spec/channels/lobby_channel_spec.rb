@@ -77,6 +77,13 @@ RSpec.describe LobbyChannel, type: :channel do
   end
 
   it 'gameboard got initalized ' do
+    stub_connection current_user: users(:one)
+    subscribe
+    stub_connection current_user: users(:two)
+    subscribe
+    stub_connection current_user: users(:three)
+    subscribe
+    stub_connection current_user: users(:four)
     subscribe
 
     expect(User.find(users(:one).id).player.gameboard.centercard).to be_truthy
