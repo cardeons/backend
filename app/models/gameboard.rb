@@ -186,7 +186,7 @@ class Gameboard < ApplicationRecord
 
     gameboard.update(centercard: new_center, rewards_treasure: new_treasure)
 
-    attack_obj = attack(gameboard.reload, true)
+    attack_obj = attack(gameboard.reload)
 
     gameboard.update(success: attack_obj[:result], player_atk: attack_obj[:playeratk], monster_atk: attack_obj[:monsteratk])
 
