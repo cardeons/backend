@@ -20,8 +20,6 @@ class Buffcard < Card
       ingamedeck.update(cardable: gameboard.graveyard)
     when 'dodge_monster'
       gameboard.update(can_flee: true)
-    when 'draw_two_cards'
-      Handcard.draw_handcards(player.id, gameboard, 2)
     when 'force_help'
       helping_player_id = gameboard.helping_player
       helping_player = Player.find_by('id = ?', helping_player_id)

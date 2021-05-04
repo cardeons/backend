@@ -724,15 +724,6 @@ buffcard4 = Buffcard.create!(
   atk_points: 0
 )
 
-buffcard5 = Buffcard.create!(
-  draw_chance: 6,
-  title: 'Pot of Greed',
-  description: '<p>Time for a duel: Draw two additional cards!</p>',
-  image: '/cardeons/cards/icons/buff.png',
-  action: 'draw_two_cards',
-  atk_points: 0
-)
-
 buffcard6 = Buffcard.create!(
   draw_chance: 6,
   title: 'Chloroform',
@@ -760,13 +751,13 @@ buffcard8 = Buffcard.create!(
   atk_points: 0
 )
 
-buffcard9 = Buffcard.create!(
+buffcard9 = Levelcard.create!(
   draw_chance: 6,
   title: 'Lick',
   description: '<p>You paralyzed the monster, it hurts itself and loses 3 ATP</p>',
   image: '/cardeons/cards/icons/buff.png',
   action: 'monster_lose_atk',
-  atk_points: 3
+  atk_points: -3
 )
 
 buffcard10 = Buffcard.create!(
@@ -1269,6 +1260,14 @@ u9.cards << (Card.find(3))
 
 levelcard = Levelcard.create!(title: 'Level up!', draw_chance: 5, description: 'Get one level', image: '/cardeons/cards/icons/level.png', action: 'level_up', level_amount: 1)
 
+levelcard2 = Buffcard.create!(
+  draw_chance: 6,
+  title: 'Pot of Greed',
+  description: '<p>Time for a duel: Draw two additional cards!</p>',
+  image: '/cardeons/cards/icons/buff.png',
+  action: 'draw_two_cards',
+  level_amount: 0
+)
 # gameboard = Gameboard.create!(current_state: 'fight', player_atk: 5)
 
 # player1 = Player.create!(name: 'Gustav', gameboard: gameboard, user: u1)
