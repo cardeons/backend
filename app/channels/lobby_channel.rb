@@ -7,49 +7,58 @@ class LobbyChannel < ApplicationCable::Channel
   INGAME = 'ingame'
 
   def subscribed
-    # access current user with current_user
+    if params['initiate']
+      lobby = Lobby.create!
 
-    # check if there is not a player with this user
-    ## read find or create by for simpler solution
-    # if Player.find_by(user_id: current_user.id)
-    #   # transmit {type: "error", params:{message: "user is already playing in #{player.gameboard_id}"}}
-    #   player = Player.find_by(user_id: current_user.id)
-    #   Gameboard.find(player.gameboard_id).destroy
-    #   createNewTestGame
-    #   # reject
-    # end
+      current_user.update!(lobby: lobby)
+    else
+      inquirer = User.find_by('id=?', params['inquirer'])
 
-    # remove player from old gameboard
-    # delete_old_players
+      FriendlistChannel.broadcast_to(current_user, { type: 'LOBBY_ERROR', params: { message: 'Lobby is full...' } }) if inquirer.lobby.users.count == 4
+      reject if inquirer.lobby.users.count == 4
+      current_user.update!(lobby: inquirer.lobby) if inquirer.lobby.users.count < 4
+    end
+  end
 
-    # search for gameboard with open lobby
-    # gameboard = Gameboard.find_or_create_by(current_state: LOBBY)
+  def lobby_invite(data)
+    friend = User.find_by('id=?', data['friend'])
 
-    # create new player
-    # player = Player.create!(name: current_user.name, gameboard_id: gameboard.id, user: current_user)
+    FriendlistChannel.broadcast_to(friend, { type: 'GAME_INVITE', params: { inviter: current_user.id, inviter_name: current_user.name } })
+  end
 
-    player = current_user.player
+  def start_lobby_queue(data)
+    lobby = current_user.lobby
 
-    player.init_player(params)
+    delete_old_players
 
-    # player.init_player(params)
-    gameboard = current_user.player.gameboard
+    gameboard = Gameboard.find_or_create_by!(current_state: :lobby)
 
-    gameboard.update!(current_player: player)
-
+    gameboard = Gameboard.create!(current_state: :lobby) if lobby.users.reload.count > (4 - gameboard.players.reload.count)
     @gameboard = gameboard
 
-    # Should only be usable if ENV is set
-    ENV['DEV_TOOL_ENABLED'] == 'enabled' && create_dummy_players_for_gameboard(@gameboard, params['testplayers'])
+    lobby.users.each do |user|
+      Player.create!(name: user.name, gameboard_id: gameboard.id, user: user)
 
-    lobbyisfull = @gameboard.players.count > 3
+      player = user.player
 
-    stream_for @gameboard
+      player.init_player(data)
 
-    broadcast_to(@gameboard,
-                 { type: 'DEBUG', params: { message: "new Player#{current_user.email} conected to the gameboard id: #{@gameboard.id} players in lobby #{@gameboard.reload.players.count}" } })
+      # player.init_player(params)
+      # gameboard = current_user.player.gameboard
 
-    if lobbyisfull
+      # gameboard.update!(current_player: player)
+      # Should only be usable if ENV is set
+      ENV['DEV_TOOL_ENABLED'] == 'enabled' && create_dummy_players_for_gameboard(@gameboard, data['testplayers'])
+
+      lobbyisfull = @gameboard.players.count > 3
+
+      stream_for @gameboard
+
+      broadcast_to(@gameboard,
+                   { type: 'DEBUG', params: { message: "new Player#{current_user.email} conected to the gameboard id: #{@gameboard.id} players in lobby #{@gameboard.reload.players.count}" } })
+
+      next unless lobbyisfull
+
       # Lobby is full tell players to start the game
       broadcast_to(@gameboard, { type: 'DEBUG', params: { message: 'Lobby is full start with game subscribe to Player and GameChannel' } })
 
@@ -61,6 +70,8 @@ class LobbyChannel < ApplicationCable::Channel
 
   def unsubscribed
     # Any cleanup needed when channel is unsubscribed
+    # kann des probleme machen beim reload? weil man dann keine params mehr hat?? :thinking:
+    current_user.update(lobby: nil)
     if @gameboard.reload.lobby?
       current_user.player.destroy!
       # pp current_user.player.id
@@ -101,5 +112,27 @@ class LobbyChannel < ApplicationCable::Channel
 
   def deliver_error_message(error)
     broadcast_to(@gameboard, { type: 'ERROR', params: { message: error } })
+  end
+
+  def delete_old_players
+    # search if user is already in a game
+    old_players = Player.where('user_id=?', current_user.id)
+    old_players.each do |player|
+      # if its the current players turn get the next one in line
+      old_gameboard = player.gameboard
+      if old_gameboard.current_player == player
+        Gameboard.get_next_player(old_gameboard) if old_gameboard.current_player == player
+        old_gameboard.reload
+        if old_gameboard.current_player == player || old_gameboard.players.count < 3
+          old_gameboard.current_player = nil
+          old_gameboard.save!
+          old_gameboard.destroy!
+          next
+        end
+        # just set current_player to il for now
+        # old_gameboard.current_player = nil
+      end
+      player.destroy!
+    end
   end
 end

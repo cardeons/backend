@@ -309,16 +309,12 @@ class Gameboard < ApplicationRecord
   end
 
   def self.clear_buffcards(gameboard)
-    if gameboard.interceptcard
-      gameboard.interceptcard.ingamedecks.each do |card|
-        card.update!(cardable: gameboard.graveyard)
-      end
+    gameboard.interceptcard&.ingamedecks&.each do |card|
+      card.update!(cardable: gameboard.graveyard)
     end
 
-    if gameboard.playerinterceptcard
-      gameboard.playerinterceptcard.ingamedecks.each do |card|
-        card.update!(cardable: gameboard.graveyard)
-      end
+    gameboard.playerinterceptcard&.ingamedecks&.each do |card|
+      card.update!(cardable: gameboard.graveyard)
     end
   end
 end
