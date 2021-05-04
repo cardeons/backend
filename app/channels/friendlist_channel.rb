@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 class FriendlistChannel < ApplicationCable::Channel
+  LOBBY = 'lobby'
   def subscribed
     stream_for current_user
 
@@ -40,6 +41,12 @@ class FriendlistChannel < ApplicationCable::Channel
     broadcast_to(current_user, { type: 'FRIEND_LOG', params: { message: "You declined a friendrequest from #{inquirer.name}" } })
   end
 
+  def initiate_lobby
+    lobby = Lobby.create
+
+    current_user.update!(lobby: lobby)
+  end
+
   def invite(data)
     friend = User.find_by('id=?', data['friend'])
 
@@ -51,5 +58,43 @@ class FriendlistChannel < ApplicationCable::Channel
 
     broadcast_to(current_user, { type: 'LOBBY_ERROR', params: { message: 'Lobby is full...' } }) if inquirer.lobby.users.count == 4
     current_user.update!(lobby: inquirer.lobby) if inquirer.lobby.users.count < 4
+  end
+
+  def start_queue
+    lobby = current_user.lobby
+
+    delete_old_players
+
+    gameboard = Gameboard.find_or_create_by(current_state: LOBBY)
+
+    gameboard = Gameboard.create(current_state: LOBBY) if lobby.users.count > (4 - gameboard.players.count)
+
+    lobby.users.each do |user|
+      player = Player.create!(name: user.name, gameboard_id: gameboard.id, user: user)
+
+      broadcast_to(user, { type: 'SUBSCRIBE_LOBBY', params: { game_id: gameboard.id } })
+    end
+  end
+
+  def delete_old_players
+    # search if user is already in a game
+    old_players = Player.where('user_id=?', current_user.id)
+    old_players.each do |player|
+      # if its the current players turn get the next one in line
+      old_gameboard = player.gameboard
+      if old_gameboard.current_player == player
+        Gameboard.get_next_player(old_gameboard) if old_gameboard.current_player == player
+        old_gameboard.reload
+        if old_gameboard.current_player == player || old_gameboard.players.count < 3
+          old_gameboard.current_player = nil
+          old_gameboard.save!
+          old_gameboard.destroy!
+          next
+        end
+        # just set current_player to il for now
+        # old_gameboard.current_player = nil
+      end
+      player.destroy!
+    end
   end
 end

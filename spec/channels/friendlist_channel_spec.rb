@@ -181,13 +181,10 @@ RSpec.describe FriendlistChannel, type: :channel do
     stub_connection current_user: users(:one)
     subscribe
 
+    perform('initiate_lobby')
     perform('invite', {
               friend: users(:usernorbert).id
             })
-
-    firstlobby = Lobby.create
-
-    users(:one).lobby = firstlobby
 
     unsubscribe
 
@@ -200,16 +197,14 @@ RSpec.describe FriendlistChannel, type: :channel do
 
     expect(users(:usernorbert).reload.lobby).to eq users(:one).lobby
 
-    expect(Lobby.find(firstlobby.id).users.count).to eq 2
+    expect(users(:one).lobby.users.count).to eq 2
   end
 
   it 'test if broadcast if lobby is full' do
     stub_connection current_user: users(:one)
     subscribe
 
-    firstlobby = Lobby.create
-
-    users(:one).lobby = firstlobby
+    perform('initiate_lobby')
 
     unsubscribe
     stub_connection current_user: users(:usernorbert)
@@ -263,6 +258,55 @@ RSpec.describe FriendlistChannel, type: :channel do
         hash_including(type: 'LOBBY_ERROR', params: { message: 'Lobby is full...' })
       ).exactly(:once)
 
-    expect(Lobby.find(firstlobby.id).reload.users.count).to eq 4
+    expect(users(:one).lobby.users.count).to eq 4
+  end
+
+  it 'test startqueue with single player' do
+    stub_connection current_user: users(:one)
+    subscribe
+
+    perform('initiate_lobby')
+    expect do
+      perform('start_queue')
+    end.to have_broadcasted_to(FriendlistChannel.broadcasting_for(connection.current_user))
+      .with(
+        hash_including(type: 'SUBSCRIBE_LOBBY')
+      ).exactly(:once)
+
+    expect(users(:one).reload.player).to be_truthy
+  end
+
+  it 'test startqueue with 3 player' do
+    stub_connection current_user: users(:one)
+    subscribe
+
+    perform('initiate_lobby')
+
+    unsubscribe
+    stub_connection current_user: users(:two)
+    subscribe
+
+    perform('accept_invite', {
+              inquirer: users(:one).id
+            })
+
+    unsubscribe
+    stub_connection current_user: users(:three)
+    subscribe
+
+    perform('accept_invite', {
+              inquirer: users(:one).id
+            })
+
+    expect do
+      perform('start_queue')
+    end.to have_broadcasted_to(FriendlistChannel.broadcasting_for(connection.current_user))
+      .with(
+        hash_including(type: 'SUBSCRIBE_LOBBY')
+      ).exactly(:once)
+
+    expect(users(:one).reload.player).to be_truthy
+    expect(users(:two).reload.player).to be_truthy
+    expect(users(:three).reload.player).to be_truthy
   end
 end
