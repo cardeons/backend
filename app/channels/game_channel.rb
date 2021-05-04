@@ -103,11 +103,6 @@ class GameChannel < ApplicationCable::Channel
     PlayerChannel.broadcast_to(current_user, { type: 'ERROR', params: { message: result[:message] } }) if result[:type] == 'ERROR'
     broadcast_to(@gameboard, { type: 'BOARD_UPDATE', params: updated_board })
 
-    # if result[:type] != 'ERROR'
-    #   msg = "#{player.name} has equiped a monster!"
-    #   broadcast_to(@gameboard, { type: GAME_LOG, params: { date: Time.new, message: msg } })
-    # end
-
     PlayerChannel.broadcast_to(current_user, { type: 'HANDCARD_UPDATE', params: { handcards: Gameboard.render_cards_array(player.handcard.ingamedecks) } })
   end
 
