@@ -28,15 +28,9 @@ class Cursecard < Card
   end
 
   def self.activate(ingamedeck, player, gameboard, playeratk = 0, monsteratk = 0)
-    pp '**************************************************'
-    pp 'in activate'
-    pp '**************************************************'
     case ingamedeck.card.action # get the action from card
     when 'lose_atk_points'
       playeratk += ingamedeck.card.atk_points
-      # msg = "#{player.name} got cursed! The player lost #{ingamedeck.card.atk_points} attack points because of it."
-      # Cursecard.broadcast_gamelog(msg, gameboard)
-
       { playeratk: playeratk, monsteratk: monsteratk }
     when 'lose_item_hand'
       Monstercard.lose_item_by_category(player, gameboard, 'hand')
@@ -48,16 +42,9 @@ class Cursecard < Card
       { playeratk: playeratk, monsteratk: monsteratk }
     when 'no_help_next_fight'
       gameboard.update(asked_help: true)
-
-      # msg = "#{player.name} got cursed! The player can not ask for help in the next fight."
-      # Cursecard.broadcast_gamelog(msg, gameboard)
-
       { playeratk: playeratk, monsteratk: monsteratk }
     when 'minus_atk_next_fight'
       playeratk += ingamedeck.card.atk_points
-
-      # msg = "#{player.name} got cursed! The player will lose #{ingamedeck.card.atk_points} for the next fight."
-      # Cursecard.broadcast_gamelog(msg, gameboard)
 
       { playeratk: playeratk, monsteratk: monsteratk }
     when 'lose_item_head'
@@ -77,10 +64,6 @@ class Cursecard < Card
 
       { playeratk: playeratk, monsteratk: monsteratk }
     when 'double_attack_double_reward'
-
-      # msg = "#{player.name} got cursed! The monster has double the attack but also double the reward because of it."
-      # Cursecard.broadcast_gamelog(msg, gameboard)
-
       monstercard = gameboard.centercard.card
 
       monsteratk = monstercard.atk_points * 2 if monstercard

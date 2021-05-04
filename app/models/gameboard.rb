@@ -226,7 +226,7 @@ class Gameboard < ApplicationRecord
     output
   end
 
-  def self.attack(gameboard, _curse_log = true)
+  def self.attack(gameboard)
     gameboard.reload
     player = gameboard.current_player
     playeratkpoints = 1
