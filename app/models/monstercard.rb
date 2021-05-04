@@ -21,9 +21,8 @@ class Monstercard < Card
     unless deck_card.nil?
       card = Card.find_by('id=?', deck_card.card_id)
 
-      # TODO: validieren
       cardtype = card.type
-      #       # there already are 5 items, you can't put any more (6 because the monster itself is in this table)
+      # there already are 5 items, you can't put any more (6 because the monster itself is in this table)
       if monster_to_equip.cards.count == 6
         type = 'ERROR'
         message = "You can't put any more items on this monster."
@@ -161,19 +160,19 @@ class Monstercard < Card
     case ingamedeck.card.action # get the action from card
     when 'lose_item_hand'
       lose_item_by_category(player, gameboard, 'hand')
-      msg = "You lost 1 handitem because of Monstercards bad things #{ingamedeck.card.title}"
+      msg = "#{player.name} lost one hand item because of #{ingamedeck.card.title}s bad things."
       Cursecard.broadcast_gamelog(msg, gameboard)
     when 'lose_item_shoe'
       lose_item_by_category(player, gameboard, 'shoe')
-      msg = "You lost 1 shoeitem because of Monstercards bad things #{ingamedeck.card.title}"
+      msg = "#{player.name} lost one shoe item because of #{ingamedeck.card.title}s bad things."
       Cursecard.broadcast_gamelog(msg, gameboard)
     when 'lose_item_head'
       lose_item_by_category(player, gameboard, 'head')
-      msg = "You lost 1 headitem because of Monstercards bad things #{ingamedeck.card.title}"
+      msg = "#{player.name} lost one head item because of #{ingamedeck.card.title}s bad things."
       Cursecard.broadcast_gamelog(msg, gameboard)
     when 'lose_item'
       lose_item(player, gameboard)
-      msg = "You lost 1 item because of Monstercards bad things #{ingamedeck.card.title}"
+      msg = "#{player.name} lost one item because of #{ingamedeck.card.title}s bad things."
       Cursecard.broadcast_gamelog(msg, gameboard)
     when 'random_card_lowest_level'
       all_players = gameboard.players.order(:id)
@@ -199,13 +198,13 @@ class Monstercard < Card
       random = rand(0..player_lowest_level.size - 1)
 
       random_card&.update!(cardable: player_lowest_level[random].handcard)
-      msg = "You lost 1 item to the player with the lowest level because of Monstercards bad things #{ingamedeck.card.title}"
+      msg = "#{player.name} lost one item to the player with the lowest level because of #{ingamedeck.card.title}s bad things."
       Cursecard.broadcast_gamelog(msg, gameboard)
       Player.broadcast_all_playerhandcards(gameboard)
     when 'no_help_next_fight'
       Ingamedeck.create(card: Cursecard.find_by('title = ?', 'The unicorn curse'), gameboard: gameboard, cardable: player.playercurse)
 
-      msg = "No one will help you in your next fight because of Monstercards bad things #{ingamedeck.card.title}"
+      msg = "No one is allowed to help #{player.name} in the next fight because of #{ingamedeck.card.title}s bad things."
       Cursecard.broadcast_gamelog(msg, gameboard)
     when 'lose_one_card'
       offset = rand(player.handcard.ingamedecks.count)
@@ -213,7 +212,7 @@ class Monstercard < Card
       random_card = player.handcard.ingamedecks.offset(offset).first
 
       random_card&.update!(cardable: gameboard.graveyard)
-      msg = "You lost 1 handcard because of Monstercards bad things #{ingamedeck.card.title}"
+      msg = "#{player.name} lost one handcard because of #{ingamedeck.card.title}s bad things."
       Cursecard.broadcast_gamelog(msg, gameboard)
       Player.broadcast_all_playerhandcards(gameboard)
     when 'lose_level'
@@ -221,14 +220,14 @@ class Monstercard < Card
 
       player.update(level: player.level - 1) unless player.level == 1
 
-      msg = "You lost 1 level because of Monstercards bad things #{ingamedeck.card.title}"
+      msg = "#{player.name} lost one level because of #{ingamedeck.card.title}s bad things."
       Cursecard.broadcast_gamelog(msg, gameboard)
     when 'die'
       player = gameboard.current_player
 
       player.update(level: 1)
 
-      msg = "You died because of Monstercards bad things #{ingamedeck.card.title}"
+      msg = "#{player.name} died because of #{ingamedeck.card.title}s bad things."
       Cursecard.broadcast_gamelog(msg, gameboard)
     else
       puts 'action unknown :('

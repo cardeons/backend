@@ -103,10 +103,10 @@ class GameChannel < ApplicationCable::Channel
     PlayerChannel.broadcast_to(current_user, { type: 'ERROR', params: { message: result[:message] } }) if result[:type] == 'ERROR'
     broadcast_to(@gameboard, { type: 'BOARD_UPDATE', params: updated_board })
 
-    if result[:type] != 'ERROR'
-      msg = "#{player.name} has equiped a monster!"
-      broadcast_to(@gameboard, { type: GAME_LOG, params: { date: Time.new, message: msg } })
-    end
+    # if result[:type] != 'ERROR'
+    #   msg = "#{player.name} has equiped a monster!"
+    #   broadcast_to(@gameboard, { type: GAME_LOG, params: { date: Time.new, message: msg } })
+    # end
 
     PlayerChannel.broadcast_to(current_user, { type: 'HANDCARD_UPDATE', params: { handcards: Gameboard.render_cards_array(player.handcard.ingamedecks) } })
   end
@@ -186,10 +186,13 @@ class GameChannel < ApplicationCable::Channel
     case to
     when 'center_card'
       @gameboard.interceptcard.add_card_with_ingamedeck_id(unique_card_id)
-
+      msg = "#{current_user.player.name} buffed the monster!"
+      Cursecard.broadcast_gamelog(msg, @gameboard)
     when 'current_player'
       # buff player
       @gameboard.playerinterceptcard.add_card_with_ingamedeck_id(unique_card_id)
+      msg = "#{current_user.player.name} buffed #{@gameboard.current_player.name}."
+      Cursecard.broadcast_gamelog(msg, @gameboard)
     else
       PlayerChannel.broadcast_error(current_user, 'This is ont a correct field for to!')
       return
@@ -284,7 +287,7 @@ class GameChannel < ApplicationCable::Channel
       ingamedeck.update_attribute(:cardable, player.inventory)
     when 'player_monster'
       if ingamedeck.card.type != 'Monstercard'
-        # ##make sure no items are placed in the monsterslot
+        # make sure no items are placed in the monsterslot
         PlayerChannel.broadcast_to(current_user, { type: ERROR, params: { message: 'You can not equip an item without a monster' } })
       elsif player.monsterone.cards.count < 1
         ingamedeck.update(cardable: player.monsterone)

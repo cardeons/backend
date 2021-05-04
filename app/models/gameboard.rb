@@ -226,7 +226,7 @@ class Gameboard < ApplicationRecord
     output
   end
 
-  def self.attack(gameboard, curse_log = false)
+  def self.attack(gameboard, _curse_log = true)
     gameboard.reload
     player = gameboard.current_player
     playeratkpoints = 1
@@ -248,7 +248,7 @@ class Gameboard < ApplicationRecord
       monsteratkpts += gameboard.interceptcard.cards.sum(:atk_points)
 
       player.playercurse.ingamedecks.each do |curse|
-        curse_obj = Cursecard.activate(curse, player, gameboard, playeratkpoints, monsteratkpts, curse_log)
+        curse_obj = Cursecard.activate(curse, player, gameboard, playeratkpoints, monsteratkpts)
 
         playeratkpoints = curse_obj[:playeratk]
         monsteratkpts = curse_obj[:monsteratk]
