@@ -751,7 +751,7 @@ buffcard8 = Buffcard.create!(
   atk_points: 0
 )
 
-buffcard9 = Levelcard.create!(
+buffcard9 = Buffcard.create!(
   draw_chance: 6,
   title: 'Lick',
   description: '<p>You paralyzed the monster, it hurts itself and loses 3 ATP</p>',
@@ -1260,7 +1260,7 @@ u9.cards << (Card.find(3))
 
 levelcard = Levelcard.create!(title: 'Level up!', draw_chance: 5, description: 'Get one level', image: '/cardeons/cards/icons/level.png', action: 'level_up', level_amount: 1)
 
-levelcard2 = Buffcard.create!(
+levelcard2 = Levelcard.create!(
   draw_chance: 6,
   title: 'Pot of Greed',
   description: '<p>Time for a duel: Draw two additional cards!</p>',
