@@ -3,7 +3,7 @@
 require 'rails_helper'
 
 RSpec.describe FriendlistChannel, type: :channel do
-  fixtures :users, :players, :gameboards, :centercards, :cards, :graveyards
+  fixtures :users
 
   before do
     # initialize connection with identifiers
@@ -308,5 +308,44 @@ RSpec.describe FriendlistChannel, type: :channel do
     expect(users(:one).reload.player).to be_truthy
     expect(users(:two).reload.player).to be_truthy
     expect(users(:three).reload.player).to be_truthy
+  end
+
+  it 'test startqueue gets new gameboard if existing has no space for all players from lobby' do
+    gameboard = Gameboard.create!
+    gameboard.lobby!
+    Player.create!(name: users(:four).name, gameboard_id: gameboard.id, user: users(:four))
+    Player.create!(name: users(:five).name, gameboard_id: gameboard.id, user: users(:five))
+    Player.create!(name: users(:six).name, gameboard_id: gameboard.id, user: users(:six))
+
+    stub_connection current_user: users(:one)
+    subscribe
+
+    perform('initiate_lobby')
+
+    unsubscribe
+    stub_connection current_user: users(:two)
+    subscribe
+
+    perform('accept_invite', {
+              inquirer: users(:one).id
+            })
+
+    unsubscribe
+    stub_connection current_user: users(:three)
+    subscribe
+
+    perform('accept_invite', {
+              inquirer: users(:one).id
+            })
+
+    expect do
+      perform('start_queue')
+    end.to have_broadcasted_to(FriendlistChannel.broadcasting_for(connection.current_user))
+      .with(
+        hash_including(type: 'SUBSCRIBE_LOBBY')
+      ).exactly(:once)
+
+    expect(users(:one).player.gameboard).to_not eq gameboard
+    expect(users(:one).player.gameboard).to be_truthy
   end
 end

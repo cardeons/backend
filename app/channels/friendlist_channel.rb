@@ -65,9 +65,9 @@ class FriendlistChannel < ApplicationCable::Channel
 
     delete_old_players
 
-    gameboard = Gameboard.find_or_create_by(current_state: LOBBY)
+    gameboard = Gameboard.find_or_create_by(current_state: :lobby)
 
-    gameboard = Gameboard.create(current_state: LOBBY) if lobby.users.count > (4 - gameboard.players.count)
+    gameboard = Gameboard.create(current_state: :lobby) if lobby.users.count > (4 - gameboard.players.count)
 
     lobby.users.each do |user|
       Player.create!(name: user.name, gameboard_id: gameboard.id, user: user)
@@ -75,6 +75,8 @@ class FriendlistChannel < ApplicationCable::Channel
       broadcast_to(user, { type: 'SUBSCRIBE_LOBBY', params: { game_id: gameboard.id } })
     end
   end
+
+  private
 
   def delete_old_players
     # search if user is already in a game
