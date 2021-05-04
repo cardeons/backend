@@ -182,7 +182,7 @@ RSpec.describe FriendlistChannel, type: :channel do
     subscribe
 
     perform('initiate_lobby')
-    perform('invite', {
+    perform('lobby_invite', {
               friend: users(:usernorbert).id
             })
 
@@ -191,7 +191,7 @@ RSpec.describe FriendlistChannel, type: :channel do
     stub_connection current_user: users(:usernorbert)
     subscribe
 
-    perform('accept_invite', {
+    perform('accept_lobby_invite', {
               inquirer: users(:one).id
             })
 
@@ -211,7 +211,7 @@ RSpec.describe FriendlistChannel, type: :channel do
     subscribe
 
     expect do
-      perform('accept_invite', {
+      perform('accept_lobby_invite', {
                 inquirer: users(:one).id
               })
     end.to have_broadcasted_to(FriendlistChannel.broadcasting_for(connection.current_user))
@@ -224,7 +224,7 @@ RSpec.describe FriendlistChannel, type: :channel do
     subscribe
 
     expect do
-      perform('accept_invite', {
+      perform('accept_lobby_invite', {
                 inquirer: users(:one).id
               })
     end.to have_broadcasted_to(FriendlistChannel.broadcasting_for(connection.current_user))
@@ -237,7 +237,7 @@ RSpec.describe FriendlistChannel, type: :channel do
     subscribe
 
     expect do
-      perform('accept_invite', {
+      perform('accept_lobby_invite', {
                 inquirer: users(:one).id
               })
     end.to have_broadcasted_to(FriendlistChannel.broadcasting_for(connection.current_user))
@@ -250,7 +250,7 @@ RSpec.describe FriendlistChannel, type: :channel do
     subscribe
 
     expect do
-      perform('accept_invite', {
+      perform('accept_lobby_invite', {
                 inquirer: users(:one).id
               })
     end.to have_broadcasted_to(FriendlistChannel.broadcasting_for(connection.current_user))
@@ -267,7 +267,7 @@ RSpec.describe FriendlistChannel, type: :channel do
 
     perform('initiate_lobby')
     expect do
-      perform('start_queue')
+      perform('start_lobby_queue')
     end.to have_broadcasted_to(FriendlistChannel.broadcasting_for(connection.current_user))
       .with(
         hash_including(type: 'SUBSCRIBE_LOBBY')
@@ -286,7 +286,7 @@ RSpec.describe FriendlistChannel, type: :channel do
     stub_connection current_user: users(:two)
     subscribe
 
-    perform('accept_invite', {
+    perform('accept_lobby_invite', {
               inquirer: users(:one).id
             })
 
@@ -294,12 +294,12 @@ RSpec.describe FriendlistChannel, type: :channel do
     stub_connection current_user: users(:three)
     subscribe
 
-    perform('accept_invite', {
+    perform('accept_lobby_invite', {
               inquirer: users(:one).id
             })
 
     expect do
-      perform('start_queue')
+      perform('start_lobby_queue')
     end.to have_broadcasted_to(FriendlistChannel.broadcasting_for(connection.current_user))
       .with(
         hash_including(type: 'SUBSCRIBE_LOBBY')
@@ -326,7 +326,7 @@ RSpec.describe FriendlistChannel, type: :channel do
     stub_connection current_user: users(:two)
     subscribe
 
-    perform('accept_invite', {
+    perform('accept_lobby_invite', {
               inquirer: users(:one).id
             })
 
@@ -334,12 +334,12 @@ RSpec.describe FriendlistChannel, type: :channel do
     stub_connection current_user: users(:three)
     subscribe
 
-    perform('accept_invite', {
+    perform('accept_lobby_invite', {
               inquirer: users(:one).id
             })
 
     expect do
-      perform('start_queue')
+      perform('start_lobby_queue')
     end.to have_broadcasted_to(FriendlistChannel.broadcasting_for(connection.current_user))
       .with(
         hash_including(type: 'SUBSCRIBE_LOBBY')
