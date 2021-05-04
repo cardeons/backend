@@ -18,16 +18,16 @@ class Gameboard < ApplicationRecord
     current_player = players.last
     gameboard_id = id
     update(current_player: current_player, current_state: 'ingame')
-    Centercard.create!(gameboard_id: gameboard_id)
-    Graveyard.create!(gameboard_id: gameboard_id)
-    Playerinterceptcard.create!(gameboard_id: gameboard_id)
-    Interceptcard.create!(gameboard_id: gameboard_id)
+    Centercard.create!(gameboard_id: gameboard_id) unless centercard
+    Graveyard.create!(gameboard_id: gameboard_id) unless graveyard
+    Playerinterceptcard.create!(gameboard_id: gameboard_id) unless playerinterceptcard
+    Interceptcard.create!(gameboard_id: gameboard_id) unless interceptcard
 
     # pp Player.find(current_player).gameboard
     players.each do |player|
       Handcard.find_or_create_by!(player_id: player.id) # unless player.handcard
-      Handcard.draw_handcards(player.id, self, 4)
-      Handcard.draw_one_monster(player.id, self)
+      Handcard.draw_handcards(player.id, self, 4) unless player.handcard.cards.count >= 5
+      Handcard.draw_one_monster(player.id, self) unless player.handcard.cards.count >= 5
     end
   end
 

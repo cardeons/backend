@@ -70,7 +70,7 @@ class FriendlistChannel < ApplicationCable::Channel
     gameboard = Gameboard.create(current_state: LOBBY) if lobby.users.count > (4 - gameboard.players.count)
 
     lobby.users.each do |user|
-      player = Player.create!(name: user.name, gameboard_id: gameboard.id, user: user)
+      Player.create!(name: user.name, gameboard_id: gameboard.id, user: user)
 
       broadcast_to(user, { type: 'SUBSCRIBE_LOBBY', params: { game_id: gameboard.id } })
     end
