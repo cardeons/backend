@@ -118,8 +118,8 @@ class GameChannel < ApplicationCable::Channel
       rewards = @gameboard.rewards_treasure
 
       # no level up if the monster was a bossmonster
-      unless result[:boss_phase]
-        player = Player.find_by('user_id = ?', current_user.id)
+      unless @gameboard.boss_phase?
+        player = current_user.player
         player_level = player.level
         player.update!(level: player_level + @gameboard.reload.centercard.card.level_amount)
 
@@ -173,41 +173,44 @@ class GameChannel < ApplicationCable::Channel
     # to: 'center_card' | 'current_player'
     # }
 
-    if @gameboard.intercept_phase? || @gameboard.boss_phase?
-      unique_card_id = params['unique_card_id']
-      to = params['to']
+    # intercept shouldn't be possible if it's not d
+    PlayerChannel.broadcast_error(current_user, "You can't intercept right now, it's #{@gameboad.current_state} phase") if !@gameboard.intercept_phase? && !@gameboad.boss_phase?
 
-      # return if player does not own this card
-      ingame_card = check_if_player_owns_card(unique_card_id) || return
+    # if @gameboard.intercept_phase? || @gameboard.boss_phase?
+    unique_card_id = params['unique_card_id']
+    to = params['to']
 
-      if ingame_card.card.type != 'Buffcard'
-        # only buffcards are allowed alteast i think
-        PlayerChannel.broadcast_error(current_user, 'This card cannot be used to intercept')
-        return
-      end
+    # return if player does not own this card
+    ingame_card = check_if_player_owns_card(unique_card_id) || return
 
-      current_user.player.reload
-      @gameboard.reload
-
-      case to
-      when 'center_card'
-        @gameboard.interceptcard.add_card_with_ingamedeck_id(unique_card_id)
-
-      when 'current_player'
-        # buff player
-        @gameboard.playerinterceptcard.add_card_with_ingamedeck_id(unique_card_id)
-      else
-        PlayerChannel.broadcast_error(current_user, 'This is not a correct field to play your card!')
-        return
-      end
-
-      start_intercept_phase(@gameboard)
-
-      # update this players handcards
-      PlayerChannel.broadcast_to(current_user, { type: 'HANDCARD_UPDATE', params: { handcards: Gameboard.render_cards_array(current_user.player.handcard.ingamedecks.reload) } })
-      # update board
-      broadcast_to(@gameboard, { type: BOARD_UPDATE, params: Gameboard.broadcast_game_board(@gameboard) })
+    if ingame_card.card.type != 'Buffcard'
+      # only buffcards are allowed alteast i think
+      PlayerChannel.broadcast_error(current_user, 'This card cannot be used to intercept')
+      return
     end
+
+    current_user.player.reload
+    @gameboard.reload
+
+    case to
+    when 'center_card'
+      @gameboard.interceptcard.add_card_with_ingamedeck_id(unique_card_id)
+
+    when 'current_player'
+      # buff player
+      @gameboard.playerinterceptcard.add_card_with_ingamedeck_id(unique_card_id)
+    else
+      PlayerChannel.broadcast_error(current_user, 'This is not a correct field to play your card!')
+      return
+    end
+
+    start_intercept_phase(@gameboard)
+
+    # update this players handcards
+    PlayerChannel.broadcast_to(current_user, { type: 'HANDCARD_UPDATE', params: { handcards: Gameboard.render_cards_array(current_user.player.handcard.ingamedecks.reload) } })
+    # update board
+    broadcast_to(@gameboard, { type: BOARD_UPDATE, params: Gameboard.broadcast_game_board(@gameboard) })
+    # end
   end
 
   def no_interception
@@ -421,7 +424,7 @@ class GameChannel < ApplicationCable::Channel
     @gameboard.update(centercard: new_center)
 
     @gameboard.boss_phase!
-    result = Gameboard.attack(@gameboard, false, true)
+    result = Gameboard.attack(@gameboard, false)
 
     @gameboard.update(success: result[:result], player_atk: result[:playeratk], monster_atk: result[:monsteratk])
     updated_board = Gameboard.broadcast_game_board(@gameboard.reload)

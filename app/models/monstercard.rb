@@ -91,8 +91,6 @@ class Monstercard < Card
   def self.calculate_monsterslot_atk(monsterslot)
     monstercards = 0
     if monsterslot
-      # pp '-----------'
-      # pp monsterslot.cards.where(type: 'Monstercard')
       monstercards = 1 if monsterslot.cards.where(type: 'Monstercard').any?
       monstercards += monsterslot.cards.where(type: 'Itemcard').sum(:atk_points)
     end
@@ -213,19 +211,16 @@ class Monstercard < Card
       Player.broadcast_all_playerhandcards(gameboard)
     when 'lose_level'
       if gameboard.intercept_finished?
-        player.update(level: player.level - 1) unless player.level == 1
+        player.decrement!(:level, 1) unless player.level == 1
       else
         gameboard.reload.players.each do |player_individual|
-          pp player_individual
-          player_individual.update(level: player_individual.level - 1) unless player_individual.level == 1
+          player_individual.decrement!(:level, 1) unless player_individual.level == 1
         end
       end
 
       msg = "You lost 1 level because of Monstercards bad things #{ingamedeck.card.title}"
       Cursecard.broadcast_gamelog(msg, gameboard)
     when 'die'
-      # player = gameboard.current_player
-
       player.update(level: 1)
 
       msg = "You died because of Monstercards bad things #{ingamedeck.card.title}"

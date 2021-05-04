@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-require 'pp'
-
 class Gameboard < ApplicationRecord
   has_many :players, dependent: :destroy
   has_many :ingamedeck, dependent: :destroy
@@ -190,7 +188,7 @@ class Gameboard < ApplicationRecord
     # if bosscard is drawn, phase is boss_phase, otherwise always intercept_phase
     if gameboard.centercard.card.type == 'Bosscard'
       gameboard.boss_phase!
-      attack_obj = attack(gameboard.reload, true, true)
+      attack_obj = attack(gameboard.reload, true)
     else
       gameboard.intercept_phase!
       attack_obj = attack(gameboard.reload, true)
@@ -234,8 +232,10 @@ class Gameboard < ApplicationRecord
     output
   end
 
-  def self.attack(gameboard, curse_log = false, boss_phase = false)
+  def self.attack(gameboard, curse_log = false)
     gameboard.reload
+
+    boss_phase = gameboard.boss_phase?
 
     players = if boss_phase
                 gameboard.players
