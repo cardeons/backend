@@ -178,8 +178,8 @@ class GameChannel < ApplicationCable::Channel
     # to: 'center_card' | 'current_player'
     # }
 
-    # intercept shouldn't be possible if it's not d
-    PlayerChannel.broadcast_error(current_user, "You can't intercept right now, it's #{@gameboad.current_state} phase") if !@gameboard.intercept_phase? && !@gameboad.boss_phase?
+    # intercept shouldn't be possible if it's not the right phase
+    return PlayerChannel.broadcast_error(current_user, "You can't intercept right now, it's #{@gameboad.current_state} phase") if !@gameboard.intercept_phase? && !@gameboad.boss_phase?
 
     # if @gameboard.intercept_phase? || @gameboard.boss_phase?
     unique_card_id = params['unique_card_id']
@@ -215,7 +215,6 @@ class GameChannel < ApplicationCable::Channel
     PlayerChannel.broadcast_to(current_user, { type: 'HANDCARD_UPDATE', params: { handcards: Gameboard.render_cards_array(current_user.player.handcard.ingamedecks.reload) } })
     # update board
     broadcast_to(@gameboard, { type: BOARD_UPDATE, params: Gameboard.broadcast_game_board(@gameboard) })
-    # end
   end
 
   def no_interception
