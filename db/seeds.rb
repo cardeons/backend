@@ -724,6 +724,15 @@ buffcard4 = Buffcard.create!(
   atk_points: 0
 )
 
+levelcard2 = Levelcard.create!(
+  draw_chance: 6,
+  title: 'Pot of Greed',
+  description: '<p>Time for a duel: Draw two additional cards!</p>',
+  image: '/cardeons/cards/icons/buff.png',
+  action: 'draw_two_cards',
+  level_amount: 0
+)
+
 buffcard6 = Buffcard.create!(
   draw_chance: 6,
   title: 'Chloroform',
@@ -1260,14 +1269,6 @@ u9.cards << (Card.find(3))
 
 levelcard = Levelcard.create!(title: 'Level up!', draw_chance: 5, description: 'Get one level', image: '/cardeons/cards/icons/level.png', action: 'level_up', level_amount: 1)
 
-levelcard2 = Levelcard.create!(
-  draw_chance: 6,
-  title: 'Pot of Greed',
-  description: '<p>Time for a duel: Draw two additional cards!</p>',
-  image: '/cardeons/cards/icons/buff.png',
-  action: 'draw_two_cards',
-  level_amount: 0
-)
 # gameboard = Gameboard.create!(current_state: 'fight', player_atk: 5)
 
 # player1 = Player.create!(name: 'Gustav', gameboard: gameboard, user: u1)
