@@ -1287,7 +1287,7 @@ u7.cards << (Card.find(3))
 u8.cards << (Card.find(3))
 u9.cards << (Card.find(3))
 
-levelcard = Levelcard.create!(title: 'Level up!', draw_chance: 5, description: 'Get one level', image: '/cardeons/cards/icons/level.png', action: 'level_up', level_amount: 1)
+levelcard = Levelcard.create!(title: 'Level up!', draw_chance: 5, description: '<p>Get one level</p>', image: '/cardeons/cards/icons/level.png', action: 'level_up', level_amount: 1)
 
 # gameboard = Gameboard.create!(current_state: 'fight', player_atk: 5)
 
