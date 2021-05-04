@@ -9,7 +9,8 @@ class Card < ApplicationRecord
   enum good_against: %i[fire water air earth], _suffix: true
   enum bad_against: %i[fire water air earth], _suffix: true
   enum element: %i[fire water air earth]
-  enum synergy_type: %i[bull buffalo bear unicorn catfish hotdog boar pizza]
+  enum synergy_type: %i[bull buffalo bear unicorn catfish hotdog boar pizza], _suffix: true
+  enum animal: %i[bull buffalo bear unicorn catfish hotdog boar pizza]
 
   # has_many :ingamedecks
   # has_many :monsterthrees, through: :ingamedecks, source: :cardable, source_type: 'Monsterthree'

@@ -32,7 +32,6 @@ RSpec.describe Gameboard, type: :model do
       bad_against_value: 1,
       atk_points: 1,
       item_category: 'MyString',
-      has_combination: 1,
       level_amount: 1
     )
 

@@ -15,7 +15,6 @@
         "bad_against_value": "um wie viel schlechter gegen bad_against element",
         "atk_points": "wie viel Attacke",
         "item_category": "Welche Itemkategorie",
-        "has_combination": "mit wem eine Kombination?",
         "level_amount": "wie viele Levels bei Sieg?",
         "type": "Kartentyp"
     },
@@ -81,7 +80,6 @@
         "draw_chance": "Wie wahrscheinlich ist es dass ich die Karte ziehe?",
         "element": "Element der Karte",
         "atk_points": "wie viel Attacke gibt es dem Monster dazu",
-        "has_combination": "id von mit wem eine Kombination?",
         "item_category": "Welche Itemkategorie",
         "type": "Itemcard"
     },

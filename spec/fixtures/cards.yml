@@ -18,7 +18,7 @@ one:
   
   atk_points: 1
   item_category: MyString
-  has_combination: 1
+  
   level_amount: 1
 
 two:
@@ -39,7 +39,7 @@ two:
   
   atk_points: 1
   item_category: MyString
-  has_combination: 1
+  
   level_amount: 1
 
 
@@ -61,7 +61,7 @@ monstercard:
   
   atk_points: 1
   item_category: MyString
-  has_combination: 1
+  
   level_amount: 1
   type: Monstercard
 
@@ -83,7 +83,7 @@ monstercard2:
   
   atk_points: 1
   item_category: MyString
-  has_combination: 1
+  
   level_amount: 1
   type: Monstercard
 
@@ -105,7 +105,7 @@ monstercard3:
   
   atk_points: 1
   item_category: MyString
-  has_combination: 1
+  
   level_amount: 1
   type: Monstercard
 
@@ -127,7 +127,7 @@ monstercard4:
   
   atk_points: 1
   item_category: MyString
-  has_combination: 1
+  
   level_amount: 1
   type: Monstercard
 
@@ -149,7 +149,7 @@ monstercard5:
   
   atk_points: 1
   item_category: MyString
-  has_combination: 1
+  
   level_amount: 1
   type: Monstercard
 
@@ -171,7 +171,7 @@ monstercard6:
   
   atk_points: 1
   item_category: MyString
-  has_combination: 1
+  
   level_amount: 1
   type: Monstercard
 
@@ -193,7 +193,7 @@ monstercard7:
   
   atk_points: 1
   item_category: MyString
-  has_combination: 1
+  
   level_amount: 1
   type: Monstercard
 
@@ -215,7 +215,7 @@ monstercard8:
   
   atk_points: 1
   item_category: MyString
-  has_combination: 1
+  
   level_amount: 1
   type: Monstercard
 
@@ -237,7 +237,7 @@ monstercard9:
   
   atk_points: 1
   item_category: MyString
-  has_combination: 1
+  
   level_amount: 1
   type: Monstercard
 
@@ -259,7 +259,7 @@ monstercard10:
   
   atk_points: 1
   item_category: MyString
-  has_combination: 1
+  
   level_amount: 2
   type: Monstercard
 
@@ -280,7 +280,7 @@ firemonster:
   
   atk_points: 1
   item_category: MyString
-  has_combination: 1
+  
   level_amount: 2
   type: Monstercard
 
@@ -302,7 +302,7 @@ watermonster:
   
   atk_points: 1
   item_category: MyString
-  has_combination: 1
+  
   level_amount: 2
   type: Monstercard
 
@@ -323,7 +323,7 @@ earthmonster:
   
   atk_points: 1
   item_category: MyString
-  has_combination: 1
+  
   level_amount: 2
   type: Monstercard
 
@@ -345,7 +345,7 @@ itemcard:
   
   atk_points: 1
   item_category: MyString
-  has_combination: 1
+  
   level_amount: 1
   type: Itemcard
 
@@ -367,7 +367,7 @@ itemcard2:
   
   atk_points: 1
   item_category: 'head'
-  has_combination: 1
+  
   level_amount: 1
   type: Itemcard
 
@@ -389,7 +389,7 @@ itemcard3:
   
   atk_points: 1
   item_category: 'shoe'
-  has_combination: 1
+  
   level_amount: 1
   type: Itemcard
 
@@ -411,7 +411,7 @@ itemcard4:
   
   atk_points: 1
   item_category: 'hand'
-  has_combination: 1
+  
   level_amount: 1
   type: Itemcard
 
@@ -433,7 +433,7 @@ test:
   
   atk_points: 1
   item_category: MyString
-  has_combination: 1
+  
   level_amount: 1
   type: Monstercard
 
@@ -455,7 +455,7 @@ buffcard:
   
   atk_points: 1
   item_category: MyString
-  has_combination: 1
+  
   level_amount: 1
   type: Buffcard
 
@@ -477,7 +477,7 @@ cursecard:
   
   atk_points: 1
   item_category: MyString
-  has_combination: 1
+  
   level_amount: 1
   type: Cursecard
 
@@ -499,7 +499,7 @@ cursecard2:
   
   atk_points: 1
   item_category: MyString
-  has_combination: 1
+  
   level_amount: 1
   type: Cursecard
 
@@ -521,7 +521,7 @@ cursecard3:
   
   atk_points: 1
   item_category: MyString
-  has_combination: 1
+  
   level_amount: 1
   type: Cursecard
 
@@ -543,7 +543,7 @@ cursecard4:
   
   atk_points: 1
   item_category: MyString
-  has_combination: 1
+  
   level_amount: 1
   type: Cursecard
 
@@ -565,7 +565,7 @@ cursecard5:
   
   atk_points: -1
   item_category: MyString
-  has_combination: 1
+  
   level_amount: 1
   type: Cursecard
 
@@ -587,7 +587,7 @@ cursecard6:
   
   atk_points: -1
   item_category: MyString
-  has_combination: 1
+  
   level_amount: 1
   type: Cursecard
 
@@ -609,7 +609,7 @@ cursecard7:
   
   atk_points: -1
   item_category: MyString
-  has_combination: 1
+  
   level_amount: 1
   type: Cursecard
 
@@ -631,7 +631,7 @@ levelcard:
   
   atk_points: -1
   item_category: MyString
-  has_combination: 1
+  
   level_amount: 1
   type: Levelcard
 
@@ -653,7 +653,7 @@ buffcard:
   
   atk_points: 5
   item_category: MyString
-  has_combination: 1
+  
   level_amount: 1
   type: Buffcard
 
@@ -675,7 +675,7 @@ buffcard2:
   
   atk_points: -5
   item_category: MyString
-  has_combination: 1
+  
   level_amount: 1
   type: Buffcard
 
@@ -697,7 +697,7 @@ buffcard3:
   
   atk_points: -5
   item_category: MyString
-  has_combination: 1
+  
   level_amount: 1
   type: Buffcard
 
@@ -719,7 +719,7 @@ buffcard4:
   
   atk_points: -5
   item_category: MyString
-  has_combination: 1
+  
   level_amount: 1
   type: Buffcard
 
@@ -741,7 +741,7 @@ buffcard5:
   
   atk_points: -5
   item_category: MyString
-  has_combination: 1
+  
   level_amount: 1
   type: Buffcard
 
@@ -763,6 +763,6 @@ buffcard6:
   
   atk_points: -5
   item_category: MyString
-  has_combination: 1
+  
   level_amount: 1
   type: Buffcard

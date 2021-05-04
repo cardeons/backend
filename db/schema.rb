@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_05_03_160530) do
+ActiveRecord::Schema.define(version: 2021_05_04_100902) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -31,7 +31,6 @@ ActiveRecord::Schema.define(version: 2021_05_03_160530) do
     t.integer "bad_against_value"
     t.integer "atk_points"
     t.string "item_category"
-    t.integer "has_combination"
     t.integer "level_amount"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false

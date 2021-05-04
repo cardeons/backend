@@ -61,10 +61,6 @@ if ENV['cards']
     element: 'water',
     bad_things: '<p><b>Bad things: </b>Oh no, you disrespected the Sir!</p><p> Lose your shoes.</p>',
     rewards_treasure: 3,
-    good_against: '',
-    bad_against: '',
-    good_against_value: 0,
-    bad_against_value: 3,
     synergy_type: "hotdog",
     synergy_value: -3,
     atk_points: 10,
@@ -83,9 +79,7 @@ if ENV['cards']
     bad_things: '<p><b>Bad things: </b>Oh no, you disrespected the Sir!</p><p> Lose one hand thing.</p>',
     rewards_treasure: 1,
     good_against: 'water',
-    bad_against: '',
     good_against_value: 2,
-    bad_against_value: 0,
     atk_points: 7,
     level_amount: 1
   )
@@ -101,10 +95,6 @@ if ENV['cards']
     element: 'air',
     bad_things: '<p><b>Bad things: </b>Oh no, you disrespected the Sir!</p><p> Lose your shoes.</p>',
     rewards_treasure: 3,
-    good_against: '',
-    bad_against: '',
-    good_against_value: 0,
-    bad_against_value: 0,
     atk_points: 15,
     level_amount: 1
   )
@@ -191,10 +181,6 @@ if ENV['cards']
     element: 'fire',
     bad_things: '<p><b>Bad things: </b>Got catfished, really? You should know better.. Give a random card to the player with the lowest level. </p>',
     rewards_treasure: 1,
-    good_against: '',
-    bad_against: '',
-    good_against_value: 0,
-    bad_against_value: 0,
     synergy_type: 'hotdog',
     synergy_value: -3,
     atk_points: 7,
@@ -212,10 +198,6 @@ if ENV['cards']
     element: 'earth',
     bad_things: '<p><b>Bad things: </b>Got catfished, really? You should know better.. Lose one card. </p>',
     rewards_treasure: 2,
-    good_against: '',
-    bad_against: '',
-    good_against_value: 0,
-    bad_against_value: 0,
     synergy_type: 'hotdog',
     synergy_value: -3,
     atk_points: 10,
@@ -233,10 +215,6 @@ if ENV['cards']
     element: 'water',
     bad_things: '<p><b>Bad things: </b>Got catfished, really? You should know better.. Give a random card to the player with the lowest level. </p>',
     rewards_treasure: 1,
-    good_against: '',
-    bad_against: '',
-    good_against_value: 0,
-    bad_against_value: 0,
     synergy_type: 'hotdog',
     synergy_value: 3,
     atk_points: 4,
@@ -254,10 +232,6 @@ if ENV['cards']
     element: 'air',
     bad_things: '<p><b>Bad things: </b>Got catfished, really? You should know better.. Give a random card to the player with the lowest level. </p>',
     rewards_treasure: 3,
-    good_against: '',
-    bad_against: '',
-    good_against_value: 0,
-    bad_against_value: 3,
     synergy_type: 'hotdog',
     synergy_value: -3,
     atk_points: 18,
@@ -277,9 +251,7 @@ if ENV['cards']
     bad_things: '<p><b>Bad things: </b>Picture that with a Kodak: Lose some cool sunglasses or your headpiece!</p>',
     rewards_treasure: 1,
     good_against: 'fire',
-    bad_against: '',
     good_against_value: 3,
-    bad_against_value: 0,
     atk_points: 5,
     level_amount: 1
   )
@@ -296,9 +268,7 @@ if ENV['cards']
     bad_things: '<p><b>Bad things: </b>Picture that with a Kodak: Lose some cool sunglasses or your headpiece!</p>',
     rewards_treasure: 1,
     good_against: 'water',
-    bad_against: '',
     good_against_value: 1,
-    bad_against_value: 0,
     atk_points: 3,
     level_amount: 1
   )
@@ -315,9 +285,7 @@ if ENV['cards']
     bad_things: '<p><b>Bad things: </b>Picture that with a Kodak: Lose some cool sunglasses or your headpiece!</p>',
     rewards_treasure: 2,
     good_against: 'air',
-    bad_against: '',
     good_against_value: 5,
-    bad_against_value: 0,
     atk_points: 8,
     level_amount: 1
   )
@@ -334,7 +302,6 @@ if ENV['cards']
     bad_things: '<p><b>Bad things: </b>Picture that with a Kodak: Lose some cool sunglasses or your headpiece!</p>',
     rewards_treasure: 3,
     good_against: 'earth',
-    bad_against: '',
     good_against_value: 7,
     atk_points: 12,
     level_amount: 1
@@ -352,10 +319,6 @@ if ENV['cards']
     element: 'water',
     bad_things: '<p><b>Bad things: </b>Too hot to handle! Lose a Level!</p>',
     rewards_treasure: 1,
-    good_against: '',
-    bad_against: '',
-    good_against_value: 0,
-    bad_against_value: 0,
     atk_points: 3,
     level_amount: 1
   )
@@ -372,9 +335,7 @@ if ENV['cards']
     bad_things: '<p><b>Bad things: </b>Too hot to handle! Lose a Level!</p>',
     rewards_treasure: 2,
     good_against: 'fire',
-    bad_against: '',
     good_against_value: 3,
-    bad_against_value: 0,
     atk_points: 9,
     level_amount: 1
   )
@@ -390,9 +351,7 @@ if ENV['cards']
     element: 'air',
     bad_things: '<p><b>Bad things: </b>Too hot to handle! Lose a Level!</p>',
     rewards_treasure: 1,
-    good_against: '',
     bad_against: 'fire',
-    good_against_value: 0,
     bad_against_value: 2,
     atk_points: 5,
     level_amount: 1
@@ -429,12 +388,8 @@ if ENV['cards']
     element: 'water',
     bad_things: '<p><b>Bad things: </b>Oh no, it seems like the popcorn is soaking wet! You eat it out of respect and lose one level because it is so disgusting.</p>',
     rewards_treasure: 3,
-    good_against: '',
-    bad_against: '',
     synergy_type: 'buffalo',
     synergy_value: 3,
-    good_against_value: 0,
-    bad_against_value: 0,
     atk_points: 10,
     level_amount: 1
   )
@@ -450,10 +405,6 @@ if ENV['cards']
     element: 'earth',
     bad_things: '<p><b>Bad things: </b>The Corn is not done and still on the fields… You lose one hand thing!</p>',
     rewards_treasure: 2,
-    good_against: '',
-    bad_against: '',
-    good_against_value: 0,
-    bad_against_value: 0,
     atk_points: 7,
     level_amount: 1
   )
@@ -470,9 +421,7 @@ if ENV['cards']
     bad_things: '<p><b>Bad things: </b>The Corn flies away and so does your future. Lose one level.</p>',
     rewards_treasure: 3,
     good_against: 'air',
-    bad_against: '',
     good_against_value: 3,
-    bad_against_value: 0,
     atk_points: 15,
     level_amount: 1
   )
@@ -489,9 +438,7 @@ if ENV['cards']
     bad_things: '<p><b>Bad things: </b>You got some Popcorn stuck between your teeth! Gross! You can’t get it out. No one is willing to help you in your next fight!</p>',
     rewards_treasure: 1,
     good_against: 'water',
-    bad_against: '',
     good_against_value: 3,
-    bad_against_value: 0,
     atk_points: 5,
     level_amount: 1
   )
@@ -518,9 +465,7 @@ if ENV['cards']
     bad_things: '<p><b>Bad things: </b>Wet dogs smell horrible. You run away and lose a level!</p>',
     rewards_treasure: 3,
     good_against: 'fire',
-    bad_against: '',
     good_against_value: 5,
-    bad_against_value: 0,
     atk_points: 15,
     level_amount: 1
   )
@@ -536,12 +481,8 @@ if ENV['cards']
     element: 'earth',
     bad_things: '<p><b>Bad things: </b>Your Hot Dog fell on the ground. You still try to eat it and poison yourself. Lose one hand thing.</p>',
     rewards_treasure: 2,
-    good_against: '',
-    bad_against: '',
     synergy_type: 'boar',
     synergy_value: -3,
-    good_against_value: 0,
-    bad_against_value: 3,
     atk_points: 9,
     level_amount: 1
   )
@@ -557,10 +498,6 @@ if ENV['cards']
     element: 'air',
     bad_things: '<p><b>Bad things: </b>Looks more like Falling, you lose an item!</p>',
     rewards_treasure: 1,
-    good_against: '',
-    bad_against: '',
-    good_against_value: 0,
-    bad_against_value: 0,
     atk_points: 4,
     level_amount: 1
   )
@@ -576,10 +513,6 @@ if ENV['cards']
     element: 'fire',
     bad_things: '<p><b>Bad things: </b>Oh no, it’s way too hot! You burn your tongue and lose a weapon.</p>',
     rewards_treasure: 2,
-    good_against: '',
-    bad_against: '',
-    good_against_value: 0,
-    bad_against_value: 0,
     synergy_type: 'buffalo',
     synergy_value: 3,
     atk_points: 6,
@@ -598,10 +531,6 @@ if ENV['cards']
     element: 'water',
     bad_things: '<p><b>Bad things: </b>He almost bored you to death. Lose a level!</p>',
     rewards_treasure: 3,
-    good_against: '',
-    bad_against: '',
-    good_against_value: 0,
-    bad_against_value: 0,
     atk_points: 13,
     level_amount: 1
   )
@@ -618,9 +547,7 @@ if ENV['cards']
     bad_things: '<p><b>Bad things: </b>He almost bored you to death. Lose a weapon!</p>',
     rewards_treasure: 2,
     good_against: 'water',
-    bad_against: '',
     good_against_value: 4,
-    bad_against_value: 0,
     atk_points: 11,
     level_amount: 1
   )
@@ -637,9 +564,7 @@ if ENV['cards']
     bad_things: '<p><b>Bad things: </b>He bored you to death. Lose all levels.</p>',
     rewards_treasure: 4,
     good_against: 'fire',
-    bad_against: '',
     good_against_value: 6,
-    bad_against_value: 0,
     atk_points: 18,
     level_amount: 1
   )
@@ -655,10 +580,6 @@ if ENV['cards']
     element: 'fire',
     bad_things: '<p><b>Bad things: </b>He almost bored you to death. Nothing happens, you are still bored.</p>',
     rewards_treasure: 1,
-    good_against: '',
-    bad_against: '',
-    good_against_value: 0,
-    bad_against_value: 0,
     atk_points: 6,
     level_amount: 1
   )
@@ -668,7 +589,7 @@ if ENV['cards']
   curse = Cursecard.create!(
     title: 'Very bad curse',
     description: '<p>This curse is very bad.</p><p> Actually, it is so bad that this curse will stick to you and weaken your fighting ability as long as you do not find a way to remove it! -1 attack points.</p>',
-    image: '/icon/Curse.png',
+    image: '/cardeons/cards/icons/curse.png',
     action: 'lose_atk_points',
     draw_chance: 6,
     atk_points: -1
@@ -838,7 +759,7 @@ if ENV['cards']
   #   element: 'fire',
   #   atk_points: 2,
   #   item_category: 'head',
-  #   has_combination: false
+  #   
   # )
 
   # item2 = Itemcard.create!(
@@ -850,7 +771,7 @@ if ENV['cards']
   #   element: 'fire',
   #   atk_points: 2,
   #   item_category: 'hand_one',
-  #   has_combination: false
+  #   
   # )
 
   # #Itemcards
@@ -864,7 +785,7 @@ if ENV['cards']
     draw_chance: 5,
     atk_points: 3,
     item_category: 'head',
-    has_combination: false
+    
   )
 
   # #roman helmet
@@ -877,7 +798,6 @@ if ENV['cards']
     synergy_type: 'boar',
     synergy_value: 2,
     atk_points: 1,
-    has_combination: false,
     item_category: 'head',
   )
 
@@ -891,7 +811,7 @@ if ENV['cards']
     element: 'water',
     atk_points: 3,
     item_category: 'hand',
-    has_combination: true
+    animal: 'pizza'
   )
 
   veggiepizza = Itemcard.create!(
@@ -903,7 +823,7 @@ if ENV['cards']
     element: 'earth',
     atk_points: 3,
     item_category: 'hand',
-    has_combination: true
+    
   )
 
   chickenpizza = Itemcard.create!(
@@ -915,7 +835,7 @@ if ENV['cards']
     element: 'air',
     atk_points: 3,
     item_category: 'hand',
-    has_combination: true
+    
   )
 
   diavolopizza = Itemcard.create!(
@@ -927,7 +847,7 @@ if ENV['cards']
     element: 'fire',
     atk_points: 3,
     item_category: 'hand',
-    has_combination: true
+    
   )
 
   # #pizza cutter
@@ -941,7 +861,7 @@ if ENV['cards']
     synergy_value: 3,
     atk_points: 3,
     item_category: 'hand',
-    has_combination: true
+    
   )
 
   # #controller
@@ -953,7 +873,7 @@ if ENV['cards']
     draw_chance: 5,
     atk_points: 2,
     item_category: 'hand',
-    has_combination: false
+    
   )
 
   # #the one ring
@@ -965,7 +885,7 @@ if ENV['cards']
     draw_chance: 5,
     atk_points: 1,
     item_category: 'none',
-    has_combination: false
+    
   )
 
   # #german tourist shoes
@@ -977,7 +897,7 @@ if ENV['cards']
     draw_chance: 5,
     atk_points: 3,
     item_category: 'shoe',
-    has_combination: false
+    
   )
 
   # #ironing board
@@ -989,7 +909,7 @@ if ENV['cards']
     draw_chance: 5,
     atk_points: 2,
     item_category: 'hand',
-    has_combination: false
+    
   )
 
   # #Plunger
@@ -1001,7 +921,7 @@ if ENV['cards']
     draw_chance: 5,
     atk_points: 2,
     item_category: 'hand',
-    has_combination: false
+    
   )
 
   # #Ladle
@@ -1013,7 +933,7 @@ if ENV['cards']
     draw_chance: 5,
     atk_points: 2,
     item_category: 'hand',
-    has_combination: false
+    
   )
 
   # #Rubber ring
@@ -1027,7 +947,7 @@ if ENV['cards']
     good_against_value: 3,
     atk_points: 2,
     item_category: 'none',
-    has_combination: false
+    
   )
 
   # #Sunglasses
@@ -1041,7 +961,7 @@ if ENV['cards']
     synergy_value: 3,
     atk_points: 2,
     item_category: 'none',
-    has_combination: true
+    
   )
 
   # #Water Gun
@@ -1055,7 +975,7 @@ if ENV['cards']
     good_against_value: 3,
     atk_points: 2,
     item_category: 'hand',
-    has_combination: false
+    
   )
 
   # #Wand
@@ -1067,13 +987,13 @@ if ENV['cards']
     draw_chance: 5,
     atk_points: 3,
     item_category: 'hand',
-    has_combination: false
+    
   )
 
   # #Whip
   whip = Itemcard.create!(
     title: 'Whip',
-    description: '<p>Use it for your horse or something else ;-). +2 if used on a Unicorn.</p>',
+    description: '<p>Use it for your horse or in your bedroom ;-). +2 if used on a Unicorn.</p>',
     image: '/cardeons/cards/items/whip.png',
     action: 'plus_two',
     draw_chance: 5,
@@ -1081,7 +1001,7 @@ if ENV['cards']
     synergy_type: 'unicorn',
     synergy_value: 2,
     item_category: 'hand',
-    has_combination: false
+    
   )
 
   # #Dagger
@@ -1093,19 +1013,19 @@ if ENV['cards']
     draw_chance: 5,
     atk_points: 3,
     item_category: 'hand',
-    has_combination: false
+    
   )
 
   # #hermes
   item3 = Itemcard.create!(
     title: 'Hermes shoes',
-    description: '<p>Damn, WHAT ARE THOOOSE. Hopefully hermes does not mind you took them.</p>',
+    description: '<p>Damn, WHAT ARE THOOOSE!?!. Hopefully hermes does not mind you took them.</p>',
     image: '/cardeons/cards/items/shoes.png',
     action: 'no_action',
     draw_chance: 5,
     atk_points: 3,
     item_category: 'shoes',
-    has_combination: false
+    
   )
 
   # #spaghetto_head
@@ -1117,7 +1037,7 @@ if ENV['cards']
     draw_chance: 5,
     atk_points: 2,
     item_category: 'head',
-    has_combination: false
+    
   )
 
   # #Berserker axe
@@ -1129,7 +1049,7 @@ if ENV['cards']
     draw_chance: 5,
     atk_points: 3,
     item_category: 'hand',
-    has_combination: false
+    
   )
 
   # #Katana
@@ -1141,7 +1061,7 @@ if ENV['cards']
     draw_chance: 5,
     atk_points: 3,
     item_category: 'hand',
-    has_combination: false
+    
   )
 
   # #Saddle
@@ -1155,7 +1075,7 @@ if ENV['cards']
     synergy_type: 'unicorn',
     synergy_value: 2,
     item_category: 'hand',
-    has_combination: true
+    
   )
 
   # #Morning star
@@ -1167,7 +1087,7 @@ if ENV['cards']
     draw_chance: 5,
     atk_points: 3,
     item_category: 'hand',
-    has_combination: false
+    
   )
 
   # #Toothbrush
@@ -1179,7 +1099,7 @@ if ENV['cards']
     draw_chance: 5,
     atk_points: 1,
     item_category: 'hand',
-    has_combination: false
+    
   )
 
   # #Spongebobs Spatula
@@ -1191,7 +1111,7 @@ if ENV['cards']
     draw_chance: 5,
     atk_points: 2,
     item_category: 'hand',
-    has_combination: false
+    
   )
 
   # #Crown
@@ -1204,8 +1124,8 @@ if ENV['cards']
     synergy_type: 'bear',
     synergy_value: 3,
     atk_points: 2,
-    item_category: 'hand',
-    has_combination: true
+    item_category: 'head',
+    
   )
 
   # #Bow and arrow
@@ -1217,7 +1137,7 @@ if ENV['cards']
     draw_chance: 5,
     atk_points: 3,
     item_category: 'hand',
-    has_combination: false
+    
   )
 
   # #Excalibur
@@ -1229,7 +1149,7 @@ if ENV['cards']
     draw_chance: 5,
     atk_points: 2,
     item_category: 'hand',
-    has_combination: false
+    
   )
 
   levelcard = Levelcard.create!(title: 'Level up!', draw_chance: 5, description: 'Get one level', image: '/cardeons/cards/icons/level.png', action: 'level_up', level_amount: 1)

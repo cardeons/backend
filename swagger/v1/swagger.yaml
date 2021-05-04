@@ -115,8 +115,6 @@ paths:
                             type: string
                           item_category:
                             type: string
-                          has_combination:
-                            type: string
                           level_amount:
                             type: string
                           created_at:
@@ -178,8 +176,6 @@ paths:
                         atk_points:
                           type: string
                         item_category:
-                          type: string
-                        has_combination:
                           type: string
                         level_amount:
                           type: string

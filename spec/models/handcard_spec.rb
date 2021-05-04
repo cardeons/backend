@@ -70,7 +70,6 @@ RSpec.describe Handcard, type: :model do
       element: 'fire',
       atk_points: 2,
       item_category: 'head',
-      has_combination: false
     )
 
     Handcard.draw_handcards(subject.player.id, subject.player.gameboard)
