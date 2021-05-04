@@ -49,6 +49,7 @@ class FriendlistChannel < ApplicationCable::Channel
   def accept_invite(data)
     inquirer = User.find_by('id=?', data['inquirer'])
 
-    current_user.update!(lobby: inquirer.lobby)
+    broadcast_to(current_user, { type: 'LOBBY_ERROR', params: { message: 'Lobby is full...' } }) if inquirer.lobby.users.count == 4
+    current_user.update!(lobby: inquirer.lobby) if inquirer.lobby.users.count < 4
   end
 end

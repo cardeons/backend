@@ -198,12 +198,71 @@ RSpec.describe FriendlistChannel, type: :channel do
               inquirer: users(:one).id
             })
 
-    expect(users(:usernorbert).lobby).to eq users(:one).lobby
-
-    pp users(:usernorbert).lobby.users.count
-
-    pp firstlobby.users
+    expect(users(:usernorbert).reload.lobby).to eq users(:one).lobby
 
     expect(Lobby.find(firstlobby.id).users.count).to eq 2
+  end
+
+  it 'test if broadcast if lobby is full' do
+    stub_connection current_user: users(:one)
+    subscribe
+
+    firstlobby = Lobby.create
+
+    users(:one).lobby = firstlobby
+
+    unsubscribe
+    stub_connection current_user: users(:usernorbert)
+    subscribe
+
+    expect do
+      perform('accept_invite', {
+                inquirer: users(:one).id
+              })
+    end.to have_broadcasted_to(FriendlistChannel.broadcasting_for(connection.current_user))
+      .with(
+        hash_including(type: 'LOBBY_ERROR', params: { message: 'Lobby is full...' })
+      ).exactly(0)
+
+    unsubscribe
+    stub_connection current_user: users(:two)
+    subscribe
+
+    expect do
+      perform('accept_invite', {
+                inquirer: users(:one).id
+              })
+    end.to have_broadcasted_to(FriendlistChannel.broadcasting_for(connection.current_user))
+      .with(
+        hash_including(type: 'LOBBY_ERROR', params: { message: 'Lobby is full...' })
+      ).exactly(0)
+
+    unsubscribe
+    stub_connection current_user: users(:three)
+    subscribe
+
+    expect do
+      perform('accept_invite', {
+                inquirer: users(:one).id
+              })
+    end.to have_broadcasted_to(FriendlistChannel.broadcasting_for(connection.current_user))
+      .with(
+        hash_including(type: 'LOBBY_ERROR', params: { message: 'Lobby is full...' })
+      ).exactly(0)
+
+    unsubscribe
+    stub_connection current_user: users(:four)
+    subscribe
+
+    expect do
+      perform('accept_invite', {
+                inquirer: users(:one).id
+              })
+    end.to have_broadcasted_to(FriendlistChannel.broadcasting_for(connection.current_user))
+      .with(
+        hash_including(type: 'LOBBY_ERROR', params: { message: 'Lobby is full...' })
+      ).exactly(:once)
+
+    expect(Lobby.find(firstlobby.id).reload.users.count).to eq 4
   end
 end
