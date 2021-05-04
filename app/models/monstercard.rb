@@ -26,9 +26,6 @@ class Monstercard < Card
 
     card = Card.find_by('id=?', deck_card.card_id)
 
-    # TODO: validieren
-    cardtype = card.type
-
     # there already are 5 items, you can't put any more (6 because the monster itself is in this table)
     if monster_to_equip.cards.count == 6
       type = 'ERROR'
@@ -60,7 +57,7 @@ class Monstercard < Card
     # GameChannel.broadcast_to(gameboard, {type: 'ERROR', params: { message: "You already have this type of item on your monster! (#{card.item_category})" } })
 
     # not an item
-    elsif cardtype != 'Itemcard'
+    elsif  card.type != 'Itemcard'
       type = 'ERROR'
       message = "Sorry, you can't put anything on your monster that is not an item!"
     # GameChannel.broadcast_to(gameboard, {type: 'ERROR', params: { message: "Sorry, you can't put anything on your monster that is not an item!"} })
@@ -95,14 +92,6 @@ class Monstercard < Card
   end
 
   def self.calculate_monsterslot_atk(monsterslot)
-    # monstercards = 0
-    # if monsterslot
-    #   monstercards = 1 if monsterslot.cards.where(type: 'Monstercard').any?
-    #   monstercards += monsterslot.cards.where(type: 'Itemcard').sum(:atk_points)
-    # end
-
-    # monstercards
-
     return 0 unless monsterslot
 
     monstercard = monsterslot.cards.find_by('type=?', 'Monstercard')
@@ -119,13 +108,8 @@ class Monstercard < Card
       # calculate synergy of item with given monstercard
       monster_items_atk_points += card.calculate_synergy_value(monstercard)
 
-      pp 'card.id'
-      pp card.id
       # calculate synergy with the other items!
       itemcards.each do |card_to_compare|
-        pp 'card_to_compare.id'
-        pp card_to_compare.id
-
         monster_items_atk_points += card.calculate_synergy_value(card_to_compare)
       end
     end
@@ -261,14 +245,5 @@ class Monstercard < Card
     else
       puts 'action unknown :('
     end
-  end
-
-  def calculate_self_element_modifiers(other_card)
-    modifier = 0
-
-    modifier += good_against_value if good_against == other_card.element
-    modifier -= bad_against_value if bad_against == other_card.element
-
-    modifier
   end
 end

@@ -249,17 +249,12 @@ monstercard10:
   action: 'lose_item_hand'
   draw_chance: 1
   level: 1
-  
   bad_things: MyString
   rewards_treasure: 1
-  
-  
   good_against_value: 1
   bad_against_value: 1
-  
   atk_points: 1
   item_category: MyString
-  
   level_amount: 2
   type: Monstercard
 
@@ -277,10 +272,8 @@ firemonster:
   good_against: water
   good_against_value: 3
   bad_against_value: 1
-  
   atk_points: 1
   item_category: MyString
-  
   level_amount: 2
   type: Monstercard
 
@@ -753,16 +746,113 @@ buffcard6:
   action: 'flee_success'
   draw_chance: 4
   level: 1
-  
   bad_things: MyString
   rewards_treasure: MyString
-  
-  
   good_against_value: 1
   bad_against_value: 1
-  
   atk_points: -5
   item_category: MyString
-  
   level_amount: 1
   type: Buffcard
+
+goodAgainstBullMonster:
+  id: 33
+  title: antiWater
+  description: MyString
+  image: MyString
+  action: 'flee_success'
+  draw_chance: 4
+  level: 5
+  bad_things: MyString
+  rewards_treasure: 1
+  synergy_type: bull
+  synergy_value: 5
+  atk_points: 5
+  element: water
+  item_category: MyString
+  level_amount: 1
+  animal: boar
+  type: Monstercard
+
+
+bullMonster:
+  id: 34
+  title: bull
+  description: bull
+  image: bull
+  action: 'bull'
+  draw_chance: 4
+  level: 5
+  bad_things: MyString
+  rewards_treasure: 1
+  animal: bull
+  synergy_value: 5
+  atk_points: 5
+  item_category: MyString
+  level_amount: 1
+  type: Monstercard
+
+BrokenMonster:
+  id: 35
+  title: bull
+  description: bull
+  image: bull
+  action: 'bull'
+  draw_chance: 4
+  level: 100
+  atk_points: 100
+  bad_things: MyString
+  rewards_treasure: 1
+  animal: bull
+  synergy_value: 5
+  atk_points: 5
+  item_category: MyString
+  level_amount: 1
+  type: Monstercard
+
+
+goodAgainstBoar:
+  id: 36
+  title: bull
+  description: bull
+  image: bull
+  action: 'bull'
+  draw_chance: 4
+  level: 5
+  bad_things: MyString
+  rewards_treasure: 1
+  animal: bull
+  synergy_type: boar
+  synergy_value: 10
+  bad_against_value: 1
+  atk_points: 5
+  item_category: MyString
+  level_amount: 1
+  type: Monstercard
+
+  
+itemGoodAgainstWater:
+  id: 37
+  title: item
+  description: item
+  image: item
+  draw_chance: 4
+  level: 5
+  good_against: water
+  good_against_value: 20
+  atk_points: 5
+  item_category: feet
+  type: Itemcard
+
+itemBadAgainstWater:
+  id: 38
+  title: item
+  description: item
+  image: item
+  draw_chance: 4
+  level: 5
+  bad_against: water
+  bad_against_value: 10
+  atk_points: 5
+  item_category: head
+  type: Itemcard

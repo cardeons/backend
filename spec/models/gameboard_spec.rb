@@ -313,4 +313,50 @@ RSpec.describe Gameboard, type: :model do
       }
     )
   end
+
+  it 'calculate synergies/element modifiers from monsters and cards' do
+    gameboards(:gameboardFourPlayers).initialize_game_board
+    gameboards(:gameboardFourPlayers).players.each(&:init_player)
+
+    player = gameboards(:gameboardFourPlayers).current_player
+
+    Ingamedeck.create!(gameboard: gameboards(:gameboardFourPlayers), card: cards(:goodAgainstBullMonster), cardable: gameboards(:gameboardFourPlayers).centercard)
+    Ingamedeck.create!(gameboard: gameboards(:gameboardFourPlayers), card: cards(:bullMonster), cardable: player.monsterone)
+    # synergies on enemy monster is only coutned once
+    Ingamedeck.create!(gameboard: gameboards(:gameboardFourPlayers), card: cards(:bullMonster), cardable: player.monstertwo)
+
+    expect(gameboards(:gameboardFourPlayers).calculate_all_modifiers).to eql(
+      {
+        bad_against: 0,
+        good_against: 0,
+        synergy_player: 0,
+        synergy_monster: 5
+      }
+    )
+
+    Ingamedeck.create!(gameboard: gameboards(:gameboardFourPlayers), card: cards(:goodAgainstBoar), cardable: player.monsterthree)
+
+    expect(gameboards(:gameboardFourPlayers).calculate_all_modifiers).to eql(
+      {
+        bad_against: 0,
+        good_against: 0,
+        synergy_player: 10,
+        synergy_monster: 5
+      }
+    )
+
+    # add two items that are good against water(both +10)
+    Ingamedeck.create!(gameboard: gameboards(:gameboardFourPlayers), card: cards(:itemGoodAgainstWater), cardable: player.monsterone)
+    Ingamedeck.create!(gameboard: gameboards(:gameboardFourPlayers), card: cards(:itemGoodAgainstWater), cardable: player.monsterone)
+    Ingamedeck.create!(gameboard: gameboards(:gameboardFourPlayers), card: cards(:itemBadAgainstWater), cardable: player.monsterone)
+
+    expect(gameboards(:gameboardFourPlayers).calculate_all_modifiers).to eql(
+      {
+        bad_against: 10,
+        good_against: 40,
+        synergy_player: 10,
+        synergy_monster: 5
+      }
+    )
+  end
 end

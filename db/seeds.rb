@@ -42,10 +42,6 @@ if ENV['cards']
     element: 'fire',
     bad_things: '<p><b>Bad things: </b>Oh no, you disrespected the Sir!</p><p> Lose one hand thing.</p>',
     rewards_treasure: 1,
-    good_against: '',
-    bad_against: '',
-    good_against_value: 0,
-    bad_against_value: 0,
     atk_points: 5,
     level_amount: 1
   )
@@ -371,7 +367,7 @@ if ENV['cards']
     good_against: 'water',
     bad_against: 'earth',
     good_against_value: 7,
-    bad_against_value: -3,
+    bad_against_value: 3,
     atk_points: 16,
     level_amount: 1
   )

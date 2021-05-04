@@ -319,7 +319,6 @@ class Gameboard < ApplicationRecord
   end
 
   def calculate_element_modifiers
-    current_player = self.current_player
     monstercard = centercard.card
 
     modifier_player = 0
@@ -354,5 +353,45 @@ class Gameboard < ApplicationRecord
     end
 
     { modifier_player: modifier_player, modifier_monster: modifier_monster }
+  end
+
+  def calculate_all_modifiers
+    monstercard = centercard.card
+
+    # select all item cards that are good against the current monster
+    good_against_cards_monster_one = current_player.monsterone.cards.where(good_against: monstercard.element, type: 'Itemcard').sum(:good_against_value)
+    good_against_cards_monster_two = current_player.monstertwo.cards.where(good_against: monstercard.element, type: 'Itemcard').sum(:good_against_value)
+    good_against_cards_monster_three = current_player.monsterthree.cards.where(good_against: monstercard.element, type: 'Itemcard').sum(:good_against_value)
+
+    good_against_sum = good_against_cards_monster_one + good_against_cards_monster_two + good_against_cards_monster_three
+
+    # select all item cards that are good against the current monster
+    bad_against_cards_monster_one = current_player.monsterone.cards.where(bad_against: monstercard.element, type: 'Itemcard').sum(:bad_against_value)
+    bad_against_cards_monster_two = current_player.monstertwo.cards.where(bad_against: monstercard.element, type: 'Itemcard').sum(:bad_against_value)
+    bad_against_cards_monster_three = current_player.monsterthree.cards.where(bad_against: monstercard.element, type: 'Itemcard').sum(:bad_against_value)
+
+    bad_against_sum = bad_against_cards_monster_one + bad_against_cards_monster_two + bad_against_cards_monster_three
+
+    synergy_player_sum = 0
+    # calc synergy Values of Player Monster
+    if monstercard.animal
+      synergy_monsterone = current_player.monsterone.cards.where(synergy_type: monstercard.animal, type: 'Monstercard').sum(:synergy_value)
+      synergy_monstertwo = current_player.monstertwo.cards.where(synergy_type: monstercard.animal, type: 'Monstercard').sum(:synergy_value)
+      synergy_monsterthree = current_player.monsterthree.cards.where(synergy_type: monstercard.animal, type: 'Monstercard').sum(:synergy_value)
+
+      synergy_player_sum = synergy_monsterone + synergy_monstertwo + synergy_monsterthree
+    end
+
+    monsterone_card = current_player.monsterone.cards.find_by('type=?', 'Monstercard')
+    monstertwo_card = current_player.monstertwo.cards.find_by('type=?', 'Monstercard')
+    monsterthree_card = current_player.monsterthree.cards.find_by('type=?', 'Monstercard')
+
+    # calc synergy Values of Center Monster
+    synergy_monster_sum = 0
+    if monstercard.synergy_type && (monsterone_card&.animal == monstercard.synergy_type || monstertwo_card&.animal == monstercard.synergy_type || monsterthree_card&.animal == monstercard.synergy_type)
+      synergy_monster_sum = monstercard.synergy_value
+    end
+
+    { bad_against: bad_against_sum, good_against: good_against_sum, synergy_player: synergy_player_sum, synergy_monster: synergy_monster_sum }
   end
 end

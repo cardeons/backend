@@ -855,6 +855,8 @@ RSpec.describe GameChannel, type: :channel do
     # set centercard with one level reward because srand always chooses a card with 2
     Ingamedeck.create!(gameboard: gameboards(:gameboardFourPlayers), card: cards(:monstercard9), cardable: gameboards(:gameboardFourPlayers).centercard)
 
+    Ingamedeck.create!(gameboard: gameboards(:gameboardFourPlayers), card: cards(:BrokenMonster), cardable: users(:userFour).player.monsterone)
+
     expect do
       perform('attack', {})
     end.to have_broadcasted_to("game:#{users(:userFour).player.gameboard.to_gid_param}")
