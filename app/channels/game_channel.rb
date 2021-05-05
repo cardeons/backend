@@ -19,6 +19,11 @@ class GameChannel < ApplicationCable::Channel
   end
 
   def flee
+    unless current_user.player == @gameboard.current_player
+      PlayerChannel.broadcast_to(current_user, { type: 'ERROR', params: { message: "It's not your round, you can't flee..." } })
+      return
+    end
+
     output = Gameboard.flee(@gameboard, current_user)
     broadcast_to(@gameboard, { type: FLEE, params: output })
 
@@ -119,6 +124,11 @@ class GameChannel < ApplicationCable::Channel
   end
 
   def attack
+    unless current_user.player == @gameboard.current_player
+      PlayerChannel.broadcast_to(current_user, { type: 'ERROR', params: { message: "It's not your round, you can't attack..." } })
+      return
+    end
+
     result = Gameboard.attack(@gameboard)
 
     if result[:result]
