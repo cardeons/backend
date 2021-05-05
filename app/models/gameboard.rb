@@ -270,34 +270,6 @@ class Gameboard < ApplicationRecord
     { result: playerwin, playeratk: playeratkpoints, monsteratk: monsteratkpts }
   end
 
-  def self.reset_all_game_boards
-    Ingamedeck.all.where(cardable_type: 'Centercard').destroy_all
-
-    Gameboard.all.each do |gameboard|
-      current_player = gameboard.current_player
-
-      next unless current_player
-
-      current_player.handcard.ingamedecks.delete_all
-
-      current_player.inventory.ingamedecks.delete_all if current_player.inventory&.ingamedecks
-
-      current_player.monsterone.ingamedecks.delete_all if current_player.monsterone&.ingamedecks
-
-      current_player.monstertwo.ingamedecks.delete_all if current_player.monstertwo&.ingamedecks
-
-      current_player.monsterthree.ingamedecks.delete_all if current_player.monsterthree&.ingamedecks
-
-      gameboard.update_attribute(:player_atk, 1)
-
-      Handcard.draw_handcards(current_player.id, gameboard)
-
-      # updated_board = Gameboard.broadcast_game_board(gameboard)
-      # GameChannel.broadcast_to(gameboard, { type: "BOARD_UPDATE", params: updated_board })
-      # PlayerChannel.broadcast_to(current_player.user, { type: 'HANDCARD_UPDATE', params: { handcards: Gameboard.renderCardId(current_player.handcard.ingamedecks) } })
-    end
-  end
-
   def self.add_cards_to_array(arr, cards)
     cards.each do |card|
       x = card.draw_chance
@@ -357,10 +329,6 @@ class Gameboard < ApplicationRecord
 
   def calculate_all_modifiers
     monstercard = centercard.card
-
-    monsterone = current_player.monsterone
-    monstertwo = current_player.monstertwo
-    monsterthree = current_player.monsterthree
 
     good_against_sum = sum_of_cards(current_player, 'good_against', monstercard.read_attribute_before_type_cast('element'), 'Itemcard', 'good_against_value')
 
