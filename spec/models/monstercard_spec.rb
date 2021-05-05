@@ -618,12 +618,12 @@ RSpec.describe Monstercard, type: :model do
       synergy_value: 5
     )
 
-    u1 = User.create!(email: '1@1.at', password: '1', name: '1', password_confirmation: '1')
-    gameboard_test = Gameboard.create!(current_state: 'lobby', player_atk: 5)
-    player1 = Player.create(name: 'Gustav', gameboard: gameboard_test, user: u1)
+    gameboard_test = gameboards(:gameboardFourPlayers)
+    player1 = players(:playerOne)
+    gameboards(:gameboardFourPlayers).initialize_game_board
+    gameboards(:gameboardFourPlayers).players.each(&:init_player)
+    gameboards(:gameboardFourPlayers).update(current_player: player1)
 
-    Handcard.create(player_id: player1.id)
-    Monsterone.create(player: player1)
     ingamedeck1 = Ingamedeck.create!(gameboard: gameboard_test, card_id: catfish.id, cardable: player1.monsterone)
     ingamedeck2 = Ingamedeck.create!(gameboard: gameboard_test, card_id: item1.id, cardable: player1.handcard)
 

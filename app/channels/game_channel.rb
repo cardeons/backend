@@ -453,6 +453,7 @@ class GameChannel < ApplicationCable::Channel
     broadcast_to(@gameboard, { type: BOARD_UPDATE, params: updated_board })
     msg = "#{current_user.player.name} has drawn #{card.title}"
     broadcast_to(@gameboard, { type: GAME_LOG, params: { date: Time.new, message: msg } })
+  end
 
   def develop_set_next_player_as_current_player
     return unless developer_actions_enabled?

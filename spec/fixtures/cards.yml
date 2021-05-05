@@ -422,10 +422,8 @@ itemcard5:
   bad_against: MyString
   good_against_value: 1
   bad_against_value: 1
-  element_modifier: 1
   atk_points: 100
   item_category: 'hand'
-  has_combination: 1
   level_amount: 1
   type: Itemcard
 
@@ -777,7 +775,7 @@ buffcard6:
   type: Buffcard
 
 bosscard:
-  id: 33
+  id: 2000
   title: MyString
   description: MyString
   image: MyString
@@ -791,10 +789,8 @@ bosscard:
   bad_against: MyString
   good_against_value: 1
   bad_against_value: 1
-  element_modifier: 1
   atk_points: 40
   item_category: MyString
-  has_combination: 0
   level_amount: 2
   type: Bosscard
 
