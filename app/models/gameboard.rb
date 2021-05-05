@@ -362,13 +362,13 @@ class Gameboard < ApplicationRecord
     monstertwo = current_player.monstertwo
     monsterthree = current_player.monsterthree
 
-    good_against_sum = sum_of_cards(monsterone, monstertwo, monsterthree, 'good_against', monstercard.read_attribute_before_type_cast('element'), 'Itemcard', 'good_against_value')
+    good_against_sum = sum_of_cards(current_player, 'good_against', monstercard.read_attribute_before_type_cast('element'), 'Itemcard', 'good_against_value')
 
-    bad_against_sum = sum_of_cards(monsterone, monstertwo, monsterthree, 'bad_against', monstercard.read_attribute_before_type_cast('element'), 'Itemcard', 'bad_against_value')
+    bad_against_sum = sum_of_cards(current_player, 'bad_against', monstercard.read_attribute_before_type_cast('element'), 'Itemcard', 'bad_against_value')
 
     synergy_player_sum = 0
     # calc synergy Values of Player Monster
-    synergy_player_sum = sum_of_cards(monsterone, monstertwo, monsterthree, 'synergy_type', monstercard.read_attribute_before_type_cast('animal'), 'Monstercard', 'synergy_value') if monstercard.animal
+    synergy_player_sum = sum_of_cards(current_player, 'synergy_type', monstercard.read_attribute_before_type_cast('animal'), 'Monstercard', 'synergy_value') if monstercard.animal
 
     monsterone_card = current_player.monsterone.cards.find_by('type=?', 'Monstercard')
     monstertwo_card = current_player.monstertwo.cards.find_by('type=?', 'Monstercard')
@@ -385,11 +385,11 @@ class Gameboard < ApplicationRecord
 
   private
 
-  def sum_of_cards(monsterone, monstertwo, monsterthree, column, columnvalue, cardtype, sumtype)
+  def sum_of_cards(player, column, columnvalue, cardtype, sumtype)
     # eg where(bad_against:fire, type=enemy_monster.element).sum(bad_against_value)
-    monsterone_sum = monsterone.cards.where("#{column}=#{columnvalue} AND type='#{cardtype}'").sum(sumtype)
-    monstertwo_sum = monstertwo.cards.where("#{column}=#{columnvalue} AND type='#{cardtype}'").sum(sumtype)
-    monsterthree_sum = monsterthree.cards.where("#{column}=#{columnvalue} AND type='#{cardtype}'").sum(sumtype)
+    monsterone_sum = player.monsterone.cards.where("#{column}=#{columnvalue} AND type='#{cardtype}'").sum(sumtype)
+    monstertwo_sum = player.monstertwo.cards.where("#{column}=#{columnvalue} AND type='#{cardtype}'").sum(sumtype)
+    monsterthree_sum = player.monsterthree.cards.where("#{column}=#{columnvalue} AND type='#{cardtype}'").sum(sumtype)
 
     monsterone_sum + monstertwo_sum + monsterthree_sum
   end
