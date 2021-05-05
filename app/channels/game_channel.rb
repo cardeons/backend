@@ -83,6 +83,9 @@ class GameChannel < ApplicationCable::Channel
   end
 
   def draw_door_card
+    # if intercept phase is already active player should not be able to draw another card
+    return PlayerChannel.broadcast_to(current_user, { type: 'ERROR', params: { message: "You can't draw another card!" } }) if @gameboard.intercept_phase? || @gameboard.intercept_finished?
+
     name = Gameboard.draw_door_card(@gameboard)
 
     start_intercept_phase(@gameboard.reload)
@@ -395,6 +398,14 @@ class GameChannel < ApplicationCable::Channel
     monster_id = player.win_game(current_user)
     @gameboard.game_won!
     broadcast_to(@gameboard, { type: 'WIN', params: { player: player.id, monster_won: monster_id } })
+  end
+
+  def develop_set_next_player_as_current_player
+    return unless developer_actions_enabled?
+
+    Gameboard.get_next_player(@gameboard)
+    @gameboard.ingame!
+    broadcast_to(@gameboard, { type: BOARD_UPDATE, params: Gameboard.broadcast_game_board(@gameboard) })
   end
 
   def unsubscribed

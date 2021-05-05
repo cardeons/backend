@@ -335,6 +335,11 @@ Alle im Game-Chanel
    params: { }  
 }
 
+{
+   type: 'develop_set_next_player_as_current_player',
+   params: { }  
+}
+
 
 # FRIENDLISTCHANNEL
 

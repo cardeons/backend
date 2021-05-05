@@ -17,61 +17,28 @@ class Monstercard < Card
                          player.monsterthree
                        end
 
-    #     #find "original" card, only advance if found
-    unless deck_card.nil?
-      card = Card.find_by('id=?', deck_card.card_id)
+    # find "original" card, only advance if found
+    if deck_card.nil?
+      type = 'ERROR'
+      message = 'Card not found. Something went wrong.'
+      return { type: type, message: message }
+    end
 
-      # TODO: validieren
-      cardtype = card.type
-      #       # there already are 5 items, you can't put any more (6 because the monster itself is in this table)
-      if monster_to_equip.cards.count == 6
-        type = 'ERROR'
-        message = "You can't put any more items on this monster."
-      # GameChannel.broadcast_to(gameboard, {type: 'ERROR', params: { message: "You can't put any more items on this monster." } })
+    card = Card.find_by('id=?', deck_card.card_id)
 
-      # category already on monster
-      elsif monster_to_equip.cards.where('item_category=?', card.item_category).count.positive?
+    # there already are 5 items, you can't put any more (6 because the monster itself is in this table)
+    if monster_to_equip.cards.count == 6
+      type = 'ERROR'
+      message = "You can't put any more items on this monster."
 
-        if card.item_category == 'hand' && monster_to_equip.cards.where('item_category=?', card.item_category).count == 1
-          type = 'GAMEBOARD_UPDATE'
-          message = 'Successfully equipped.'
-          deck_card.update(cardable: monster_to_equip)
+    # category already on monster
+    elsif monster_to_equip.cards.where('item_category=?', card.item_category).count.positive?
 
-          attack_obj = Gameboard.attack(player.gameboard)
-
-          monstercards1 = Monstercard.calculate_monsterslot_atk(player.monsterone)
-          monstercards2 = Monstercard.calculate_monsterslot_atk(player.monstertwo)
-          monstercards3 = Monstercard.calculate_monsterslot_atk(player.monsterthree)
-
-          playeratkpoints = monstercards1 + monstercards2 + monstercards3 + player.level
-
-          player.update!(attack: playeratkpoints)
-          player.gameboard.update(success: attack_obj[:result], player_atk: attack_obj[:playeratk], monster_atk: attack_obj[:monsteratk])
-
-        else
-          type = 'ERROR'
-          message = "You already have this type of item on your monster! (#{card.item_category})"
-        end
-      # GameChannel.broadcast_to(gameboard, {type: 'ERROR', params: { message: "You already have this type of item on your monster! (#{card.item_category})" } })
-
-      # not an item
-      elsif cardtype != 'Itemcard'
-        type = 'ERROR'
-        message = "Sorry, you can't put anything on your monster that is not an item!"
-      # GameChannel.broadcast_to(gameboard, {type: 'ERROR', params: { message: "Sorry, you can't put anything on your monster that is not an item!"} })
-
-      # yay
-      else
+      if card.item_category == 'hand' && monster_to_equip.cards.where('item_category=?', card.item_category).count == 1
         type = 'GAMEBOARD_UPDATE'
+        message = 'Successfully equipped.'
         deck_card.update(cardable: monster_to_equip)
 
-        # player_atk = monster_to_equip.cards.sum(:atk_points)
-
-        # result = player.gameboard.monster_atk < player_atk
-        # player.gameboard.update_attribute(:success, result)
-        # GameChannel.broadcast_to(gameboard, {type: 'GAMEBOARD_UPDATE', params: Gameboard.broadcast_game_board(gameboard) })
-
-        # get updatet result of attack
         attack_obj = Gameboard.attack(player.gameboard)
 
         monstercards1 = Monstercard.calculate_monsterslot_atk(player.monsterone)
@@ -80,29 +47,74 @@ class Monstercard < Card
 
         playeratkpoints = monstercards1 + monstercards2 + monstercards3 + player.level
 
-        player.update(attack: playeratkpoints)
+        player.update!(attack: playeratkpoints)
         player.gameboard.update(success: attack_obj[:result], player_atk: attack_obj[:playeratk], monster_atk: attack_obj[:monsteratk])
-        message = 'Successfully equipped.'
+
+      else
+        type = 'ERROR'
+        message = "You already have this type of item on your monster! (#{card.item_category})"
       end
+    # GameChannel.broadcast_to(gameboard, {type: 'ERROR', params: { message: "You already have this type of item on your monster! (#{card.item_category})" } })
+
+    # not an item
+    elsif  card.type != 'Itemcard'
+      type = 'ERROR'
+      message = "Sorry, you can't put anything on your monster that is not an item!"
+    # GameChannel.broadcast_to(gameboard, {type: 'ERROR', params: { message: "Sorry, you can't put anything on your monster that is not an item!"} })
+
+    # yay
+    else
+      type = 'GAMEBOARD_UPDATE'
+      deck_card.update(cardable: monster_to_equip)
+
+      # player_atk = monster_to_equip.cards.sum(:atk_points)
+
+      # result = player.gameboard.monster_atk < player_atk
+      # player.gameboard.update_attribute(:success, result)
+      # GameChannel.broadcast_to(gameboard, {type: 'GAMEBOARD_UPDATE', params: Gameboard.broadcast_game_board(gameboard) })
+
+      # get updatet result of attack
+      attack_obj = Gameboard.attack(player.gameboard)
+
+      monstercards1 = Monstercard.calculate_monsterslot_atk(player.monsterone)
+      monstercards2 = Monstercard.calculate_monsterslot_atk(player.monstertwo)
+      monstercards3 = Monstercard.calculate_monsterslot_atk(player.monsterthree)
+
+      playeratkpoints = monstercards1 + monstercards2 + monstercards3 + player.level
+
+      player.update(attack: playeratkpoints)
+      player.gameboard.update(success: attack_obj[:result], player_atk: attack_obj[:playeratk], monster_atk: attack_obj[:monsteratk])
+      message = 'Successfully equipped.'
     end
 
-    if deck_card.nil?
-      type = 'ERROR'
-      message = 'Card not found. Something went wrong.'
-      # GameChannel.broadcast_to(gameboard, {type: 'ERROR', params: { message: "Card not found"} })
-    end
     # type = "equip"
     { type: type, message: message }
   end
 
   def self.calculate_monsterslot_atk(monsterslot)
-    monstercards = 0
-    if monsterslot
-      monstercards = 1 if monsterslot.cards.where(type: 'Monstercard').any?
-      monstercards += monsterslot.cards.where(type: 'Itemcard').sum(:atk_points)
+    return 0 unless monsterslot
+
+    monstercard = monsterslot.cards.find_by('type=?', 'Monstercard')
+
+    monster_items_atk_points = 0
+
+    # monster always have 1 attack if player plays them
+    monster_items_atk_points = 1 if monstercard
+
+    itemcards = monsterslot.cards.where(type: 'Itemcard')
+    monster_items_atk_points += itemcards.sum(:atk_points)
+
+    itemcards.where.not(synergy_type: nil).each do |card|
+      # calculate synergy of item with given monstercard
+      monster_items_atk_points += card.calculate_synergy_value(monstercard)
+
+      # calculate synergy with the other items!
+      itemcards.each do |card_to_compare|
+        monster_items_atk_points += card.calculate_synergy_value(card_to_compare)
+      end
     end
 
-    monstercards
+    monster_items_atk_points
   end
 
   def self.lose_item_by_category(player, gameboard, category)
