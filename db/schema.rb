@@ -12,6 +12,7 @@
 
 ActiveRecord::Schema.define(version: 2021_05_04_100902) do
 
+
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -57,6 +58,8 @@ ActiveRecord::Schema.define(version: 2021_05_04_100902) do
     t.bigint "friend_id"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
+    t.boolean "pending", default: true
+    t.bigint "inquirer_id"
     t.index ["user_id"], name: "index_friendships_on_user_id"
   end
 
@@ -175,7 +178,7 @@ ActiveRecord::Schema.define(version: 2021_05_04_100902) do
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
     t.string "name"
-    t.boolean "online", default: false
+    t.integer "status"
   end
 
   add_foreign_key "centercards", "gameboards"

@@ -1072,6 +1072,7 @@ RSpec.describe GameChannel, type: :channel do
     expect(Ingamedeck.find_by('id=?', unique_card3.id).cardable_type).to eql('Graveyard')
     expect(Ingamedeck.find_by('id=?', unique_card4.id).cardable_type).to eql('Graveyard')
   end
+
   it 'user is set to inactive if he unsubscribes from the game_channel' do
     gameboards(:gameboardFourPlayers).initialize_game_board
     gameboards(:gameboardFourPlayers).players.each(&:init_player)
@@ -1085,5 +1086,24 @@ RSpec.describe GameChannel, type: :channel do
 
     # player is set to inactive = true on unsubscribe
     expect(users(:userFour).player.inactive).to be_truthy
+  end
+
+  it 'dev action gets right next player' do
+    gameboards(:gameboardFourPlayers).players.each(&:init_player)
+    gameboards(:gameboardFourPlayers).initialize_game_board
+
+    stub_connection current_user: users(:userOne)
+    subscribe
+
+    ENV['DEV_TOOL_ENABLED'] = 'enabled'
+
+    perform('develop_set_next_player_as_current_player', {})
+    expect(gameboards(:gameboardFourPlayers).reload.current_player).to eql(gameboards(:gameboardFourPlayers).players.first)
+
+    perform('develop_set_next_player_as_current_player', {})
+    expect(gameboards(:gameboardFourPlayers).reload.current_player).to eql(gameboards(:gameboardFourPlayers).players.second)
+
+    perform('develop_set_next_player_as_current_player', {})
+    expect(gameboards(:gameboardFourPlayers).reload.current_player).to eql(gameboards(:gameboardFourPlayers).players.third)
   end
 end

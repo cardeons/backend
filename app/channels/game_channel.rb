@@ -397,6 +397,14 @@ class GameChannel < ApplicationCable::Channel
     broadcast_to(@gameboard, { type: 'WIN', params: { player: player.id, monster_won: monster_id } })
   end
 
+  def develop_set_next_player_as_current_player
+    return unless developer_actions_enabled?
+
+    Gameboard.get_next_player(@gameboard)
+    @gameboard.ingame!
+    broadcast_to(@gameboard, { type: BOARD_UPDATE, params: Gameboard.broadcast_game_board(@gameboard) })
+  end
+
   def unsubscribed
     current_user.player.update!(inactive: true)
     # Any cleanup needed when channel is unsubscribed
