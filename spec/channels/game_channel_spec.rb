@@ -1123,7 +1123,7 @@ RSpec.describe GameChannel, type: :channel do
               })
     end.to have_broadcasted_to("game:#{users(:one).player.gameboard.to_gid_param}")
       .with(
-        hash_including(type: 'CURSE_LOG')
+        hash_including(type: 'GAME_LOG')
       )
   end
 end

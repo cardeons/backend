@@ -83,6 +83,13 @@ class GameChannel < ApplicationCable::Channel
   end
 
   def draw_door_card
+    @gameboard.reload
+    # if intercept phase is already active player should not be able to draw another card
+    if @gameboard.intercept_phase? || @gameboard.intercept_finished?
+      PlayerChannel.broadcast_to(current_user, { type: 'ERROR', params: { message: "You can't draw another card!" } })
+      return
+    end
+
     name = Gameboard.draw_door_card(@gameboard)
 
     start_intercept_phase(@gameboard.reload)
@@ -102,6 +109,11 @@ class GameChannel < ApplicationCable::Channel
 
     PlayerChannel.broadcast_to(current_user, { type: 'ERROR', params: { message: result[:message] } }) if result[:type] == 'ERROR'
     broadcast_to(@gameboard, { type: 'BOARD_UPDATE', params: updated_board })
+
+    # if result[:type] != 'ERROR'
+    #   msg = "#{player.name} has equiped a monster!"
+    #   broadcast_to(@gameboard, { type: GAME_LOG, params: { date: Time.new, message: msg } })
+    # end
 
     PlayerChannel.broadcast_to(current_user, { type: 'HANDCARD_UPDATE', params: { handcards: Gameboard.render_cards_array(player.handcard.ingamedecks) } })
   end
@@ -157,11 +169,12 @@ class GameChannel < ApplicationCable::Channel
   end
 
   def intercept(params)
-    # params={
-    # action: "intercept",
-    # unique_card_id: 1,
-    # to: 'center_card' | 'current_player'
-    # }
+    @gameboard.reload
+
+    if @gameboard.centercard.nil?
+      PlayerChannel.broadcast_to(current_user, { type: 'ERROR', params: { message: "There's no card in the center!" } })
+      return
+    end
 
     unique_card_id = params['unique_card_id']
     to = params['to']
@@ -176,7 +189,6 @@ class GameChannel < ApplicationCable::Channel
     end
 
     current_user.player.reload
-    @gameboard.reload
 
     case to
     when 'center_card'
@@ -324,7 +336,7 @@ class GameChannel < ApplicationCable::Channel
   end
 
   def curse_player(params)
-    player = Player.find_by('id=?', current_user.player.id)
+    player = current_user.player
     Cursecard.handlecurse(params, @gameboard, current_user)
     PlayerChannel.broadcast_to(current_user, { type: 'HANDCARD_UPDATE', params: { handcards: Gameboard.render_cards_array(player.handcard.ingamedecks) } })
     broadcast_to(@gameboard, { type: BOARD_UPDATE, params: Gameboard.broadcast_game_board(@gameboard) })

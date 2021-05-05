@@ -100,35 +100,12 @@ PLAYER Channel response
 
 Gameboard Channel responses
 {
-#Allgemeiner Game Log
   type: "GAME_LOG",
   params:
   {
     date: ISOSTRING,
-    message: "game log"
-  }
-
-#Curse Log
-  type: "CURSE_LOG",
-  params:
-  {
-    date: ISOSTRING,
-    message: "game log"
-  }
-
-#Buff Log
-  type: "BUFF_LOG",
-  params:
-  {
-    date: ISOSTRING,
-    me
-    
-#Level Log
-  type: "LEVEL_LOG",
-  params:
-  {
-    date: ISOSTRING,
-    message: "game log"
+    message: "game log",
+    type: "info | success | warning | error | dark"
   }
 }
 

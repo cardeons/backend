@@ -24,7 +24,7 @@ class Cursecard < Card
   end
 
   def self.broadcast_gamelog(msg, gameboard)
-    GameChannel.broadcast_to(gameboard, { type: 'CURSE_LOG', params: { date: Time.new, message: msg } })
+    GameChannel.broadcast_to(gameboard, { type: 'GAME_LOG', params: { date: Time.new, message: msg, type: 'dark' } })
   end
 
   def self.activate(ingamedeck, player, gameboard, playeratk = 0, monsteratk = 0)

@@ -155,7 +155,7 @@ class Monstercard < Card
   end
 
   def self.broadcast_gamelog(msg, gameboard)
-    GameChannel.broadcast_to(gameboard, { type: 'ERROR_LOG', params: { date: Time.new, message: msg } })
+    GameChannel.broadcast_to(gameboard, { type: 'GAME_LOG', params: { date: Time.new, message: msg, type: 'error' } })
   end
 
   def self.bad_things(ingamedeck, gameboard)
