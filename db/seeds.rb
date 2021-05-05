@@ -4,15 +4,15 @@
 # The data can then be loaded with the bin/rails db:seed command (or created alongside the database with db:setup).
 
 if ENV['users']
-  u1 = User.create!(email: 'daniela-dottolo@gmx.at', password: 'hahasosecret123', name: 'lol', password_confirmation: 'hahasosecret123')
-  u2 = User.create!(email: 'hallo@hallo.at', password: '235', name: 'lul', password_confirmation: '235')
-  u3 = User.create!(email: 'fjeorfje@gmx.at', password: 'dfergt', name: 'lel', password_confirmation: 'dfergt')
-  u4 = User.create!(email: 'ferjfrekpo@gmx.at', password: 'z6gtfr4', name: 'lawl', password_confirmation: 'z6gtfr4')
-  u5 = User.create!(email: '2@2.at', password: '2', name: '2', password_confirmation: '2')
-  u6 = User.create!(email: '3@3.at', password: '3', name: '3', password_confirmation: '3')
-  u7 = User.create!(email: '4@4.at', password: '4', name: '4', password_confirmation: '4')
-  u8 = User.create!(email: '5@5.at', password: '5', name: '5', password_confirmation: '5')
-  u9 = User.create!(email: '1@1.at', password: '1', name: '1', password_confirmation: '1')
+  u1 = User.create(email: 'daniela-dottolo@gmx.at', password: 'hahasosecret123', name: 'lol', password_confirmation: 'hahasosecret123')
+  u2 = User.create(email: 'hallo@hallo.at', password: '235', name: 'lul', password_confirmation: '235')
+  u3 = User.create(email: 'fjeorfje@gmx.at', password: 'dfergt', name: 'lel', password_confirmation: 'dfergt')
+  u4 = User.create(email: 'ferjfrekpo@gmx.at', password: 'z6gtfr4', name: 'lawl', password_confirmation: 'z6gtfr4')
+  u5 = User.create(email: '2@2.at', password: '2', name: '2', password_confirmation: '2')
+  u6 = User.create(email: '3@3.at', password: '3', name: '3', password_confirmation: '3')
+  u7 = User.create(email: '4@4.at', password: '4', name: '4', password_confirmation: '4')
+  u8 = User.create(email: '5@5.at', password: '5', name: '5', password_confirmation: '5')
+  u9 = User.create(email: '1@1.at', password: '1', name: '1', password_confirmation: '1')
 end
 
 # TODO: Delete?
@@ -29,6 +29,7 @@ end
 if ENV['cards']
   # delete all cards
   Card.all.destroy_all
+  Gameboard.all.destroy_all
   # reset pk counter :)
   ActiveRecord::Base.connection.reset_pk_sequence!('cards')
   bear_fire = Monstercard.create!(
@@ -1150,6 +1151,11 @@ if ENV['cards']
 
   levelcard = Levelcard.create!(title: 'Level up!', draw_chance: 5, description: 'Get one level', image: '/cardeons/cards/icons/level.png', action: 'level_up', level_amount: 1)
 
+
+  ## add starting cards to all players
+  User.all.each do |user|
+    user.cards << (Card.find(1))
+  end
 end
 # Adds cards to inventory of user1
 # User.find(1).cards << (Card.find(1))
@@ -1159,7 +1165,7 @@ end
 
 # add cards to userinventories
 
-if ENV['users']
+if ENV['users'] && !Card.all.nil?
   u1.cards << (Card.find(4))
   u2.cards << (Card.find(4))
   u3.cards << (Card.find(4))
