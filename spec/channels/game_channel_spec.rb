@@ -886,7 +886,7 @@ RSpec.describe GameChannel, type: :channel do
 
     perform('attack', {})
 
-    expect(users(:userFour).cards.size).to eql(2)
+    expect(users(:userFour).cards.reload.size).to eql(2)
   end
 
   it 'player can only play a monster if its his turn' do
@@ -1089,7 +1089,6 @@ RSpec.describe GameChannel, type: :channel do
     expect(users(:userFour).player.inactive).to be_truthy
   end
 
-
   it 'develop draw boss card sets bosscard as centercard' do
     gameboards(:gameboardFourPlayers).initialize_game_board
     gameboards(:gameboardFourPlayers).players.each(&:init_player)
@@ -1167,11 +1166,14 @@ RSpec.describe GameChannel, type: :channel do
   it 'attack in bossphase when player attack is high enough' do
     gameboards(:gameboardFourPlayers).initialize_game_board
     gameboards(:gameboardFourPlayers).players.each(&:init_player)
-    
+
     # give player one enough attack to defeat monster
     Ingamedeck.create!(gameboard: gameboards(:gameboardFourPlayers), card: cards(:monstercard10), cardable: players(:playerOne).monsterone)
     # monster level 1 + item with 100 attack
     Ingamedeck.create!(gameboard: gameboards(:gameboardFourPlayers), card: cards(:itemcard5), cardable: players(:playerOne).monsterone)
+
+    stub_connection current_user: users(:userOne)
+    subscribe
 
     ENV['DEV_TOOL_ENABLED'] = 'enabled'
     perform('develop_draw_boss_card', {})
@@ -1209,10 +1211,8 @@ RSpec.describe GameChannel, type: :channel do
       action: 'plus_one',
       draw_chance: 14,
       element: 'fire',
-      element_modifier: 2,
       atk_points: 2,
-      item_category: 'hand',
-      has_combination: false
+      item_category: 'hand'
     )
 
     gameboard_test = gameboards(:gameboardFourPlayers)
@@ -1243,7 +1243,7 @@ RSpec.describe GameChannel, type: :channel do
   it 'dev action gets right next player' do
     gameboards(:gameboardFourPlayers).players.each(&:init_player)
     gameboards(:gameboardFourPlayers).initialize_game_board
-    
+
     stub_connection current_user: users(:userOne)
     subscribe
 
@@ -1281,4 +1281,3 @@ RSpec.describe GameChannel, type: :channel do
       ).exactly(:once)
   end
 end
-
