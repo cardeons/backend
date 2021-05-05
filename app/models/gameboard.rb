@@ -270,34 +270,6 @@ class Gameboard < ApplicationRecord
     { result: playerwin, playeratk: playeratkpoints, monsteratk: monsteratkpts }
   end
 
-  def self.reset_all_game_boards
-    Ingamedeck.all.where(cardable_type: 'Centercard').destroy_all
-
-    Gameboard.all.each do |gameboard|
-      current_player = gameboard.current_player
-
-      next unless current_player
-
-      current_player.handcard.ingamedecks.delete_all
-
-      current_player.inventory.ingamedecks.delete_all if current_player.inventory&.ingamedecks
-
-      current_player.monsterone.ingamedecks.delete_all if current_player.monsterone&.ingamedecks
-
-      current_player.monstertwo.ingamedecks.delete_all if current_player.monstertwo&.ingamedecks
-
-      current_player.monsterthree.ingamedecks.delete_all if current_player.monsterthree&.ingamedecks
-
-      gameboard.update_attribute(:player_atk, 1)
-
-      Handcard.draw_handcards(current_player.id, gameboard)
-
-      # updated_board = Gameboard.broadcast_game_board(gameboard)
-      # GameChannel.broadcast_to(gameboard, { type: "BOARD_UPDATE", params: updated_board })
-      # PlayerChannel.broadcast_to(current_player.user, { type: 'HANDCARD_UPDATE', params: { handcards: Gameboard.renderCardId(current_player.handcard.ingamedecks) } })
-    end
-  end
-
   def self.add_cards_to_array(arr, cards)
     cards.each do |card|
       x = card.draw_chance
@@ -358,17 +330,13 @@ class Gameboard < ApplicationRecord
   def calculate_all_modifiers
     monstercard = centercard.card
 
-    monsterone = current_player.monsterone
-    monstertwo = current_player.monstertwo
-    monsterthree = current_player.monsterthree
+    good_against_sum = sum_of_cards(current_player, 'good_against', monstercard.read_attribute_before_type_cast('element'), 'Itemcard', 'good_against_value')
 
-    good_against_sum = sum_of_cards(monsterone, monstertwo, monsterthree, 'good_against', monstercard.read_attribute_before_type_cast('element'), 'Itemcard', 'good_against_value')
-
-    bad_against_sum = sum_of_cards(monsterone, monstertwo, monsterthree, 'bad_against', monstercard.read_attribute_before_type_cast('element'), 'Itemcard', 'bad_against_value')
+    bad_against_sum = sum_of_cards(current_player, 'bad_against', monstercard.read_attribute_before_type_cast('element'), 'Itemcard', 'bad_against_value')
 
     synergy_player_sum = 0
     # calc synergy Values of Player Monster
-    synergy_player_sum = sum_of_cards(monsterone, monstertwo, monsterthree, 'synergy_type', monstercard.read_attribute_before_type_cast('animal'), 'Monstercard', 'synergy_value') if monstercard.animal
+    synergy_player_sum = sum_of_cards(current_player, 'synergy_type', monstercard.read_attribute_before_type_cast('animal'), 'Monstercard', 'synergy_value') if monstercard.animal
 
     monsterone_card = current_player.monsterone.cards.find_by('type=?', 'Monstercard')
     monstertwo_card = current_player.monstertwo.cards.find_by('type=?', 'Monstercard')
@@ -385,11 +353,11 @@ class Gameboard < ApplicationRecord
 
   private
 
-  def sum_of_cards(monsterone, monstertwo, monsterthree, column, columnvalue, cardtype, sumtype)
+  def sum_of_cards(player, column, columnvalue, cardtype, sumtype)
     # eg where(bad_against:fire, type=enemy_monster.element).sum(bad_against_value)
-    monsterone_sum = monsterone.cards.where("#{column}=#{columnvalue} AND type='#{cardtype}'").sum(sumtype)
-    monstertwo_sum = monstertwo.cards.where("#{column}=#{columnvalue} AND type='#{cardtype}'").sum(sumtype)
-    monsterthree_sum = monsterthree.cards.where("#{column}=#{columnvalue} AND type='#{cardtype}'").sum(sumtype)
+    monsterone_sum = player.monsterone.cards.where("#{column}=#{columnvalue} AND type='#{cardtype}'").sum(sumtype)
+    monstertwo_sum = player.monstertwo.cards.where("#{column}=#{columnvalue} AND type='#{cardtype}'").sum(sumtype)
+    monsterthree_sum = player.monsterthree.cards.where("#{column}=#{columnvalue} AND type='#{cardtype}'").sum(sumtype)
 
     monsterone_sum + monstertwo_sum + monsterthree_sum
   end
