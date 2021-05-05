@@ -19,7 +19,9 @@ class GameChannel < ApplicationCable::Channel
   end
 
   def flee
-    output = Gameboard.flee(@gameboard.reload, current_user)
+    return unless validate_user
+
+    output = Gameboard.flee(@gameboard, current_user)
     broadcast_to(@gameboard, { type: FLEE, params: output })
 
     @gameboard.centercard.ingamedeck&.update!(cardable: @gameboard.graveyard)
@@ -118,6 +120,8 @@ class GameChannel < ApplicationCable::Channel
   end
 
   def attack
+    return unless validate_user
+
     result = Gameboard.attack(@gameboard.reload)
 
     if result[:result]
@@ -252,10 +256,8 @@ class GameChannel < ApplicationCable::Channel
     helping_player_id = helping_player.id
     @gameboard = @gameboard.reload
 
-    unless current_user.player == @gameboard.current_player
-      PlayerChannel.broadcast_to(current_user, { type: 'ERROR', params: { message: "It's not your round, you can't ask for help..." } })
-      return
-    end
+    return unless validate_user
+
     if @gameboard.asked_help
       PlayerChannel.broadcast_to(current_user, { type: 'ERROR', params: { message: 'You already asked for help...' } })
       return
@@ -350,6 +352,14 @@ class GameChannel < ApplicationCable::Channel
     Cursecard.handlecurse(params, @gameboard, current_user)
     PlayerChannel.broadcast_to(current_user, { type: 'HANDCARD_UPDATE', params: { handcards: Gameboard.render_cards_array(player.handcard.ingamedecks) } })
     broadcast_to(@gameboard, { type: BOARD_UPDATE, params: Gameboard.broadcast_game_board(@gameboard) })
+  end
+
+  def validate_user
+    if current_user.player != @gameboard.current_player
+      PlayerChannel.broadcast_error(current_user, "You can't do that, it's not your turn...")
+      return false
+    end
+    true
   end
 
   def develop_add_buff_card
