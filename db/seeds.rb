@@ -649,7 +649,7 @@ if ENV['cards']
   curse8 = Cursecard.create!(
     title: 'Is this really bad?',
     description: '<p>The monsters attack gets doubled but gives double the rewards!</p>',
-    image: '/icon/Curse.png',
+    image: '/cardeons/cards/icons/curse.png',
     action: 'double_attack_double_reward',
     draw_chance: 6,
     atk_points: 0
