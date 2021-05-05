@@ -19,7 +19,7 @@ class GameChannel < ApplicationCable::Channel
   end
 
   def flee
-    validate_user ? nil : return
+    return unless validate_user
 
     output = Gameboard.flee(@gameboard, current_user)
     broadcast_to(@gameboard, { type: FLEE, params: output })
@@ -121,7 +121,7 @@ class GameChannel < ApplicationCable::Channel
   end
 
   def attack
-    validate_user ? nil : return
+    return unless validate_user
 
     result = Gameboard.attack(@gameboard)
 
@@ -243,7 +243,8 @@ class GameChannel < ApplicationCable::Channel
     helping_player_id = helping_player.id
     @gameboard = @gameboard.reload
 
-    validate_user ? nil : return
+    return unless validate_user
+
     if @gameboard.asked_help
       PlayerChannel.broadcast_to(current_user, { type: 'ERROR', params: { message: 'You already asked for help...' } })
       return
@@ -342,7 +343,7 @@ class GameChannel < ApplicationCable::Channel
 
   def validate_user
     if current_user.player != @gameboard.current_player
-      PlayerChannel.broadcast_to(current_user, { type: 'ERROR', params: { message: "You can't do that, it's not your turn..." } })
+      PlayerChannel.broadcast_error(current_user, "You can't do that, it's not your turn...")
       return false
     end
     true
