@@ -32,6 +32,7 @@ services:
       RAILS_ENV: production
       SECRET_KEY_BASE: test
       ENC_KEY: test
+      DEV_TOOL_ENABLED: enabled
     ports:
       - 3000:3000
     depends_on:

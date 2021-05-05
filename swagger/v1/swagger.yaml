@@ -133,13 +133,9 @@ paths:
                             type: string
                           bad_against_value:
                             type: string
-                          element_modifier:
-                            type: string
                           atk_points:
                             type: string
                           item_category:
-                            type: string
-                          has_combination:
                             type: string
                           level_amount:
                             type: string
@@ -199,13 +195,9 @@ paths:
                           type: string
                         bad_against_value:
                           type: string
-                        element_modifier:
-                          type: string
                         atk_points:
                           type: string
                         item_category:
-                          type: string
-                        has_combination:
                           type: string
                         level_amount:
                           type: string

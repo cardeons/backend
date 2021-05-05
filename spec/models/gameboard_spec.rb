@@ -26,17 +26,12 @@ RSpec.describe Gameboard, type: :model do
       action: 'MyString',
       draw_chance: 1,
       level: 1,
-      element: 'MyString',
       bad_things: 'MyString',
       rewards_treasure: 'MyString',
-      good_against: 'MyString',
-      bad_against: 'MyString',
       good_against_value: 1,
       bad_against_value: 1,
-      element_modifier: 1,
       atk_points: 1,
       item_category: 'MyString',
-      has_combination: 1,
       level_amount: 1
     )
 
@@ -262,5 +257,106 @@ RSpec.describe Gameboard, type: :model do
     expect(player.playercurse.ingamedecks.count).to eql(4)
     Gameboard.get_next_player(gameboards(:gameboardFourPlayers))
     expect(player.playercurse.ingamedecks.count).to eql(1)
+  end
+
+  it 'element modifiers are calculated correct' do
+    gameboards(:gameboardFourPlayers).initialize_game_board
+    gameboards(:gameboardFourPlayers).players.each(&:init_player)
+
+    player = gameboards(:gameboardFourPlayers).current_player
+
+    Ingamedeck.create!(gameboard: gameboards(:gameboardFourPlayers), card: cards(:firemonster), cardable: gameboards(:gameboardFourPlayers).centercard)
+    Ingamedeck.create!(gameboard: gameboards(:gameboardFourPlayers), card: cards(:watermonster), cardable: player.monsterone)
+
+    expect(gameboards(:gameboardFourPlayers).calculate_element_modifiers).to eql(
+      {
+        modifier_player: -2,
+        modifier_monster: 3
+      }
+    )
+
+    Ingamedeck.create!(gameboard: gameboards(:gameboardFourPlayers), card: cards(:earthmonster), cardable: player.monstertwo)
+
+    expect(gameboards(:gameboardFourPlayers).calculate_element_modifiers).to eql(
+      {
+        modifier_player: 3,
+        modifier_monster: 3
+      }
+    )
+
+    Ingamedeck.create!(gameboard: gameboards(:gameboardFourPlayers), card: cards(:earthmonster), cardable: player.monsterthree)
+
+    expect(gameboards(:gameboardFourPlayers).calculate_element_modifiers).to eql(
+      {
+        modifier_player: 8,
+        modifier_monster: 3
+      }
+    )
+
+    Ingamedeck.create!(gameboard: gameboards(:gameboardFourPlayers), card: cards(:watermonster), cardable: player.monsterone)
+  end
+
+  it 'element modifier is only counted once if playes has two of the same type' do
+    gameboards(:gameboardFourPlayers).initialize_game_board
+    gameboards(:gameboardFourPlayers).players.each(&:init_player)
+
+    player = gameboards(:gameboardFourPlayers).current_player
+
+    Ingamedeck.create!(gameboard: gameboards(:gameboardFourPlayers), card: cards(:firemonster), cardable: gameboards(:gameboardFourPlayers).centercard)
+    Ingamedeck.create!(gameboard: gameboards(:gameboardFourPlayers), card: cards(:watermonster), cardable: player.monsterone)
+    Ingamedeck.create!(gameboard: gameboards(:gameboardFourPlayers), card: cards(:watermonster), cardable: player.monstertwo)
+
+    expect(gameboards(:gameboardFourPlayers).calculate_element_modifiers).to eql(
+      {
+        modifier_player: -4,
+        modifier_monster: 3
+      }
+    )
+  end
+
+  it 'calculate synergies/element modifiers from monsters and cards' do
+    gameboards(:gameboardFourPlayers).initialize_game_board
+    gameboards(:gameboardFourPlayers).players.each(&:init_player)
+
+    player = gameboards(:gameboardFourPlayers).current_player
+
+    Ingamedeck.create!(gameboard: gameboards(:gameboardFourPlayers), card: cards(:goodAgainstBullMonster), cardable: gameboards(:gameboardFourPlayers).centercard)
+    Ingamedeck.create!(gameboard: gameboards(:gameboardFourPlayers), card: cards(:bullMonster), cardable: player.monsterone)
+    # synergies on enemy monster is only coutned once
+    Ingamedeck.create!(gameboard: gameboards(:gameboardFourPlayers), card: cards(:bullMonster), cardable: player.monstertwo)
+
+    expect(gameboards(:gameboardFourPlayers).calculate_all_modifiers).to eql(
+      {
+        bad_against: 0,
+        good_against: 0,
+        synergy_player: 0,
+        synergy_monster: 5
+      }
+    )
+
+    Ingamedeck.create!(gameboard: gameboards(:gameboardFourPlayers), card: cards(:goodAgainstBoar), cardable: player.monsterthree)
+
+    expect(gameboards(:gameboardFourPlayers).calculate_all_modifiers).to eql(
+      {
+        bad_against: 0,
+        good_against: 0,
+        synergy_player: 10,
+        synergy_monster: 5
+      }
+    )
+
+    # add two items that are good against water(both +10)
+    Ingamedeck.create!(gameboard: gameboards(:gameboardFourPlayers), card: cards(:itemGoodAgainstWater), cardable: player.monsterone)
+    Ingamedeck.create!(gameboard: gameboards(:gameboardFourPlayers), card: cards(:itemGoodAgainstWater), cardable: player.monsterone)
+    Ingamedeck.create!(gameboard: gameboards(:gameboardFourPlayers), card: cards(:itemBadAgainstWater), cardable: player.monsterone)
+
+    expect(gameboards(:gameboardFourPlayers).calculate_all_modifiers).to eql(
+      {
+        bad_against: 10,
+        good_against: 40,
+        synergy_player: 10,
+        synergy_monster: 5
+      }
+    )
   end
 end
