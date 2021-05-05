@@ -358,29 +358,17 @@ class Gameboard < ApplicationRecord
   def calculate_all_modifiers
     monstercard = centercard.card
 
-    # select all item cards that are good against the current monster
-    good_against_cards_monster_one = current_player.monsterone.cards.where(good_against: monstercard.element, type: 'Itemcard').sum(:good_against_value)
-    good_against_cards_monster_two = current_player.monstertwo.cards.where(good_against: monstercard.element, type: 'Itemcard').sum(:good_against_value)
-    good_against_cards_monster_three = current_player.monsterthree.cards.where(good_against: monstercard.element, type: 'Itemcard').sum(:good_against_value)
+    monsterone = current_player.monsterone
+    monstertwo = current_player.monstertwo
+    monsterthree = current_player.monsterthree
 
-    good_against_sum = good_against_cards_monster_one + good_against_cards_monster_two + good_against_cards_monster_three
+    good_against_sum = sum_of_cards(monsterone, monstertwo, monsterthree, 'good_against', monstercard.read_attribute_before_type_cast('element'), 'Itemcard', 'good_against_value')
 
-    # select all item cards that are good against the current monster
-    bad_against_cards_monster_one = current_player.monsterone.cards.where(bad_against: monstercard.element, type: 'Itemcard').sum(:bad_against_value)
-    bad_against_cards_monster_two = current_player.monstertwo.cards.where(bad_against: monstercard.element, type: 'Itemcard').sum(:bad_against_value)
-    bad_against_cards_monster_three = current_player.monsterthree.cards.where(bad_against: monstercard.element, type: 'Itemcard').sum(:bad_against_value)
-
-    bad_against_sum = bad_against_cards_monster_one + bad_against_cards_monster_two + bad_against_cards_monster_three
+    bad_against_sum = sum_of_cards(monsterone, monstertwo, monsterthree, 'bad_against', monstercard.read_attribute_before_type_cast('element'), 'Itemcard', 'bad_against_value')
 
     synergy_player_sum = 0
     # calc synergy Values of Player Monster
-    if monstercard.animal
-      synergy_monsterone = current_player.monsterone.cards.where(synergy_type: monstercard.animal, type: 'Monstercard').sum(:synergy_value)
-      synergy_monstertwo = current_player.monstertwo.cards.where(synergy_type: monstercard.animal, type: 'Monstercard').sum(:synergy_value)
-      synergy_monsterthree = current_player.monsterthree.cards.where(synergy_type: monstercard.animal, type: 'Monstercard').sum(:synergy_value)
-
-      synergy_player_sum = synergy_monsterone + synergy_monstertwo + synergy_monsterthree
-    end
+    synergy_player_sum = sum_of_cards(monsterone, monstertwo, monsterthree, 'synergy_type', monstercard.read_attribute_before_type_cast('animal'), 'Monstercard', 'synergy_value') if monstercard.animal
 
     monsterone_card = current_player.monsterone.cards.find_by('type=?', 'Monstercard')
     monstertwo_card = current_player.monstertwo.cards.find_by('type=?', 'Monstercard')
@@ -393,5 +381,16 @@ class Gameboard < ApplicationRecord
     end
 
     { bad_against: bad_against_sum, good_against: good_against_sum, synergy_player: synergy_player_sum, synergy_monster: synergy_monster_sum }
+  end
+
+  private
+
+  def sum_of_cards(monsterone, monstertwo, monsterthree, column, columnvalue, cardtype, sumtype)
+    # eg where(bad_against:fire, type=enemy_monster.element).sum(bad_against_value)
+    monsterone_sum = monsterone.cards.where("#{column}=#{columnvalue} AND type='#{cardtype}'").sum(sumtype)
+    monstertwo_sum = monstertwo.cards.where("#{column}=#{columnvalue} AND type='#{cardtype}'").sum(sumtype)
+    monsterthree_sum = monsterthree.cards.where("#{column}=#{columnvalue} AND type='#{cardtype}'").sum(sumtype)
+
+    monsterone_sum + monstertwo_sum + monsterthree_sum
   end
 end
