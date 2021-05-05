@@ -11,7 +11,7 @@ class Player < ApplicationRecord
   belongs_to :user
   validates_uniqueness_of :user_id
 
-  def init_player(params = {})
+  def init_player(_params = {})
     Inventory.find_or_create_by!(player: self)
     Monsterone.find_or_create_by!(player: self)
     Monstertwo.find_or_create_by!(player: self)
@@ -22,9 +22,9 @@ class Player < ApplicationRecord
 
     # add the monsters from the player to his handcards
     # TODO: Check if player actually posesses these cards
-    Ingamedeck.create(card_id: params['monsterone'], gameboard: gameboard, cardable: handcard) if params['monsterone']
-    Ingamedeck.create(card_id: params['monstertwo'], gameboard: gameboard, cardable: handcard) if params['monstertwo']
-    Ingamedeck.create(card_id: params['monsterthree'], gameboard: gameboard, cardable: handcard) if params['monsterthree']
+    Ingamedeck.create(card_id: user.monsterone, gameboard: gameboard, cardable: handcard) unless user.monsterone.blank?
+    Ingamedeck.create(card_id: user.monstertwo, gameboard: gameboard, cardable: handcard) unless user.monstertwo.blank?
+    Ingamedeck.create(card_id: user.monsterthree, gameboard: gameboard, cardable: handcard) unless user.monsterthree.blank?
   end
 
   def self.draw_five_cards(player)

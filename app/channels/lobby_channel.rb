@@ -28,6 +28,18 @@ class LobbyChannel < ApplicationCable::Channel
     FriendlistChannel.broadcast_to(friend, { type: 'GAME_INVITE', params: { inviter: current_user.id, inviter_name: current_user.name } })
   end
 
+  def add_monster(data)
+    current_user.monsterone.blank? && current_user.update!(monsterone: data['monster_id']) && return
+    current_user.monstertwo.blank? && current_user.update!(monstertwo: data['monster_id']) && return
+    current_user.monsterthree.blank? && current_user.update!(monsterthree: data['monster_id']) && return
+  end
+
+  def remove_monster(data)
+    current_user.monsterone == data['monster_id'] && current_user.update!(monsterone: nil) && return
+    current_user.monstertwo == data['monster_id'] && current_user.update!(monstertwo: nil) && return
+    current_user.monsterthree == data['monster_id'] && current_user.update!(monsterthree: nil) && return
+  end
+
   def start_lobby_queue(data)
     lobby = current_user.lobby
 
@@ -43,7 +55,7 @@ class LobbyChannel < ApplicationCable::Channel
 
       player = user.player
 
-      player.init_player(data)
+      player.init_player(user)
 
       # player.init_player(params)
       # gameboard = current_user.player.gameboard

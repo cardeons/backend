@@ -78,15 +78,88 @@ RSpec.describe LobbyChannel, type: :channel do
 
   it 'adds monsters to handcards if player brought some' do
     subscribe initiate: true
-    perform('start_lobby_queue', {
-              monsterone: 1,
-              monstertwo: 2,
-              monsterthree: 3
+    perform('add_monster', {
+              monster_id: 1
             })
+    perform('add_monster', {
+              monster_id: 2
+            })
+    perform('add_monster', {
+              monster_id: 3
+            })
+    perform('start_lobby_queue')
 
     expect(User.find(users(:one).id).player.handcard.cards.find(1)).to be_truthy
     expect(User.find(users(:one).id).player.handcard.cards.find(2)).to be_truthy
     expect(User.find(users(:one).id).player.handcard.cards.find(3)).to be_truthy
+  end
+
+  it 'adds monsters to handcards if multiple players brought some' do
+    subscribe initiate: true
+    perform('add_monster', {
+              monster_id: 1
+            })
+    perform('add_monster', {
+              monster_id: 2
+            })
+    perform('add_monster', {
+              monster_id: 3
+            })
+    stub_connection current_user: users(:two)
+    subscribe inquirer: users(:one).id
+    perform('add_monster', {
+              monster_id: 2
+            })
+    perform('start_lobby_queue')
+
+    expect(User.find(users(:one).id).player.handcard.cards.find(1)).to be_truthy
+    expect(User.find(users(:one).id).player.handcard.cards.find(2)).to be_truthy
+    expect(User.find(users(:two).id).player.handcard.cards.find(2)).to be_truthy
+    expect(User.find(users(:one).id).player.handcard.cards.find(3)).to be_truthy
+  end
+
+  it 'removes monsters from handcards if players deletes some' do
+    subscribe initiate: true
+    perform('add_monster', {
+              monster_id: 1
+            })
+    perform('add_monster', {
+              monster_id: 2
+            })
+    perform('add_monster', {
+              monster_id: 3
+            })
+    perform('remove_monster', {
+              monster_id: 3
+            })
+
+    perform('start_lobby_queue')
+
+    expect(User.find(users(:one).id).player.handcard.cards.find(1)).to be_truthy
+    expect(User.find(users(:one).id).player.handcard.cards.find(2)).to be_truthy
+    expect(User.find(users(:one).id).player.handcard.cards.count).to eq 2
+  end
+
+  it 'removes monsters from handcards if players deletes some' do
+    subscribe initiate: true
+    perform('add_monster', {
+              monster_id: 1
+            })
+    perform('add_monster', {
+              monster_id: 2
+            })
+    perform('add_monster', {
+              monster_id: 3
+            })
+    perform('remove_monster', {
+              monster_id: 2
+            })
+
+    perform('start_lobby_queue')
+
+    expect(User.find(users(:one).id).player.handcard.cards.find(1)).to be_truthy
+    expect(User.find(users(:one).id).player.handcard.cards.find(3)).to be_truthy
+    expect(User.find(users(:one).id).player.handcard.cards.count).to eq 2
   end
 
   it 'gameboard got initalized ' do
@@ -213,7 +286,7 @@ RSpec.describe LobbyChannel, type: :channel do
     unsubscribe
 
     stub_connection current_user: users(:usernorbert)
-    subscribe inquirer: users(:one).id
+    subscribe initiate: false, inquirer: users(:one).id
     unsubscribe
 
     stub_connection current_user: users(:two)
