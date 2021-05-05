@@ -12,4 +12,8 @@ class User < ApplicationRecord
   has_and_belongs_to_many :cards
 
   has_one :player
+  has_many :friendships, dependent: :destroy
+  has_many :friends, through: :friendships, class_name: 'User'
+
+  enum status: %i[online offline ingame]
 end

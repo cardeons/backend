@@ -10,7 +10,8 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_04_21_153318) do
+ActiveRecord::Schema.define(version: 2021_05_04_100902) do
+
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -22,21 +23,22 @@ ActiveRecord::Schema.define(version: 2021_04_21_153318) do
     t.string "action"
     t.integer "draw_chance"
     t.integer "level"
-    t.string "element"
+    t.decimal "element"
     t.string "bad_things"
     t.string "rewards_treasure"
-    t.string "good_against"
-    t.string "bad_against"
+    t.decimal "good_against"
+    t.decimal "bad_against"
     t.integer "good_against_value"
     t.integer "bad_against_value"
-    t.integer "element_modifier"
     t.integer "atk_points"
     t.string "item_category"
-    t.integer "has_combination"
     t.integer "level_amount"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
     t.string "type"
+    t.integer "animal"
+    t.integer "synergy_type"
+    t.integer "synergy_value", default: 0
   end
 
   create_table "cards_users", id: false, force: :cascade do |t|
@@ -49,6 +51,16 @@ ActiveRecord::Schema.define(version: 2021_04_21_153318) do
     t.datetime "updated_at", precision: 6, null: false
     t.bigint "gameboard_id", null: false
     t.index ["gameboard_id"], name: "index_centercards_on_gameboard_id"
+  end
+
+  create_table "friendships", force: :cascade do |t|
+    t.bigint "user_id", null: false
+    t.bigint "friend_id"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.boolean "pending", default: true
+    t.bigint "inquirer_id"
+    t.index ["user_id"], name: "index_friendships_on_user_id"
   end
 
   create_table "gameboards", force: :cascade do |t|
@@ -166,9 +178,11 @@ ActiveRecord::Schema.define(version: 2021_04_21_153318) do
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
     t.string "name"
+    t.integer "status"
   end
 
   add_foreign_key "centercards", "gameboards"
+  add_foreign_key "friendships", "users"
   add_foreign_key "graveyards", "gameboards"
   add_foreign_key "handcards", "players"
   add_foreign_key "ingamedecks", "cards"

@@ -44,3 +44,5 @@ Style/GuardClause:
 
 AllCops:
   SuggestExtensions: false
+  Excludes:
+    - db/**

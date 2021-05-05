@@ -309,16 +309,88 @@ class Gameboard < ApplicationRecord
   end
 
   def self.clear_buffcards(gameboard)
-    if gameboard.interceptcard
-      gameboard.interceptcard.ingamedecks.each do |card|
-        card.update!(cardable: gameboard.graveyard)
+    gameboard&.interceptcard&.ingamedecks&.each do |card|
+      card.update!(cardable: gameboard.graveyard)
+    end
+
+    gameboard&.playerinterceptcard&.ingamedecks&.each do |card|
+      card.update!(cardable: gameboard.graveyard)
+    end
+  end
+
+  def calculate_element_modifiers
+    monstercard = centercard.card
+
+    modifier_player = 0
+    modifier_monster = 0
+
+    # modifiers are 0 if there is no centercard
+    return { modifier_player: modifier_player, modifier_monster: modifier_monster } unless monstercard
+
+    monsterone_card = current_player.monsterone.cards.find_by('type=?', 'Monstercard')
+    monstertwo_card = current_player.monstertwo.cards.find_by('type=?', 'Monstercard')
+    monsterthree_card = current_player.monsterthree.cards.find_by('type=?', 'Monstercard')
+
+    if monsterone_card
+      modifier_player += monsterone_card.calculate_self_element_modifiers(monstercard)
+      modifier_monster += monstercard.calculate_self_element_modifiers(monsterone_card)
+    end
+
+    if monstertwo_card
+      modifier_player += monstertwo_card&.calculate_self_element_modifiers(monstercard)
+
+      # modifiers are only applied to monster if they have a diferent element than the other usermonster
+      modifier_monster += monstercard.calculate_self_element_modifiers(monstertwo_card) if monsterone_card&.element != monstertwo_card&.element
+    end
+
+    if monsterthree_card
+      modifier_player += monsterthree_card.calculate_self_element_modifiers(monstercard)
+
+      # modifiers are only applied to monster if they have a diferent element than the other usermonster
+      if monsterone_card&.element != monsterthree_card&.element && monstertwo_card&.element != monsterthree_card&.element
+        modifier_monster += monstercard.calculate_self_element_modifiers(monsterthree_card)
       end
     end
 
-    if gameboard.playerinterceptcard
-      gameboard.playerinterceptcard.ingamedecks.each do |card|
-        card.update!(cardable: gameboard.graveyard)
-      end
+    { modifier_player: modifier_player, modifier_monster: modifier_monster }
+  end
+
+  def calculate_all_modifiers
+    monstercard = centercard.card
+
+    monsterone = current_player.monsterone
+    monstertwo = current_player.monstertwo
+    monsterthree = current_player.monsterthree
+
+    good_against_sum = sum_of_cards(monsterone, monstertwo, monsterthree, 'good_against', monstercard.read_attribute_before_type_cast('element'), 'Itemcard', 'good_against_value')
+
+    bad_against_sum = sum_of_cards(monsterone, monstertwo, monsterthree, 'bad_against', monstercard.read_attribute_before_type_cast('element'), 'Itemcard', 'bad_against_value')
+
+    synergy_player_sum = 0
+    # calc synergy Values of Player Monster
+    synergy_player_sum = sum_of_cards(monsterone, monstertwo, monsterthree, 'synergy_type', monstercard.read_attribute_before_type_cast('animal'), 'Monstercard', 'synergy_value') if monstercard.animal
+
+    monsterone_card = current_player.monsterone.cards.find_by('type=?', 'Monstercard')
+    monstertwo_card = current_player.monstertwo.cards.find_by('type=?', 'Monstercard')
+    monsterthree_card = current_player.monsterthree.cards.find_by('type=?', 'Monstercard')
+
+    # calc synergy Values of Center Monster
+    synergy_monster_sum = 0
+    if monstercard.synergy_type && (monsterone_card&.animal == monstercard.synergy_type || monstertwo_card&.animal == monstercard.synergy_type || monsterthree_card&.animal == monstercard.synergy_type)
+      synergy_monster_sum = monstercard.synergy_value
     end
+
+    { bad_against: bad_against_sum, good_against: good_against_sum, synergy_player: synergy_player_sum, synergy_monster: synergy_monster_sum }
+  end
+
+  private
+
+  def sum_of_cards(monsterone, monstertwo, monsterthree, column, columnvalue, cardtype, sumtype)
+    # eg where(bad_against:fire, type=enemy_monster.element).sum(bad_against_value)
+    monsterone_sum = monsterone.cards.where("#{column}=#{columnvalue} AND type='#{cardtype}'").sum(sumtype)
+    monstertwo_sum = monstertwo.cards.where("#{column}=#{columnvalue} AND type='#{cardtype}'").sum(sumtype)
+    monsterthree_sum = monsterthree.cards.where("#{column}=#{columnvalue} AND type='#{cardtype}'").sum(sumtype)
+
+    monsterone_sum + monstertwo_sum + monsterthree_sum
   end
 end
