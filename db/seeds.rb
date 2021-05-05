@@ -27,9 +27,9 @@ end
 # #bear
 
 if ENV['cards']
+  Gameboard.all.destroy_all
   # delete all cards
   Card.all.destroy_all
-  Gameboard.all.destroy_all
   # reset pk counter :)
   ActiveRecord::Base.connection.reset_pk_sequence!('cards')
   bear_fire = Monstercard.create!(
