@@ -24,6 +24,10 @@
       <th>Item category</th>
       <th>Has combination</th>
       <th>Level amount</th>
+      <th>Synergy type</th>
+      <th>Synergy value</th>
+      <th>Animal</th>
+
       <th colspan="3"></th>
     </tr>
   </thead>
@@ -48,6 +52,9 @@
         <td><%= card.atk_points %></td>
         <td><%= card.item_category %></td>
         <td><%= card.level_amount %></td>
+        <td><%= card.synergy_type %></td>
+        <td><%= card.synergy_value %></td>
+        <td><%= card.animal %></td>
         <td><%= link_to 'Edit', edit_card_path(card) %></td>
       </tr>
     <% end %>
