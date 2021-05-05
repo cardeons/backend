@@ -20,7 +20,7 @@ class CreateCards < ActiveRecord::Migration[6.1]
       t.integer :atk_points
       t.string :item_category
       t.integer :level_amount
-
+      t.integer :has_combination
       t.timestamps
     end
   end
