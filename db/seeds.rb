@@ -691,14 +691,14 @@ if ENV['cards']
     action: 'dodge_monster',
     atk_points: 0
   )
-
-  buffcard5 = Buffcard.create!(
+  
+  levelcard2 = Levelcard.create!(
     draw_chance: 6,
     title: 'Pot of Greed',
     description: '<p>Time for a duel: Draw two additional cards!</p>',
     image: '/cardeons/cards/icons/buff.png',
     action: 'draw_two_cards',
-    atk_points: 0
+    level_amount: 0
   )
 
   buffcard6 = Buffcard.create!(

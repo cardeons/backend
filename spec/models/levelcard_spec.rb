@@ -79,4 +79,17 @@ RSpec.describe Levelcard, type: :model do
     Levelcard.activate(levelcard, current_player)
     expect(current_player.level).to eql(4)
   end
+
+  it 'gain 2 cards if pot of greed levelcard is activated' do
+    gameboards(:gameboardFourPlayers).initialize_game_board
+    gameboards(:gameboardFourPlayers).players.each(&:init_player)
+
+    current_player = gameboards(:gameboardFourPlayers).current_player
+    current_player.update(level: 4)
+    levelcard = Ingamedeck.create!(gameboard: gameboards(:gameboardFourPlayers), card: cards(:buffcard4), cardable: current_player.playercurse)
+
+    expect(current_player.handcard.ingamedecks.size).to eql(5)
+    Levelcard.activate(levelcard, current_player)
+    expect(current_player.handcard.ingamedecks.size).to eql(7)
+  end
 end
