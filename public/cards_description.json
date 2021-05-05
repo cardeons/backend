@@ -1,24 +1,22 @@
 {
-    "karte_allgemein":  {
+    "karte_allgemein": {
         "title": "name der Karte",
         "description": "Beschreibung der Karte",
         "image": "Bildurl der Karte",
         "action": "Funktion der Karte",
         "draw_chance": "Wie wahrscheinlich ist es dass ich die Karte ziehe?",
         "level": "Level der Karte",
-        "element":"Element der Karte",
-        "bad_things":"Beschreibung der schlimmen Dinge",
-        "rewards_treasure":"Menge an Schätzen",
-        "good_against":"Effektiv gegen dieses Element",
-        "bad_against":"Schlecht gegen dieses Element",
-        "good_against_value":"um wie viel besser gegen good_against element",
-        "bad_against_value":"um wie viel schlechter gegen bad_against element",
-        "element_modifier":"um wie viel besser wenn richtiges Element (items)",
+        "element": "Element der Karte",
+        "bad_things": "Beschreibung der schlimmen Dinge",
+        "rewards_treasure": "Menge an Schätzen",
+        "good_against": "Effektiv gegen dieses Element",
+        "bad_against": "Schlecht gegen dieses Element",
+        "good_against_value": "um wie viel besser gegen good_against element",
+        "bad_against_value": "um wie viel schlechter gegen bad_against element",
         "atk_points": "wie viel Attacke",
-        "item_category":"Welche Itemkategorie",
-        "has_combination":"mit wem eine Kombination?",
-        "level_amount":"wie viele Levels bei Sieg?",
-        "type":"Kartentyp"
+        "item_category": "Welche Itemkategorie",
+        "level_amount": "wie viele Levels bei Sieg?",
+        "type": "Kartentyp"
     },
     "monsterkarte": {
         "title": "name der Karte",
@@ -27,16 +25,16 @@
         "action": "Funktion die ausgeführt wird, wenn die schlimmen Dinge eintreten",
         "draw_chance": "Wie wahrscheinlich ist es dass ich die Karte ziehe?",
         "level": "Level der Karte",
-        "element":"Element der Karte",
-        "bad_things":"Beschreibung der schlimmen Dinge",
-        "rewards_treasure":"Menge an Schätzen",
-        "good_against":"Effektiv gegen dieses Element",
-        "bad_against":"Schlecht gegen dieses Element",
-        "good_against_value":"um wie viel besser gegen good_against element",
-        "bad_against_value":"um wie viel schlechter gegen bad_against element",
+        "element": "Element der Karte",
+        "bad_things": "Beschreibung der schlimmen Dinge",
+        "rewards_treasure": "Menge an Schätzen",
+        "good_against": "Effektiv gegen dieses Element",
+        "bad_against": "Schlecht gegen dieses Element",
+        "good_against_value": "um wie viel besser gegen good_against element",
+        "bad_against_value": "um wie viel schlechter gegen bad_against element",
         "atk_points": "wie viel Attacke",
-        "level_amount":"wie viele Levels bei Sieg?",
-        "type":"Monstercard"
+        "level_amount": "wie viele Levels bei Sieg?",
+        "type": "Monstercard"
     },
     "bosskarte": {
         "title": "name der Karte",
@@ -45,16 +43,16 @@
         "action": "Funktion die ausgeführt wird, wenn die schlimmen Dinge eintreten",
         "draw_chance": "Wie wahrscheinlich ist es dass ich die Karte ziehe?",
         "level": "Level der Karte",
-        "element":"Element der Karte",
-        "bad_things":"Beschreibung der schlimmen Dinge",
-        "rewards_treasure":"Menge an Schätzen",
-        "good_against":"Effektiv gegen dieses Element",
-        "bad_against":"Schlecht gegen dieses Element",
-        "good_against_value":"um wie viel besser gegen good_against element",
-        "bad_against_value":"um wie viel schlechter gegen bad_against element",
+        "element": "Element der Karte",
+        "bad_things": "Beschreibung der schlimmen Dinge",
+        "rewards_treasure": "Menge an Schätzen",
+        "good_against": "Effektiv gegen dieses Element",
+        "bad_against": "Schlecht gegen dieses Element",
+        "good_against_value": "um wie viel besser gegen good_against element",
+        "bad_against_value": "um wie viel schlechter gegen bad_against element",
         "atk_points": "wie viel Attacke",
-        "level_amount":"wie viele Levels bei Sieg?",
-        "type":"Bosscard"
+        "level_amount": "wie viele Levels bei Sieg?",
+        "type": "Bosscard"
     },
     "buffkarte": {
         "title": "name der Karte",
@@ -63,7 +61,7 @@
         "action": "Funktion die ausgeführt wird, wenn der Buff eingesetzt wird",
         "draw_chance": "Wie wahrscheinlich ist es dass ich die Karte ziehe?",
         "atk_points": "wie viel bufft es?",
-        "type":"Buffcard"
+        "type": "Buffcard"
     },
     "cursekarte": {
         "title": "name der Karte",
@@ -72,7 +70,7 @@
         "action": "Funktion die ausgeführt wird, wenn der Fluch eingesetzt wird",
         "draw_chance": "Wie wahrscheinlich ist es dass ich die Karte ziehe?",
         "atk_points": "wie viel atk verlierst du? wenn es eine atk - karte ist",
-        "type":"Cursecard"
+        "type": "Cursecard"
     },
     "itemkarte": {
         "title": "name der Karte",
@@ -80,18 +78,16 @@
         "image": "Bildurl der Karte",
         "action": "Funktion die ausgeführt wird, wenn die schlimmen Dinge eintreten",
         "draw_chance": "Wie wahrscheinlich ist es dass ich die Karte ziehe?",
-        "element":"Element der Karte",
-        "element_modifier":"um wie viel besser wenn Monster das gleiche Element hat wie die Karte",
+        "element": "Element der Karte",
         "atk_points": "wie viel Attacke gibt es dem Monster dazu",
-        "has_combination":"id von mit wem eine Kombination?",
-        "item_category":"Welche Itemkategorie",
-        "type":"Itemcard"
+        "item_category": "Welche Itemkategorie",
+        "type": "Itemcard"
     },
     "levelkarte": {
         "title": "name der Karte",
         "description": "Beschreibung der Karte",
         "image": "Bildurl der Karte",
         "action": "Funktion die ausgeführt wird, wenn die Karte eingesetzt wird",
-        "type":"Levelcard"
+        "type": "Levelcard"
     }
 }
