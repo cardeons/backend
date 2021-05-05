@@ -55,11 +55,45 @@ paths:
               required:
               - email
               - password
-  "/users.json":
+  "/search/{search}.json":
     get:
-      summary: list all the cards
+      summary: list all users with search
       tags:
       - User
+      parameters:
+      - name: search
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: successful
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: string
+                        name:
+                          type: string
+  "/users/{id}/inventory.json":
+    get:
+      summary: list all cards of user
+      tags:
+      - Inventory
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
       responses:
         '200':
           description: successful
@@ -133,13 +167,9 @@ paths:
                             type: string
                           bad_against_value:
                             type: string
-                          element_modifier:
-                            type: string
                           atk_points:
                             type: string
                           item_category:
-                            type: string
-                          has_combination:
                             type: string
                           level_amount:
                             type: string
@@ -199,13 +229,9 @@ paths:
                           type: string
                         bad_against_value:
                           type: string
-                        element_modifier:
-                          type: string
                         atk_points:
                           type: string
                         item_category:
-                          type: string
-                        has_combination:
                           type: string
                         level_amount:
                           type: string

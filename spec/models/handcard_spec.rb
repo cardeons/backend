@@ -68,10 +68,8 @@ RSpec.describe Handcard, type: :model do
       action: 'plus_one',
       draw_chance: 13,
       element: 'fire',
-      element_modifier: 2,
       atk_points: 2,
       item_category: 'head',
-      has_combination: false
     )
 
     Handcard.draw_handcards(subject.player.id, subject.player.gameboard)

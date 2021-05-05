@@ -8,10 +8,12 @@ class FriendlistChannel < ApplicationCable::Channel
 
     Friendship.broadcast_friends(current_user)
     Friendship.broadcast_pending_requests(current_user)
+    broadcast_status_to_friends
   end
 
   def unsubscribed
     current_user.update(status: :offline)
+    broadcast_status_to_friends
   end
 
   def send_friend_request(data)
@@ -38,5 +40,11 @@ class FriendlistChannel < ApplicationCable::Channel
 
     Friendship.remove_friend(current_user, inquirer)
     broadcast_to(current_user, { type: 'FRIEND_LOG', params: { message: "You declined a friendrequest from #{inquirer.name}" } })
+  end
+
+  def broadcast_status_to_friends
+    current_user.friends.each do |friend|
+      Friendship.broadcast_friends(friend)
+    end
   end
 end

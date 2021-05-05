@@ -74,10 +74,8 @@ RSpec.describe Monstercard, type: :model do
       action: 'plus_one',
       draw_chance: 13,
       element: 'fire',
-      element_modifier: 2,
       atk_points: 2,
-      item_category: 'head',
-      has_combination: false
+      item_category: 'head'
     )
     gameboard_test = gameboards(:gameboardFourPlayers)
     player1 = players(:playerOne)
@@ -118,10 +116,8 @@ RSpec.describe Monstercard, type: :model do
       action: 'plus_one',
       draw_chance: 13,
       element: 'fire',
-      element_modifier: 2,
       atk_points: 2,
-      item_category: 'head',
-      has_combination: false
+      item_category: 'head'
     )
     gameboard_test = gameboards(:gameboardFourPlayers)
     player1 = players(:playerOne)
@@ -236,10 +232,8 @@ RSpec.describe Monstercard, type: :model do
       action: 'plus_one',
       draw_chance: 13,
       element: 'fire',
-      element_modifier: 2,
       atk_points: 2,
-      item_category: 'head',
-      has_combination: false
+      item_category: 'head'
     )
 
     item2 = Itemcard.create!(
@@ -249,10 +243,8 @@ RSpec.describe Monstercard, type: :model do
       action: 'plus_one',
       draw_chance: 14,
       element: 'fire',
-      element_modifier: 2,
       atk_points: 2,
-      item_category: 'hand_one',
-      has_combination: false
+      item_category: 'hand_one'
     )
     item3 = Itemcard.create!(
       title: 'Hermes shoes',
@@ -261,10 +253,8 @@ RSpec.describe Monstercard, type: :model do
       action: 'plus_3',
       draw_chance: 5,
       element: 'earth',
-      element_modifier: 3,
       atk_points: 4,
-      item_category: 'shoes',
-      has_combination: false
+      item_category: 'shoes'
     )
     item4 = Itemcard.create!(
       title: 'Helmet of Doom',
@@ -273,10 +263,8 @@ RSpec.describe Monstercard, type: :model do
       action: 'plus_one',
       draw_chance: 13,
       element: 'fire',
-      element_modifier: 2,
       atk_points: 2,
-      item_category: 'hand_two',
-      has_combination: false
+      item_category: 'hand_two'
     )
 
     item5 = Itemcard.create!(
@@ -286,10 +274,8 @@ RSpec.describe Monstercard, type: :model do
       action: 'plus_one',
       draw_chance: 14,
       element: 'fire',
-      element_modifier: 2,
       atk_points: 2,
-      item_category: 'none',
-      has_combination: false
+      item_category: 'none'
     )
     item6 = Itemcard.create!(
       title: 'Hermes shoes',
@@ -298,10 +284,8 @@ RSpec.describe Monstercard, type: :model do
       action: 'plus_3',
       draw_chance: 5,
       element: 'earth',
-      element_modifier: 3,
       atk_points: 4,
-      item_category: 'back',
-      has_combination: false
+      item_category: 'back'
     )
 
     gameboard_test = gameboards(:gameboardFourPlayers)
@@ -532,10 +516,8 @@ RSpec.describe Monstercard, type: :model do
       action: 'plus_one',
       draw_chance: 14,
       element: 'fire',
-      element_modifier: 2,
       atk_points: 2,
-      item_category: 'hand',
-      has_combination: false
+      item_category: 'hand'
     )
 
     gameboard_test = gameboards(:gameboardFourPlayers)
@@ -580,10 +562,8 @@ RSpec.describe Monstercard, type: :model do
       action: 'plus_one',
       draw_chance: 14,
       element: 'fire',
-      element_modifier: 2,
       atk_points: 2,
-      item_category: 'hand',
-      has_combination: false
+      item_category: 'hand'
     )
 
     gameboard_test = gameboards(:gameboardFourPlayers)
@@ -603,5 +583,76 @@ RSpec.describe Monstercard, type: :model do
     equip_two = Monstercard.equip_monster({ 'unique_monster_id' => ingamedeck1.id, 'unique_equip_id' => ingamedeck3.id, 'action' => 'equip_monster' }, player1)
     ## attack must be 6 - monster has 14 atk but should be calculated as 1, item 2+2, player 1
     expect(player1.attack).to eql(6)
+  end
+
+  it 'attack points are calculated correctly with synergies on items and items and items and monster' do
+    catfish = Monstercard.create!(
+      title: 'Catfish',
+      description: '<p>HA! You got catfished.</p>',
+      image: '/monster/catfish.png',
+      action: 'lose_level',
+      animal: 'catfish',
+      draw_chance: 5,
+      level: 10,
+      element: 'water',
+      bad_things: '<p><b>Bad things:</b>Getting catfished, really? You should know better. Lose one level.</p>',
+      rewards_treasure: 2,
+      good_against: 'fire',
+      bad_against: 'earth',
+      good_against_value: 3,
+      bad_against_value: 1,
+      atk_points: 14,
+      level_amount: 2
+    )
+
+    item1 = Itemcard.create!(
+      title: 'The things to get things out of the toilet',
+      description: '<p>Disgusting. If I was you, I would not touch it.</p>',
+      image: '/item/poempel.png',
+      action: 'plus_one',
+      draw_chance: 14,
+      element: 'fire',
+      atk_points: 2,
+      item_category: 'hand',
+      synergy_type: 'pizza',
+      synergy_value: 5
+    )
+
+    u1 = User.create!(email: '1@1.at', password: '1', name: '1', password_confirmation: '1')
+    gameboard_test = Gameboard.create!(current_state: 'lobby', player_atk: 5)
+    player1 = Player.create(name: 'Gustav', gameboard: gameboard_test, user: u1)
+
+    Handcard.create(player_id: player1.id)
+    Monsterone.create(player: player1)
+    ingamedeck1 = Ingamedeck.create!(gameboard: gameboard_test, card_id: catfish.id, cardable: player1.monsterone)
+    ingamedeck2 = Ingamedeck.create!(gameboard: gameboard_test, card_id: item1.id, cardable: player1.handcard)
+
+    Monstercard.equip_monster({ 'unique_monster_id' => ingamedeck1.id, 'unique_equip_id' => ingamedeck2.id, 'action' => 'equip_monster' }, player1)
+    ## attack must be 4 - monster has 14 atk but should be calculated as 1, item 2, player 1
+    expect(player1.attack).to eql(4)
+
+    item2 = Itemcard.create!(
+      title: 'Item that has pizza as animal',
+      description: '<p>meh</p>',
+      image: '/item/poempel.png',
+      action: 'plus_one',
+      draw_chance: 14,
+      synergy_type: 'catfish',
+      synergy_value: 3,
+      atk_points: 2,
+      item_category: 'foot',
+      animal: 'pizza'
+    )
+    ingamedeck4 = Ingamedeck.create!(gameboard: gameboard_test, card_id: item2.id, cardable: player1.handcard)
+
+    Monstercard.equip_monster({ 'unique_monster_id' => ingamedeck1.id, 'unique_equip_id' => ingamedeck4.id, 'action' => 'equip_monster' }, player1)
+    # Player is level 1
+    # Item1 gives 2
+    # Monster gives 1
+    # Item2 gives 2
+
+    # synergy item1 und item2 gives 5
+    # synergy monster and item2 gives 3
+    expect(player1.attack).to eql(14)
   end
 end

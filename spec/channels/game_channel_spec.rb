@@ -857,6 +857,8 @@ RSpec.describe GameChannel, type: :channel do
     # set centercard with one level reward because srand always chooses a card with 2
     Ingamedeck.create!(gameboard: gameboards(:gameboardFourPlayers), card: cards(:monstercard9), cardable: gameboards(:gameboardFourPlayers).centercard)
 
+    Ingamedeck.create!(gameboard: gameboards(:gameboardFourPlayers), card: cards(:BrokenMonster), cardable: users(:userFour).player.monsterone)
+
     expect do
       perform('attack', {})
     end.to have_broadcasted_to("game:#{users(:userFour).player.gameboard.to_gid_param}")
@@ -1255,6 +1257,28 @@ RSpec.describe GameChannel, type: :channel do
 
     perform('develop_set_next_player_as_current_player', {})
     expect(gameboards(:gameboardFourPlayers).reload.current_player).to eql(gameboards(:gameboardFourPlayers).players.third)
+  end
+
+  it 'sends an ERROR broadcast if user has already drawn a door card' do
+    gameboards(:gameboardFourPlayers).initialize_game_board
+    gameboards(:gameboardFourPlayers).players.each(&:init_player)
+
+    stub_connection current_user: users(:userFour)
+    subscribe
+
+    expect do
+      perform('draw_door_card', {})
+    end.to have_broadcasted_to("game:#{users(:userFour).player.gameboard.to_gid_param}")
+      .with(
+        hash_including(type: 'BOARD_UPDATE')
+      ).exactly(:once)
+
+    expect do
+      perform('draw_door_card', {})
+    end.to have_broadcasted_to(PlayerChannel.broadcasting_for(connection.current_user))
+      .with(
+        hash_including(type: 'ERROR')
+      ).exactly(:once)
   end
 end
 

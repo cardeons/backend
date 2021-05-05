@@ -83,6 +83,13 @@ class GameChannel < ApplicationCable::Channel
   end
 
   def draw_door_card
+    @gameboard.reload
+    # if intercept phase is already active player should not be able to draw another card
+    if @gameboard.intercept_phase? || @gameboard.intercept_finished?
+      PlayerChannel.broadcast_to(current_user, { type: 'ERROR', params: { message: "You can't draw another card!" } })
+      return
+    end
+
     name = Gameboard.draw_door_card(@gameboard)
 
     start_intercept_phase(@gameboard.reload)
@@ -172,11 +179,11 @@ class GameChannel < ApplicationCable::Channel
 
   def intercept(params)
     @gameboard.reload
-    # params={
-    # action: "intercept",
-    # unique_card_id: 1,
-    # to: 'center_card' | 'current_player'
-    # }
+
+    if @gameboard.centercard.nil?
+      PlayerChannel.broadcast_to(current_user, { type: 'ERROR', params: { message: "There's no card in the center!" } })
+      return
+    end
 
     # intercept shouldn't be possible if it's not the right phase
     return PlayerChannel.broadcast_error(current_user, "You can't intercept right now, it's #{@gameboad.current_state} phase") if !@gameboard.intercept_phase? && !@gameboad.boss_phase?
@@ -195,7 +202,6 @@ class GameChannel < ApplicationCable::Channel
     end
 
     current_user.player.reload
-    @gameboard.reload
 
     case to
     when 'center_card'
