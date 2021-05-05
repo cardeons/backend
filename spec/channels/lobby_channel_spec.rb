@@ -162,6 +162,50 @@ RSpec.describe LobbyChannel, type: :channel do
     expect(User.find(users(:one).id).player.handcard.cards.count).to eq 2
   end
 
+  it 'gameboard got initalized every player has 5 cards even if he brought cards' do
+    stub_connection current_user: users(:one)
+    subscribe initiate: true
+    perform('add_monster', {
+              monster_id: 1
+            })
+    perform('add_monster', {
+              monster_id: 2
+            })
+    perform('add_monster', {
+              monster_id: 3
+            })
+    stub_connection current_user: users(:two)
+    subscribe inquirer: users(:one).id
+    perform('add_monster', {
+              monster_id: 1
+            })
+    perform('add_monster', {
+              monster_id: 2
+            })
+    stub_connection current_user: users(:three)
+    subscribe inquirer: users(:one).id
+    perform('add_monster', {
+              monster_id: 1
+            })
+    stub_connection current_user: users(:four)
+    subscribe inquirer: users(:one).id
+    perform('start_lobby_queue')
+
+    expect(User.find(users(:one).id).player.handcard.cards.find(1)).to be_truthy
+    expect(User.find(users(:one).id).player.handcard.cards.find(2)).to be_truthy
+    expect(User.find(users(:one).id).player.handcard.cards.find(3)).to be_truthy
+
+    expect(User.find(users(:two).id).player.handcard.cards.find(1)).to be_truthy
+    expect(User.find(users(:two).id).player.handcard.cards.find(2)).to be_truthy
+
+    expect(User.find(users(:three).id).player.handcard.cards.find(1)).to be_truthy
+
+    expect(User.find(users(:one).id).player.handcard.cards.count).to eq 5
+    expect(User.find(users(:two).id).player.handcard.cards.count).to eq 5
+    expect(User.find(users(:three).id).player.handcard.cards.count).to eq 5
+    expect(User.find(users(:four).id).player.handcard.cards.count).to eq 5
+  end
+
   it 'gameboard got initalized ' do
     stub_connection current_user: users(:one)
     subscribe initiate: true

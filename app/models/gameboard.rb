@@ -25,9 +25,14 @@ class Gameboard < ApplicationRecord
 
     # pp Player.find(current_player).gameboard
     players.each do |player|
+      lobby_card = 0
+      player.user.monsterone.blank? ? nil : lobby_card += 1
+      player.user.monstertwo.blank? ? nil : lobby_card += 1
+      player.user.monsterthree.blank? ? nil : lobby_card += 1
       Handcard.find_or_create_by!(player_id: player.id) # unless player.handcard
-      Handcard.draw_handcards(player.id, self, 4) unless player.handcard.cards.count >= 5
-      Handcard.draw_one_monster(player.id, self) unless player.handcard.cards.count >= 5
+      Handcard.draw_handcards(player.id, self, 4) unless player.handcard.cards.count >= 5 || lobby_card.positive?
+      Handcard.draw_handcards(player.id, self, 5 - lobby_card) if player.handcard.cards.count <= 5 && lobby_card.positive?
+      Handcard.draw_one_monster(player.id, self) unless player.handcard.cards.count >= 5 || lobby_card.positive?
     end
   end
 
