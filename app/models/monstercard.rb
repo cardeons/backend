@@ -154,6 +154,10 @@ class Monstercard < Card
     end
   end
 
+  def self.broadcast_gamelog(msg, gameboard)
+    GameChannel.broadcast_to(gameboard, { type: 'ERROR_LOG', params: { date: Time.new, message: msg } })
+  end
+
   def self.bad_things(ingamedeck, gameboard)
     player = gameboard.current_player
 
@@ -161,19 +165,19 @@ class Monstercard < Card
     when 'lose_item_hand'
       lose_item_by_category(player, gameboard, 'hand')
       msg = "#{player.name} lost one hand item because of #{ingamedeck.card.title}s bad things."
-      Cursecard.broadcast_gamelog(msg, gameboard)
+      Monstercard.broadcast_gamelog(msg, gameboard)
     when 'lose_item_shoe'
       lose_item_by_category(player, gameboard, 'shoe')
       msg = "#{player.name} lost one shoe item because of #{ingamedeck.card.title}s bad things."
-      Cursecard.broadcast_gamelog(msg, gameboard)
+      Monstercard.broadcast_gamelog(msg, gameboard)
     when 'lose_item_head'
       lose_item_by_category(player, gameboard, 'head')
       msg = "#{player.name} lost one head item because of #{ingamedeck.card.title}s bad things."
-      Cursecard.broadcast_gamelog(msg, gameboard)
+      Monstercard.broadcast_gamelog(msg, gameboard)
     when 'lose_item'
       lose_item(player, gameboard)
       msg = "#{player.name} lost one item because of #{ingamedeck.card.title}s bad things."
-      Cursecard.broadcast_gamelog(msg, gameboard)
+      Monstercard.broadcast_gamelog(msg, gameboard)
     when 'random_card_lowest_level'
       all_players = gameboard.players.order(:id)
       first = true
@@ -199,13 +203,13 @@ class Monstercard < Card
 
       random_card&.update!(cardable: player_lowest_level[random].handcard)
       msg = "#{player.name} lost one item to the player with the lowest level because of #{ingamedeck.card.title}s bad things."
-      Cursecard.broadcast_gamelog(msg, gameboard)
+      Monstercard.broadcast_gamelog(msg, gameboard)
       Player.broadcast_all_playerhandcards(gameboard)
     when 'no_help_next_fight'
       Ingamedeck.create(card: Cursecard.find_by('title = ?', 'The unicorn curse'), gameboard: gameboard, cardable: player.playercurse)
 
       msg = "No one is allowed to help #{player.name} in the next fight because of #{ingamedeck.card.title}s bad things."
-      Cursecard.broadcast_gamelog(msg, gameboard)
+      Monstercard.broadcast_gamelog(msg, gameboard)
     when 'lose_one_card'
       offset = rand(player.handcard.ingamedecks.count)
 
@@ -213,7 +217,7 @@ class Monstercard < Card
 
       random_card&.update!(cardable: gameboard.graveyard)
       msg = "#{player.name} lost one handcard because of #{ingamedeck.card.title}s bad things."
-      Cursecard.broadcast_gamelog(msg, gameboard)
+      Monstercard.broadcast_gamelog(msg, gameboard)
       Player.broadcast_all_playerhandcards(gameboard)
     when 'lose_level'
       player = gameboard.current_player
@@ -221,14 +225,14 @@ class Monstercard < Card
       player.update(level: player.level - 1) unless player.level == 1
 
       msg = "#{player.name} lost one level because of #{ingamedeck.card.title}s bad things."
-      Cursecard.broadcast_gamelog(msg, gameboard)
+      Monstercard.broadcast_gamelog(msg, gameboard)
     when 'die'
       player = gameboard.current_player
 
       player.update(level: 1)
 
       msg = "#{player.name} died because of #{ingamedeck.card.title}s bad things."
-      Cursecard.broadcast_gamelog(msg, gameboard)
+      Monstercard.broadcast_gamelog(msg, gameboard)
     else
       puts 'action unknown :('
     end

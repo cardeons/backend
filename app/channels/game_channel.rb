@@ -182,12 +182,12 @@ class GameChannel < ApplicationCable::Channel
     when 'center_card'
       @gameboard.interceptcard.add_card_with_ingamedeck_id(unique_card_id)
       msg = "#{current_user.player.name} buffed the monster!"
-      Cursecard.broadcast_gamelog(msg, @gameboard)
+      Buffcard.broadcast_gamelog(msg, @gameboard)
     when 'current_player'
       # buff player
       @gameboard.playerinterceptcard.add_card_with_ingamedeck_id(unique_card_id)
       msg = "#{current_user.player.name} buffed #{@gameboard.current_player.name}."
-      Cursecard.broadcast_gamelog(msg, @gameboard)
+      Buffcard.broadcast_gamelog(msg, @gameboard)
     else
       PlayerChannel.broadcast_error(current_user, 'This is ont a correct field for to!')
       return

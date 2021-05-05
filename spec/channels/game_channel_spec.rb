@@ -1105,7 +1105,7 @@ RSpec.describe GameChannel, type: :channel do
     expect(gameboards(:gameboardFourPlayers).reload.current_player).to eql(gameboards(:gameboardFourPlayers).players.third)
   end
 
-  it 'test if game log gets sent after activating cursecard' do
+  it 'test if curse log gets sent after activating cursecard' do
     gameboards(:gameboardFourPlayers).initialize_game_board
     gameboards(:gameboardFourPlayers).players.each(&:init_player)
     # assign player to this user
@@ -1123,7 +1123,7 @@ RSpec.describe GameChannel, type: :channel do
               })
     end.to have_broadcasted_to("game:#{users(:one).player.gameboard.to_gid_param}")
       .with(
-        hash_including(type: 'GAME_LOG')
+        hash_including(type: 'CURSE_LOG')
       )
   end
 end
