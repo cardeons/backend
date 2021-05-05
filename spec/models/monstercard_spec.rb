@@ -619,7 +619,7 @@ RSpec.describe Monstercard, type: :model do
     )
 
     gameboard_test = gameboards(:gameboardFourPlayers)
-    player1 = players(:playerOne)
+    player1 = players(:playerTwo)
     gameboards(:gameboardFourPlayers).initialize_game_board
     gameboards(:gameboardFourPlayers).players.each(&:init_player)
     gameboards(:gameboardFourPlayers).update(current_player: player1)
@@ -650,7 +650,6 @@ RSpec.describe Monstercard, type: :model do
     # Item1 gives 2
     # Monster gives 1
     # Item2 gives 2
-
     # synergy item1 und item2 gives 5
     # synergy monster and item2 gives 3
     expect(player1.attack).to eql(14)
