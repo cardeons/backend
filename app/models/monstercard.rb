@@ -39,6 +39,7 @@ class Monstercard < Card
         message = 'Successfully equipped.'
         deck_card.update(cardable: monster_to_equip)
 
+        # get updated result of attack
         attack_obj = Gameboard.attack(player.gameboard)
 
         monstercards1 = Monstercard.calculate_monsterslot_atk(player.monsterone)
@@ -229,15 +230,17 @@ class Monstercard < Card
       Cursecard.broadcast_gamelog(msg, gameboard)
       Player.broadcast_all_playerhandcards(gameboard)
     when 'lose_level'
-      player = gameboard.current_player
-
-      player.update(level: player.level - 1) unless player.level == 1
+      if gameboard.intercept_finished?
+        player.decrement!(:level, 1) unless player.level == 1
+      else
+        gameboard.reload.players.each do |player_individual|
+          player_individual.decrement!(:level, 1) unless player_individual.level == 1
+        end
+      end
 
       msg = "You lost 1 level because of Monstercards bad things #{ingamedeck.card.title}"
       Cursecard.broadcast_gamelog(msg, gameboard)
     when 'die'
-      player = gameboard.current_player
-
       player.update(level: 1)
 
       msg = "You died because of Monstercards bad things #{ingamedeck.card.title}"

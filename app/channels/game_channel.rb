@@ -96,8 +96,7 @@ class GameChannel < ApplicationCable::Channel
 
     start_intercept_phase(@gameboard.reload)
 
-    # attack()
-    broadcast_to(@gameboard, { type: BOARD_UPDATE, params: Gameboard.broadcast_game_board(@gameboard) })
+    broadcast_to(@gameboard, { type: BOARD_UPDATE, params: Gameboard.broadcast_game_board(@gameboard.reload) })
     msg = "#{current_user.player.name} has drawn #{name}"
     broadcast_to(@gameboard, { type: GAME_LOG, params: { date: Time.new, message: msg } })
   end
@@ -123,47 +122,57 @@ class GameChannel < ApplicationCable::Channel
   def attack
     return unless validate_user
 
-    result = Gameboard.attack(@gameboard)
+    result = Gameboard.attack(@gameboard.reload)
 
     if result[:result]
-      player = Player.find_by('user_id = ?', current_user.id)
-
-      player_level = player.level
-      player.update!(level: player_level + @gameboard.reload.centercard.card.level_amount)
-
-      if player.level >= 5
-        monster_id = player.win_game(current_user)
-        @gameboard.game_won!
-        broadcast_to(@gameboard, { type: 'WIN', params: { player: player.id, monster_won: monster_id } })
-        return
-      end
 
       rewards = @gameboard.rewards_treasure
-      shared_reward = @gameboard.shared_reward
-      current_player_treasure = rewards - shared_reward
 
-      Handcard.draw_handcards(@gameboard.current_player.id, @gameboard, current_player_treasure)
-      # TODO: add helping player to gameboard? give treasures to helping player
-      if @gameboard.reload.helping_player
-        helping_player = @gameboard.helping_player
-        Handcard.draw_handcards(helping_player.id, @gameboard, shared_reward)
+      # boss monster, no levels, just rewards
+      if @gameboard.boss_phase?
+        @gameboard.players.each do |player|
+          Handcard.draw_handcards(player.id, @gameboard, rewards)
+          PlayerChannel.broadcast_to(player.user, { type: 'HANDCARD_UPDATE', params: { handcards: Gameboard.render_cards_array(player.handcard.reload.ingamedecks) } })
+        end
+        msg = "You all killed #{@gameboard.centercard.card.title}!"
+      # normal monster
+      else
+        player = current_user.player
+        player_level = player.level
+        player.update!(level: player_level + @gameboard.reload.centercard.card.level_amount)
 
-        PlayerChannel.broadcast_to(helping_player.user, { type: 'HANDCARD_UPDATE', params: { handcards: Gameboard.render_cards_array(helping_player.handcard.ingamedecks) } })
+        if player.level >= 5
+          monster_id = player.win_game(current_user)
+          @gameboard.game_won!
+          broadcast_to(@gameboard, { type: 'WIN', params: { player: player.id, monster_won: monster_id } })
+          return
+        end
+
+        shared_reward = @gameboard.shared_reward
+        current_player_treasure = rewards - shared_reward
+        Handcard.draw_handcards(@gameboard.current_player.id, @gameboard, current_player_treasure)
+        PlayerChannel.broadcast_to(current_user.reload, { type: 'HANDCARD_UPDATE', params: { handcards: Gameboard.render_cards_array(player.handcard.reload.ingamedecks) } })
+
+        if @gameboard.reload.helping_player
+          helping_player = @gameboard.helping_player
+          Handcard.draw_handcards(helping_player.id, @gameboard, shared_reward)
+
+          PlayerChannel.broadcast_to(helping_player.user, { type: 'HANDCARD_UPDATE', params: { handcards: Gameboard.render_cards_array(helping_player.handcard.reload.ingamedecks) } })
+          msg = "#{current_user.player.name} has killed #{@gameboard.centercard.card.title}"
+        end
       end
 
-      msg = "#{current_user.player.name} has killed #{@gameboard.centercard.card.title}"
       broadcast_to(@gameboard, { type: GAME_LOG, params: { date: Time.new, message: msg } })
-
       @gameboard.centercard.ingamedeck&.update!(cardable: @gameboard.graveyard)
-
-      PlayerChannel.broadcast_to(current_user.reload, { type: 'HANDCARD_UPDATE', params: { handcards: Gameboard.render_cards_array(player.handcard.ingamedecks) } })
 
       Gameboard.get_next_player(@gameboard)
       @gameboard.ingame!
       broadcast_to(@gameboard, { type: BOARD_UPDATE, params: Gameboard.broadcast_game_board(@gameboard) })
     end
+
+    Monstercard.bad_things(@gameboard.centercard, @gameboard) if @gameboard.boss_phase_finished?
     Gameboard.clear_buffcards(@gameboard)
-    PlayerChannel.broadcast_to(current_user, { type: 'ERROR', params: { message: 'Playerattack too low' } }) unless result[:result]
+    PlayerChannel.broadcast_to(current_user, { type: 'ERROR', params: { message: 'Attack too low' } }) unless result[:result]
 
     # updated_board = Gameboard.broadcast_game_board(@gameboard)
     # broadcast_to(@gameboard, { type: BOARD_UPDATE, params: updated_board })
@@ -180,6 +189,10 @@ class GameChannel < ApplicationCable::Channel
       return
     end
 
+    # intercept shouldn't be possible if it's not the right phase
+    return PlayerChannel.broadcast_error(current_user, "You can't intercept right now, it's #{@gameboad.current_state} phase") if !@gameboard.intercept_phase? && !@gameboad.boss_phase?
+
+    # if @gameboard.intercept_phase? || @gameboard.boss_phase?
     unique_card_id = params['unique_card_id']
     to = params['to']
 
@@ -202,7 +215,7 @@ class GameChannel < ApplicationCable::Channel
       # buff player
       @gameboard.playerinterceptcard.add_card_with_ingamedeck_id(unique_card_id)
     else
-      PlayerChannel.broadcast_error(current_user, 'This is ont a correct field for to!')
+      PlayerChannel.broadcast_error(current_user, 'This is not a correct field to play your card!')
       return
     end
 
@@ -414,6 +427,33 @@ class GameChannel < ApplicationCable::Channel
     broadcast_to(@gameboard, { type: 'WIN', params: { player: player.id, monster_won: monster_id } })
   end
 
+  def develop_draw_boss_card
+    return unless developer_actions_enabled?
+
+    ## remove old centercard if neccessary
+    unless @gameboard.centercard.nil?
+      centercard = Centercard.find_by!('gameboard_id = ?', @gameboard.id)
+      centercard.ingamedeck&.update!(cardable: @gameboard.graveyard)
+    end
+
+    # centercard
+    card = Bosscard.all.first
+    Ingamedeck.create(gameboard: @gameboard, card_id: card.id, cardable: centercard)
+
+    new_center = Centercard.find_by('gameboard_id = ?', @gameboard.id)
+    @gameboard.update(centercard: new_center)
+
+    @gameboard.boss_phase!
+    result = Gameboard.attack(@gameboard, false)
+
+    @gameboard.update(success: result[:result], player_atk: result[:playeratk], monster_atk: result[:monsteratk])
+    updated_board = Gameboard.broadcast_game_board(@gameboard.reload)
+
+    start_intercept_phase(@gameboard.reload)
+    broadcast_to(@gameboard, { type: BOARD_UPDATE, params: updated_board })
+    msg = "#{current_user.player.name} has drawn #{card.title}"
+    broadcast_to(@gameboard, { type: GAME_LOG, params: { date: Time.new, message: msg } })
+
   def develop_set_next_player_as_current_player
     return unless developer_actions_enabled?
 
@@ -473,7 +513,8 @@ class GameChannel < ApplicationCable::Channel
   end
 
   def start_intercept_phase(gameboard)
-    gameboard.intercept_phase!
+    # if no boss monster has been drawn, state should be intercept_phase
+    gameboard.intercept_phase! unless gameboard.boss_phase?
 
     timestamp = Time.now
 
