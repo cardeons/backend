@@ -314,7 +314,6 @@ RSpec.describe LobbyChannel, type: :channel do
     perform('start_lobby_queue')
 
     expect(User.find(users(:one).id).player.gameboard.players.count).to eql(4)
-    expect(Lobby.find_by(id: lobby_id)).to be_falsy
   end
 
   it 'should delete old player from old gameboard if user joins again' do

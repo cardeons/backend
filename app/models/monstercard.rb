@@ -61,7 +61,6 @@ class Monstercard < Card
       # update plaayer atk
       player.calculate_player_atk_with_monster_and_items
 
-
       message = '✅ Successfully equipped.'
     end
 

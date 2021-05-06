@@ -129,14 +129,14 @@ class GameChannel < ApplicationCable::Channel
       rewards = @gameboard.rewards_treasure
 
       # boss monster, no levels, just rewards
-      if @gameboard.boss_phase?
-        @gameboard.players.each do |player|
-          Handcard.draw_handcards(player.id, @gameboard, rewards)
-          PlayerChannel.broadcast_to(player.user, { type: 'HANDCARD_UPDATE', params: { handcards: Gameboard.render_cards_array(player.handcard.reload.ingamedecks) } })
-        end
-        msg = "⚔ You all killed #{@gameboard.centercard.card.title}!"
-      # normal monster
-      else
+      # if @gameboard.boss_phase?
+      #   @gameboard.players.each do |player|
+      #     Handcard.draw_handcards(player.id, @gameboard, rewards)
+      #     PlayerChannel.broadcast_to(player.user, { type: 'HANDCARD_UPDATE', params: { handcards: Gameboard.render_cards_array(player.handcard.reload.ingamedecks) } })
+      #   end
+      #   msg = "⚔ You all killed #{@gameboard.centercard.card.title}!"
+      # # normal monster
+      # else
         player = current_user.player
         player_level = player.level
         player.update!(level: player_level + @gameboard.reload.centercard.card.level_amount)
@@ -161,7 +161,7 @@ class GameChannel < ApplicationCable::Channel
           PlayerChannel.broadcast_to(helping_player.user, { type: 'HANDCARD_UPDATE', params: { handcards: Gameboard.render_cards_array(helping_player.handcard.reload.ingamedecks) } })
           msg = "⚔ #{current_user.player.name} has killed #{@gameboard.centercard.card.title}"
         end
-      end
+      # end
 
       broadcast_to(@gameboard, { type: GAME_LOG, params: { date: Time.new, message: msg, type: 'success' } })
       @gameboard.centercard.ingamedeck&.update!(cardable: @gameboard.graveyard)
