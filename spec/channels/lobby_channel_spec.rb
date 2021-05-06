@@ -175,12 +175,18 @@ RSpec.describe LobbyChannel, type: :channel do
               monster_id: 3
             })
     stub_connection current_user: users(:two)
-    subscribe inquirer: users(:one).id
+    expect do
+      subscribe inquirer: users(:one).id
+    end
+      .to have_broadcasted_to("lobby:#{users(:one).lobby.to_gid_param}")
+      .with(
+        hash_including(type: 'LOBBY_UPDATE')
+      ).exactly(:once)
     perform('add_monster', {
-              monster_id: 1
+              monster_id: 4
             })
     perform('add_monster', {
-              monster_id: 2
+              monster_id: 5
             })
     stub_connection current_user: users(:three)
     subscribe inquirer: users(:one).id
@@ -195,8 +201,8 @@ RSpec.describe LobbyChannel, type: :channel do
     expect(User.find(users(:one).id).player.handcard.cards.find(2)).to be_truthy
     expect(User.find(users(:one).id).player.handcard.cards.find(3)).to be_truthy
 
-    expect(User.find(users(:two).id).player.handcard.cards.find(1)).to be_truthy
-    expect(User.find(users(:two).id).player.handcard.cards.find(2)).to be_truthy
+    expect(User.find(users(:two).id).player.handcard.cards.find(4)).to be_truthy
+    expect(User.find(users(:two).id).player.handcard.cards.find(5)).to be_truthy
 
     expect(User.find(users(:three).id).player.handcard.cards.find(1)).to be_truthy
 
@@ -314,7 +320,7 @@ RSpec.describe LobbyChannel, type: :channel do
               friend: users(:usernorbert).id
             })
 
-    unsubscribe
+    # unsubscribe
 
     stub_connection current_user: users(:usernorbert)
     subscribe inquirer: users(:one).id
@@ -327,19 +333,15 @@ RSpec.describe LobbyChannel, type: :channel do
   it 'test if only 4 players in lobby' do
     stub_connection current_user: users(:one)
     subscribe initiate: true
-    unsubscribe
 
     stub_connection current_user: users(:usernorbert)
     subscribe initiate: false, inquirer: users(:one).id
-    unsubscribe
 
     stub_connection current_user: users(:two)
     subscribe inquirer: users(:one).id
-    unsubscribe
 
     stub_connection current_user: users(:three)
     subscribe inquirer: users(:one).id
-    unsubscribe
 
     stub_connection current_user: users(:four)
     subscribe inquirer: users(:one).id
@@ -360,11 +362,8 @@ RSpec.describe LobbyChannel, type: :channel do
     stub_connection current_user: users(:one)
     subscribe initiate: true
 
-    unsubscribe
-
     stub_connection current_user: users(:two)
     subscribe inquirer: users(:one).id
-    unsubscribe
 
     stub_connection current_user: users(:three)
     subscribe inquirer: users(:one).id
@@ -386,11 +385,9 @@ RSpec.describe LobbyChannel, type: :channel do
     stub_connection current_user: users(:one)
     subscribe initiate: true
 
-    unsubscribe
     stub_connection current_user: users(:two)
     subscribe inquirer: users(:one).id
 
-    unsubscribe
     stub_connection current_user: users(:three)
     subscribe inquirer: users(:one).id
 
