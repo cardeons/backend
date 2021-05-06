@@ -86,6 +86,9 @@ class LobbyChannel < ApplicationCable::Channel
     broadcast_to(@lobby, { type: 'START_QUEUE', params: { game_id: @gameboard.id } })
 
     lobby.users.each do |user|
+      # TODO: Destroy Player for now we should change this for later
+      Player.find_by(name: user.name)&.destroy
+
       Player.create!(name: user.name, gameboard_id: gameboard.id, user: user)
 
       player = user.player
@@ -101,21 +104,27 @@ class LobbyChannel < ApplicationCable::Channel
 
       lobbyisfull = @gameboard.players.count > 3
 
-      user.update!(lobby: nil, oldlobby: nil)
-
-      broadcast_to(@lobby,
+      broadcast_to(@gameboard,
                    { type: 'DEBUG', params: { message: "new Player#{current_user.email} conected to the gameboard id: #{@gameboard.id} players in lobby #{@gameboard.reload.players.count}" } })
 
       next unless lobbyisfull
 
-      lobby.destroy!
+      arr = []
+      @gameboard.players.each do |my_player|
+        next if arr.find_index(my_player.user.lobby)
+
+        broadcast_to(my_player.user.lobby,
+                     { type: 'DEBUG', params: { message: "new Player#{current_user.email} conected to the gameboard id: #{@gameboard.id} players in lobby #{@gameboard.reload.players.count}" } })
+        broadcast_to(my_player.user.lobby, { type: 'START_GAME', params: { game_id: @gameboard.id } })
+
+        broadcast_to(my_player.user.lobby, { type: 'DEBUG', params: { message: 'Lobby is full start with game subscribe to Player and GameChannel' } })
+
+        arr.push(my_player.user.lobby)
+      end
 
       # Lobby is full tell players to start the game
-      broadcast_to(@lobby, { type: 'DEBUG', params: { message: 'Lobby is full start with game subscribe to Player and GameChannel' } })
 
       @gameboard.initialize_game_board
-
-      broadcast_to(@lobby, { type: 'START_GAME', params: { game_id: @gameboard.id } })
     end
   end
 
@@ -128,12 +137,14 @@ class LobbyChannel < ApplicationCable::Channel
 
     lobby_users = get_all_users_from_lobby(lobby)
     broadcast_to(@lobby, { type: 'LOBBY_UPDATE', params: { users: lobby_users } })
-    lobby.destroy if lobby && (lobby.reload.users.reload.count == 0)
+    lobby.destroy if lobby && lobby.reload.users.reload.count.zero?
 
     return unless @gameboard
 
     if @gameboard.reload.lobby?
       current_user.player.destroy!
+
+      @gameboard.destroy! if @gameboard.players.count.zero?
       # pp current_user.player.id
       # Player.destroy(current_user.player.id)
       # pp current_user.player.reload
