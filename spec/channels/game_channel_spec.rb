@@ -931,56 +931,46 @@ RSpec.describe GameChannel, type: :channel do
   end
 
   it 'unsubscribe' do
-    # gameboards(:gameboardFourPlayers).initialize_game_board
-    # gameboards(:gameboardFourPlayers).players.each(&:init_player)
+    gameboards(:gameboardFourPlayers).initialize_game_board
+    gameboards(:gameboardFourPlayers).players.each(&:init_player)
 
-    # player = users(:userFour).player
+    gameboard_id = gameboards(:gameboardFourPlayers).id
 
-    # ## users subscribe
-    # stub_connection current_user: users(:userFour)
-    # subscribe
+    # users subscribe
+    stub_connection current_user: users(:userOne)
+    subscribe
 
-    # stub_connection current_user: users(:userThree)
-    # subscribe
+    gameboards(:gameboardFourPlayers).update(current_player: users(:userOne).player)
 
-    # stub_connection current_user: users(:userTwo)
-    # subscribe
+    # first unsubscribe
+    unsubscribe
+    expect(users(:userOne).player.inactive).to be_truthy
+    expect(gameboards(:gameboardFourPlayers).reload.players.size).to eql(4)
 
-    # ## users unsubscribe
-    # # stub_connection current_user: users(:userFour)
+    # second unsubscribe
+    stub_connection current_user: users(:userThree)
+    subscribe
+    unsubscribe
 
-    # gameboards(:gameboardFourPlayers).update(current_player: users(:userFour).player.id)
+    expect(users(:userThree).player.inactive).to be_truthy
+    expect(gameboards(:gameboardFourPlayers).reload.players.size).to eql(4)
 
-    # pp gameboards(:gameboardFourPlayers).players
-    # pp 'first unsubscribe'
+    stub_connection current_user: users(:userTwo)
+    subscribe
+    unsubscribe
 
-    # unsubscribe
+    # third unsubscribe
+    expect(users(:userTwo).player.reload.inactive).to be_truthy
+    expect(gameboards(:gameboardFourPlayers).reload.players.size).to eql(4)
 
-    # expect(users(:userFour).reload.player).to be_falsy
-    # expect(gameboards(:gameboardFourPlayers).reload.players.size).to eql(2)
+    stub_connection current_user: users(:userFour)
+    subscribe
+    unsubscribe
 
-    # stub_connection current_user: users(:userThree)
-    # unsubscribe
+    # all are unsubscribed
 
-    # pp 'second unsubscribe'
-
-    # expect(users(:userThree).reload.player).to be_falsy
-    # expect(gameboards(:gameboardFourPlayers).reload.players.size).to eql(1)
-
-    # stub_connection current_user: users(:userTwo)
-    # unsubscribe
-
-    # pp 'third unsubscribe'
-
-    # expect(users(:userTwo).reload.player).to be_falsy
-    # expect(gameboards(:gameboardFourPlayers).reload.players.size).to eql(0)
-
-    # pp '--------------------'
-
-    # # pp users(:userFour).reload.player
-
+    expect(Gameboard.find_by('id = ?', gameboard_id)).to be_falsy
     # player is still referenced in gameboard, gets deleted
-    # end
   end
 
   it 'test if buffcards get removed after attack is over' do
