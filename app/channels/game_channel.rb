@@ -540,6 +540,10 @@ class GameChannel < ApplicationCable::Channel
     # if no boss monster has been drawn, state should be intercept_phase
     gameboard.intercept_phase! unless gameboard.boss_phase?
 
+    gameboard.players.each do |player|
+      player.update!(intercept: true)
+    end
+
     timestamp = Time.now
 
     gameboard.update!(intercept_timestamp: timestamp)
