@@ -660,7 +660,7 @@ if ENV['cards']
   buffcard = Buffcard.create!(
     draw_chance: 6,
     title: 'Buffing up, eh?',
-    description: '<p>You are getting stronger and stronger. 2 extra attack points for any side.</p>',
+    description: '<p>Someone is getting stronger and stronger. 2 extra attack points for any side.</p>',
     image: '/cardeons/cards/icons/buff.png',
     action: 'gain_atk',
     atk_points: 2
@@ -669,7 +669,7 @@ if ENV['cards']
   buffcard2 = Buffcard.create!(
     draw_chance: 6,
     title: 'Slippery slope',
-    description: '<p>Someone slipped, any side looses 5 attack points.</p>',
+    description: '<p>Someone slipped. - 5 attack points.</p>',
     image: '/cardeons/cards/icons/buff.png',
     action: 'monster_lose_atk',
     atk_points: -5
@@ -723,7 +723,7 @@ if ENV['cards']
   buffcard8 = Buffcard.create!(
     draw_chance: 6,
     title: 'Invisibility potion',
-    description: '<p>Someone gets stabbed in the back, - 3 attack points!</p>',
+    description: '<p>Someone gets stabbed in the back. - 3 attack points!</p>',
     image: '/cardeons/cards/icons/buff.png',
     action: 'flee_success',
     atk_points: -3
@@ -732,7 +732,7 @@ if ENV['cards']
   buffcard9 = Buffcard.create!(
     draw_chance: 6,
     title: 'Lick',
-    description: '<p>Someone got paralyzed and hurts itself out of confusion and loses 3 attack points.</p>',
+    description: '<p>Someone got paralyzed and hurt itself out of confusion. - 3 attack points.</p>',
     image: '/cardeons/cards/icons/buff.png',
     action: 'monster_lose_atk',
     atk_points: -3
