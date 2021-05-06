@@ -548,4 +548,9 @@ class GameChannel < ApplicationCable::Channel
     # sets Intercept Timer
     CheckIntercepttimerJob.set(wait: 40.seconds).perform_later(@gameboard, timestamp, 45)
   end
+
+  def send_chat_message(params)
+    msg = params['message']
+    msg && broadcast_to(@gameboard, { type: 'CHAT_MESSAGE', params: { date: Time.new, id: current_user.player.id, name: current_user.player.name, message: msg } })
+  end
 end
