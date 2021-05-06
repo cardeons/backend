@@ -8,10 +8,12 @@ class FriendlistChannel < ApplicationCable::Channel
 
     Friendship.broadcast_friends(current_user)
     Friendship.broadcast_pending_requests(current_user)
+    broadcast_status_to_friends
   end
 
   def unsubscribed
     current_user.update(status: :offline)
+    broadcast_status_to_friends
   end
 
   def load_friends
@@ -33,6 +35,8 @@ class FriendlistChannel < ApplicationCable::Channel
     inquirer = User.find_by('id=?', data['inquirer'])
 
     Friendship.accept(current_user, inquirer)
+    Friendship.broadcast_friends(current_user)
+    Friendship.broadcast_friends(inquirer)
 
     broadcast_to(current_user, { type: 'FRIEND_LOG', params: { message: "You accepted a friendrequest from #{inquirer.name}" } })
     broadcast_to(inquirer, { type: 'FRIEND_LOG', params: { message: "#{current_user.name} accepted your friendrequest" } })
@@ -79,4 +83,10 @@ class FriendlistChannel < ApplicationCable::Channel
   #     broadcast_to(user, { type: 'SUBSCRIBE_LOBBY', params: { game_id: gameboard.id } })
   #   end
   # end
+
+  def broadcast_status_to_friends
+    current_user.friends.each do |friend|
+      Friendship.broadcast_friends(friend)
+    end
+  end
 end

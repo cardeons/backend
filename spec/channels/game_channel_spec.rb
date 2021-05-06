@@ -61,7 +61,7 @@ RSpec.describe GameChannel, type: :channel do
 
     # give player a buffcard
     player.handcard.ingamedecks.create(card: cards(:buffcard), gameboard: gameboards(:gameboardFourPlayers))
-
+    Gameboard.draw_door_card(gameboards(:gameboardFourPlayers))
     expect do
       perform('intercept', {
                 unique_card_id: player.handcard.ingamedecks.find_by('card_id=?', cards(:buffcard).id),
@@ -98,6 +98,7 @@ RSpec.describe GameChannel, type: :channel do
 
     # give player a buffcard
     player.handcard.ingamedecks.create(card: cards(:buffcard), gameboard: gameboards(:gameboardFourPlayers))
+    Gameboard.draw_door_card(gameboards(:gameboardFourPlayers))
 
     expect do
       perform('intercept', {
@@ -122,6 +123,7 @@ RSpec.describe GameChannel, type: :channel do
 
     stub_connection current_user: users(:one)
     subscribe
+    Gameboard.draw_door_card(gameboards(:gameboardFourPlayers))
 
     expect do
       perform('intercept', {
@@ -759,7 +761,7 @@ RSpec.describe GameChannel, type: :channel do
     ingamedeck = Ingamedeck.create!(gameboard: gameboards(:gameboardFourPlayers), card: cards(:levelcard), cardable: users(:one).player.handcard)
 
     expect do
-      perform('curse_player', {
+      perform('level_up', {
                 to: 2,
                 unique_card_id: ingamedeck.id
               })
@@ -782,7 +784,7 @@ RSpec.describe GameChannel, type: :channel do
     ingamedeck = Ingamedeck.create!(gameboard: gameboards(:gameboardFourPlayers), card: cards(:levelcard), cardable: users(:one).player.handcard)
 
     expect do
-      perform('curse_player', {
+      perform('level_up', {
                 to: 2,
                 unique_card_id: ingamedeck.id
               })
@@ -855,6 +857,8 @@ RSpec.describe GameChannel, type: :channel do
     # set centercard with one level reward because srand always chooses a card with 2
     Ingamedeck.create!(gameboard: gameboards(:gameboardFourPlayers), card: cards(:monstercard9), cardable: gameboards(:gameboardFourPlayers).centercard)
 
+    Ingamedeck.create!(gameboard: gameboards(:gameboardFourPlayers), card: cards(:BrokenMonster), cardable: users(:userFour).player.monsterone)
+
     expect do
       perform('attack', {})
     end.to have_broadcasted_to("game:#{users(:userFour).player.gameboard.to_gid_param}")
@@ -882,7 +886,7 @@ RSpec.describe GameChannel, type: :channel do
 
     perform('attack', {})
 
-    expect(users(:userFour).cards.size).to eql(2)
+    expect(users(:userFour).cards.reload.size).to eql(2)
   end
 
   it 'player can only play a monster if its his turn' do
@@ -986,12 +990,11 @@ RSpec.describe GameChannel, type: :channel do
     stub_connection current_user: users(:userFour)
     subscribe
 
-    Gameboard.draw_door_card(gameboards(:gameboardFourPlayers))
-
     player = gameboards(:gameboardFourPlayers).current_player
     unique_card = player.handcard.ingamedecks.create(card: cards(:buffcard), gameboard: gameboards(:gameboardFourPlayers))
     unique_card2 = player.handcard.ingamedecks.create(card: cards(:buffcard3), gameboard: gameboards(:gameboardFourPlayers))
 
+    Gameboard.draw_door_card(gameboards(:gameboardFourPlayers))
     ## buff monster two times
     perform('intercept', {
               unique_card_id: player.handcard.ingamedecks.find_by('id=?', unique_card.id),
@@ -1032,11 +1035,11 @@ RSpec.describe GameChannel, type: :channel do
     stub_connection current_user: users(:userFour)
     subscribe
 
-    Gameboard.draw_door_card(gameboards(:gameboardFourPlayers))
-
     player = gameboards(:gameboardFourPlayers).current_player
     unique_card = player.handcard.ingamedecks.create(card: cards(:buffcard), gameboard: gameboards(:gameboardFourPlayers))
     unique_card2 = player.handcard.ingamedecks.create(card: cards(:buffcard3), gameboard: gameboards(:gameboardFourPlayers))
+
+    Gameboard.draw_door_card(gameboards(:gameboardFourPlayers))
 
     ## buff monster two times
     perform('intercept', {
@@ -1070,6 +1073,7 @@ RSpec.describe GameChannel, type: :channel do
     expect(Ingamedeck.find_by('id=?', unique_card3.id).cardable_type).to eql('Graveyard')
     expect(Ingamedeck.find_by('id=?', unique_card4.id).cardable_type).to eql('Graveyard')
   end
+
   it 'user is set to inactive if he unsubscribes from the game_channel' do
     gameboards(:gameboardFourPlayers).initialize_game_board
     gameboards(:gameboardFourPlayers).players.each(&:init_player)
@@ -1083,5 +1087,197 @@ RSpec.describe GameChannel, type: :channel do
 
     # player is set to inactive = true on unsubscribe
     expect(users(:userFour).player.inactive).to be_truthy
+  end
+
+  it 'develop draw boss card sets bosscard as centercard' do
+    gameboards(:gameboardFourPlayers).initialize_game_board
+    gameboards(:gameboardFourPlayers).players.each(&:init_player)
+
+    stub_connection current_user: users(:userFour)
+    subscribe
+
+    ENV['DEV_TOOL_ENABLED'] = 'enabled'
+
+    perform('develop_draw_boss_card', {})
+
+    expect(gameboards(:gameboardFourPlayers).reload.centercard.card.type).to eql('Bosscard')
+    expect(gameboards(:gameboardFourPlayers).reload.current_state).to eql('boss_phase')
+  end
+
+  it 'develop draw boss card sets bosscard as centercard and deletes old centercard if neccessary' do
+    gameboards(:gameboardFourPlayers).initialize_game_board
+    gameboards(:gameboardFourPlayers).players.each(&:init_player)
+
+    stub_connection current_user: users(:userFour)
+    subscribe
+
+    ENV['DEV_TOOL_ENABLED'] = 'enabled'
+
+    perform('draw_door_card', {})
+    expect(gameboards(:gameboardFourPlayers).reload.centercard.card.type).to eql('Monstercard')
+    expect(gameboards(:gameboardFourPlayers).reload.current_state).to eql('intercept_phase')
+
+    perform('develop_draw_boss_card', {})
+    expect(gameboards(:gameboardFourPlayers).reload.centercard.card.type).to eql('Bosscard')
+    expect(gameboards(:gameboardFourPlayers).reload.current_state).to eql('boss_phase')
+  end
+
+  it 'attack in bossphase when player attack is too low' do
+    gameboards(:gameboardFourPlayers).initialize_game_board
+    gameboards(:gameboardFourPlayers).players.each(&:init_player)
+
+    stub_connection current_user: users(:userFour)
+    subscribe
+
+    ENV['DEV_TOOL_ENABLED'] = 'enabled'
+    perform('develop_draw_boss_card', {})
+
+    playerwin = Gameboard.attack(gameboards(:gameboardFourPlayers))
+
+    # player should not have a chance against the monster
+    expect(gameboards(:gameboardFourPlayers).success).to be_falsy
+    expect(playerwin[:result]).to be_falsy
+    # expect(gameboards(:gameboardFourPlayers).success).to be_falsy unless playerwin[:result]
+  end
+
+  it 'all players should lose a level if attack is too low' do
+    gameboards(:gameboardFourPlayers).initialize_game_board
+    gameboards(:gameboardFourPlayers).players.each(&:init_player)
+
+    stub_connection current_user: users(:userFour)
+    subscribe
+
+    players(:playerOne).update(level: 3)
+    players(:playerTwo).update(level: 4)
+
+    ENV['DEV_TOOL_ENABLED'] = 'enabled'
+    perform('develop_draw_boss_card', {})
+    playerwin = Gameboard.attack(gameboards(:gameboardFourPlayers))
+    perform('flee', {})
+
+    # all players should now be one level lower than in the beginning
+    expect(players(:playerOne).reload.level).to eql(2)
+    expect(players(:playerTwo).reload.level).to eql(3)
+    expect(players(:playerThree).reload.level).to eql(1)
+    expect(players(:playerFour).reload.level).to eql(1)
+    # expect(gameboards(:gameboardFourPlayers).success).to be_falsy unless playerwin[:result]
+  end
+
+  it 'attack in bossphase when player attack is high enough' do
+    gameboards(:gameboardFourPlayers).initialize_game_board
+    gameboards(:gameboardFourPlayers).players.each(&:init_player)
+
+    # give player one enough attack to defeat monster
+    Ingamedeck.create!(gameboard: gameboards(:gameboardFourPlayers), card: cards(:monstercard10), cardable: players(:playerOne).monsterone)
+    # monster level 1 + item with 100 attack
+    Ingamedeck.create!(gameboard: gameboards(:gameboardFourPlayers), card: cards(:itemcard5), cardable: players(:playerOne).monsterone)
+
+    stub_connection current_user: users(:userOne)
+    subscribe
+
+    ENV['DEV_TOOL_ENABLED'] = 'enabled'
+    perform('develop_draw_boss_card', {})
+
+    playerwin = Gameboard.attack(gameboards(:gameboardFourPlayers))
+
+    expect(gameboards(:gameboardFourPlayers).success).to be_truthy
+    expect(playerwin[:result]).to be_truthy
+    expect(playerwin[:playeratk]).to eql(105)
+  end
+
+  it 'attack points are calculated correctly during boss_phase' do
+    catfish = Monstercard.create!(
+      title: 'Catfish',
+      description: '<p>HA! You got catfished.</p>',
+      image: '/monster/catfish.png',
+      action: 'lose_level',
+      draw_chance: 5,
+      level: 10,
+      element: 'water',
+      bad_things: '<p><b>Bad things:</b>Getting catfished, really? You should know better. Lose one level.</p>',
+      rewards_treasure: 2,
+      good_against: 'fire',
+      bad_against: 'earth',
+      good_against_value: 3,
+      bad_against_value: 1,
+      atk_points: 14,
+      level_amount: 2
+    )
+
+    item1 = Itemcard.create!(
+      title: 'The things to get things out of the toilet',
+      description: '<p>Disgusting. If I was you, I would not touch it.</p>',
+      image: '/item/poempel.png',
+      action: 'plus_one',
+      draw_chance: 14,
+      element: 'fire',
+      atk_points: 2,
+      item_category: 'hand'
+    )
+
+    gameboard_test = gameboards(:gameboardFourPlayers)
+    player1 = players(:playerOne)
+    gameboards(:gameboardFourPlayers).initialize_game_board
+    gameboards(:gameboardFourPlayers).players.each(&:init_player)
+    gameboards(:gameboardFourPlayers).update(current_player: player1)
+
+    stub_connection current_user: users(:userOne)
+    subscribe
+
+    ingamedeck1 = Ingamedeck.create!(gameboard: gameboard_test, card_id: catfish.id, cardable: player1.monsterone)
+    ingamedeck2 = Ingamedeck.create!(gameboard: gameboard_test, card_id: item1.id, cardable: player1.handcard)
+    ingamedeck3 = Ingamedeck.create!(gameboard: gameboard_test, card_id: item1.id, cardable: player1.handcard)
+
+    ENV['DEV_TOOL_ENABLED'] = 'enabled'
+    perform('develop_draw_boss_card', {})
+
+    equip_one = Monstercard.equip_monster({ 'unique_monster_id' => ingamedeck1.id, 'unique_equip_id' => ingamedeck2.id, 'action' => 'equip_monster' }, player1)
+    ## attack must be 4 - monster has 14 atk but should be calculated as 1, item 2, player 1
+    expect(player1.reload.attack).to eql(4)
+
+    equip_two = Monstercard.equip_monster({ 'unique_monster_id' => ingamedeck1.id, 'unique_equip_id' => ingamedeck3.id, 'action' => 'equip_monster' }, player1)
+    ## attack must be 6 - monster has 14 atk but should be calculated as 1, item 2+2, player 1
+    expect(player1.attack).to eql(6)
+  end
+
+  it 'dev action gets right next player' do
+    gameboards(:gameboardFourPlayers).players.each(&:init_player)
+    gameboards(:gameboardFourPlayers).initialize_game_board
+
+    stub_connection current_user: users(:userOne)
+    subscribe
+
+    ENV['DEV_TOOL_ENABLED'] = 'enabled'
+
+    perform('develop_set_next_player_as_current_player', {})
+    expect(gameboards(:gameboardFourPlayers).reload.current_player).to eql(gameboards(:gameboardFourPlayers).players.first)
+
+    perform('develop_set_next_player_as_current_player', {})
+    expect(gameboards(:gameboardFourPlayers).reload.current_player).to eql(gameboards(:gameboardFourPlayers).players.second)
+
+    perform('develop_set_next_player_as_current_player', {})
+    expect(gameboards(:gameboardFourPlayers).reload.current_player).to eql(gameboards(:gameboardFourPlayers).players.third)
+  end
+
+  it 'sends an ERROR broadcast if user has already drawn a door card' do
+    gameboards(:gameboardFourPlayers).initialize_game_board
+    gameboards(:gameboardFourPlayers).players.each(&:init_player)
+
+    stub_connection current_user: users(:userFour)
+    subscribe
+
+    expect do
+      perform('draw_door_card', {})
+    end.to have_broadcasted_to("game:#{users(:userFour).player.gameboard.to_gid_param}")
+      .with(
+        hash_including(type: 'BOARD_UPDATE')
+      ).exactly(:once)
+
+    expect do
+      perform('draw_door_card', {})
+    end.to have_broadcasted_to(PlayerChannel.broadcasting_for(connection.current_user))
+      .with(
+        hash_including(type: 'ERROR')
+      ).exactly(:once)
   end
 end

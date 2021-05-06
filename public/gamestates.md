@@ -162,6 +162,20 @@ Gameboard Channel response
   #GAMEBOARD WIE IMMER
 }
 
+#ANFRAGE
+{
+  action: "level_up",
+  params: {
+    unique_card_id: 4
+  }
+  #sollte man nur auf sich selbst spielenn können
+}
+
+#ANTWORT
+{
+  #GAMEBOARD WIE IMMER
+}
+
 
 #ANFRAGE
 {
@@ -265,12 +279,14 @@ Gameboard Channel response
 
 CURRENT_STATE
 
-available values: lobby | ingame | intercept_phase | intercept_finished
+available values: lobby | ingame | intercept_phase | intercept_finished | boss_phase | boss_phase_finished | game_won
 
 lobby = spieler befinden sich in der lobby
 ingame = spiel hat gestartet
 intercept_phase = spieler hat ein monster ausgespielt/eine türkarte gezogen. Solange nicht alle spieler no_intercept drücken, ist das spiel in dieser phase.
 intercept_finished = kein spieler wollte intercepten, zug ist "vorbei"
+boss_phase = spieler hat ein bossmonster aus dem Türstapel gezogen, alle spieler bekämpfen dieses monster gemeinsam
+boss_phase_finished = kein spieler kann mehr etwas einwerfen, zug ist "vorbei"
 game_won = ein spieler hat lvl 5 erreicht
 
 
@@ -326,6 +342,16 @@ Alle im Game-Chanel
    params: { }  
 }
 
+{
+   type: 'develop_set_next_player_as_current_player',
+   params: { }  
+}
+
+
+{
+   type: 'develop_draw_boss_card',
+   params: { }  
+}
 
 # FRIENDLISTCHANNEL
 
