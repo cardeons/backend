@@ -142,6 +142,14 @@ class LobbyChannel < ApplicationCable::Channel
     return unless @gameboard
 
     if @gameboard.reload.lobby?
+
+      # Delete dummy Players
+      dummy_players = @gameboard.players.where('name like ?', '%Dummy420%')
+      dummy_players.each do |player|
+        user = player.user
+        player.destroy!
+        user.destroy!
+      end
       current_user.player.destroy!
 
       @gameboard.destroy! if @gameboard.players.count.zero?
@@ -166,8 +174,8 @@ class LobbyChannel < ApplicationCable::Channel
 
     (1..number_of_players).each do
       x = rand(1..1_000_000)
-      u1 = User.create!(email: "#{x}2@2.at", password: '2', name: "#{x}2", password_confirmation: '2')
-      player1 = Player.create!(name: "#{x}2", gameboard: gameboard_test, user: u1)
+      u1 = User.create!(email: "#{x}_Dummy420_2@2.at", password: '2', name: "#{x}2", password_confirmation: '2')
+      player1 = Player.create!(name: "#{x}_Dummy420_2", gameboard: gameboard_test, user: u1)
       playercurse1 = Playercurse.create!(player: player1)
       Handcard.create!(player: player1)
       p1i = Inventory.create!(player: player1)
