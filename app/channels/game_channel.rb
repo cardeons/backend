@@ -9,6 +9,7 @@ class GameChannel < ApplicationCable::Channel
   GAME_LOG = 'GAME_LOG'
 
   def subscribed
+    current_user.ingame!
     @gameboard = current_user.player.gameboard
     current_user.player.update!(inactive: false)
     stream_for @gameboard
@@ -486,6 +487,7 @@ class GameChannel < ApplicationCable::Channel
   end
 
   def unsubscribed
+    current_user.online!
     current_user.player.update!(inactive: true)
     # Any cleanup needed when channel is unsubscribed
     # pp current_user.playerpp

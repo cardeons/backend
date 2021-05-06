@@ -21,6 +21,7 @@ class LobbyChannel < ApplicationCable::Channel
     elsif params['lobby_id']
       lobby = Lobby.find_by('id = ?', params['lobby_id'])
       @lobby = lobby
+
       FriendlistChannel.broadcast_to(current_user, { type: 'LOBBY_ERROR', params: { message: 'There is no lobby... please create a new one...' } }) unless lobby
 
       FriendlistChannel.broadcast_to(current_user, { type: 'LOBBY_ERROR', params: { message: 'Lobby is full...' } }) if lobby.users.count >= 4
@@ -30,14 +31,15 @@ class LobbyChannel < ApplicationCable::Channel
 
       lobby_users = get_all_users_from_lobby(lobby)
 
-      broadcast_to(@lobby, { type: 'LOBBY_UPDATE', params: { users: lobby_users } })
-
       current_user.update!(lobby: lobby, oldlobby: lobby.id) if lobby.users.count < 4
+
+      broadcast_to(@lobby, { type: 'LOBBY_UPDATE', params: { users: lobby_users } })
     end
-    stream_for @lobby
   end
 
   def get_all_users_from_lobby(lobby)
+    return unless lobby
+
     lobby.reload
     lobby.users.reload
     lobby_users = []
@@ -119,6 +121,9 @@ class LobbyChannel < ApplicationCable::Channel
     # current_user.update(lobby: nil)
     lobby = current_user.lobby
     current_user.update!(monsterone: nil, monstertwo: nil, monsterthree: nil, lobby: nil)
+
+    lobby_users = get_all_users_from_lobby(lobby)
+    broadcast_to(@lobby, { type: 'LOBBY_UPDATE', params: { users: lobby_users } })
     lobby.destroy if lobby && (lobby.reload.users.reload.count == 0)
 
     return unless @gameboard
