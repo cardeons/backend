@@ -5,6 +5,7 @@ class ChangeColumnCard < ActiveRecord::Migration[6.1]
     change_column :cards, :element, 'numeric USING CAST(good_against AS numeric)'
     add_column :cards, :synergy_type, :integer, if_not_exists: true
     add_column :cards, :synergy_value, :integer, default: 0
+    add_column :cards, :animal, :integer
   end
 
   def down

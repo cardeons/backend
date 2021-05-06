@@ -10,9 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-
 ActiveRecord::Schema.define(version: 2021_05_06_113608) do
-
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -37,9 +35,9 @@ ActiveRecord::Schema.define(version: 2021_05_06_113608) do
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
     t.string "type"
-    t.integer "animal"
     t.integer "synergy_type"
     t.integer "synergy_value", default: 0
+    t.integer "animal"
   end
 
   create_table "cards_users", id: false, force: :cascade do |t|
@@ -164,7 +162,7 @@ ActiveRecord::Schema.define(version: 2021_05_06_113608) do
     t.index ["gameboard_id"], name: "index_playerinterceptcards_on_gameboard_id"
   end
 
-  create_table "h", force: :cascade do |t|
+  create_table "players", force: :cascade do |t|
     t.string "name"
     t.string "avatar"
     t.integer "level", default: 1
