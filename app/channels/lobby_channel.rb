@@ -8,7 +8,7 @@ class LobbyChannel < ApplicationCable::Channel
 
   def subscribed
     if params['initiate']
-      lobby = Lobby.find_or_create_by!(id: current_user.oldlobby)
+      lobby = Lobby.create!
 
       @lobby = lobby
 
