@@ -233,18 +233,31 @@ class Monstercard < Card
       Monstercard.broadcast_gamelog(msg, gameboard)
       Player.broadcast_all_playerhandcards(gameboard)
     when 'lose_level'
-      if gameboard.intercept_finished?
+      if gameboard.reload.intercept_finished?
         player.decrement!(:level, 1) unless player.level == 1
         msg = "😢 #{player.name} lost one level because of #{ingamedeck.card.title}s bad things."
         Monstercard.broadcast_gamelog(msg, gameboard)
       else
+        gameboard.boss_phase_finished!
+        GameChannel.broadcast_to(gameboard, { type: 'BOARD_UPDATE', params: Gameboard.broadcast_game_board(gameboard.reload) })
+
+        msg = "❌ Too bad. Even together you couldn't defeat the monster. You all lost a level."
+        Monstercard.broadcast_gamelog(msg, gameboard)
+
         gameboard.reload.players.each do |player_individual|
           player_individual.decrement!(:level, 1) unless player_individual.level == 1
         end
-      end
 
-      msg = "😢 #{player.name} lost one level because of #{ingamedeck.card.title}s bad things."
-      Monstercard.broadcast_gamelog(msg, gameboard)
+        gameboard.centercard.ingamedeck&.update!(cardable: gameboard.graveyard)
+
+        # sleep for frontend animation
+        # could maybe be shorter as soon as we know the animation length (kinda)
+        sleep 2
+
+        Gameboard.get_next_player(gameboard)
+        gameboard.ingame!
+        GameChannel.broadcast_to(gameboard, { type: 'BOARD_UPDATE', params: Gameboard.broadcast_game_board(gameboard.reload) })
+      end
     when 'die'
       player.update(level: 1)
 

@@ -171,11 +171,6 @@ class GameChannel < ApplicationCable::Channel
       broadcast_to(@gameboard, { type: BOARD_UPDATE, params: Gameboard.broadcast_game_board(@gameboard) })
     end
 
-    if @gameboard.boss_phase_finished?
-      Monstercard.bad_things(@gameboard.centercard, @gameboard)
-      msg = "❌ Too bad. Even together you couldn't defeat the monster. You all lost a level."
-      broadcast_to(@gameboard, { type: GAME_LOG, params: { date: Time.new, message: msg, type: 'error' } })
-    end
     Gameboard.clear_buffcards(@gameboard)
     PlayerChannel.broadcast_to(current_user, { type: 'ERROR', params: { message: '❌ Attack too low' } }) unless result[:result]
 

@@ -492,34 +492,6 @@ RSpec.describe LobbyChannel, type: :channel do
     expect(users(:one).lobby.users.count).to eq 3
   end
 
-  it 'test if initial user can get back' do
-    stub_connection current_user: users(:one)
-    subscribe initiate: true
-
-    lobby = users(:one).lobby
-
-    stub_connection current_user: users(:two)
-    subscribe lobby_id: lobby.id
-
-    stub_connection current_user: users(:three)
-    subscribe lobby_id: lobby.id
-
-    expect(lobby.users.count).to eq 3
-
-    stub_connection current_user: users(:one)
-    subscribe initiate: true
-    unsubscribe
-
-    expect(lobby.users.count).to eq 2
-
-    subscribe initiate: true
-
-    expect(lobby.users.count).to eq 3
-    expect(users(:three).lobby.nil?).to be_falsy
-    expect(users(:one).lobby.nil?).to be_falsy
-    expect(users(:two).lobby.nil?).to be_falsy
-  end
-
   it 'test if lobby gets destroyed after last one leaves' do
     stub_connection current_user: users(:one)
     subscribe initiate: true
