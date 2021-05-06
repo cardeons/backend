@@ -25,11 +25,8 @@ class UsersController < ApplicationController
     # wrong type of JWT
     return false unless decoded_token
 
-    if (current_user = User.find(decoded_token[0]['user_id']))
-      current_user
-    else
-      return false
-    end
+    return false unless User.find(decoded_token[0]['user_id'])
+
     true
   end
 
