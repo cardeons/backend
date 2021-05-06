@@ -235,6 +235,8 @@ class Monstercard < Card
     when 'lose_level'
       if gameboard.intercept_finished?
         player.decrement!(:level, 1) unless player.level == 1
+        msg = "😢 #{player.name} lost one level because of #{ingamedeck.card.title}s bad things."
+        Monstercard.broadcast_gamelog(msg, gameboard)
       else
         gameboard.reload.players.each do |player_individual|
           player_individual.decrement!(:level, 1) unless player_individual.level == 1
