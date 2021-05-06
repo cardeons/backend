@@ -7,7 +7,15 @@ class Levelcard < Card
     GameChannel.broadcast_to(gameboard, { type: 'GAME_LOG', params: { date: Time.new, message: msg, type: 'success' } })
   end
 
-  def self.activate(ingamedeck, player)
+  def self.activate(params, current_user)
+    ingamedeck = Ingamedeck.find_by('id = ?', params['unique_card_id'])
+    player = current_user.player
+
+    unless ingamedeck.card.type == 'Levelcard'
+      PlayerChannel.broadcast_to(current_user, { type: 'ERROR', params: { message: "❌ You can't play this card here." } })
+      return
+    end
+
     case ingamedeck.card.action # get the action from card
     when 'level_up'
       # level up cards are not usable if you're one level before winning
