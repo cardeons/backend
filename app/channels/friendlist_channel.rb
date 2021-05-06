@@ -30,6 +30,8 @@ class FriendlistChannel < ApplicationCable::Channel
     inquirer = User.find_by('id=?', data['inquirer'])
 
     Friendship.accept(current_user, inquirer)
+    Friendship.broadcast_friends(current_user)
+    Friendship.broadcast_friends(inquirer)
 
     broadcast_to(current_user, { type: 'FRIEND_LOG', params: { message: "You accepted a friendrequest from #{inquirer.name}" } })
     broadcast_to(inquirer, { type: 'FRIEND_LOG', params: { message: "#{current_user.name} accepted your friendrequest" } })

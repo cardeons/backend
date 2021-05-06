@@ -18,7 +18,8 @@ class UsersController < ApplicationController
   end
 
   def find_verified_user
-    token = request.headers['token']
+    # token = request.headers['token']
+    token = request.headers['Authorization'].split[1]
 
     decoded_token = decoded_token(token)
 
