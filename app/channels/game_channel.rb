@@ -298,6 +298,7 @@ class GameChannel < ApplicationCable::Channel
       end
       msg = "✅ #{current_player.name} asked #{@gameboad.helping_player.name} for help in this fight. He agreed!"
       broadcast_to(@gameboard, { type: GAME_LOG, params: { date: Time.new, message: msg, type: 'success' } })
+      start_intercept_phase(@gameboard)
     end
 
     @gameboard.update(shared_reward: 0) unless params['help']
