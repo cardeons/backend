@@ -50,32 +50,22 @@ class GameChannel < ApplicationCable::Channel
 
     centercard = Centercard.find_by('gameboard_id = ?', @gameboard.id)
 
-    # centercard.ingamedecks.each do |ingamedeck|
-    #   ingamedeck.update(cardable: Graveyard.find_by('gameboard_id = ?', @gameboard.id))
-    # end
-
     centercard.ingamedeck&.update(cardable: Graveyard.find_by('gameboard_id = ?', @gameboard.id))
 
     # update handcard to centercard
     ingame_card.update(cardable: Centercard.find_by('gameboard_id = ?', @gameboard.id))
 
-    # TODO: Do we even need this anymore? is this ont already handelt i attack?
-    monsteratk = ingame_card.card.atk_points
-    centercard = Centercard.find_by('gameboard_id = ?', @gameboard.id)
-
-    @gameboard.update(centercard: centercard, monster_atk: monsteratk)
     @gameboard.intercept_phase!
     @gameboard.players.each do |player|
       player.update!(intercept: true)
     end
 
-    result = Gameboard.attack(@gameboard)
-    @gameboard.update(success: result[:result], player_atk: result[:playeratk], monster_atk: result[:monsteratk])
     updated_board = Gameboard.broadcast_game_board(@gameboard)
     broadcast_to(@gameboard, { type: BOARD_UPDATE, params: updated_board })
+
     name = @gameboard.centercard.card.title
     player = Player.find_by('user_id = ?', current_user.id)
-    msg = "#{player.name} has played #{name} from handcards!"
+    msg = "#{player.name} has played #{name} from their handcards!"
 
     @gameboard.reload
     start_intercept_phase(@gameboard)
@@ -122,7 +112,7 @@ class GameChannel < ApplicationCable::Channel
   def attack
     return unless validate_user
 
-    result = Gameboard.attack(@gameboard.reload)
+    result = Gameboard.calc_attack_points(@gameboard.reload)
 
     if result[:result]
 
@@ -145,6 +135,7 @@ class GameChannel < ApplicationCable::Channel
           monster_id = player.win_game(current_user)
           @gameboard.game_won!
           broadcast_to(@gameboard, { type: 'WIN', params: { player: player.id, monster_won: monster_id } })
+          broadcast_to(@gameboard, { type: BOARD_UPDATE, params: Gameboard.broadcast_game_board(@gameboard) })
           return
         end
 
@@ -298,7 +289,7 @@ class GameChannel < ApplicationCable::Channel
   def move_card(params)
     unique_card_id = params['unique_card_id']
     to = params['to']
-    player = Player.find_by('id=?', current_user.player.id)
+    player = current_user.player.reload
     ingamedeck = Ingamedeck.find_by('id = ?', unique_card_id)
 
     case to
@@ -326,25 +317,14 @@ class GameChannel < ApplicationCable::Channel
       end
     end
 
-    monstercards1 = Monstercard.calculate_monsterslot_atk(player.monsterone)
-    monstercards2 = Monstercard.calculate_monsterslot_atk(player.monstertwo)
-    monstercards3 = Monstercard.calculate_monsterslot_atk(player.monsterthree)
-
-    playeratkpoints = monstercards1 + monstercards2 + monstercards3 + player.level
-
-    player.update_attribute(:attack, playeratkpoints)
+    # recalc player atk
+    playeratkpoints = player.calculate_player_atk_with_monster_and_items
 
     @gameboard.update_attribute(:player_atk, playeratkpoints)
 
-    gameboard = Gameboard.find(@gameboard.id)
-
-    # get updatet result of attack
-    attack_obj = Gameboard.attack(gameboard)
-    gameboard.update(success: attack_obj[:result], player_atk: attack_obj[:playeratk], monster_atk: attack_obj[:monsteratk])
-
     PlayerChannel.broadcast_to(current_user, { type: 'HANDCARD_UPDATE', params: { handcards: Gameboard.render_cards_array(player.handcard.ingamedecks) } })
 
-    broadcast_to(@gameboard, { type: BOARD_UPDATE, params: Gameboard.broadcast_game_board(gameboard) })
+    broadcast_to(@gameboard, { type: BOARD_UPDATE, params: Gameboard.broadcast_game_board(@gameboard) })
   end
 
   def curse_player(params)
@@ -444,9 +424,7 @@ class GameChannel < ApplicationCable::Channel
     @gameboard.update(centercard: new_center)
 
     @gameboard.boss_phase!
-    result = Gameboard.attack(@gameboard, false)
 
-    @gameboard.update(success: result[:result], player_atk: result[:playeratk], monster_atk: result[:monsteratk])
     updated_board = Gameboard.broadcast_game_board(@gameboard.reload)
 
     start_intercept_phase(@gameboard.reload)

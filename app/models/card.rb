@@ -18,8 +18,13 @@ class Card < ApplicationRecord
   def calculate_self_element_modifiers(other_card)
     modifier = 0
 
-    modifier += good_against_value if good_against == other_card.element
-    modifier -= bad_against_value if bad_against == other_card.element
+    return modifier unless other_card.element
+
+    # if good_against is not nil and the same element
+    modifier += good_against_value if good_against && good_against == other_card.element
+
+    # if bad_against is not nil and the same element
+    modifier -= bad_against_value if bad_against && bad_against == other_card.element
 
     modifier
   end

@@ -87,6 +87,7 @@ RSpec.describe Gameboard, type: :model do
 
   it 'render gameboard' do
     gameboards(:gameboardFourPlayers).initialize_game_board
+    gameboards(:gameboardFourPlayers).players.each(&:init_player)
 
     centercard = (Gameboard.render_card_from_id(gameboards(:gameboardFourPlayers).centercard.ingamedeck.id) if gameboards(:gameboardFourPlayers).centercard.ingamedeck)
     gameboard_obj = {
@@ -95,22 +96,22 @@ RSpec.describe Gameboard, type: :model do
       center_card: centercard,
       interceptcards: [],
       player_interceptcards: [],
-      player_atk: gameboards(:gameboardFourPlayers).player_atk,
-      monster_atk: gameboards(:gameboardFourPlayers).monster_atk,
-      success: gameboards(:gameboardFourPlayers).success,
+      player_atk: gameboards(:gameboardFourPlayers).current_player.calculate_player_atk_with_monster_and_items,
+      monster_atk: 0,
+      success: true,
       can_flee: gameboards(:gameboardFourPlayers).can_flee,
       rewards_treasure: gameboards(:gameboardFourPlayers).rewards_treasure,
       graveyard: [],
       shared_reward: gameboards(:gameboardFourPlayers).shared_reward,
       helping_player: gameboards(:gameboardFourPlayers).helping_player,
       current_state: 'ingame',
-      intercept_timestamp: nil
+      intercept_timestamp: nil,
+      player_element_synergy_modifiers: gameboards(:gameboardFourPlayers).player_element_synergy_modifiers,
+      monster_element_synergy_modifiers: gameboards(:gameboardFourPlayers).monster_element_synergy_modifiers
+
     }
-    starting = Process.clock_gettime(Process::CLOCK_MONOTONIC)
 
     expect(Gameboard.render_gameboard(gameboards(:gameboardFourPlayers))).to eql(gameboard_obj)
-    ending = Process.clock_gettime(Process::CLOCK_MONOTONIC)
-    # puts ending - starting
   end
 
   # only measure times
@@ -222,7 +223,7 @@ RSpec.describe Gameboard, type: :model do
     gameboards(:gameboardFourPlayers).players.each(&:init_player)
     Gameboard.draw_door_card(gameboards(:gameboardFourPlayers))
 
-    playerwin = Gameboard.attack(gameboards(:gameboardFourPlayers))
+    playerwin = Gameboard.calc_attack_points(gameboards(:gameboardFourPlayers))
 
     # expect(playeratk.to(eql))
     expect(gameboards(:gameboardFourPlayers).success).to be_truthy if playerwin[:result]
@@ -268,7 +269,7 @@ RSpec.describe Gameboard, type: :model do
     Ingamedeck.create!(gameboard: gameboards(:gameboardFourPlayers), card: cards(:firemonster), cardable: gameboards(:gameboardFourPlayers).centercard)
     Ingamedeck.create!(gameboard: gameboards(:gameboardFourPlayers), card: cards(:watermonster), cardable: player.monsterone)
 
-    expect(gameboards(:gameboardFourPlayers).calculate_element_modifiers).to eql(
+    expect(gameboards(:gameboardFourPlayers).send(:calculate_monster_element_modifier)).to eql(
       {
         modifier_player: -2,
         modifier_monster: 3
@@ -277,7 +278,7 @@ RSpec.describe Gameboard, type: :model do
 
     Ingamedeck.create!(gameboard: gameboards(:gameboardFourPlayers), card: cards(:earthmonster), cardable: player.monstertwo)
 
-    expect(gameboards(:gameboardFourPlayers).calculate_element_modifiers).to eql(
+    expect(gameboards(:gameboardFourPlayers).send(:calculate_monster_element_modifier)).to eql(
       {
         modifier_player: 3,
         modifier_monster: 3
@@ -286,14 +287,12 @@ RSpec.describe Gameboard, type: :model do
 
     Ingamedeck.create!(gameboard: gameboards(:gameboardFourPlayers), card: cards(:earthmonster), cardable: player.monsterthree)
 
-    expect(gameboards(:gameboardFourPlayers).calculate_element_modifiers).to eql(
+    expect(gameboards(:gameboardFourPlayers).send(:calculate_monster_element_modifier)).to eql(
       {
         modifier_player: 8,
         modifier_monster: 3
       }
     )
-
-    Ingamedeck.create!(gameboard: gameboards(:gameboardFourPlayers), card: cards(:watermonster), cardable: player.monsterone)
   end
 
   it 'element modifier is only counted once if playes has two of the same type' do
@@ -306,7 +305,7 @@ RSpec.describe Gameboard, type: :model do
     Ingamedeck.create!(gameboard: gameboards(:gameboardFourPlayers), card: cards(:watermonster), cardable: player.monsterone)
     Ingamedeck.create!(gameboard: gameboards(:gameboardFourPlayers), card: cards(:watermonster), cardable: player.monstertwo)
 
-    expect(gameboards(:gameboardFourPlayers).calculate_element_modifiers).to eql(
+    expect(gameboards(:gameboardFourPlayers).send(:calculate_monster_element_modifier)).to eql(
       {
         modifier_player: -4,
         modifier_monster: 3
@@ -325,23 +324,19 @@ RSpec.describe Gameboard, type: :model do
     # synergies on enemy monster is only coutned once
     Ingamedeck.create!(gameboard: gameboards(:gameboardFourPlayers), card: cards(:bullMonster), cardable: player.monstertwo)
 
-    expect(gameboards(:gameboardFourPlayers).calculate_all_modifiers).to eql(
+    expect(gameboards(:gameboardFourPlayers).send(:calc_synergy_monster_and_items)).to eql(
       {
-        bad_against: 0,
-        good_against: 0,
-        synergy_player: 0,
-        synergy_monster: 5
+        modifier_player: 0,
+        modifier_monster: 5
       }
     )
 
     Ingamedeck.create!(gameboard: gameboards(:gameboardFourPlayers), card: cards(:goodAgainstBoar), cardable: player.monsterthree)
 
-    expect(gameboards(:gameboardFourPlayers).calculate_all_modifiers).to eql(
+    expect(gameboards(:gameboardFourPlayers).send(:calc_synergy_monster_and_items)).to eql(
       {
-        bad_against: 0,
-        good_against: 0,
-        synergy_player: 10,
-        synergy_monster: 5
+        modifier_player: 10,
+        modifier_monster: 5
       }
     )
 
@@ -350,13 +345,47 @@ RSpec.describe Gameboard, type: :model do
     Ingamedeck.create!(gameboard: gameboards(:gameboardFourPlayers), card: cards(:itemGoodAgainstWater), cardable: player.monsterone)
     Ingamedeck.create!(gameboard: gameboards(:gameboardFourPlayers), card: cards(:itemBadAgainstWater), cardable: player.monsterone)
 
-    expect(gameboards(:gameboardFourPlayers).calculate_all_modifiers).to eql(
+    expect(gameboards(:gameboardFourPlayers).send(:calc_synergy_monster_and_items)).to eql(
       {
-        bad_against: 10,
-        good_against: 40,
-        synergy_player: 10,
-        synergy_monster: 5
+        modifier_player: 40,
+        modifier_monster: 5
       }
     )
+  end
+
+  it 'update gameboard modifiers of player and monster' do
+    gameboards(:gameboardFourPlayers).initialize_game_board
+    gameboards(:gameboardFourPlayers).players.each(&:init_player)
+
+    player = gameboards(:gameboardFourPlayers).current_player
+
+    # +5 against bulls
+    Ingamedeck.create!(gameboard: gameboards(:gameboardFourPlayers), card: cards(:goodAgainstBullMonster), cardable: gameboards(:gameboardFourPlayers).centercard)
+
+    Ingamedeck.create!(gameboard: gameboards(:gameboardFourPlayers), card: cards(:bullMonster), cardable: player.monsterone)
+    # synergies on enemy monster is only coutned once
+    Ingamedeck.create!(gameboard: gameboards(:gameboardFourPlayers), card: cards(:bullMonster), cardable: player.monstertwo)
+
+    gameboards(:gameboardFourPlayers).update_recalc_element_synergy_modifer
+
+    expect(gameboards(:gameboardFourPlayers).reload.player_element_synergy_modifiers).to eql(0)
+    expect(gameboards(:gameboardFourPlayers).reload.monster_element_synergy_modifiers).to eql(5)
+
+    Ingamedeck.create!(gameboard: gameboards(:gameboardFourPlayers), card: cards(:goodAgainstBoar), cardable: player.monsterthree)
+
+    gameboards(:gameboardFourPlayers).update_recalc_element_synergy_modifer
+
+    expect(gameboards(:gameboardFourPlayers).reload.player_element_synergy_modifiers).to eql(10)
+    expect(gameboards(:gameboardFourPlayers).reload.monster_element_synergy_modifiers).to eql(5)
+
+    # add two items that are good against water(both +10)
+    Ingamedeck.create!(gameboard: gameboards(:gameboardFourPlayers), card: cards(:itemGoodAgainstWater), cardable: player.monsterone)
+    Ingamedeck.create!(gameboard: gameboards(:gameboardFourPlayers), card: cards(:itemGoodAgainstWater), cardable: player.monsterone)
+    Ingamedeck.create!(gameboard: gameboards(:gameboardFourPlayers), card: cards(:itemBadAgainstWater), cardable: player.monsterone)
+
+    gameboards(:gameboardFourPlayers).update_recalc_element_synergy_modifer
+
+    expect(gameboards(:gameboardFourPlayers).reload.player_element_synergy_modifiers).to eql(40)
+    expect(gameboards(:gameboardFourPlayers).reload.monster_element_synergy_modifiers).to eql(5)
   end
 end
