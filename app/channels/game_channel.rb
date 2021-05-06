@@ -354,6 +354,12 @@ class GameChannel < ApplicationCable::Channel
     broadcast_to(@gameboard, { type: BOARD_UPDATE, params: Gameboard.broadcast_game_board(@gameboard) })
   end
 
+  def level_up(params)
+    Levelcard.activate(params, current_user)
+    PlayerChannel.broadcast_to(current_user, { type: 'HANDCARD_UPDATE', params: { handcards: Gameboard.render_cards_array(player.handcard.ingamedecks) } })
+    broadcast_to(@gameboard, { type: BOARD_UPDATE, params: Gameboard.broadcast_game_board(@gameboard) })
+  end
+
   def validate_user
     if current_user.player != @gameboard.current_player
       PlayerChannel.broadcast_error(current_user, "You can't do that, it's not your turn...")
