@@ -10,26 +10,31 @@ class LobbyChannel < ApplicationCable::Channel
     if params['initiate']
       lobby = Lobby.find_or_create_by!(id: current_user.oldlobby)
 
+      @lobby = lobby
+
+      stream_for @lobby
+
       current_user.update!(lobby: lobby, oldlobby: lobby.id)
 
       lobby_users = get_all_users_from_lobby(lobby)
-      broadcast_to(lobby, { type: 'LOBBY_UPDATE', params: { users: lobby_users } })
+      broadcast_to(@lobby, { type: 'LOBBY_UPDATE', params: { users: lobby_users } })
     elsif params['lobby_id']
-      lobby = Lobby.find_by(id: params['lobby_id'])
-
+      lobby = Lobby.find_by('id = ?', params['lobby_id'])
+      @lobby = lobby
       FriendlistChannel.broadcast_to(current_user, { type: 'LOBBY_ERROR', params: { message: 'There is no lobby... please create a new one...' } }) unless lobby
 
       FriendlistChannel.broadcast_to(current_user, { type: 'LOBBY_ERROR', params: { message: 'Lobby is full...' } }) if lobby.users.count >= 4
       reject if lobby.users.count >= 4
 
-      stream_for lobby
+      stream_for @lobby
 
       lobby_users = get_all_users_from_lobby(lobby)
 
-      broadcast_to(lobby, { type: 'LOBBY_UPDATE', params: { users: lobby_users } })
+      broadcast_to(@lobby, { type: 'LOBBY_UPDATE', params: { users: lobby_users } })
 
       current_user.update!(lobby: lobby, oldlobby: lobby.id) if lobby.users.count < 4
     end
+    stream_for @lobby
   end
 
   def get_all_users_from_lobby(lobby)
@@ -72,6 +77,8 @@ class LobbyChannel < ApplicationCable::Channel
     gameboard = Gameboard.create!(current_state: :lobby) if lobby.users.reload.count > (4 - gameboard.players.reload.count)
     @gameboard = gameboard
 
+    broadcast_to(@lobby, { type: 'START_QUEUE', params: { game_id: @gameboard.id } })
+
     lobby.users.each do |user|
       Player.create!(name: user.name, gameboard_id: gameboard.id, user: user)
 
@@ -88,11 +95,9 @@ class LobbyChannel < ApplicationCable::Channel
 
       lobbyisfull = @gameboard.players.count > 3
 
-      stream_for @gameboard
+      user.update!(lobby: nil, oldlobby: nil)
 
-      user.update!(lobby: nil)
-
-      broadcast_to(@gameboard,
+      broadcast_to(@lobby,
                    { type: 'DEBUG', params: { message: "new Player#{current_user.email} conected to the gameboard id: #{@gameboard.id} players in lobby #{@gameboard.reload.players.count}" } })
 
       next unless lobbyisfull
@@ -100,11 +105,11 @@ class LobbyChannel < ApplicationCable::Channel
       lobby.destroy!
 
       # Lobby is full tell players to start the game
-      broadcast_to(@gameboard, { type: 'DEBUG', params: { message: 'Lobby is full start with game subscribe to Player and GameChannel' } })
+      broadcast_to(@lobby, { type: 'DEBUG', params: { message: 'Lobby is full start with game subscribe to Player and GameChannel' } })
 
       @gameboard.initialize_game_board
 
-      broadcast_to(@gameboard, { type: 'START_GAME', params: { game_id: @gameboard.id } })
+      broadcast_to(@lobby, { type: 'START_GAME', params: { game_id: @gameboard.id } })
     end
   end
 
@@ -123,7 +128,7 @@ class LobbyChannel < ApplicationCable::Channel
       # pp current_user.player.id
       # Player.destroy(current_user.player.id)
       # pp current_user.player.reload
-      broadcast_to(@gameboard, { type: 'DEBUG', params: { message: 'User left the lobby and got destroyed' } })
+      broadcast_to(@lobby, { type: 'DEBUG', params: { message: 'User left the lobby and got destroyed' } })
     end
   end
 
@@ -157,7 +162,7 @@ class LobbyChannel < ApplicationCable::Channel
   end
 
   def deliver_error_message(error)
-    broadcast_to(@gameboard, { type: 'ERROR', params: { message: error } })
+    broadcast_to(@lobby, { type: 'ERROR', params: { message: error } })
   end
 
   def delete_old_players
