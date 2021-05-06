@@ -171,6 +171,20 @@ Gameboard Channel response
   #GAMEBOARD WIE IMMER
 }
 
+#ANFRAGE
+{
+  action: "level_up",
+  params: {
+    unique_card_id: 4
+  }
+  #sollte man nur auf sich selbst spielenn können
+}
+
+#ANTWORT
+{
+  #GAMEBOARD WIE IMMER
+}
+
 
 #ANFRAGE
 {
