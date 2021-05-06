@@ -16,7 +16,6 @@ class Monstercard < Card
                        else
                          player.monsterthree
                        end
-
     # find "original" card, only advance if found
     if deck_card.nil?
       type = 'ERROR'
