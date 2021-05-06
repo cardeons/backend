@@ -93,4 +93,15 @@ class Player < ApplicationRecord
 
     random_monster.id
   end
+
+  def calculate_player_atk_with_monster_and_items
+    monstercards1 = Monstercard.calculate_monsterslot_atk(monsterone.reload)
+    monstercards2 = Monstercard.calculate_monsterslot_atk(monstertwo.reload)
+    monstercards3 = Monstercard.calculate_monsterslot_atk(monsterthree.reload)
+
+    atk = monstercards1 + monstercards2 + monstercards3 + reload.level
+
+    update!(attack: atk)
+    atk
+  end
 end

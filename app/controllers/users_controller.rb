@@ -32,7 +32,7 @@ class UsersController < ApplicationController
   end
 
   def search
-    @users = User.where('name like ?', "%#{params[:search]}%") if find_verified_user
+    @users = User.where('name like ?', "%#{params[:search]}%").first(5) if find_verified_user
   end
 
   # GET /users/1

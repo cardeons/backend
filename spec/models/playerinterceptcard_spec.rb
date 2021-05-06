@@ -56,9 +56,8 @@ RSpec.describe Playerinterceptcard, type: :model do
 
     buff_atk = cards(:buffcard).atk_points
 
-    # checks if player atk got increased
-    expect { gameboards(:gameboardFourPlayers).playerinterceptcard.add_card_with_ingamedeck_id(ingamedeck_card.id) }.to(change do
-                                                                                                                          gameboards(:gameboardFourPlayers).player_atk
-                                                                                                                        end.from(old_atk).to(old_atk + buff_atk))
+    gameboards(:gameboardFourPlayers).playerinterceptcard.add_card_with_ingamedeck_id(ingamedeck_card.id)
+
+    expect(Gameboard.calc_attack_points(gameboards(:gameboardFourPlayers))).to include(playeratk: old_atk + buff_atk)
   end
 end

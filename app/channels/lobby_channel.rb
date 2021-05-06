@@ -8,6 +8,7 @@ class LobbyChannel < ApplicationCable::Channel
 
   def subscribed
     if params['initiate']
+
       lobby = Lobby.create!
 
       @lobby = lobby
@@ -19,6 +20,7 @@ class LobbyChannel < ApplicationCable::Channel
       lobby_users = get_all_users_from_lobby(lobby)
       broadcast_to(@lobby, { type: 'LOBBY_UPDATE', params: { users: lobby_users } })
     elsif params['lobby_id']
+
       lobby = Lobby.find_by('id = ?', params['lobby_id'])
       @lobby = lobby
 
@@ -29,11 +31,13 @@ class LobbyChannel < ApplicationCable::Channel
 
       stream_for @lobby
 
-      lobby_users = get_all_users_from_lobby(lobby)
-
       current_user.update!(lobby: lobby, oldlobby: lobby.id) if lobby.users.count < 4
 
+      lobby_users = get_all_users_from_lobby(lobby.reload)
+
       broadcast_to(@lobby, { type: 'LOBBY_UPDATE', params: { users: lobby_users } })
+    else
+      reject
     end
   end
 
@@ -82,6 +86,9 @@ class LobbyChannel < ApplicationCable::Channel
     broadcast_to(@lobby, { type: 'START_QUEUE', params: { game_id: @gameboard.id } })
 
     lobby.users.each do |user|
+      # TODO: Destroy Player for now we should change this for later
+      Player.find_by(name: user.name)&.destroy
+
       Player.create!(name: user.name, gameboard_id: gameboard.id, user: user)
 
       player = user.player
@@ -97,21 +104,27 @@ class LobbyChannel < ApplicationCable::Channel
 
       lobbyisfull = @gameboard.players.count > 3
 
-      user.update!(lobby: nil, oldlobby: nil)
-
-      broadcast_to(@lobby,
+      broadcast_to(@gameboard,
                    { type: 'DEBUG', params: { message: "new Player#{current_user.email} conected to the gameboard id: #{@gameboard.id} players in lobby #{@gameboard.reload.players.count}" } })
 
       next unless lobbyisfull
 
-      lobby.destroy!
+      arr = []
+      @gameboard.players.each do |my_player|
+        next if arr.find_index(my_player.user.lobby)
+
+        broadcast_to(my_player.user.lobby,
+                     { type: 'DEBUG', params: { message: "new Player#{current_user.email} conected to the gameboard id: #{@gameboard.id} players in lobby #{@gameboard.reload.players.count}" } })
+        broadcast_to(my_player.user.lobby, { type: 'START_GAME', params: { game_id: @gameboard.id } })
+
+        broadcast_to(my_player.user.lobby, { type: 'DEBUG', params: { message: 'Lobby is full start with game subscribe to Player and GameChannel' } })
+
+        arr.push(my_player.user.lobby)
+      end
 
       # Lobby is full tell players to start the game
-      broadcast_to(@lobby, { type: 'DEBUG', params: { message: 'Lobby is full start with game subscribe to Player and GameChannel' } })
 
       @gameboard.initialize_game_board
-
-      broadcast_to(@lobby, { type: 'START_GAME', params: { game_id: @gameboard.id } })
     end
   end
 
@@ -124,12 +137,22 @@ class LobbyChannel < ApplicationCable::Channel
 
     lobby_users = get_all_users_from_lobby(lobby)
     broadcast_to(@lobby, { type: 'LOBBY_UPDATE', params: { users: lobby_users } })
-    lobby.destroy if lobby && (lobby.reload.users.reload.count == 0)
+    lobby.destroy if lobby && lobby.reload.users.reload.count.zero?
 
     return unless @gameboard
 
     if @gameboard.reload.lobby?
+
+      # Delete dummy Players
+      dummy_players = @gameboard.players.where('name like ?', '%Dummy420%')
+      dummy_players.each do |player|
+        user = player.user
+        player.destroy!
+        user.destroy!
+      end
       current_user.player.destroy!
+
+      @gameboard.destroy! if @gameboard.players.count.zero?
       # pp current_user.player.id
       # Player.destroy(current_user.player.id)
       # pp current_user.player.reload
@@ -151,8 +174,8 @@ class LobbyChannel < ApplicationCable::Channel
 
     (1..number_of_players).each do
       x = rand(1..1_000_000)
-      u1 = User.create!(email: "#{x}2@2.at", password: '2', name: "#{x}2", password_confirmation: '2')
-      player1 = Player.create!(name: "#{x}2", gameboard: gameboard_test, user: u1)
+      u1 = User.create!(email: "#{x}_Dummy420_2@2.at", password: '2', name: "#{x}2", password_confirmation: '2')
+      player1 = Player.create!(name: "#{x}_Dummy420_2", gameboard: gameboard_test, user: u1)
       playercurse1 = Playercurse.create!(player: player1)
       Handcard.create!(player: player1)
       p1i = Inventory.create!(player: player1)
