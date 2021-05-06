@@ -112,8 +112,9 @@ class LobbyChannel < ApplicationCable::Channel
     # Any cleanup needed when channel is unsubscribed
     # kann des probleme machen beim reload? weil man dann keine params mehr hat?? :thinking:
     # current_user.update(lobby: nil)
-    current_user.lobby.destroy if current_user.lobby && (current_user.lobby.reload.users.reload.count == 0)
+    lobby = current_user.lobby
     current_user.update!(monsterone: nil, monstertwo: nil, monsterthree: nil, lobby: nil)
+    lobby.destroy if lobby && (lobby.reload.users.reload.count == 0)
 
     return unless @gameboard
 
