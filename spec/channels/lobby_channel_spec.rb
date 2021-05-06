@@ -248,6 +248,9 @@ RSpec.describe LobbyChannel, type: :channel do
   it '4 players get assigned to the game' do
     stub_connection current_user: users(:one)
     subscribe initiate: true
+
+    lobby_id = users(:one).lobby.id
+
     stub_connection current_user: users(:two)
     subscribe lobby_id: users(:one).lobby.id
     stub_connection current_user: users(:three)
@@ -257,6 +260,7 @@ RSpec.describe LobbyChannel, type: :channel do
     perform('start_lobby_queue')
 
     expect(User.find(users(:one).id).player.gameboard.players.count).to eql(4)
+    expect(Lobby.find_by(id: lobby_id)).to be_falsy
   end
 
   it 'should delete old player from old gameboard if user joins again' do
@@ -460,5 +464,36 @@ RSpec.describe LobbyChannel, type: :channel do
     expect(users(:three).lobby.nil?).to be_falsy
     expect(users(:one).lobby.nil?).to be_falsy
     expect(users(:two).lobby.nil?).to be_falsy
+  end
+
+  it 'test if lobby gets destroyed after last one leaves' do
+    stub_connection current_user: users(:one)
+    subscribe initiate: true
+
+    lobby_id = users(:one).lobby.id
+    unsubscribe
+    expect(Lobby.find_by(id: lobby_id)).to be_falsy
+  end
+
+  it 'test if lobby gets destroyed after last one leaves' do
+    stub_connection current_user: users(:one)
+    subscribe initiate: true
+
+    lobby_id = users(:one).lobby.id
+    unsubscribe
+    expect(Lobby.find_by(id: lobby_id)).to be_falsy
+  end
+
+  it 'test if lobby does not get destroyed after intiating one leaves' do
+    stub_connection current_user: users(:one)
+    subscribe initiate: true
+    lobby_id = users(:one).lobby.id
+    stub_connection current_user: users(:two)
+    subscribe lobby_id: lobby_id
+    stub_connection current_user: users(:one)
+    subscribe initiate: true
+    unsubscribe
+
+    expect(Lobby.find_by(id: lobby_id)).to be_truthy
   end
 end
