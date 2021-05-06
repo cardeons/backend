@@ -95,7 +95,7 @@ class LobbyChannel < ApplicationCable::Channel
 
       lobbyisfull = @gameboard.players.count > 3
 
-      user.update!(lobby: nil)
+      user.update!(lobby: nil, oldlobby: nil)
 
       broadcast_to(@lobby,
                    { type: 'DEBUG', params: { message: "new Player#{current_user.email} conected to the gameboard id: #{@gameboard.id} players in lobby #{@gameboard.reload.players.count}" } })
