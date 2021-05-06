@@ -594,7 +594,7 @@ if ENV['cards']
 
   curse2 = Cursecard.create!(
     title: 'Eight-legged curse',
-    description: '<p>A spider scared you, you dropped something you held in your hand!</p>',
+    description: '<p>A spider scared your monster, it dropped something it held in its hand!</p>',
     image: '/cardeons/cards/icons/curse.png',
     action: 'lose_item_hand',
     draw_chance: 6,
