@@ -195,7 +195,7 @@ class GameChannel < ApplicationCable::Channel
     end
 
     # intercept shouldn't be possible if it's not the right phase
-    return PlayerChannel.broadcast_error(current_user, "❌ You can't intercept right now, it's #{@gameboad.current_state} phase") if !@gameboard.intercept_phase? && !@gameboad.boss_phase?
+    return PlayerChannel.broadcast_error(current_user, "❌ You can't intercept right now, it's #{@gameboad.current_state} phase") if !@gameboard.intercept_phase? && !@gameboard.boss_phase?
 
     # if @gameboard.intercept_phase? || @gameboard.boss_phase?
     unique_card_id = params['unique_card_id']
@@ -227,7 +227,7 @@ class GameChannel < ApplicationCable::Channel
       return
     end
 
-    start_intercept_phase(@gameboard)
+    start_intercept_phase(@gameboard) unless @gameboard.boss_phase?
 
     # update this players handcards
     PlayerChannel.broadcast_to(current_user, { type: 'HANDCARD_UPDATE', params: { handcards: Gameboard.render_cards_array(current_user.player.handcard.ingamedecks.reload) } })
@@ -266,6 +266,12 @@ class GameChannel < ApplicationCable::Channel
 
     return unless validate_user
 
+    # no help call in bossphase
+    if @gameboard.boss_phase?
+      PlayerChannel.broadcast_to(current_user, { type: 'ERROR', params: { message: "❌ You're in this together! No need to ask for help during a bossfight." } })
+      return
+    end
+
     if @gameboard.asked_help
       PlayerChannel.broadcast_to(current_user, { type: 'ERROR', params: { message: '❌ You already asked for help...' } })
       return
@@ -289,6 +295,9 @@ class GameChannel < ApplicationCable::Channel
   end
 
   def answer_help_call(params)
+    # no help calls in bossphase
+    return if @gameboard.boss_phase?
+
     if params['help'] && @gameboard.reload.helping_player
       helping_player = @gameboard.helping_player
 
@@ -541,6 +550,9 @@ class GameChannel < ApplicationCable::Channel
   end
 
   def start_intercept_phase(gameboard)
+    pp '*************************'
+    pp 'intercept updated!!'
+    pp '*************************'
     # if no boss monster has been drawn, state should be intercept_phase
     gameboard.intercept_phase! unless gameboard.boss_phase?
 
