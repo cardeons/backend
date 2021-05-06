@@ -12,7 +12,8 @@ class ChangeColumnCard < ActiveRecord::Migration[6.1]
     change_column :cards, :good_against, :string
     change_column :cards, :bad_against, :string
     change_column :cards, :element, :string
-    remove_column :cards, :synergy_type
-    remove_column :cards, :synergy_value
+    remove_column :cards, :synergy_type,  :integer
+    remove_column :cards, :synergy_value, :integer
+    remove_column :cards, :animal, :integer
   end
 end
