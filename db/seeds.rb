@@ -747,6 +747,24 @@ if ENV['cards']
     atk_points: 5
   )
 
+  buffcard11 = Buffcard.create!(
+    draw_chance: 6,
+    title: 'Spinach!',
+    description: '<p>Provides a plate of spinach! +3 for any side!</p>',
+    image: '/cardeons/cards/icons/buff.png',
+    action: 'plus_atk',
+    atk_points: 3
+  )
+
+  buffcard12 = Buffcard.create!(
+    draw_chance: 6,
+    title: '420',
+    description: '<p>Just chillin. +4 for any side!</p>',
+    image: '/cardeons/cards/icons/buff.png',
+    action: 'plus_atk',
+    atk_points: 4
+  )
+
   # item1 = Itemcard.create!(
   #   title: 'Helmet of Doom',
   #   description: '<p>This is the helmet of doom</p>',
