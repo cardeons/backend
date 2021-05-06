@@ -423,6 +423,13 @@ Alle im Game-Chanel
     }
 }
 
+{
+  type: 'LOBBY_UPDATE',
+  params: {
+    users: [ {id: , name: '', status: ''}]
+  }
+}
+
 #invite to lobby
 {
   action: "lobby_invite",
