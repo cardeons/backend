@@ -277,7 +277,7 @@ class Gameboard < ApplicationRecord
 
     result = playeratkpoints > monsteratkpts
 
-    result ? gameboard.update(success: true) : gameboard.update(success: false)
+    gameboard.update(success: result)
 
     { result: result, playeratk: playeratkpoints, monsteratk: monsteratkpts }
   end

@@ -60,7 +60,9 @@ class GameChannel < ApplicationCable::Channel
       player.update!(intercept: true)
     end
 
-    updated_board = Gameboard.broadcast_game_board(@gameboard)
+    @gameboard.update_recalc_element_synergy_modifer
+
+    updated_board = Gameboard.broadcast_game_board(@gameboard.reload)
     broadcast_to(@gameboard, { type: BOARD_UPDATE, params: updated_board })
 
     name = @gameboard.centercard.card.title
@@ -84,6 +86,7 @@ class GameChannel < ApplicationCable::Channel
 
     name = Gameboard.draw_door_card(@gameboard)
 
+    @gameboard.reload.update_recalc_element_synergy_modifer
     start_intercept_phase(@gameboard.reload)
 
     broadcast_to(@gameboard, { type: BOARD_UPDATE, params: Gameboard.broadcast_game_board(@gameboard.reload) })
@@ -104,6 +107,11 @@ class GameChannel < ApplicationCable::Channel
     if result[:type] != 'ERROR'
       msg = "#{player.name} has equiped a monster!"
       broadcast_to(@gameboard, { type: GAME_LOG, params: { date: Time.new, message: msg } })
+    end
+
+    if player.gameboard.current_player == player
+      @gameboard.update_recalc_element_synergy_modifer
+      broadcast_to(@gameboard, { type: BOARD_UPDATE, params: Gameboard.broadcast_game_board(@gameboard.reload) })
     end
 
     PlayerChannel.broadcast_to(current_user, { type: 'HANDCARD_UPDATE', params: { handcards: Gameboard.render_cards_array(player.handcard.ingamedecks) } })
