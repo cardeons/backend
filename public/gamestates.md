@@ -89,13 +89,14 @@ PLAYER Channel response
 }
 
 
-Gameboard Channel response
+Gameboard Channel responses
 {
   type: "GAME_LOG",
   params:
   {
     date: ISOSTRING,
-    message: "game log"
+    message: "game log",
+    type: "info | success | warning | error | dark"
   }
 }
 
@@ -279,14 +280,12 @@ Gameboard Channel response
 
 CURRENT_STATE
 
-available values: lobby | ingame | intercept_phase | intercept_finished | boss_phase | boss_phase_finished | game_won
+available values: lobby | ingame | intercept_phase | intercept_finished
 
 lobby = spieler befinden sich in der lobby
 ingame = spiel hat gestartet
 intercept_phase = spieler hat ein monster ausgespielt/eine türkarte gezogen. Solange nicht alle spieler no_intercept drücken, ist das spiel in dieser phase.
 intercept_finished = kein spieler wollte intercepten, zug ist "vorbei"
-boss_phase = spieler hat ein bossmonster aus dem Türstapel gezogen, alle spieler bekämpfen dieses monster gemeinsam
-boss_phase_finished = kein spieler kann mehr etwas einwerfen, zug ist "vorbei"
 game_won = ein spieler hat lvl 5 erreicht
 
 
@@ -347,11 +346,6 @@ Alle im Game-Chanel
    params: { }  
 }
 
-
-{
-   type: 'develop_draw_boss_card',
-   params: { }  
-}
 
 # FRIENDLISTCHANNEL
 

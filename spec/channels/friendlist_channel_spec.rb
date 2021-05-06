@@ -28,7 +28,7 @@ RSpec.describe FriendlistChannel, type: :channel do
               })
     end.to have_broadcasted_to(FriendlistChannel.broadcasting_for(connection.current_user))
       .with(
-        hash_including(type: 'FRIEND_LOG', params: { message: "You sent a friendrequest to #{users(:usernorbert).name}" })
+        hash_including(type: 'FRIEND_LOG', params: { message: "🤝 You sent a friendrequest to #{users(:usernorbert).name}" })
       ).exactly(:once)
 
     unsubscribe
@@ -52,7 +52,7 @@ RSpec.describe FriendlistChannel, type: :channel do
               })
     end.to have_broadcasted_to(FriendlistChannel.broadcasting_for(connection.current_user))
       .with(
-        hash_including(type: 'FRIEND_LOG', params: { message: "You sent a friendrequest to #{users(:usernorbert).name}" })
+        hash_including(type: 'FRIEND_LOG', params: { message: "🤝 You sent a friendrequest to #{users(:usernorbert).name}" })
       ).exactly(:once)
 
     unsubscribe
@@ -66,7 +66,7 @@ RSpec.describe FriendlistChannel, type: :channel do
               })
     end.to have_broadcasted_to(FriendlistChannel.broadcasting_for(connection.current_user))
       .with(
-        hash_including(type: 'FRIEND_LOG', params: { message: "You accepted a friendrequest from #{users(:one).name}" })
+        hash_including(type: 'FRIEND_LOG', params: { message: "✅ You accepted a friendrequest from #{users(:one).name}" })
       ).exactly(:once)
 
     expect(users(:usernorbert).friends.count).to eq 1
@@ -83,7 +83,7 @@ RSpec.describe FriendlistChannel, type: :channel do
               })
     end.to have_broadcasted_to(FriendlistChannel.broadcasting_for(connection.current_user))
       .with(
-        hash_including(type: 'FRIEND_LOG', params: { message: "You sent a friendrequest to #{users(:usernorbert).name}" })
+        hash_including(type: 'FRIEND_LOG', params: { message: "🤝 You sent a friendrequest to #{users(:usernorbert).name}" })
       ).exactly(:once)
 
     unsubscribe
@@ -97,7 +97,7 @@ RSpec.describe FriendlistChannel, type: :channel do
               })
     end.to have_broadcasted_to(FriendlistChannel.broadcasting_for(connection.current_user))
       .with(
-        hash_including(type: 'FRIEND_LOG', params: { message: "You declined a friendrequest from #{users(:one).name}" })
+        hash_including(type: 'FRIEND_LOG', params: { message: "❌ You declined a friendrequest from #{users(:one).name}" })
       ).exactly(:once)
 
     expect(users(:usernorbert).friends.count).to eq 0
@@ -113,7 +113,7 @@ RSpec.describe FriendlistChannel, type: :channel do
               })
     end.to have_broadcasted_to(FriendlistChannel.broadcasting_for(connection.current_user))
       .with(
-        hash_including(type: 'FRIEND_LOG', params: { message: "You sent a friendrequest to #{users(:usernorbert).name}" })
+        hash_including(type: 'FRIEND_LOG', params: { message: "🤝 You sent a friendrequest to #{users(:usernorbert).name}" })
       ).exactly(:once)
 
     unsubscribe
@@ -127,7 +127,7 @@ RSpec.describe FriendlistChannel, type: :channel do
               })
     end.to have_broadcasted_to(FriendlistChannel.broadcasting_for(connection.current_user))
       .with(
-        hash_including(type: 'FRIEND_LOG', params: { message: "You declined a friendrequest from #{users(:one).name}" })
+        hash_including(type: 'FRIEND_LOG', params: { message: "❌ You declined a friendrequest from #{users(:one).name}" })
       ).exactly(0)
   end
 
@@ -154,7 +154,7 @@ RSpec.describe FriendlistChannel, type: :channel do
               })
     end.to have_broadcasted_to(FriendlistChannel.broadcasting_for(connection.current_user))
       .with(
-        hash_including(type: 'FRIEND_LOG', params: { message: "You sent a friendrequest to #{users(:usernorbert).name}" })
+        hash_including(type: 'FRIEND_LOG', params: { message: "🤝 You sent a friendrequest to #{users(:usernorbert).name}" })
       ).exactly(:once)
 
     unsubscribe

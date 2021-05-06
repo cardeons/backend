@@ -193,10 +193,10 @@ class Gameboard < ApplicationRecord
     # if bosscard is drawn, phase is boss_phase, otherwise always intercept_phase
     if gameboard.centercard.card.type == 'Bosscard'
       gameboard.boss_phase!
-      attack_obj = attack(gameboard.reload, true)
+      attack_obj = attack(gameboard.reload)
     else
       gameboard.intercept_phase!
-      attack_obj = attack(gameboard.reload, true)
+      attack_obj = attack(gameboard.reload)
     end
 
     gameboard.update(success: attack_obj[:result], player_atk: attack_obj[:playeratk], monster_atk: attack_obj[:monsteratk])
@@ -237,7 +237,7 @@ class Gameboard < ApplicationRecord
     output
   end
 
-  def self.attack(gameboard, curse_log = false)
+  def self.attack(gameboard)
     gameboard.reload
 
     boss_phase = gameboard.boss_phase?
@@ -262,7 +262,7 @@ class Gameboard < ApplicationRecord
       playeratkpoints += gameboard.playerinterceptcard.cards.sum(:atk_points)
 
       player.playercurse.ingamedecks.each do |curse|
-        curse_obj = Cursecard.activate(curse, player, gameboard, playeratkpoints, monsteratkpts, curse_log)
+        curse_obj = Cursecard.activate(curse, player, gameboard, playeratkpoints, monsteratkpts)
 
         playeratkpoints = curse_obj[:playeratk]
         monsteratkpts = curse_obj[:monsteratk]

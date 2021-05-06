@@ -16,11 +16,10 @@ class Monstercard < Card
                        else
                          player.monsterthree
                        end
-
     # find "original" card, only advance if found
     if deck_card.nil?
       type = 'ERROR'
-      message = 'Card not found. Something went wrong.'
+      message = '❌ Card not found. Something went wrong.'
       return { type: type, message: message }
     end
 
@@ -29,14 +28,14 @@ class Monstercard < Card
     # there already are 5 items, you can't put any more (6 because the monster itself is in this table)
     if monster_to_equip.cards.count == 6
       type = 'ERROR'
-      message = "You can't put any more items on this monster."
+      message = "❌ You can't put any more items on this monster."
 
     # category already on monster
     elsif monster_to_equip.cards.where('item_category=?', card.item_category).count.positive?
 
       if card.item_category == 'hand' && monster_to_equip.cards.where('item_category=?', card.item_category).count == 1
         type = 'GAMEBOARD_UPDATE'
-        message = 'Successfully equipped.'
+        message = '✅ Successfully equipped.'
         deck_card.update(cardable: monster_to_equip)
 
         # get updated result of attack
@@ -53,14 +52,14 @@ class Monstercard < Card
 
       else
         type = 'ERROR'
-        message = "You already have this type of item on your monster! (#{card.item_category})"
+        message = "❌ You already have this type of item on your monster! (#{card.item_category})"
       end
     # GameChannel.broadcast_to(gameboard, {type: 'ERROR', params: { message: "You already have this type of item on your monster! (#{card.item_category})" } })
 
     # not an item
     elsif  card.type != 'Itemcard'
       type = 'ERROR'
-      message = "Sorry, you can't put anything on your monster that is not an item!"
+      message = "❌ Sorry, you can't put anything on your monster that is not an item!"
     # GameChannel.broadcast_to(gameboard, {type: 'ERROR', params: { message: "Sorry, you can't put anything on your monster that is not an item!"} })
 
     # yay
@@ -85,7 +84,7 @@ class Monstercard < Card
 
       player.update(attack: playeratkpoints)
       player.gameboard.update(success: attack_obj[:result], player_atk: attack_obj[:playeratk], monster_atk: attack_obj[:monsteratk])
-      message = 'Successfully equipped.'
+      message = '✅ Successfully equipped.'
     end
 
     # type = "equip"
@@ -168,26 +167,30 @@ class Monstercard < Card
     end
   end
 
+  def self.broadcast_gamelog(msg, gameboard)
+    GameChannel.broadcast_to(gameboard, { type: 'GAME_LOG', params: { date: Time.new, message: msg, type: 'error' } })
+  end
+
   def self.bad_things(ingamedeck, gameboard)
     player = gameboard.current_player
 
     case ingamedeck.card.action # get the action from card
     when 'lose_item_hand'
       lose_item_by_category(player, gameboard, 'hand')
-      msg = "You lost 1 handitem because of Monstercards bad things #{ingamedeck.card.title}"
-      Cursecard.broadcast_gamelog(msg, gameboard)
+      msg = "😢 #{player.name} lost one hand item because of #{ingamedeck.card.title}s bad things."
+      Monstercard.broadcast_gamelog(msg, gameboard)
     when 'lose_item_shoe'
       lose_item_by_category(player, gameboard, 'shoe')
-      msg = "You lost 1 shoeitem because of Monstercards bad things #{ingamedeck.card.title}"
-      Cursecard.broadcast_gamelog(msg, gameboard)
+      msg = "😢 #{player.name} lost one shoe item because of #{ingamedeck.card.title}s bad things."
+      Monstercard.broadcast_gamelog(msg, gameboard)
     when 'lose_item_head'
       lose_item_by_category(player, gameboard, 'head')
-      msg = "You lost 1 headitem because of Monstercards bad things #{ingamedeck.card.title}"
-      Cursecard.broadcast_gamelog(msg, gameboard)
+      msg = "😢 #{player.name} lost one head item because of #{ingamedeck.card.title}s bad things."
+      Monstercard.broadcast_gamelog(msg, gameboard)
     when 'lose_item'
       lose_item(player, gameboard)
-      msg = "You lost 1 item because of Monstercards bad things #{ingamedeck.card.title}"
-      Cursecard.broadcast_gamelog(msg, gameboard)
+      msg = "😢 #{player.name} lost one item because of #{ingamedeck.card.title}s bad things."
+      Monstercard.broadcast_gamelog(msg, gameboard)
     when 'random_card_lowest_level'
       all_players = gameboard.players.order(:id)
       first = true
@@ -212,41 +215,43 @@ class Monstercard < Card
       random = rand(0..player_lowest_level.size - 1)
 
       random_card&.update!(cardable: player_lowest_level[random].handcard)
-      msg = "You lost 1 item to the player with the lowest level because of Monstercards bad things #{ingamedeck.card.title}"
-      Cursecard.broadcast_gamelog(msg, gameboard)
+      msg = "😢 #{player.name} lost one item to the player with the lowest level because of #{ingamedeck.card.title}s bad things."
+      Monstercard.broadcast_gamelog(msg, gameboard)
       Player.broadcast_all_playerhandcards(gameboard)
     when 'no_help_next_fight'
       Ingamedeck.create(card: Cursecard.find_by('title = ?', 'The unicorn curse'), gameboard: gameboard, cardable: player.playercurse)
 
-      msg = "No one will help you in your next fight because of Monstercards bad things #{ingamedeck.card.title}"
-      Cursecard.broadcast_gamelog(msg, gameboard)
+      msg = "😢 No one is allowed to help #{player.name} in the next fight because of #{ingamedeck.card.title}s bad things."
+      Monstercard.broadcast_gamelog(msg, gameboard)
     when 'lose_one_card'
       offset = rand(player.handcard.ingamedecks.count)
 
       random_card = player.handcard.ingamedecks.offset(offset).first
 
       random_card&.update!(cardable: gameboard.graveyard)
-      msg = "You lost 1 handcard because of Monstercards bad things #{ingamedeck.card.title}"
-      Cursecard.broadcast_gamelog(msg, gameboard)
+      msg = "😢 #{player.name} lost one handcard because of #{ingamedeck.card.title}s bad things."
+      Monstercard.broadcast_gamelog(msg, gameboard)
       Player.broadcast_all_playerhandcards(gameboard)
     when 'lose_level'
       if gameboard.intercept_finished?
         player.decrement!(:level, 1) unless player.level == 1
+        msg = "😢 #{player.name} lost one level because of #{ingamedeck.card.title}s bad things."
+        Monstercard.broadcast_gamelog(msg, gameboard)
       else
         gameboard.reload.players.each do |player_individual|
           player_individual.decrement!(:level, 1) unless player_individual.level == 1
         end
       end
 
-      msg = "You lost 1 level because of Monstercards bad things #{ingamedeck.card.title}"
-      Cursecard.broadcast_gamelog(msg, gameboard)
+      msg = "😢 #{player.name} lost one level because of #{ingamedeck.card.title}s bad things."
+      Monstercard.broadcast_gamelog(msg, gameboard)
     when 'die'
       player.update(level: 1)
 
-      msg = "You died because of Monstercards bad things #{ingamedeck.card.title}"
-      Cursecard.broadcast_gamelog(msg, gameboard)
+      msg = "💀 #{player.name} died because of #{ingamedeck.card.title}s bad things."
+      Monstercard.broadcast_gamelog(msg, gameboard)
     else
-      puts 'action unknown :('
+      puts '❌ action unknown'
     end
   end
 end

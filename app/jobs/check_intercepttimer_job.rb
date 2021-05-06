@@ -17,7 +17,7 @@ class CheckIntercepttimerJob < ApplicationJob
 
       gameboard.intercept_timestamp = nil
       gameboard.save!
-      GameChannel.broadcast_to(gameboard, { type: 'GAME_LOG', params: { date: Time.new, message: 'Intercept Phase is finished' } })
+      GameChannel.broadcast_to(gameboard, { type: 'GAME_LOG', params: { date: Time.new, message: '📢 Intercept Phase is finished', type: 'info' } })
       GameChannel.broadcast_to(gameboard, { type: 'BOARD_UPDATE', params: Gameboard.broadcast_game_board(gameboard) })
     elsif (gameboard.intercept_phase? || gameboard.boss_phase?) && gameboard.intercept_timestamp.to_i == timestamp_int
       CheckIntercepttimerJob.perform_later(gameboard, timestamp_int, intercept_delay_int)
