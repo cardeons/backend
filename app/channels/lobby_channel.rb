@@ -8,36 +8,46 @@ class LobbyChannel < ApplicationCable::Channel
 
   def subscribed
     if params['initiate']
-      lobby = Lobby.find_or_create_by!(id: current_user.oldlobby)
+      lobby = Lobby.find_by(id: current_user.oldlobby) || Lobby.create!
 
       current_user.update!(lobby: lobby, oldlobby: lobby.id)
-    elsif params['inquirer']
-      inquirer = User.find_by('id=?', params['inquirer'])
-      @lobby = Lobby.find_by(id: current_user.oldlobby) || inquirer.lobby
 
-      FriendlistChannel.broadcast_to(current_user, { type: 'LOBBY_ERROR', params: { message: 'There is no lobby... please create a new one...' } }) unless @lobby
+      lobby_users = get_all_users_from_lobby(lobby)
+      broadcast_to(lobby, { type: 'LOBBY_UPDATE', params: { users: lobby_users } })
+    elsif params['lobby_id']
+      lobby = Lobby.find_by(id: params['lobby_id'])
 
-      FriendlistChannel.broadcast_to(current_user, { type: 'LOBBY_ERROR', params: { message: 'Lobby is full...' } }) if @lobby.users.count == 4
-      reject if @lobby.users.count == 4
+      FriendlistChannel.broadcast_to(current_user, { type: 'LOBBY_ERROR', params: { message: 'There is no lobby... please create a new one...' } }) unless lobby
 
-      stream_for @lobby
+      FriendlistChannel.broadcast_to(current_user, { type: 'LOBBY_ERROR', params: { message: 'Lobby is full...' } }) if lobby.users.count >= 4
+      reject if lobby.users.count >= 4
 
-      lobby_users = []
+      stream_for lobby
 
-      @lobby.users.each do |user|
-        lobby_users.push({ name: user.name, id: user.id })
-      end
+      lobby_users = get_all_users_from_lobby(lobby)
 
-      broadcast_to(@lobby, { type: 'LOBBY_UPDATE', params: { users: lobby_users } })
+      broadcast_to(lobby, { type: 'LOBBY_UPDATE', params: { users: lobby_users } })
 
-      current_user.update!(lobby: @lobby, oldlobby: @lobby.id) if inquirer.lobby.users.count < 4
+      current_user.update!(lobby: lobby, oldlobby: lobby.id) if lobby.users.count < 4
     end
+  end
+
+  def get_all_users_from_lobby(lobby)
+    lobby.reload
+    lobby.users.reload
+    lobby_users = []
+
+    lobby.users.each do |user|
+      lobby_users.push({ name: user.name, id: user.id })
+    end
+
+    lobby_users
   end
 
   def lobby_invite(data)
     friend = User.find_by('id=?', data['friend'])
 
-    FriendlistChannel.broadcast_to(friend, { type: 'GAME_INVITE', params: { inviter: current_user.id, inviter_name: current_user.name } })
+    FriendlistChannel.broadcast_to(friend, { type: 'GAME_INVITE', params: { inviter: current_user.id, inviter_name: current_user.name, lobby_id: current_user.lobby.id } })
   end
 
   def add_monster(data)
@@ -80,10 +90,14 @@ class LobbyChannel < ApplicationCable::Channel
 
       stream_for @gameboard
 
+      user.update!(lobby: nil)
+
       broadcast_to(@gameboard,
                    { type: 'DEBUG', params: { message: "new Player#{current_user.email} conected to the gameboard id: #{@gameboard.id} players in lobby #{@gameboard.reload.players.count}" } })
 
       next unless lobbyisfull
+
+      lobby.destroy!
 
       # Lobby is full tell players to start the game
       broadcast_to(@gameboard, { type: 'DEBUG', params: { message: 'Lobby is full start with game subscribe to Player and GameChannel' } })
@@ -98,6 +112,7 @@ class LobbyChannel < ApplicationCable::Channel
     # Any cleanup needed when channel is unsubscribed
     # kann des probleme machen beim reload? weil man dann keine params mehr hat?? :thinking:
     # current_user.update(lobby: nil)
+    current_user.lobby.destroy if current_user.lobby && (current_user.lobby.reload.users.reload.count == 0)
     current_user.update!(monsterone: nil, monstertwo: nil, monsterthree: nil, lobby: nil)
 
     return unless @gameboard

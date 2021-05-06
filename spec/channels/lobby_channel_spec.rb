@@ -22,9 +22,9 @@ RSpec.describe LobbyChannel, type: :channel do
     ENV['DEV_TOOL_ENABLED'] = nil
   end
 
-  # it 'user does not already have a player before the game' do
-  #   expect(users(:one).player).to be_nil
-  # end
+  it 'user does not already have a player before the game' do
+    expect(users(:one).player).to be_nil
+  end
 
   it 'successfully subscribes' do
     subscribe initiate: true
@@ -106,7 +106,7 @@ RSpec.describe LobbyChannel, type: :channel do
               monster_id: 3
             })
     stub_connection current_user: users(:two)
-    subscribe inquirer: users(:one).id
+    subscribe lobby_id: users(:one).lobby.id
     perform('add_monster', {
               monster_id: 2
             })
@@ -176,7 +176,7 @@ RSpec.describe LobbyChannel, type: :channel do
             })
     stub_connection current_user: users(:two)
     expect do
-      subscribe inquirer: users(:one).id
+      subscribe lobby_id: users(:one).lobby.id
     end
       .to have_broadcasted_to("lobby:#{users(:one).lobby.to_gid_param}")
       .with(
@@ -189,12 +189,12 @@ RSpec.describe LobbyChannel, type: :channel do
               monster_id: 5
             })
     stub_connection current_user: users(:three)
-    subscribe inquirer: users(:one).id
+    subscribe lobby_id: users(:one).lobby.id
     perform('add_monster', {
               monster_id: 1
             })
     stub_connection current_user: users(:four)
-    subscribe inquirer: users(:one).id
+    subscribe lobby_id: users(:one).lobby.id
     perform('start_lobby_queue')
 
     expect(User.find(users(:one).id).player.handcard.cards.find(1)).to be_truthy
@@ -216,11 +216,11 @@ RSpec.describe LobbyChannel, type: :channel do
     stub_connection current_user: users(:one)
     subscribe initiate: true
     stub_connection current_user: users(:two)
-    subscribe inquirer: users(:one).id
+    subscribe lobby_id: users(:one).lobby.id
     stub_connection current_user: users(:three)
-    subscribe inquirer: users(:one).id
+    subscribe lobby_id: users(:one).lobby.id
     stub_connection current_user: users(:four)
-    subscribe inquirer: users(:one).id
+    subscribe lobby_id: users(:one).lobby.id
     perform('start_lobby_queue')
 
     expect(User.find(users(:one).id).player.gameboard.centercard).to be_truthy
@@ -232,11 +232,11 @@ RSpec.describe LobbyChannel, type: :channel do
     stub_connection current_user: users(:one)
     subscribe initiate: true
     stub_connection current_user: users(:two)
-    subscribe inquirer: users(:one).id
+    subscribe lobby_id: users(:one).lobby.id
     stub_connection current_user: users(:three)
-    subscribe inquirer: users(:one).id
+    subscribe lobby_id: users(:one).lobby.id
     stub_connection current_user: users(:four)
-    subscribe inquirer: users(:one).id
+    subscribe lobby_id: users(:one).lobby.id
     perform('start_lobby_queue')
 
     expect(User.find(users(:one).id).player.handcard.cards.count).to eql(5)
@@ -249,11 +249,11 @@ RSpec.describe LobbyChannel, type: :channel do
     stub_connection current_user: users(:one)
     subscribe initiate: true
     stub_connection current_user: users(:two)
-    subscribe inquirer: users(:one).id
+    subscribe lobby_id: users(:one).lobby.id
     stub_connection current_user: users(:three)
-    subscribe inquirer: users(:one).id
+    subscribe lobby_id: users(:one).lobby.id
     stub_connection current_user: users(:four)
-    subscribe inquirer: users(:one).id
+    subscribe lobby_id: users(:one).lobby.id
     perform('start_lobby_queue')
 
     expect(User.find(users(:one).id).player.gameboard.players.count).to eql(4)
@@ -264,6 +264,7 @@ RSpec.describe LobbyChannel, type: :channel do
     subscribe initiate: true
     perform('start_lobby_queue')
     expect(Player.where('user_id=?', users(:one).id).count).to eql(1)
+    unsubscribe
     stub_connection current_user: users(:one)
     subscribe initiate: true
     perform('start_lobby_queue')
@@ -323,7 +324,7 @@ RSpec.describe LobbyChannel, type: :channel do
     # unsubscribe
 
     stub_connection current_user: users(:usernorbert)
-    subscribe inquirer: users(:one).id
+    subscribe lobby_id: users(:one).lobby.id
 
     expect(users(:usernorbert).reload.lobby).to eq users(:one).lobby
 
@@ -335,16 +336,16 @@ RSpec.describe LobbyChannel, type: :channel do
     subscribe initiate: true
 
     stub_connection current_user: users(:usernorbert)
-    subscribe initiate: false, inquirer: users(:one).id
+    subscribe initiate: false, lobby_id: users(:one).lobby.id
 
     stub_connection current_user: users(:two)
-    subscribe inquirer: users(:one).id
+    subscribe lobby_id: users(:one).lobby.id
 
     stub_connection current_user: users(:three)
-    subscribe inquirer: users(:one).id
+    subscribe lobby_id: users(:one).lobby.id
 
     stub_connection current_user: users(:four)
-    subscribe inquirer: users(:one).id
+    subscribe lobby_id: users(:one).lobby.id
 
     expect(users(:one).lobby.users.count).to eq 4
   end
@@ -363,10 +364,10 @@ RSpec.describe LobbyChannel, type: :channel do
     subscribe initiate: true
 
     stub_connection current_user: users(:two)
-    subscribe inquirer: users(:one).id
+    subscribe lobby_id: users(:one).lobby.id
 
     stub_connection current_user: users(:three)
-    subscribe inquirer: users(:one).id
+    subscribe lobby_id: users(:one).lobby.id
 
     perform('start_lobby_queue')
 
@@ -386,14 +387,50 @@ RSpec.describe LobbyChannel, type: :channel do
     subscribe initiate: true
 
     stub_connection current_user: users(:two)
-    subscribe inquirer: users(:one).id
+    subscribe lobby_id: users(:one).lobby.id
 
     stub_connection current_user: users(:three)
-    subscribe inquirer: users(:one).id
+    subscribe lobby_id: users(:one).lobby.id
 
     perform('start_lobby_queue')
 
     expect(users(:one).player.gameboard).to_not eq gameboard
     expect(users(:one).player.gameboard).to be_truthy
+  end
+
+  it 'test if user gets kicked if unsubscribe and rejoins on subscribe' do
+    stub_connection current_user: users(:one)
+    subscribe initiate: true
+
+    stub_connection current_user: users(:two)
+    subscribe lobby_id: users(:one).lobby.id
+
+    stub_connection current_user: users(:three)
+    subscribe lobby_id: users(:one).lobby.id
+    unsubscribe
+
+    expect(users(:one).lobby.users.count).to eq 2
+
+    subscribe lobby_id: users(:one).lobby.id
+
+    expect(users(:one).lobby.users.count).to eq 3
+  end
+
+  it 'test if user gets kicked if unsubscribe and rejoins on subscribe' do
+    stub_connection current_user: users(:one)
+    subscribe initiate: true
+
+    stub_connection current_user: users(:two)
+    subscribe lobby_id: users(:one).lobby.id
+
+    stub_connection current_user: users(:three)
+    subscribe lobby_id: users(:one).lobby.id
+    unsubscribe
+
+    expect(users(:one).lobby.users.count).to eq 2
+
+    subscribe lobby_id: users(:one).lobby.id
+
+    expect(users(:one).lobby.users.count).to eq 3
   end
 end
