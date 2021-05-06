@@ -1,12 +1,3 @@
-#lobby_channel
-ANTWORT
-{
-  type: 'START_GAME',
-  params: {
-    game_id: integer
-  }
-}
-
 #playerchannel
 ANTWORT
 {
@@ -165,6 +156,20 @@ Gameboard Channel responses
   to: 1,
   unique_card_id: 4
   #to ist die id des anderen Players, der verflucht wird
+}
+
+#ANTWORT
+{
+  #GAMEBOARD WIE IMMER
+}
+
+#ANFRAGE
+{
+  action: "level_up",
+  params: {
+    unique_card_id: 4
+  }
+  #sollte man nur auf sich selbst spielenn können
 }
 
 #ANTWORT
@@ -404,4 +409,62 @@ Alle im Game-Chanel
 #Antwort
 {
   type: 'FRIEND_LOG', params: { message: string }
+}
+
+# LOBBYCHANNEL
+
+#subscribe to lobby channel
+{
+  params:{
+      #inquirer schickt man mit wenn ma a anfrage griag hat
+      inquirer: user_id #vom Spieler den man anfragen will
+      #initiate ist true wenn ma a neues spiel anfängt und nid eingladen wird
+      initiate: boolean
+    }
+}
+
+#invite to lobby
+{
+  action: "lobby_invite",
+  params:{
+      friend: user_id #vom Spieler den man anfragen will
+    }
+}
+#Antwort im Friendlistchannel
+{
+  type: 'GAME_INVITE', params: { 
+    inviter: id, 
+    inviter_name: string 
+    }
+}
+
+#select monster
+{
+  action: "add_monster",
+  params:{
+      monster_id: id von karte
+    }
+}
+
+#remove monster from select
+{
+  action: "remove_monster",
+  params:{
+      monster_id: id von karte
+    }
+}
+
+#remove monster from select
+{
+  action: "start_lobby_queue",
+}
+
+#Antwort wenn gameboard voll
+#lobby_channel
+ANTWORT
+{
+  type: 'START_GAME',
+  params: {
+    game_id: integer
+  }
 }

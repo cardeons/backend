@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class Friendship < ApplicationRecord
   belongs_to :user
   belongs_to :friend, class_name: 'User'
@@ -41,7 +43,7 @@ class Friendship < ApplicationRecord
     friends_obj = []
 
     friendships.each do |friendship|
-      friends_obj.push({ name: friendship.friend.name, status: friendship.friend.status })
+      friends_obj.push({ id: friendship.friend.id, name: friendship.friend.name, status: friendship.friend.status })
     end
 
     FriendlistChannel.broadcast_to(current_user, { type: 'FRIENDLIST', params: { friends: friends_obj } })

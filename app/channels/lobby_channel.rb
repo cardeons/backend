@@ -7,44 +7,84 @@ class LobbyChannel < ApplicationCable::Channel
   INGAME = 'ingame'
 
   def subscribed
-    # access current user with current_user
+    if params['initiate']
+      lobby = Lobby.find_or_create_by!(id: current_user.oldlobby)
 
-    # check if there is not a player with this user
-    ## read find or create by for simpler solution
-    # if Player.find_by(user_id: current_user.id)
-    #   # transmit {type: "error", params:{message: "user is already playing in #{player.gameboard_id}"}}
-    #   player = Player.find_by(user_id: current_user.id)
-    #   Gameboard.find(player.gameboard_id).destroy
-    #   createNewTestGame
-    #   # reject
-    # end
+      current_user.update!(lobby: lobby, oldlobby: lobby.id)
+    elsif params['inquirer']
+      inquirer = User.find_by('id=?', params['inquirer'])
+      @lobby = Lobby.find_by(id: current_user.oldlobby) || inquirer.lobby
 
-    # remove player from old gameboard
+      FriendlistChannel.broadcast_to(current_user, { type: 'LOBBY_ERROR', params: { message: 'There is no lobby... please create a new one...' } }) unless @lobby
+
+      FriendlistChannel.broadcast_to(current_user, { type: 'LOBBY_ERROR', params: { message: 'Lobby is full...' } }) if @lobby.users.count == 4
+      reject if @lobby.users.count == 4
+
+      stream_for @lobby
+
+      lobby_users = []
+
+      @lobby.users.each do |user|
+        lobby_users.push({ name: user.name, id: user.id })
+      end
+
+      broadcast_to(@lobby, { type: 'LOBBY_UPDATE', params: { users: lobby_users } })
+
+      current_user.update!(lobby: @lobby, oldlobby: @lobby.id) if inquirer.lobby.users.count < 4
+    end
+  end
+
+  def lobby_invite(data)
+    friend = User.find_by('id=?', data['friend'])
+
+    FriendlistChannel.broadcast_to(friend, { type: 'GAME_INVITE', params: { inviter: current_user.id, inviter_name: current_user.name } })
+  end
+
+  def add_monster(data)
+    current_user.monsterone.blank? && current_user.update!(monsterone: data['monster_id']) && return
+    current_user.monstertwo.blank? && current_user.update!(monstertwo: data['monster_id']) && return
+    current_user.monsterthree.blank? && current_user.update!(monsterthree: data['monster_id']) && return
+  end
+
+  def remove_monster(data)
+    current_user.monsterone == data['monster_id'] && current_user.update!(monsterone: nil) && return
+    current_user.monstertwo == data['monster_id'] && current_user.update!(monstertwo: nil) && return
+    current_user.monsterthree == data['monster_id'] && current_user.update!(monsterthree: nil) && return
+  end
+
+  def start_lobby_queue(data)
+    lobby = current_user.lobby
+
     delete_old_players
 
-    # search for gameboard with open lobby
-    gameboard = Gameboard.find_or_create_by(current_state: LOBBY)
+    gameboard = Gameboard.find_or_create_by!(current_state: :lobby)
 
-    # create new player
-    player = Player.create!(name: current_user.name, gameboard_id: gameboard.id, user: current_user)
-
-    player.init_player(params)
-
-    gameboard.update!(current_player: player)
-
+    gameboard = Gameboard.create!(current_state: :lobby) if lobby.users.reload.count > (4 - gameboard.players.reload.count)
     @gameboard = gameboard
 
-    # Should only be usable if ENV is set
-    ENV['DEV_TOOL_ENABLED'] == 'enabled' && create_dummy_players_for_gameboard(@gameboard, params['testplayers'])
+    lobby.users.each do |user|
+      Player.create!(name: user.name, gameboard_id: gameboard.id, user: user)
 
-    lobbyisfull = @gameboard.players.count > 3
+      player = user.player
 
-    stream_for @gameboard
+      player.init_player(user)
 
-    broadcast_to(@gameboard,
-                 { type: 'DEBUG', params: { message: "new Player#{current_user.email} conected to the gameboard id: #{@gameboard.id} players in lobby #{@gameboard.reload.players.count}" } })
+      # player.init_player(params)
+      # gameboard = current_user.player.gameboard
 
-    if lobbyisfull
+      # gameboard.update!(current_player: player)
+      # Should only be usable if ENV is set
+      ENV['DEV_TOOL_ENABLED'] == 'enabled' && create_dummy_players_for_gameboard(@gameboard, data['testplayers'])
+
+      lobbyisfull = @gameboard.players.count > 3
+
+      stream_for @gameboard
+
+      broadcast_to(@gameboard,
+                   { type: 'DEBUG', params: { message: "new Player#{current_user.email} conected to the gameboard id: #{@gameboard.id} players in lobby #{@gameboard.reload.players.count}" } })
+
+      next unless lobbyisfull
+
       # Lobby is full tell players to start the game
       broadcast_to(@gameboard, { type: 'DEBUG', params: { message: 'Lobby is full start with game subscribe to Player and GameChannel' } })
 
@@ -56,6 +96,12 @@ class LobbyChannel < ApplicationCable::Channel
 
   def unsubscribed
     # Any cleanup needed when channel is unsubscribed
+    # kann des probleme machen beim reload? weil man dann keine params mehr hat?? :thinking:
+    # current_user.update(lobby: nil)
+    current_user.update!(monsterone: nil, monstertwo: nil, monsterthree: nil, lobby: nil)
+
+    return unless @gameboard
+
     if @gameboard.reload.lobby?
       current_user.player.destroy!
       # pp current_user.player.id
@@ -92,59 +138,6 @@ class LobbyChannel < ApplicationCable::Channel
       p1i1 = Ingamedeck.create!(gameboard: gameboard_test, card: Itemcard.first, cardable: p1i)
       p1i2 = Ingamedeck.create!(gameboard: gameboard_test, card: Itemcard.first, cardable: p1i)
     end
-    # u1 = User.create(email: "#{x}2@2.at", password: '2', name: "#{x}2", password_confirmation: '2')
-    # u2 = User.create(email: "#{x}3@3.at", password: '3', name: "#{x}3", password_confirmation: '3')
-    # u3 = User.create(email: "#{x}4@4.at", password: '4', name: "#{x}4", password_confirmation: '4')
-
-    # player1 = Player.create(name: "#{x}2", gameboard: gameboard_test, user: u1)
-    # player2 = Player.create(name: "#{x}3", gameboard: gameboard_test, user: u2)
-    # player3 = Player.create(name: "#{x}4", gameboard: gameboard_test, user: u3)
-
-    # playercurse1 = Playercurse.create(player: player1)
-    # playercurse2 = Playercurse.create(player: player2)
-    # playercurse3 = Playercurse.create(player: player3)
-
-    # Handcard.create(player: player1)
-    # Handcard.create(player: player2)
-    # Handcard.create(player: player3)
-
-    # p1i = Inventory.create(player: player1)
-    # p2i = Inventory.create(player: player2)
-    # p3i = Inventory.create(player: player3)
-
-    # p1m1 = Monsterone.create(player: player1)
-    # p2m1 = Monsterone.create(player: player2)
-    # p3m1 = Monsterone.create(player: player3)
-
-    # p1m2 = Monstertwo.create(player: player1)
-    # p2m2 = Monstertwo.create(player: player2)
-    # p3m2 = Monstertwo.create(player: player3)
-
-    # p1m3 = Monsterthree.create(player: player1)
-    # p2m3 = Monsterthree.create(player: player2)
-    # p3m3 = Monsterthree.create(player: player3)
-
-    # p1c = Ingamedeck.create(gameboard: gameboard_test, card: Cursecard.first, cardable: playercurse1)
-    # p2c = Ingamedeck.create(gameboard: gameboard_test, card: Cursecard.first, cardable: playercurse2)
-    # p3c = Ingamedeck.create(gameboard: gameboard_test, card: Cursecard.first, cardable: playercurse3)
-
-    # p1i1 = Ingamedeck.create(gameboard: gameboard_test, card: Itemcard.first, cardable: p1i)
-    # p1i2 = Ingamedeck.create(gameboard: gameboard_test, card: Itemcard.first, cardable: p1i)
-    # p2i1 = Ingamedeck.create(gameboard: gameboard_test, card: Itemcard.first, cardable: p2i)
-    # p2i2 = Ingamedeck.create(gameboard: gameboard_test, card: Itemcard.first, cardable: p2i)
-    # p3i1 = Ingamedeck.create(gameboard: gameboard_test, card: Itemcard.first, cardable: p3i)
-
-    # p1m1 = Ingamedeck.create!(gameboard: gameboard_test, card: Monstercard.first, cardable: p1m1)
-    # p1m2 = Ingamedeck.create!(gameboard: gameboard_test, card: Monstercard.first, cardable: p1m2)
-    # p1m3 = Ingamedeck.create!(gameboard: gameboard_test, card: Monstercard.first, cardable: p1m3)
-
-    # p2m1 = Ingamedeck.create!(gameboard: gameboard_test, card: Monstercard.first, cardable: p2m1)
-    # p2m2 = Ingamedeck.create!(gameboard: gameboard_test, card: Monstercard.first, cardable: p2m2)
-    # p2m3 = Ingamedeck.create!(gameboard: gameboard_test, card: Monstercard.first, cardable: p2m3)
-
-    # p3m1 = Ingamedeck.create!(gameboard: gameboard_test, card: Monstercard.first, cardable: p3m1)
-    # p3m2 = Ingamedeck.create!(gameboard: gameboard_test, card: Monstercard.first, cardable: p3m2)
-    # p3m3 = Ingamedeck.create!(gameboard: gameboard_test, card: Monstercard.first, cardable: p3m3)
   end
 
   def deliver_error_message(error)

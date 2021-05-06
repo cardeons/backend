@@ -761,7 +761,7 @@ RSpec.describe GameChannel, type: :channel do
     ingamedeck = Ingamedeck.create!(gameboard: gameboards(:gameboardFourPlayers), card: cards(:levelcard), cardable: users(:one).player.handcard)
 
     expect do
-      perform('curse_player', {
+      perform('level_up', {
                 to: 2,
                 unique_card_id: ingamedeck.id
               })
@@ -784,7 +784,7 @@ RSpec.describe GameChannel, type: :channel do
     ingamedeck = Ingamedeck.create!(gameboard: gameboards(:gameboardFourPlayers), card: cards(:levelcard), cardable: users(:one).player.handcard)
 
     expect do
-      perform('curse_player', {
+      perform('level_up', {
                 to: 2,
                 unique_card_id: ingamedeck.id
               })

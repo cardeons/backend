@@ -18,16 +18,21 @@ class Gameboard < ApplicationRecord
     current_player = players.last
     gameboard_id = id
     update(current_player: current_player, current_state: 'ingame')
-    Centercard.create!(gameboard_id: gameboard_id)
-    Graveyard.create!(gameboard_id: gameboard_id)
-    Playerinterceptcard.create!(gameboard_id: gameboard_id)
-    Interceptcard.create!(gameboard_id: gameboard_id)
+    Centercard.find_or_create_by!(gameboard_id: gameboard_id)
+    Graveyard.find_or_create_by!(gameboard_id: gameboard_id)
+    Playerinterceptcard.find_or_create_by!(gameboard_id: gameboard_id)
+    Interceptcard.find_or_create_by!(gameboard_id: gameboard_id)
 
     # pp Player.find(current_player).gameboard
     players.each do |player|
+      lobby_card = 0
+      player.user.monsterone.blank? ? nil : lobby_card += 1
+      player.user.monstertwo.blank? ? nil : lobby_card += 1
+      player.user.monsterthree.blank? ? nil : lobby_card += 1
       Handcard.find_or_create_by!(player_id: player.id) # unless player.handcard
-      Handcard.draw_handcards(player.id, self, 4)
-      Handcard.draw_one_monster(player.id, self)
+      Handcard.draw_handcards(player.id, self, 4) unless player.handcard.cards.count >= 5 || lobby_card.positive?
+      Handcard.draw_handcards(player.id, self, 5 - lobby_card) if player.handcard.cards.count <= 5 && lobby_card.positive?
+      Handcard.draw_one_monster(player.id, self) unless player.handcard.cards.count >= 5 || lobby_card.positive?
     end
   end
 
@@ -339,6 +344,16 @@ class Gameboard < ApplicationRecord
     end
 
     { modifier_player: modifier_player, modifier_monster: modifier_monster }
+  end
+
+  def self.clear_buffcards(gameboard)
+    gameboard&.interceptcard&.ingamedecks&.each do |card|
+      card.update!(cardable: gameboard.graveyard)
+    end
+
+    gameboard&.playerinterceptcard&.ingamedecks&.each do |card|
+      card.update!(cardable: gameboard.graveyard)
+    end
   end
 
   def calculate_all_modifiers

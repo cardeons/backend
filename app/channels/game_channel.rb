@@ -362,9 +362,17 @@ class GameChannel < ApplicationCable::Channel
   end
 
   def curse_player(params)
-    player = current_user.player
+    ingame_card = check_if_player_owns_card(params['unique_card_id']) || return
     Cursecard.handlecurse(params, @gameboard, current_user)
-    PlayerChannel.broadcast_to(current_user, { type: 'HANDCARD_UPDATE', params: { handcards: Gameboard.render_cards_array(player.handcard.ingamedecks) } })
+    PlayerChannel.broadcast_to(current_user, { type: 'HANDCARD_UPDATE', params: { handcards: Gameboard.render_cards_array(current_user.player.handcard.ingamedecks) } })
+    broadcast_to(@gameboard, { type: BOARD_UPDATE, params: Gameboard.broadcast_game_board(@gameboard) })
+  end
+
+  def level_up(params)
+    ingame_card = check_if_player_owns_card(params['unique_card_id']) || return
+
+    Levelcard.activate(params, current_user)
+    PlayerChannel.broadcast_to(current_user, { type: 'HANDCARD_UPDATE', params: { handcards: Gameboard.render_cards_array(current_user.player.handcard.ingamedecks) } })
     broadcast_to(@gameboard, { type: BOARD_UPDATE, params: Gameboard.broadcast_game_board(@gameboard) })
   end
 

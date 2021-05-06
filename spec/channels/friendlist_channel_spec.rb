@@ -3,7 +3,7 @@
 require 'rails_helper'
 
 RSpec.describe FriendlistChannel, type: :channel do
-  fixtures :users, :players, :gameboards, :centercards, :cards, :graveyards
+  fixtures :users
 
   before do
     # initialize connection with identifiers

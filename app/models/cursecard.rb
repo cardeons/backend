@@ -7,8 +7,6 @@ class Cursecard < Card
     ingamedeck = Ingamedeck.find_by('id = ?', params['unique_card_id'])
     player_to = Player.find_by('id = ?', params['to'])
 
-    Levelcard.activate(ingamedeck, player_to) if ingamedeck.card.type == 'Levelcard'
-
     unless ingamedeck.card.type == 'Cursecard'
       PlayerChannel.broadcast_to(current_user, { type: 'ERROR', params: { message: "❌ You can't curse someone with a card that is not a cursecard..." } })
       return
