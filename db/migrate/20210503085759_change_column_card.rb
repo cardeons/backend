@@ -14,6 +14,6 @@ class ChangeColumnCard < ActiveRecord::Migration[6.1]
     change_column :cards, :element, :string
     remove_column :cards, :synergy_type,  :integer
     remove_column :cards, :synergy_value, :integer
-    remove_column :cards, :animal, :integer
+    # remove_column :cards, :animal, :integer
   end
 end
