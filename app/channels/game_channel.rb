@@ -9,6 +9,7 @@ class GameChannel < ApplicationCable::Channel
   GAME_LOG = 'GAME_LOG'
 
   def subscribed
+    current_user.ingame!
     @gameboard = current_user.player.gameboard
     current_user.player.update!(inactive: false)
     stream_for @gameboard
@@ -486,9 +487,11 @@ class GameChannel < ApplicationCable::Channel
   end
 
   def unsubscribed
-    current_user.reload.player.update!(inactive: true)
+    current_user.reload.online!
+    current_user.player.update!(inactive: true)
 
     @gameboard.destroy! if @gameboard.players.where(inactive: true).size > 3
+
     # Any cleanup needed when channel is unsubscribed
     # pp current_user.playerpp
     # pp current_user.player
@@ -546,5 +549,10 @@ class GameChannel < ApplicationCable::Channel
 
     # sets Intercept Timer
     CheckIntercepttimerJob.set(wait: 40.seconds).perform_later(@gameboard, timestamp, 45)
+  end
+
+  def send_chat_message(params)
+    msg = params['message']
+    msg && broadcast_to(@gameboard, { type: 'CHAT_MESSAGE', params: { date: Time.new, id: current_user.player.id, name: current_user.player.name, message: msg } })
   end
 end

@@ -242,6 +242,26 @@ Gameboard Channel responses
     GAMEBOARD WIE OBEN
   }
 
+#ANFRAGE GAME_CHANNEL
+#chatmessage
+{
+  action: "send_chat_message",
+  params:{
+    message: "you are a very nice person :)😁"
+  }
+}
+
+#ANTWORT 
+{
+  type: 'CHAT_MESSAGE', 
+  params: 
+  { 
+    date: Time.new,
+    id: player.id,
+    name: player.name ,
+    message: "you are a very nice person :)😁"
+  }
+}
 
 
 
@@ -421,6 +441,13 @@ Alle im Game-Chanel
       #initiate ist true wenn ma a neues spiel anfängt und nid eingladen wird
       initiate: boolean
     }
+}
+
+{
+  type: 'LOBBY_UPDATE',
+  params: {
+    users: [ {id: , name: '', status: ''}]
+  }
 }
 
 #invite to lobby
