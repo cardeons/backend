@@ -270,6 +270,9 @@ class GameChannel < ApplicationCable::Channel
       return
     end
 
+    msg = "👀 You asked #{@gameboad.helping_player.name} for help in this fight. Lets see.."
+    PlayerChannel.broadcast_to(current_user, { type: 'GAME_LOG', params: { date: Time.new, message: msg, type: 'info' } })
+
     @gameboard.update(shared_reward: helping_shared_reward, asked_help: true, helping_player: helping_player)
 
     user_to_broadcast_to = User.where(player: helping_player).first
@@ -289,9 +292,13 @@ class GameChannel < ApplicationCable::Channel
       else
         @gameboard.update(helping_player_atk: helping_player.attack)
       end
+      msg = "✅ #{current_player.name} asked #{@gameboad.helping_player.name} for help in this fight. He agreed!"
+      broadcast_to(@gameboard, { type: GAME_LOG, params: { date: Time.new, message: msg, type: 'success' } })
     end
 
     @gameboard.update(shared_reward: 0) unless params['help']
+    msg = "❌ #{current_player.name} asked #{@gameboad.helping_player.name} for help in this fight. #{@gameboad.helping_player.name} declined!"
+    broadcast_to(@gameboard, { type: GAME_LOG, params: { date: Time.new, message: msg, type: 'error' } }) unless params['help']
 
     @gameboard.reload
 
