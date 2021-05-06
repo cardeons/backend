@@ -88,7 +88,7 @@ RSpec.describe Monstercard, type: :model do
     params = { 'unique_monster_id' => ingamedeck1.id, 'unique_equip_id' => ingamedeck2.id, 'action' => 'equip_monster' }
 
     result = Monstercard.equip_monster(params, player1)
-    expect(result == { type: 'GAMEBOARD_UPDATE', message: 'Successfully equipped.' }).to be_truthy
+    expect(result == { type: 'GAMEBOARD_UPDATE', message: '✅ Successfully equipped.' }).to be_truthy
   end
 
   it 'does not equip monster with same item category' do
@@ -132,7 +132,7 @@ RSpec.describe Monstercard, type: :model do
     params2 = { 'unique_monster_id' => ingamedeck1.id, 'unique_equip_id' => ingamedeck3.id, 'action' => 'equip_monster' }
     result = Monstercard.equip_monster(params, player1)
     result2 = Monstercard.equip_monster(params2, player1)
-    expect(result2 == { type: 'ERROR', message: 'You already have this type of item on your monster! (head)' }).to be_truthy
+    expect(result2 == { type: 'ERROR', message: '❌ You already have this type of item on your monster! (head)' }).to be_truthy
   end
 
   it 'throws error if no card to equip' do
@@ -164,7 +164,7 @@ RSpec.describe Monstercard, type: :model do
 
     params = { 'unique_monster_id' => ingamedeck1.id, 'unique_equip_id' => 303, 'action' => 'equip_monster' }
     result = Monstercard.equip_monster(params, player1)
-    expect(result == { type: 'ERROR', message: 'Card not found. Something went wrong.' }).to be_truthy
+    expect(result == { type: 'ERROR', message: '❌ Card not found. Something went wrong.' }).to be_truthy
   end
 
   it 'does not equip monster with a card thats not an item' do
@@ -205,7 +205,7 @@ RSpec.describe Monstercard, type: :model do
 
     params = { 'unique_monster_id' => ingamedeck1.id, 'unique_equip_id' => ingamedeck2.id, 'action' => 'equip_monster' }
     result = Monstercard.equip_monster(params, player1)
-    expect(result == { type: 'ERROR', message: "Sorry, you can't put anything on your monster that is not an item!" }).to be_truthy
+    expect(result == { type: 'ERROR', message: "❌ Sorry, you can't put anything on your monster that is not an item!" }).to be_truthy
   end
   it 'does not equip monster with more than 5 items' do
     catfish = Monstercard.create!(
@@ -310,7 +310,7 @@ RSpec.describe Monstercard, type: :model do
 
     params = { 'unique_monster_id' => ingamedeck1.id, 'unique_equip_id' => ingamedeck7.id, 'action' => 'equip_monster' }
     result = Monstercard.equip_monster(params, player1)
-    expect(result == { type: 'ERROR', message: "You can't put any more items on this monster." }).to be_truthy
+    expect(result == { type: 'ERROR', message: "❌ You can't put any more items on this monster." }).to be_truthy
   end
 
   it 'lose one level if monster is winning' do
@@ -531,10 +531,10 @@ RSpec.describe Monstercard, type: :model do
     ingamedeck3 = Ingamedeck.create!(gameboard: gameboard_test, card_id: item1.id, cardable: player1.handcard)
 
     equip_one = Monstercard.equip_monster({ 'unique_monster_id' => ingamedeck1.id, 'unique_equip_id' => ingamedeck2.id, 'action' => 'equip_monster' }, player1)
-    expect(equip_one == { type: 'GAMEBOARD_UPDATE', message: 'Successfully equipped.' }).to be_truthy
+    expect(equip_one == { type: 'GAMEBOARD_UPDATE', message: '✅ Successfully equipped.' }).to be_truthy
 
     equip_two = Monstercard.equip_monster({ 'unique_monster_id' => ingamedeck1.id, 'unique_equip_id' => ingamedeck3.id, 'action' => 'equip_monster' }, player1)
-    expect(equip_two == { type: 'GAMEBOARD_UPDATE', message: 'Successfully equipped.' }).to be_truthy
+    expect(equip_two == { type: 'GAMEBOARD_UPDATE', message: '✅ Successfully equipped.' }).to be_truthy
   end
   it 'attack points are calculated correctly' do
     catfish = Monstercard.create!(

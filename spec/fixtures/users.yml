@@ -21,7 +21,19 @@ three:
 four:
   id: 4
   email: test4@test.com
-  name : UserFour
+  name : UserFour2
+  password_digest: MyString
+
+five:
+  id: 5
+  email: test5@test.com
+  name : UserFive
+  password_digest: MyString
+
+six:
+  id: 6
+  email: test6@test.com
+  name : UserSix
   password_digest: MyString
 
 usernorbert:

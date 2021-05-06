@@ -774,7 +774,7 @@ RSpec.describe GameChannel, type: :channel do
     ingamedeck = Ingamedeck.create!(gameboard: gameboards(:gameboardFourPlayers), card: cards(:levelcard), cardable: users(:one).player.handcard)
 
     expect do
-      perform('curse_player', {
+      perform('level_up', {
                 to: 2,
                 unique_card_id: ingamedeck.id
               })
@@ -797,7 +797,7 @@ RSpec.describe GameChannel, type: :channel do
     ingamedeck = Ingamedeck.create!(gameboard: gameboards(:gameboardFourPlayers), card: cards(:levelcard), cardable: users(:one).player.handcard)
 
     expect do
-      perform('curse_player', {
+      perform('level_up', {
                 to: 2,
                 unique_card_id: ingamedeck.id
               })
@@ -1270,6 +1270,28 @@ RSpec.describe GameChannel, type: :channel do
 
     perform('develop_set_next_player_as_current_player', {})
     expect(gameboards(:gameboardFourPlayers).reload.current_player).to eql(gameboards(:gameboardFourPlayers).players.third)
+  end
+
+  it 'test if curse log gets sent after activating cursecard' do
+    gameboards(:gameboardFourPlayers).initialize_game_board
+    gameboards(:gameboardFourPlayers).players.each(&:init_player)
+    # assign player to this user
+    users(:one).player = gameboards(:gameboardFourPlayers).players.first
+    stub_connection current_user: users(:one)
+    subscribe
+
+    users(:one).player.update(level: 4)
+    ingamedeck = Ingamedeck.create!(gameboard: gameboards(:gameboardFourPlayers), card: cards(:cursecard2), cardable: users(:one).player.handcard)
+
+    expect do
+      perform('curse_player', {
+                to: 2,
+                unique_card_id: ingamedeck.id
+              })
+    end.to have_broadcasted_to("game:#{users(:one).player.gameboard.to_gid_param}")
+      .with(
+        hash_including(type: 'GAME_LOG')
+      )
   end
 
   it 'sends an ERROR broadcast if user has already drawn a door card' do

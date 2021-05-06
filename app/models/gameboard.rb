@@ -18,16 +18,21 @@ class Gameboard < ApplicationRecord
     current_player = players.last
     gameboard_id = id
     update(current_player: current_player, current_state: 'ingame')
-    Centercard.create!(gameboard_id: gameboard_id)
-    Graveyard.create!(gameboard_id: gameboard_id)
-    Playerinterceptcard.create!(gameboard_id: gameboard_id)
-    Interceptcard.create!(gameboard_id: gameboard_id)
+    Centercard.find_or_create_by!(gameboard_id: gameboard_id)
+    Graveyard.find_or_create_by!(gameboard_id: gameboard_id)
+    Playerinterceptcard.find_or_create_by!(gameboard_id: gameboard_id)
+    Interceptcard.find_or_create_by!(gameboard_id: gameboard_id)
 
     # pp Player.find(current_player).gameboard
     players.each do |player|
+      lobby_card = 0
+      player.user.monsterone.blank? ? nil : lobby_card += 1
+      player.user.monstertwo.blank? ? nil : lobby_card += 1
+      player.user.monsterthree.blank? ? nil : lobby_card += 1
       Handcard.find_or_create_by!(player_id: player.id) # unless player.handcard
-      Handcard.draw_handcards(player.id, self, 4)
-      Handcard.draw_one_monster(player.id, self)
+      Handcard.draw_handcards(player.id, self, 4) unless player.handcard.cards.count >= 5 || lobby_card.positive?
+      Handcard.draw_handcards(player.id, self, 5 - lobby_card) if player.handcard.cards.count <= 5 && lobby_card.positive?
+      Handcard.draw_one_monster(player.id, self) unless player.handcard.cards.count >= 5 || lobby_card.positive?
     end
   end
 
@@ -191,6 +196,7 @@ class Gameboard < ApplicationRecord
       gameboard.boss_phase!
     else
       gameboard.intercept_phase!
+
     end
 
     attack_obj = calc_attack_points(gameboard.reload, true)
@@ -235,6 +241,7 @@ class Gameboard < ApplicationRecord
 
   # def self.attack(gameboard, curse_log = false)
   def self.calc_attack_points(gameboard, curse_log = false)
+
     gameboard.reload
 
     boss_phase = gameboard.boss_phase?
@@ -250,7 +257,7 @@ class Gameboard < ApplicationRecord
       playeratkpoints += player.calculate_player_atk_with_monster_and_items
 
       player.playercurse.ingamedecks.each do |curse|
-        curse_obj = Cursecard.activate(curse, player, gameboard, playeratkpoints, monsteratkpts, curse_log)
+        curse_obj = Cursecard.activate(curse, player, gameboard, playeratkpoints, monsteratkpts)
 
         playeratkpoints = curse_obj[:playeratk]
         monsteratkpts = curse_obj[:monsteratk]
@@ -334,7 +341,19 @@ class Gameboard < ApplicationRecord
     monsterone_sum + monstertwo_sum + monsterthree_sum
   end
 
+
+  def self.clear_buffcards(gameboard)
+    gameboard&.interceptcard&.ingamedecks&.each do |card|
+      card.update!(cardable: gameboard.graveyard)
+    end
+
+    gameboard&.playerinterceptcard&.ingamedecks&.each do |card|
+      card.update!(cardable: gameboard.graveyard)
+    end
+  end
+
   def calc_synergy_monster_and_items
+
     monstercard = centercard.card
 
     good_against_sum = sum_of_cards(current_player, 'good_against', monstercard.read_attribute_before_type_cast('element'), 'Itemcard', 'good_against_value')

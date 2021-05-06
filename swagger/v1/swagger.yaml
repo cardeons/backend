@@ -61,6 +61,8 @@ paths:
       tags:
       - User
       parameters:
+      - in: header
+        name: token
       - name: search
         in: path
         required: true
@@ -251,6 +253,7 @@ servers:
     defaultHost:
       default: localhost:3000
 - url: https://cardeon.projects.multimediatechnology.at/
+- url: https://cardeon-develop.projects.multimediatechnology.at/
 - url: https://cardeons-develop.herokuapp.com/
 - url: https://cardeons.herokuapp.com/
 

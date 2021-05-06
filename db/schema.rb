@@ -10,7 +10,9 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_05_06_074517) do
+
+ActiveRecord::Schema.define(version: 2021_05_06_113608) do
+
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -122,6 +124,11 @@ ActiveRecord::Schema.define(version: 2021_05_06_074517) do
     t.index ["player_id"], name: "index_inventories_on_player_id"
   end
 
+  create_table "lobbies", force: :cascade do |t|
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+  end
+
   create_table "monsterones", force: :cascade do |t|
     t.bigint "player_id", null: false
     t.datetime "created_at", precision: 6, null: false
@@ -180,6 +187,12 @@ ActiveRecord::Schema.define(version: 2021_05_06_074517) do
     t.datetime "updated_at", precision: 6, null: false
     t.string "name"
     t.integer "status"
+    t.bigint "lobby_id"
+    t.integer "monsterone"
+    t.integer "monstertwo"
+    t.integer "monsterthree"
+    t.integer "oldlobby"
+    t.index ["lobby_id"], name: "index_users_on_lobby_id"
   end
 
   add_foreign_key "centercards", "gameboards"
@@ -197,4 +210,5 @@ ActiveRecord::Schema.define(version: 2021_05_06_074517) do
   add_foreign_key "playerinterceptcards", "gameboards"
   add_foreign_key "players", "gameboards"
   add_foreign_key "players", "users"
+  add_foreign_key "users", "lobbies"
 end

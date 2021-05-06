@@ -730,7 +730,7 @@ buffcard4:
   item_category: MyString
   
   level_amount: 1
-  type: Buffcard
+  type: Levelcard
 
 buffcard5:
   id: 31

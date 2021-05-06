@@ -80,7 +80,7 @@ RSpec.describe Monstercard, type: :model do
     gameboards(:gameboardFourPlayers).players.each(&:init_player)
 
     current_player = gameboards(:gameboardFourPlayers).current_player
-    helping_player = Player.find_by("id = ?", 3)
+    helping_player = Player.find_by('id = ?', 3)
     gameboards(:gameboardFourPlayers).update(helping_player: helping_player, helping_player_atk: 0)
 
     buff = Ingamedeck.create!(gameboard: gameboards(:gameboardFourPlayers), card: cards(:buffcard5), cardable: current_player.playercurse)

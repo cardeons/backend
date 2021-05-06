@@ -11,6 +11,8 @@ class User < ApplicationRecord
   # inventory
   has_and_belongs_to_many :cards
 
+  belongs_to :lobby, optional: true
+
   has_one :player
   has_many :friendships, dependent: :destroy
   has_many :friends, through: :friendships, class_name: 'User'
