@@ -111,7 +111,7 @@ class GameChannel < ApplicationCable::Channel
     #   broadcast_to(@gameboard, { type: GAME_LOG, params: { date: Time.new, message: msg } })
     # end
 
-    if player.gameboard.current_player == player
+    if @gameboard.current_player == player
       @gameboard.update_recalc_element_synergy_modifer
       broadcast_to(@gameboard, { type: BOARD_UPDATE, params: Gameboard.broadcast_game_board(@gameboard.reload) })
     end
@@ -457,7 +457,6 @@ class GameChannel < ApplicationCable::Channel
     @gameboard.update(centercard: new_center)
 
     @gameboard.boss_phase!
-
 
     updated_board = Gameboard.broadcast_game_board(@gameboard.reload)
 
