@@ -38,17 +38,8 @@ class Monstercard < Card
         message = '✅ Successfully equipped.'
         deck_card.update(cardable: monster_to_equip)
 
-        # get updated result of attack
-        attack_obj = Gameboard.attack(player.gameboard)
-
-        monstercards1 = Monstercard.calculate_monsterslot_atk(player.monsterone)
-        monstercards2 = Monstercard.calculate_monsterslot_atk(player.monstertwo)
-        monstercards3 = Monstercard.calculate_monsterslot_atk(player.monsterthree)
-
-        playeratkpoints = monstercards1 + monstercards2 + monstercards3 + player.level
-
-        player.update!(attack: playeratkpoints)
-        player.gameboard.update(success: attack_obj[:result], player_atk: attack_obj[:playeratk], monster_atk: attack_obj[:monsteratk])
+        # get update player atk
+        player.calculate_player_atk_with_monster_and_items
 
       else
         type = 'ERROR'
@@ -67,23 +58,10 @@ class Monstercard < Card
       type = 'GAMEBOARD_UPDATE'
       deck_card.update(cardable: monster_to_equip)
 
-      # player_atk = monster_to_equip.cards.sum(:atk_points)
+      # update plaayer atk
+      player.calculate_player_atk_with_monster_and_items
 
-      # result = player.gameboard.monster_atk < player_atk
-      # player.gameboard.update_attribute(:success, result)
-      # GameChannel.broadcast_to(gameboard, {type: 'GAMEBOARD_UPDATE', params: Gameboard.broadcast_game_board(gameboard) })
 
-      # get updatet result of attack
-      attack_obj = Gameboard.attack(player.gameboard)
-
-      monstercards1 = Monstercard.calculate_monsterslot_atk(player.monsterone)
-      monstercards2 = Monstercard.calculate_monsterslot_atk(player.monstertwo)
-      monstercards3 = Monstercard.calculate_monsterslot_atk(player.monsterthree)
-
-      playeratkpoints = monstercards1 + monstercards2 + monstercards3 + player.level
-
-      player.update(attack: playeratkpoints)
-      player.gameboard.update(success: attack_obj[:result], player_atk: attack_obj[:playeratk], monster_atk: attack_obj[:monsteratk])
       message = '✅ Successfully equipped.'
     end
 

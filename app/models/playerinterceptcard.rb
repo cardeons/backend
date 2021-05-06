@@ -10,7 +10,5 @@ class Playerinterceptcard < ApplicationRecord
     card = Ingamedeck.find_by('id=?', unique_card_id)
 
     card.update(cardable: self)
-    # recalculate attack points
-    Gameboard.attack(gameboard)
   end
 end

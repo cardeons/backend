@@ -10,7 +10,9 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
+
 ActiveRecord::Schema.define(version: 2021_05_06_113608) do
+
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -77,6 +79,8 @@ ActiveRecord::Schema.define(version: 2021_05_06_113608) do
     t.datetime "intercept_timestamp"
     t.bigint "player_id"
     t.bigint "helping_player_id"
+    t.integer "player_element_synergy_modifiers", default: 0, null: false
+    t.integer "monster_element_synergy_modifiers", default: 0, null: false
     t.index ["player_id"], name: "index_gameboards_on_player_id"
   end
 
@@ -160,7 +164,7 @@ ActiveRecord::Schema.define(version: 2021_05_06_113608) do
     t.index ["gameboard_id"], name: "index_playerinterceptcards_on_gameboard_id"
   end
 
-  create_table "players", force: :cascade do |t|
+  create_table "h", force: :cascade do |t|
     t.string "name"
     t.string "avatar"
     t.integer "level", default: 1

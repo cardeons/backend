@@ -42,7 +42,9 @@ ANTWORT
       shared_reward: int,
       helping_player: id | nil,
       intercept_timestamp: timestamp | nil,
-      current_state: lobby | ingame | intercept_phase | intercept_finished
+      current_state: lobby | ingame | intercept_phase | intercept_finished,
+      player_element_synergy_modifiers: gameboard.player_element_synergy_modifiers,
+      monster_element_synergy_modifiers: gameboard.monster_element_synergy_modifiers
     },
     players: [{
       player_id: ,

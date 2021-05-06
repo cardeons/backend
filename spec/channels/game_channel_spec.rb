@@ -12,6 +12,7 @@ RSpec.describe GameChannel, type: :channel do
     # initialize connection with identifiers
     users(:usernorbert).player = players(:singleplayer)
     users(:usernorbert).player.init_player
+
     stub_connection current_user: users(:usernorbert)
     # srand sets the seed for the rnd generator of rails => rails returns the same value if srand is sets
     srand(1)
@@ -25,8 +26,20 @@ RSpec.describe GameChannel, type: :channel do
   end
 
   it 'test if flee broadcasts to all players' do
+    gameboards(:gameboardFourPlayers).initialize_game_board
+    gameboards(:gameboardFourPlayers).players.each(&:init_player)
+    # assign player to this user
+    users(:one).player = gameboards(:gameboardFourPlayers).players.first
+
+    player = users(:one).player
+
+    stub_connection current_user: users(:one)
+
     subscribe
-    connection.current_user.player.gameboard.update(current_player: players(:singleplayer))
+
+    connection.current_user.player.gameboard.update(current_player: player)
+
+    Gameboard.draw_door_card(connection.current_user.player.gameboard)
 
     expect do
       perform('flee', {})
@@ -1122,7 +1135,7 @@ RSpec.describe GameChannel, type: :channel do
     ENV['DEV_TOOL_ENABLED'] = 'enabled'
     perform('develop_draw_boss_card', {})
 
-    playerwin = Gameboard.attack(gameboards(:gameboardFourPlayers))
+    playerwin = Gameboard.calc_attack_points(gameboards(:gameboardFourPlayers))
 
     # player should not have a chance against the monster
     expect(gameboards(:gameboardFourPlayers).success).to be_falsy
@@ -1142,7 +1155,7 @@ RSpec.describe GameChannel, type: :channel do
 
     ENV['DEV_TOOL_ENABLED'] = 'enabled'
     perform('develop_draw_boss_card', {})
-    playerwin = Gameboard.attack(gameboards(:gameboardFourPlayers))
+    playerwin = Gameboard.calc_attack_points(gameboards(:gameboardFourPlayers))
     perform('flee', {})
 
     # all players should now be one level lower than in the beginning
@@ -1168,7 +1181,7 @@ RSpec.describe GameChannel, type: :channel do
     ENV['DEV_TOOL_ENABLED'] = 'enabled'
     perform('develop_draw_boss_card', {})
 
-    playerwin = Gameboard.attack(gameboards(:gameboardFourPlayers))
+    playerwin = Gameboard.calc_attack_points(gameboards(:gameboardFourPlayers))
 
     expect(gameboards(:gameboardFourPlayers).success).to be_truthy
     expect(playerwin[:result]).to be_truthy
