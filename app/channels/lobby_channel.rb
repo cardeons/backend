@@ -8,6 +8,7 @@ class LobbyChannel < ApplicationCable::Channel
 
   def subscribed
     if params['initiate']
+
       lobby = Lobby.create!
 
       @lobby = lobby
@@ -19,6 +20,7 @@ class LobbyChannel < ApplicationCable::Channel
       lobby_users = get_all_users_from_lobby(lobby)
       broadcast_to(@lobby, { type: 'LOBBY_UPDATE', params: { users: lobby_users } })
     elsif params['lobby_id']
+
       lobby = Lobby.find_by('id = ?', params['lobby_id'])
       @lobby = lobby
 
@@ -29,11 +31,13 @@ class LobbyChannel < ApplicationCable::Channel
 
       stream_for @lobby
 
-      lobby_users = get_all_users_from_lobby(lobby)
-
       current_user.update!(lobby: lobby, oldlobby: lobby.id) if lobby.users.count < 4
 
+      lobby_users = get_all_users_from_lobby(lobby.reload)
+
       broadcast_to(@lobby, { type: 'LOBBY_UPDATE', params: { users: lobby_users } })
+    else
+      reject
     end
   end
 
