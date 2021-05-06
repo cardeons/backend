@@ -162,6 +162,58 @@ RSpec.describe LobbyChannel, type: :channel do
     expect(User.find(users(:one).id).player.handcard.cards.count).to eq 2
   end
 
+  it 'gameboard got initalized player does not have cards from unsubscribe' do
+    stub_connection current_user: users(:one)
+    subscribe initiate: true
+    perform('add_monster', {
+              monster_id: 1
+            })
+    perform('add_monster', {
+              monster_id: 2
+            })
+    perform('add_monster', {
+              monster_id: 3
+            })
+    stub_connection current_user: users(:two)
+    expect do
+      subscribe lobby_id: users(:one).lobby.id
+    end
+      .to have_broadcasted_to("lobby:#{users(:one).lobby.to_gid_param}")
+      .with(
+        hash_including(type: 'LOBBY_UPDATE')
+      ).exactly(:once)
+    perform('add_monster', {
+              monster_id: 4
+            })
+    perform('add_monster', {
+              monster_id: 5
+            })
+    unsubscribe
+    subscribe lobby_id: users(:one).lobby.id
+    stub_connection current_user: users(:three)
+    subscribe lobby_id: users(:one).lobby.id
+    perform('add_monster', {
+              monster_id: 1
+            })
+    stub_connection current_user: users(:four)
+    subscribe lobby_id: users(:one).lobby.id
+    perform('start_lobby_queue')
+
+    expect(User.find(users(:one).id).player.handcard.cards.find(1)).to be_truthy
+    expect(User.find(users(:one).id).player.handcard.cards.find(2)).to be_truthy
+    expect(User.find(users(:one).id).player.handcard.cards.find(3)).to be_truthy
+
+    expect(User.find(users(:two).id).player.handcard.cards.find_by(id: 4)).to be_falsy
+    expect(User.find(users(:two).id).player.handcard.cards.find_by(id: 5)).to be_falsy
+
+    expect(User.find(users(:three).id).player.handcard.cards.find(1)).to be_truthy
+
+    expect(User.find(users(:one).id).player.handcard.cards.count).to eq 5
+    expect(User.find(users(:two).id).player.handcard.cards.count).to eq 5
+    expect(User.find(users(:three).id).player.handcard.cards.count).to eq 5
+    expect(User.find(users(:four).id).player.handcard.cards.count).to eq 5
+  end
+
   it 'gameboard got initalized every player has 5 cards even if he brought cards' do
     stub_connection current_user: users(:one)
     subscribe initiate: true
