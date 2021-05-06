@@ -659,8 +659,8 @@ if ENV['cards']
 
   buffcard = Buffcard.create!(
     draw_chance: 6,
-    title: 'Buffing yourself up, eh?',
-    description: '<p>You are getting stronger and stronger. Gain 2 extra attack points</p>',
+    title: 'Buffing up, eh?',
+    description: '<p>You are getting stronger and stronger. 2 extra attack points for any side.</p>',
     image: '/cardeons/cards/icons/buff.png',
     action: 'gain_atk',
     atk_points: 2
@@ -669,7 +669,7 @@ if ENV['cards']
   buffcard2 = Buffcard.create!(
     draw_chance: 6,
     title: 'Slippery slope',
-    description: '<p>The monster slipped, it looses 5 attack points.</p>',
+    description: '<p>Someone slipped, any side looses 5 attack points.</p>',
     image: '/cardeons/cards/icons/buff.png',
     action: 'monster_lose_atk',
     atk_points: -5
@@ -687,10 +687,10 @@ if ENV['cards']
   buffcard4 = Buffcard.create!(
     draw_chance: 6,
     title: 'Yeet',
-    description: '<p>You send the monster to the shadow realm. You do not get any rewards or levels!</p>',
+    description: '<p>Someone is sent to the shadow realm. - 5 attack points!</p>',
     image: '/cardeons/cards/icons/buff.png',
     action: 'dodge_monster',
-    atk_points: 0
+    atk_points: -5
   )
   
   levelcard2 = Levelcard.create!(
@@ -705,7 +705,7 @@ if ENV['cards']
   buffcard6 = Buffcard.create!(
     draw_chance: 6,
     title: 'Chloroform',
-    description: '<p>You severely weaken the monster. It looses 3 attack points.</p>',
+    description: '<p>You severely weaken someone. - 3 attack points.</p>',
     image: '/icon/Buff.png',
     action: 'monster_lose_atk',
     atk_points: -3
@@ -723,19 +723,19 @@ if ENV['cards']
   buffcard8 = Buffcard.create!(
     draw_chance: 6,
     title: 'Invisibility potion',
-    description: '<p>You can flee without a problem!</p>',
+    description: '<p>Someone gets stabbed in the back, - 3 attack points!</p>',
     image: '/cardeons/cards/icons/buff.png',
     action: 'flee_success',
-    atk_points: 0
+    atk_points: -3
   )
 
   buffcard9 = Buffcard.create!(
     draw_chance: 6,
     title: 'Lick',
-    description: '<p>You paralyzed the monster, it hurts itself and loses 3 ATP</p>',
+    description: '<p>Someone got paralyzed and hurts itself out of confusion and loses 3 attack points.</p>',
     image: '/cardeons/cards/icons/buff.png',
     action: 'monster_lose_atk',
-    atk_points: 3
+    atk_points: -3
   )
 
   buffcard10 = Buffcard.create!(
