@@ -61,7 +61,7 @@ class LobbyChannel < ApplicationCable::Channel
       # pp current_user.player.id
       # Player.destroy(current_user.player.id)
       # pp current_user.player.reload
-      broadcast_to(@gameboard, { type: 'DEBUG', params: { message: 'User leaved the lobby and got destroyed' } })
+      broadcast_to(@gameboard, { type: 'DEBUG', params: { message: 'User left the lobby and got destroyed' } })
     end
   end
 

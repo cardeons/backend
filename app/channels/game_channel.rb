@@ -75,12 +75,12 @@ class GameChannel < ApplicationCable::Channel
     broadcast_to(@gameboard, { type: BOARD_UPDATE, params: updated_board })
     name = @gameboard.centercard.card.title
     player = Player.find_by('user_id = ?', current_user.id)
-    msg = "#{player.name} has played #{name} from handcards!"
+    msg = "👀 #{player.name} has played #{name} from handcards!"
 
     @gameboard.reload
     start_intercept_phase(@gameboard)
 
-    broadcast_to(@gameboard, { type: GAME_LOG, params: { date: Time.new, message: msg } })
+    broadcast_to(@gameboard, { type: GAME_LOG, params: { date: Time.new, message: msg, type: 'info' } })
     PlayerChannel.broadcast_to(current_user, { type: 'HANDCARD_UPDATE', params: { handcards: Gameboard.render_cards_array(player.handcard.ingamedecks) } })
   end
 
@@ -97,8 +97,8 @@ class GameChannel < ApplicationCable::Channel
     start_intercept_phase(@gameboard.reload)
 
     broadcast_to(@gameboard, { type: BOARD_UPDATE, params: Gameboard.broadcast_game_board(@gameboard.reload) })
-    msg = "#{current_user.player.name} has drawn #{name}"
-    broadcast_to(@gameboard, { type: GAME_LOG, params: { date: Time.new, message: msg } })
+    msg = "👀 #{current_user.player.name} has drawn #{name}"
+    broadcast_to(@gameboard, { type: GAME_LOG, params: { date: Time.new, message: msg, type: 'info' } })
   end
 
   def equip_monster(params)
@@ -134,7 +134,7 @@ class GameChannel < ApplicationCable::Channel
           Handcard.draw_handcards(player.id, @gameboard, rewards)
           PlayerChannel.broadcast_to(player.user, { type: 'HANDCARD_UPDATE', params: { handcards: Gameboard.render_cards_array(player.handcard.reload.ingamedecks) } })
         end
-        msg = "You all killed #{@gameboard.centercard.card.title}!"
+        msg = "⚔ You all killed #{@gameboard.centercard.card.title}!"
       # normal monster
       else
         player = current_user.player
@@ -158,11 +158,11 @@ class GameChannel < ApplicationCable::Channel
           Handcard.draw_handcards(helping_player.id, @gameboard, shared_reward)
 
           PlayerChannel.broadcast_to(helping_player.user, { type: 'HANDCARD_UPDATE', params: { handcards: Gameboard.render_cards_array(helping_player.handcard.reload.ingamedecks) } })
-          msg = "#{current_user.player.name} has killed #{@gameboard.centercard.card.title}"
+          msg = "⚔ #{current_user.player.name} has killed #{@gameboard.centercard.card.title}"
         end
       end
 
-      broadcast_to(@gameboard, { type: GAME_LOG, params: { date: Time.new, message: msg } })
+      broadcast_to(@gameboard, { type: GAME_LOG, params: { date: Time.new, message: msg, type: 'success' } })
       @gameboard.centercard.ingamedeck&.update!(cardable: @gameboard.graveyard)
 
       Gameboard.get_next_player(@gameboard)
@@ -172,7 +172,7 @@ class GameChannel < ApplicationCable::Channel
 
     Monstercard.bad_things(@gameboard.centercard, @gameboard) if @gameboard.boss_phase_finished?
     Gameboard.clear_buffcards(@gameboard)
-    PlayerChannel.broadcast_to(current_user, { type: 'ERROR', params: { message: 'Attack too low' } }) unless result[:result]
+    PlayerChannel.broadcast_to(current_user, { type: 'ERROR', params: { message: '❌ Attack too low' } }) unless result[:result]
 
     # updated_board = Gameboard.broadcast_game_board(@gameboard)
     # broadcast_to(@gameboard, { type: BOARD_UPDATE, params: updated_board })
@@ -185,12 +185,12 @@ class GameChannel < ApplicationCable::Channel
     @gameboard.reload
 
     if @gameboard.centercard.nil?
-      PlayerChannel.broadcast_to(current_user, { type: 'ERROR', params: { message: "There's no card in the center!" } })
+      PlayerChannel.broadcast_to(current_user, { type: 'ERROR', params: { message: "❌ There's no card in the center!" } })
       return
     end
 
     # intercept shouldn't be possible if it's not the right phase
-    return PlayerChannel.broadcast_error(current_user, "You can't intercept right now, it's #{@gameboad.current_state} phase") if !@gameboard.intercept_phase? && !@gameboad.boss_phase?
+    return PlayerChannel.broadcast_error(current_user, "❌ You can't intercept right now, it's #{@gameboad.current_state} phase") if !@gameboard.intercept_phase? && !@gameboad.boss_phase?
 
     # if @gameboard.intercept_phase? || @gameboard.boss_phase?
     unique_card_id = params['unique_card_id']
@@ -201,7 +201,7 @@ class GameChannel < ApplicationCable::Channel
 
     if ingame_card.card.type != 'Buffcard'
       # only buffcards are allowed alteast i think
-      PlayerChannel.broadcast_error(current_user, 'This card cannot be used to intercept')
+      PlayerChannel.broadcast_error(current_user, '❌ This card cannot be used to intercept')
       return
     end
 
@@ -210,15 +210,15 @@ class GameChannel < ApplicationCable::Channel
     case to
     when 'center_card'
       @gameboard.interceptcard.add_card_with_ingamedeck_id(unique_card_id)
-      msg = "#{current_user.player.name} buffed the monster!"
+      msg = "💪 #{current_user.player.name} buffed the monster!"
       Buffcard.broadcast_gamelog(msg, @gameboard)
     when 'current_player'
       # buff player
       @gameboard.playerinterceptcard.add_card_with_ingamedeck_id(unique_card_id)
-      msg = "#{current_user.player.name} buffed #{@gameboard.current_player.name}."
+      msg = "💪 #{current_user.player.name} buffed #{@gameboard.current_player.name}."
       Buffcard.broadcast_gamelog(msg, @gameboard)
     else
-      PlayerChannel.broadcast_error(current_user, 'This is not a correct field to play your card!')
+      PlayerChannel.broadcast_error(current_user, '❌ This is not a correct field to play your card!')
       return
     end
 
@@ -233,11 +233,11 @@ class GameChannel < ApplicationCable::Channel
   def no_interception
     current_user.reload
     current_user.player.update!(intercept: false)
-    msg = "#{current_user.player.name} does not want to intercept this fight."
+    msg = "❌ #{current_user.player.name} does not want to intercept this fight."
     @gameboard.reload
 
     if @gameboard.players.where('intercept = ?', false).count == 3
-      msg = 'Nobody wants to intercept this turn.'
+      msg = '📢 Nobody wants to intercept this turn.'
       @gameboard.intercept_finished!
 
       # #reset all player intercept values back to default (false)
@@ -249,7 +249,7 @@ class GameChannel < ApplicationCable::Channel
 
     @gameboard.reload
 
-    broadcast_to(@gameboard, { type: GAME_LOG, params: { date: Time.new, message: msg } })
+    broadcast_to(@gameboard, { type: GAME_LOG, params: { date: Time.new, message: msg, type: 'info' } })
     broadcast_to(@gameboard, { type: BOARD_UPDATE, params: Gameboard.broadcast_game_board(@gameboard) })
   end
 
@@ -262,11 +262,11 @@ class GameChannel < ApplicationCable::Channel
     return unless validate_user
 
     if @gameboard.asked_help
-      PlayerChannel.broadcast_to(current_user, { type: 'ERROR', params: { message: 'You already asked for help...' } })
+      PlayerChannel.broadcast_to(current_user, { type: 'ERROR', params: { message: '❌ You already asked for help...' } })
       return
     end
     if helping_shared_reward > @gameboard.rewards_treasure
-      PlayerChannel.broadcast_to(current_user, { type: 'ERROR', params: { message: "Can't share more rewards than monster gives" } })
+      PlayerChannel.broadcast_to(current_user, { type: 'ERROR', params: { message: "❌ Can't share more rewards than monster gives" } })
       return
     end
 
@@ -310,22 +310,22 @@ class GameChannel < ApplicationCable::Channel
     when 'player_monster'
       if ingamedeck.card.type != 'Monstercard'
         # make sure no items are placed in the monsterslot
-        PlayerChannel.broadcast_to(current_user, { type: ERROR, params: { message: 'You can not equip an item without a monster' } })
+        PlayerChannel.broadcast_to(current_user, { type: ERROR, params: { message: '❌ You can not equip an item without a monster' } })
       elsif player.monsterone.cards.count < 1
         ingamedeck.update(cardable: player.monsterone)
-        msg = "#{player.name} has a new monster helping to defeat the enemy!"
-        broadcast_to(@gameboard, { type: GAME_LOG, params: { date: Time.new, message: msg } })
+        msg = "💪 #{player.name} has a new monster helping to defeat the enemy!"
+        broadcast_to(@gameboard, { type: GAME_LOG, params: { date: Time.new, message: msg, type: 'info' } })
       elsif player.monstertwo.cards.count < 1
         ingamedeck.update(cardable: player.monstertwo)
-        msg = "#{player.name} has a new monster helping to defeat the enemy!"
-        broadcast_to(@gameboard, { type: GAME_LOG, params: { date: Time.new, message: msg } })
+        msg = "💪 #{player.name} has a new monster helping to defeat the enemy!"
+        broadcast_to(@gameboard, { type: GAME_LOG, params: { date: Time.new, message: msg, type: 'info' } })
       elsif player.monsterthree.cards.count < 1
         ingamedeck.update(cardable: player.monsterthree)
-        msg = "#{player.name} has a new monster helping to defeat the enemy!"
-        broadcast_to(@gameboard, { type: GAME_LOG, params: { date: Time.new, message: msg } })
+        msg = "💪 #{player.name} has a new monster helping to defeat the enemy!"
+        broadcast_to(@gameboard, { type: GAME_LOG, params: { date: Time.new, message: msg, type: 'info' } })
       else
         broadcast_to(@gameboard, { type: DEBUG, params: { message: 'All monsterslots are full' } })
-        PlayerChannel.broadcast_to(current_user, { type: ERROR, params: { message: 'All monsterslots are full!' } })
+        PlayerChannel.broadcast_to(current_user, { type: ERROR, params: { message: '❌ All monsterslots are full!' } })
       end
     end
 
@@ -359,7 +359,7 @@ class GameChannel < ApplicationCable::Channel
 
   def validate_user
     if current_user.player != @gameboard.current_player
-      PlayerChannel.broadcast_error(current_user, "You can't do that, it's not your turn...")
+      PlayerChannel.broadcast_error(current_user, "❌ You can't do that, it's not your turn...")
       return false
     end
     true
@@ -454,8 +454,8 @@ class GameChannel < ApplicationCable::Channel
 
     start_intercept_phase(@gameboard.reload)
     broadcast_to(@gameboard, { type: BOARD_UPDATE, params: updated_board })
-    msg = "#{current_user.player.name} has drawn #{card.title}"
-    broadcast_to(@gameboard, { type: GAME_LOG, params: { date: Time.new, message: msg } })
+    msg = "👀 #{current_user.player.name} has drawn #{card.title}"
+    broadcast_to(@gameboard, { type: GAME_LOG, params: { date: Time.new, message: msg, type: 'info' } })
   end
 
   def develop_set_next_player_as_current_player
@@ -499,7 +499,7 @@ class GameChannel < ApplicationCable::Channel
     # returns true if ENV['DEV_TOOL_ENABLED'] is set
     return true if ENV['DEV_TOOL_ENABLED'] == 'enabled'
 
-    PlayerChannel.broadcast_error(current_user, "You can't use developer actions in this Environment")
+    PlayerChannel.broadcast_error(current_user, "⛔ You can't use developer actions in this Environment")
     false
   end
 
@@ -510,7 +510,7 @@ class GameChannel < ApplicationCable::Channel
       # this method returns the card if player owns card
       card
     else
-      PlayerChannel.broadcast_error(current_user, "You do not own this card #{ingame_deck_id}")
+      PlayerChannel.broadcast_error(current_user, "❌ You do not own this card #{ingame_deck_id}")
       # this method returns false if player does not own card
       false
     end

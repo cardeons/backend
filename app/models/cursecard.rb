@@ -10,7 +10,7 @@ class Cursecard < Card
     Levelcard.activate(ingamedeck, player_to) if ingamedeck.card.type == 'Levelcard'
 
     unless ingamedeck.card.type == 'Cursecard'
-      PlayerChannel.broadcast_to(current_user, { type: 'ERROR', params: { message: "You can't curse someone with a card that is not a cursecard..." } })
+      PlayerChannel.broadcast_to(current_user, { type: 'ERROR', params: { message: "❌ You can't curse someone with a card that is not a cursecard..." } })
       return
     end
 
@@ -18,7 +18,7 @@ class Cursecard < Card
     if ingamedeck.card.action == 'lose_item_head' || ingamedeck.card.action == 'lose_item_hand' || ingamedeck.card.action == 'lose_level'
       activate(ingamedeck, player_to, gameboard)
     else
-      msg = "#{player_to.name} got cursed! The curse will affect the player in the next fight."
+      msg = "🔮 #{player_to.name} got cursed! The curse will affect the player in the next fight."
       Cursecard.broadcast_gamelog(msg, gameboard)
     end
   end
@@ -36,7 +36,7 @@ class Cursecard < Card
       Monstercard.lose_item_by_category(player, gameboard, 'hand')
 
       ingamedeck.update(cardable: gameboard.graveyard)
-      msg = "#{player.name} got cursed! The player lost a hand item because of it."
+      msg = "🔮 #{player.name} got cursed! The player lost a hand item because of it."
       Cursecard.broadcast_gamelog(msg, gameboard)
 
       { playeratk: playeratk, monsteratk: monsteratk }
@@ -51,7 +51,7 @@ class Cursecard < Card
       Monstercard.lose_item_by_category(player, gameboard, 'head')
       ingamedeck.update(cardable: gameboard.graveyard)
 
-      msg = "#{player.name} got cursed! The player lost a head item because of it."
+      msg = "🔮 #{player.name} got cursed! The player lost a head item because of it."
       Cursecard.broadcast_gamelog(msg, gameboard)
 
       { playeratk: playeratk, monsteratk: monsteratk }
@@ -59,7 +59,7 @@ class Cursecard < Card
       player.update(level: player.level - 1) unless player.level == 1
 
       ingamedeck.update(cardable: gameboard.graveyard)
-      msg = "#{player.name} got cursed! The player lost a level because of it."
+      msg = "🔮 #{player.name} got cursed! The player lost a level because of it."
       Cursecard.broadcast_gamelog(msg, gameboard)
 
       { playeratk: playeratk, monsteratk: monsteratk }

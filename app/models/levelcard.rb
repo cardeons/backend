@@ -4,7 +4,7 @@ class Levelcard < Card
   validates :title, :description, :image, :action, :type, :level_amount, presence: true
 
   def self.broadcast_gamelog(msg, gameboard)
-    GameChannel.broadcast_to(gameboard, { type: 'GAME_LOG', params: { date: Time.new, message: msg, type: 'warning' } })
+    GameChannel.broadcast_to(gameboard, { type: 'GAME_LOG', params: { date: Time.new, message: msg, type: 'success' } })
   end
 
   def self.activate(ingamedeck, player)
