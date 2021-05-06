@@ -32,10 +32,12 @@ RSpec.describe LobbyChannel, type: :channel do
   end
 
   it 'user streams from lobby_channel' do
+    stub_connection current_user: users(:one)
     subscribe initiate: true
     perform('start_lobby_queue')
+    expect(subscription).to have_stream_from("lobby:#{users(:one).lobby.to_gid_param}")
     # uses global id of model
-    expect(subscription).to have_stream_from("lobby:#{users(:one).player.gameboard.to_gid_param}")
+    # expect(subscription).to have_stream_from("lobby:#{users(:one).lobby.to_gid_param}")
   end
 
   it 'successfully subscribes and creates a player for the user' do
