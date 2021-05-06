@@ -30,9 +30,9 @@ class Gameboard < ApplicationRecord
       player.user.monstertwo.blank? ? nil : lobby_card += 1
       player.user.monsterthree.blank? ? nil : lobby_card += 1
       Handcard.find_or_create_by!(player_id: player.id) # unless player.handcard
-      Handcard.draw_handcards(player.id, self, 4) unless player.handcard.cards.count >= 5 || lobby_card.positive?
-      Handcard.draw_handcards(player.id, self, 5 - lobby_card) if player.handcard.cards.count <= 5 && lobby_card.positive?
-      Handcard.draw_one_monster(player.id, self) unless player.handcard.cards.count >= 5 || lobby_card.positive?
+      Handcard.draw_handcards(player.id, self, 4) unless  lobby_card.positive?
+      Handcard.draw_handcards(player.id, self, 5 - lobby_card) if lobby_card.positive?
+      Handcard.draw_one_monster(player.id, self) unless lobby_card.positive?
     end
   end
 
@@ -199,7 +199,7 @@ class Gameboard < ApplicationRecord
 
     end
 
-    attack_obj = calc_attack_points(gameboard.reload, true)
+    attack_obj = calc_attack_points(gameboard.reload)
 
     gameboard.update(success: attack_obj[:result], player_atk: attack_obj[:playeratk], monster_atk: attack_obj[:monsteratk])
 
@@ -239,9 +239,7 @@ class Gameboard < ApplicationRecord
     output
   end
 
-  # def self.attack(gameboard, curse_log = false)
-  def self.calc_attack_points(gameboard, curse_log = false)
-
+  def self.calc_attack_points(gameboard)
     gameboard.reload
 
     boss_phase = gameboard.boss_phase?
@@ -280,7 +278,7 @@ class Gameboard < ApplicationRecord
     monsteratkpts += gameboard.interceptcard.reload.cards.sum(:atk_points) || 0
 
     # calc intercept bufs
-    playeratkpoints += gameboard.playerinterceptcard.reload.cards.sum(:atk_points)
+    playeratkpoints += gameboard.playerinterceptcard.reload.cards.sum(:atk_points) || 0
 
     result = playeratkpoints > monsteratkpts
 
@@ -341,7 +339,6 @@ class Gameboard < ApplicationRecord
     monsterone_sum + monstertwo_sum + monsterthree_sum
   end
 
-
   def self.clear_buffcards(gameboard)
     gameboard&.interceptcard&.ingamedecks&.each do |card|
       card.update!(cardable: gameboard.graveyard)
@@ -353,7 +350,6 @@ class Gameboard < ApplicationRecord
   end
 
   def calc_synergy_monster_and_items
-
     monstercard = centercard.card
 
     good_against_sum = sum_of_cards(current_player, 'good_against', monstercard.read_attribute_before_type_cast('element'), 'Itemcard', 'good_against_value')
