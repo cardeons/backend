@@ -20,7 +20,6 @@ class UsersController < ApplicationController
   def find_verified_user
     token = request.headers['token']
 
-    pp token
     decoded_token = decoded_token(token)
 
     # wrong type of JWT
