@@ -550,9 +550,6 @@ class GameChannel < ApplicationCable::Channel
   end
 
   def start_intercept_phase(gameboard)
-    pp '*************************'
-    pp 'intercept updated!!'
-    pp '*************************'
     # if no boss monster has been drawn, state should be intercept_phase
     gameboard.intercept_phase! unless gameboard.boss_phase?
 
