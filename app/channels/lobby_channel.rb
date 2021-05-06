@@ -10,16 +10,16 @@ class LobbyChannel < ApplicationCable::Channel
     if params['initiate']
       lobby = Lobby.find_or_create_by!(id: current_user.oldlobby)
 
-      stream_for @lobby
-
       @lobby = lobby
+
+      stream_for @lobby
 
       current_user.update!(lobby: lobby, oldlobby: lobby.id)
 
       lobby_users = get_all_users_from_lobby(lobby)
       broadcast_to(@lobby, { type: 'LOBBY_UPDATE', params: { users: lobby_users } })
     elsif params['lobby_id']
-      lobby = Lobby.find_by(id: params['lobby_id'])
+      lobby = Lobby.find_by('id = ?', params['lobby_id'])
       @lobby = lobby
       FriendlistChannel.broadcast_to(current_user, { type: 'LOBBY_ERROR', params: { message: 'There is no lobby... please create a new one...' } }) unless lobby
 
