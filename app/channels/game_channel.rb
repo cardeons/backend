@@ -487,8 +487,11 @@ class GameChannel < ApplicationCable::Channel
   end
 
   def unsubscribed
-    current_user.online!
+    current_user.reload.online!
     current_user.player.update!(inactive: true)
+
+    @gameboard.destroy! if @gameboard.players.where(inactive: true).size > 3
+
     # Any cleanup needed when channel is unsubscribed
     # pp current_user.playerpp
     # pp current_user.player
@@ -504,7 +507,6 @@ class GameChannel < ApplicationCable::Channel
     # pp @gameboard
     # @gameboard.destroy!
 
-    # @gameboard.destroy! if @gameboard.players.size < 1
     # player.destroy!
 
     # pp @gameboard.reload.players
