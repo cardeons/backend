@@ -322,7 +322,8 @@ RSpec.describe Monstercard, type: :model do
     monster = Ingamedeck.create!(gameboard: gameboards(:gameboardFourPlayers), card: cards(:monstercard), cardable: current_player.playercurse)
 
     expect(current_player.level).to eql(3)
-    Monstercard.bad_things(monster, gameboards(:gameboardFourPlayers))
+    gameboards(:gameboardFourPlayers).intercept_finished!
+    Monstercard.bad_things(monster, gameboards(:gameboardFourPlayers).reload)
     expect(current_player.reload.level).to eql(2)
   end
 

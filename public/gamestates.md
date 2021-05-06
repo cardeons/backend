@@ -352,6 +352,11 @@ Alle im Game-Chanel
    params: { }  
 }
 
+{
+   type: 'develop_draw_boss_card',
+   params: { }  
+}
+
 #set all players intercept to false
 {
    type: 'develop_set_intercept_false',

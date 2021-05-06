@@ -129,14 +129,14 @@ class GameChannel < ApplicationCable::Channel
       rewards = @gameboard.rewards_treasure
 
       # boss monster, no levels, just rewards
-      if @gameboard.boss_phase?
-        @gameboard.players.each do |player|
-          Handcard.draw_handcards(player.id, @gameboard, rewards)
-          PlayerChannel.broadcast_to(player.user, { type: 'HANDCARD_UPDATE', params: { handcards: Gameboard.render_cards_array(player.handcard.reload.ingamedecks) } })
-        end
-        msg = "⚔ You all killed #{@gameboard.centercard.card.title}!"
-      # normal monster
-      else
+      # if @gameboard.boss_phase?
+      #   @gameboard.players.each do |player|
+      #     Handcard.draw_handcards(player.id, @gameboard, rewards)
+      #     PlayerChannel.broadcast_to(player.user, { type: 'HANDCARD_UPDATE', params: { handcards: Gameboard.render_cards_array(player.handcard.reload.ingamedecks) } })
+      #   end
+      #   msg = "⚔ You all killed #{@gameboard.centercard.card.title}!"
+      # # normal monster
+      # else
         player = current_user.player
         player_level = player.level
         player.update!(level: player_level + @gameboard.reload.centercard.card.level_amount)
@@ -161,7 +161,7 @@ class GameChannel < ApplicationCable::Channel
           PlayerChannel.broadcast_to(helping_player.user, { type: 'HANDCARD_UPDATE', params: { handcards: Gameboard.render_cards_array(helping_player.handcard.reload.ingamedecks) } })
           msg = "⚔ #{current_user.player.name} has killed #{@gameboard.centercard.card.title}"
         end
-      end
+      # end
 
       broadcast_to(@gameboard, { type: GAME_LOG, params: { date: Time.new, message: msg, type: 'success' } })
       @gameboard.centercard.ingamedeck&.update!(cardable: @gameboard.graveyard)
@@ -171,11 +171,6 @@ class GameChannel < ApplicationCable::Channel
       broadcast_to(@gameboard, { type: BOARD_UPDATE, params: Gameboard.broadcast_game_board(@gameboard) })
     end
 
-    if @gameboard.boss_phase_finished?
-      Monstercard.bad_things(@gameboard.centercard, @gameboard)
-      msg = "❌ Too bad. Even together you couldn't defeat the monster. You all lost a level."
-      broadcast_to(@gameboard, { type: GAME_LOG, params: { date: Time.new, message: msg, type: 'error' } })
-    end
     Gameboard.clear_buffcards(@gameboard)
     PlayerChannel.broadcast_to(current_user, { type: 'ERROR', params: { message: '❌ Attack too low' } }) unless result[:result]
 
