@@ -1302,4 +1302,37 @@ RSpec.describe GameChannel, type: :channel do
         hash_including(type: 'ERROR')
       ).exactly(:once)
   end
+
+  it 'start intercept phase sets all players to intercept true, even if they have decided not to intercept' do
+    gameboards(:gameboardFourPlayers).initialize_game_board
+    gameboards(:gameboardFourPlayers).players.each(&:init_player)
+    users(:userOne).player = gameboards(:gameboardFourPlayers).players.first
+
+    stub_connection current_user: users(:userTwo)
+    subscribe
+
+    Gameboard.draw_door_card(gameboards(:gameboardFourPlayers))
+
+    # player 2 doesn't want to intercept
+    perform('no_interception', {
+              player_id: connection.current_user.player.id
+            })
+
+    expect(connection.current_user.player.intercept).to be_falsy
+
+    stub_connection current_user: users(:userThree)
+    subscribe
+
+    connection.current_user.player.handcard.ingamedecks.create(card: cards(:buffcard), gameboard: gameboards(:gameboardFourPlayers))
+
+    perform('intercept', {
+              unique_card_id: connection.current_user.player.handcard.ingamedecks.find_by('card_id=?', cards(:buffcard).id),
+              to: 'center_card'
+            })
+
+    expect(connection.current_user.player.intercept).to be_truthy
+    expect(gameboards(:gameboardFourPlayers).intercept_phase?).to be_truthy
+
+    expect(gameboards(:gameboardFourPlayers).players.where(intercept: true).size).to eql(4)
+  end
 end
