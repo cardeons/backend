@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class AddDefaultToPlayerIntercept < ActiveRecord::Migration[6.1]
   def up
     change_column_default :players, :intercept, true
