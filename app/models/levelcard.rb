@@ -12,14 +12,17 @@ class Levelcard < Card
     when 'level_up'
       # level up cards are not usable if you're one level before winning
       if player.level == 4
-        PlayerChannel.broadcast_error(player.user, "You can't use a level up card if you're already level 4!")
+        PlayerChannel.broadcast_error(player.user, "❌ You can't use a level up card if you're already level 4!")
         return
       end
       player.update(level: player.level + 1)
-      msg = "#{player.name} used a level up card! He is now level #{player.reload.level}."
+      msg = "⬆ #{player.name} used a level up card! He is now level #{player.reload.level}."
       Levelcard.broadcast_gamelog(msg, player.gameboard)
+    when 'draw_two_cards'
+      Handcard.draw_handcards(player.id, player.gameboard, 2)
+      PlayerChannel.broadcast_to(player.user, { type: 'HANDCARD_UPDATE', params: { handcards: Gameboard.render_cards_array(player.handcard.ingamedecks) } })
     else
-      puts "There is no action'"
+      puts "❌ There is no action'"
     end
   end
 end

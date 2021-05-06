@@ -8,17 +8,17 @@ one:
   action: MyString
   draw_chance: 1
   level: 1
-  element: MyString
+  
   bad_things: MyString
   rewards_treasure: MyString
-  good_against: MyString
-  bad_against: MyString
+  
+  
   good_against_value: 1
   bad_against_value: 1
-  element_modifier: 1
+  
   atk_points: 1
   item_category: MyString
-  has_combination: 1
+  
   level_amount: 1
 
 two:
@@ -29,17 +29,17 @@ two:
   action: MyString
   draw_chance: 1
   level: 1
-  element: MyString
+  
   bad_things: MyString
   rewards_treasure: MyString
-  good_against: MyString
-  bad_against: MyString
+  
+  
   good_against_value: 1
   bad_against_value: 1
-  element_modifier: 1
+  
   atk_points: 1
   item_category: MyString
-  has_combination: 1
+  
   level_amount: 1
 
 
@@ -51,17 +51,17 @@ monstercard:
   action: 'lose_level'
   draw_chance: 1
   level: 1
-  element: MyString
+  
   bad_things: MyString
   rewards_treasure: 3
-  good_against: MyString
-  bad_against: MyString
+  
+  
   good_against_value: 1
   bad_against_value: 1
-  element_modifier: 1
+  
   atk_points: 1
   item_category: MyString
-  has_combination: 1
+  
   level_amount: 1
   type: Monstercard
 
@@ -73,17 +73,17 @@ monstercard2:
   action: 'die'
   draw_chance: 1
   level: 1
-  element: MyString
+  
   bad_things: MyString
   rewards_treasure: 3
-  good_against: MyString
-  bad_against: MyString
+  
+  
   good_against_value: 1
   bad_against_value: 1
-  element_modifier: 1
+  
   atk_points: 1
   item_category: MyString
-  has_combination: 1
+  
   level_amount: 1
   type: Monstercard
 
@@ -95,17 +95,17 @@ monstercard3:
   action: 'lose_one_card'
   draw_chance: 1
   level: 1
-  element: MyString
+  
   bad_things: MyString
   rewards_treasure: 3
-  good_against: MyString
-  bad_against: MyString
+  
+  
   good_against_value: 1
   bad_against_value: 1
-  element_modifier: 1
+  
   atk_points: 1
   item_category: MyString
-  has_combination: 1
+  
   level_amount: 1
   type: Monstercard
 
@@ -117,17 +117,17 @@ monstercard4:
   action: 'no_help_next_fight'
   draw_chance: 1
   level: 1
-  element: MyString
+  
   bad_things: MyString
   rewards_treasure: 3
-  good_against: MyString
-  bad_against: MyString
+  
+  
   good_against_value: 1
   bad_against_value: 1
-  element_modifier: 1
+  
   atk_points: 1
   item_category: MyString
-  has_combination: 1
+  
   level_amount: 1
   type: Monstercard
 
@@ -139,17 +139,17 @@ monstercard5:
   action: 'random_card_lowest_level'
   draw_chance: 1
   level: 1
-  element: MyString
+  
   bad_things: MyString
   rewards_treasure: 3
-  good_against: MyString
-  bad_against: MyString
+  
+  
   good_against_value: 1
   bad_against_value: 1
-  element_modifier: 1
+  
   atk_points: 1
   item_category: MyString
-  has_combination: 1
+  
   level_amount: 1
   type: Monstercard
 
@@ -161,17 +161,17 @@ monstercard6:
   action: 'lose_item'
   draw_chance: 1
   level: 1
-  element: MyString
+  
   bad_things: MyString
   rewards_treasure: 3
-  good_against: MyString
-  bad_against: MyString
+  
+  
   good_against_value: 1
   bad_against_value: 1
-  element_modifier: 1
+  
   atk_points: 1
   item_category: MyString
-  has_combination: 1
+  
   level_amount: 1
   type: Monstercard
 
@@ -183,17 +183,17 @@ monstercard7:
   action: 'lose_item_head'
   draw_chance: 1
   level: 1
-  element: MyString
+  
   bad_things: MyString
   rewards_treasure: 3
-  good_against: MyString
-  bad_against: MyString
+  
+  
   good_against_value: 1
   bad_against_value: 1
-  element_modifier: 1
+  
   atk_points: 1
   item_category: MyString
-  has_combination: 1
+  
   level_amount: 1
   type: Monstercard
 
@@ -205,17 +205,17 @@ monstercard8:
   action: 'lose_item_shoe'
   draw_chance: 1
   level: 1
-  element: MyString
+  
   bad_things: MyString
   rewards_treasure: 3
-  good_against: MyString
-  bad_against: MyString
+  
+  
   good_against_value: 1
   bad_against_value: 1
-  element_modifier: 1
+  
   atk_points: 1
   item_category: MyString
-  has_combination: 1
+  
   level_amount: 1
   type: Monstercard
 
@@ -227,17 +227,17 @@ monstercard9:
   action: 'lose_item_hand'
   draw_chance: 1
   level: 1
-  element: MyString
+  
   bad_things: MyString
   rewards_treasure: 3
-  good_against: MyString
-  bad_against: MyString
+  
+  
   good_against_value: 1
   bad_against_value: 1
-  element_modifier: 1
+  
   atk_points: 1
   item_category: MyString
-  has_combination: 1
+  
   level_amount: 1
   type: Monstercard
 
@@ -249,21 +249,75 @@ monstercard10:
   action: 'lose_item_hand'
   draw_chance: 1
   level: 1
-  element: MyString
   bad_things: MyString
   rewards_treasure: 1
-  good_against: MyString
-  bad_against: MyString
   good_against_value: 1
   bad_against_value: 1
-  element_modifier: 1
   atk_points: 1
   item_category: MyString
-  has_combination: 1
+  level_amount: 2
+  type: Monstercard
+
+firemonster:
+  title: Fury_Monster
+  description: MyString
+  image: MyString
+  action: 'lose_item_hand'
+  draw_chance: 1
+  level: 1
+  element: fire
+  bad_things: MyString
+  rewards_treasure: 1
+  good_against: water
+  good_against_value: 3
+  bad_against_value: 1
+  atk_points: 1
+  item_category: MyString
   level_amount: 2
   type: Monstercard
 
 
+watermonster:
+  title: wateryMonster
+  description: MyString
+  image: MyString
+  action: 'lose_item_hand'
+  draw_chance: 1
+  level: 1
+  element: water
+  bad_things: MyString
+  rewards_treasure: 1
+  good_against: earth
+  bad_against: fire
+  good_against_value: 3
+  bad_against_value: 2
+  
+  atk_points: 1
+  item_category: MyString
+  
+  level_amount: 2
+  type: Monstercard
+
+
+earthmonster:
+  title: wateryMonster
+  description: MyString
+  image: MyString
+  action: 'lose_item_hand'
+  draw_chance: 1
+  level: 1
+  element: earth
+  bad_things: MyString
+  rewards_treasure: 1
+  good_against: fire
+  good_against_value: 5
+  bad_against_value: 1
+  
+  atk_points: 1
+  item_category: MyString
+  
+  level_amount: 2
+  type: Monstercard
 
 itemcard:
   id: 12
@@ -273,17 +327,17 @@ itemcard:
   action: MyString
   draw_chance: 1
   level: 1
-  element: MyString
+  
   bad_things: MyString
   rewards_treasure: MyString
-  good_against: MyString
-  bad_against: MyString
+  
+  
   good_against_value: 1
   bad_against_value: 1
-  element_modifier: 1
+  
   atk_points: 1
   item_category: MyString
-  has_combination: 1
+  
   level_amount: 1
   type: Itemcard
 
@@ -295,17 +349,17 @@ itemcard2:
   action: MyString
   draw_chance: 1
   level: 1
-  element: MyString
+  
   bad_things: MyString
   rewards_treasure: MyString
-  good_against: MyString
-  bad_against: MyString
+  
+  
   good_against_value: 1
   bad_against_value: 1
-  element_modifier: 1
+  
   atk_points: 1
   item_category: 'head'
-  has_combination: 1
+  
   level_amount: 1
   type: Itemcard
 
@@ -317,17 +371,17 @@ itemcard3:
   action: MyString
   draw_chance: 1
   level: 1
-  element: MyString
+  
   bad_things: MyString
   rewards_treasure: MyString
-  good_against: MyString
-  bad_against: MyString
+  
+  
   good_against_value: 1
   bad_against_value: 1
-  element_modifier: 1
+  
   atk_points: 1
   item_category: 'shoe'
-  has_combination: 1
+  
   level_amount: 1
   type: Itemcard
 
@@ -339,6 +393,28 @@ itemcard4:
   action: MyString
   draw_chance: 1
   level: 1
+  
+  bad_things: MyString
+  rewards_treasure: MyString
+  
+  
+  good_against_value: 1
+  bad_against_value: 1
+  
+  atk_points: 1
+  item_category: 'hand'
+  
+  level_amount: 1
+  type: Itemcard
+
+itemcard5:
+  id: 150
+  title: Overpowered Item
+  description: MyString
+  image: MyString
+  action: MyString
+  draw_chance: 1
+  level: 1
   element: MyString
   bad_things: MyString
   rewards_treasure: MyString
@@ -346,10 +422,8 @@ itemcard4:
   bad_against: MyString
   good_against_value: 1
   bad_against_value: 1
-  element_modifier: 1
-  atk_points: 1
+  atk_points: 100
   item_category: 'hand'
-  has_combination: 1
   level_amount: 1
   type: Itemcard
 
@@ -361,17 +435,17 @@ test:
   action: MyString
   draw_chance: 1
   level: 1
-  element: MyString
+  
   bad_things: MyString
   rewards_treasure: MyString
-  good_against: MyString
-  bad_against: MyString
+  
+  
   good_against_value: 1
   bad_against_value: 1
-  element_modifier: 1
+  
   atk_points: 1
   item_category: MyString
-  has_combination: 1
+  
   level_amount: 1
   type: Monstercard
 
@@ -383,17 +457,17 @@ buffcard:
   action: MyString
   draw_chance: 1
   level: 1
-  element: MyString
+  
   bad_things: MyString
   rewards_treasure: MyString
-  good_against: MyString
-  bad_against: MyString
+  
+  
   good_against_value: 1
   bad_against_value: 1
-  element_modifier: 1
+  
   atk_points: 1
   item_category: MyString
-  has_combination: 1
+  
   level_amount: 1
   type: Buffcard
 
@@ -405,17 +479,17 @@ cursecard:
   action: 'no_help_next_fight'
   draw_chance: 4
   level: 1
-  element: MyString
+  
   bad_things: MyString
   rewards_treasure: MyString
-  good_against: MyString
-  bad_against: MyString
+  
+  
   good_against_value: 1
   bad_against_value: 1
-  element_modifier: 1
+  
   atk_points: 1
   item_category: MyString
-  has_combination: 1
+  
   level_amount: 1
   type: Cursecard
 
@@ -427,17 +501,17 @@ cursecard2:
   action: 'lose_level'
   draw_chance: 4
   level: 1
-  element: MyString
+  
   bad_things: MyString
   rewards_treasure: MyString
-  good_against: MyString
-  bad_against: MyString
+  
+  
   good_against_value: 1
   bad_against_value: 1
-  element_modifier: 1
+  
   atk_points: 1
   item_category: MyString
-  has_combination: 1
+  
   level_amount: 1
   type: Cursecard
 
@@ -449,17 +523,17 @@ cursecard3:
   action: 'lose_item_head'
   draw_chance: 4
   level: 1
-  element: MyString
+  
   bad_things: MyString
   rewards_treasure: MyString
-  good_against: MyString
-  bad_against: MyString
+  
+  
   good_against_value: 1
   bad_against_value: 1
-  element_modifier: 1
+  
   atk_points: 1
   item_category: MyString
-  has_combination: 1
+  
   level_amount: 1
   type: Cursecard
 
@@ -471,17 +545,17 @@ cursecard4:
   action: 'lose_item_hand'
   draw_chance: 4
   level: 1
-  element: MyString
+  
   bad_things: MyString
   rewards_treasure: MyString
-  good_against: MyString
-  bad_against: MyString
+  
+  
   good_against_value: 1
   bad_against_value: 1
-  element_modifier: 1
+  
   atk_points: 1
   item_category: MyString
-  has_combination: 1
+  
   level_amount: 1
   type: Cursecard
 
@@ -493,17 +567,17 @@ cursecard5:
   action: 'lose_atk_points'
   draw_chance: 4
   level: 1
-  element: MyString
+  
   bad_things: MyString
   rewards_treasure: MyString
-  good_against: MyString
-  bad_against: MyString
+  
+  
   good_against_value: 1
   bad_against_value: 1
-  element_modifier: 1
+  
   atk_points: -1
   item_category: MyString
-  has_combination: 1
+  
   level_amount: 1
   type: Cursecard
 
@@ -515,17 +589,17 @@ cursecard6:
   action: 'minus_atk_next_fight'
   draw_chance: 4
   level: 1
-  element: MyString
+  
   bad_things: MyString
   rewards_treasure: MyString
-  good_against: MyString
-  bad_against: MyString
+  
+  
   good_against_value: 1
   bad_against_value: 1
-  element_modifier: 1
+  
   atk_points: -1
   item_category: MyString
-  has_combination: 1
+  
   level_amount: 1
   type: Cursecard
 
@@ -537,17 +611,17 @@ cursecard7:
   action: 'double_attack_double_reward'
   draw_chance: 4
   level: 1
-  element: MyString
+  
   bad_things: MyString
   rewards_treasure: MyString
-  good_against: MyString
-  bad_against: MyString
+  
+  
   good_against_value: 1
   bad_against_value: 1
-  element_modifier: 1
+  
   atk_points: -1
   item_category: MyString
-  has_combination: 1
+  
   level_amount: 1
   type: Cursecard
 
@@ -559,17 +633,17 @@ levelcard:
   action: 'level_up'
   draw_chance: 4
   level: 1
-  element: MyString
+  
   bad_things: MyString
   rewards_treasure: MyString
-  good_against: MyString
-  bad_against: MyString
+  
+  
   good_against_value: 1
   bad_against_value: 1
-  element_modifier: 1
+  
   atk_points: -1
   item_category: MyString
-  has_combination: 1
+  
   level_amount: 1
   type: Levelcard
 
@@ -581,17 +655,17 @@ buffcard:
   action: 'gain_atk'
   draw_chance: 4
   level: 1
-  element: MyString
+  
   bad_things: MyString
   rewards_treasure: MyString
-  good_against: MyString
-  bad_against: MyString
+  
+  
   good_against_value: 1
   bad_against_value: 1
-  element_modifier: 1
+  
   atk_points: 5
   item_category: MyString
-  has_combination: 1
+  
   level_amount: 1
   type: Buffcard
 
@@ -603,17 +677,17 @@ buffcard2:
   action: 'monster_lose_atk'
   draw_chance: 4
   level: 1
-  element: MyString
+  
   bad_things: MyString
   rewards_treasure: MyString
-  good_against: MyString
-  bad_against: MyString
+  
+  
   good_against_value: 1
   bad_against_value: 1
-  element_modifier: 1
+  
   atk_points: -5
   item_category: MyString
-  has_combination: 1
+  
   level_amount: 1
   type: Buffcard
 
@@ -625,17 +699,17 @@ buffcard3:
   action: 'dodge_monster'
   draw_chance: 4
   level: 1
-  element: MyString
+  
   bad_things: MyString
   rewards_treasure: MyString
-  good_against: MyString
-  bad_against: MyString
+  
+  
   good_against_value: 1
   bad_against_value: 1
-  element_modifier: 1
+  
   atk_points: -5
   item_category: MyString
-  has_combination: 1
+  
   level_amount: 1
   type: Buffcard
 
@@ -647,17 +721,17 @@ buffcard4:
   action: 'draw_two_cards'
   draw_chance: 4
   level: 1
-  element: MyString
+  
   bad_things: MyString
   rewards_treasure: MyString
-  good_against: MyString
-  bad_against: MyString
+  
+  
   good_against_value: 1
   bad_against_value: 1
-  element_modifier: 1
+  
   atk_points: -5
   item_category: MyString
-  has_combination: 1
+  
   level_amount: 1
   type: Buffcard
 
@@ -669,17 +743,17 @@ buffcard5:
   action: 'force_help'
   draw_chance: 4
   level: 1
-  element: MyString
+  
   bad_things: MyString
   rewards_treasure: MyString
-  good_against: MyString
-  bad_against: MyString
+  
+  
   good_against_value: 1
   bad_against_value: 1
-  element_modifier: 1
+  
   atk_points: -5
   item_category: MyString
-  has_combination: 1
+  
   level_amount: 1
   type: Buffcard
 
@@ -691,16 +765,133 @@ buffcard6:
   action: 'flee_success'
   draw_chance: 4
   level: 1
-  element: MyString
   bad_things: MyString
   rewards_treasure: MyString
+  good_against_value: 1
+  bad_against_value: 1
+  atk_points: -5
+  item_category: MyString
+  level_amount: 1
+  type: Buffcard
+
+bosscard:
+  id: 2000
+  title: MyString
+  description: MyString
+  image: MyString
+  action: 'lose_level'
+  draw_chance: 1
+  level: 40
+  element: MyString
+  bad_things: MyString
+  rewards_treasure: 1
   good_against: MyString
   bad_against: MyString
   good_against_value: 1
   bad_against_value: 1
-  element_modifier: 1
-  atk_points: -5
+  atk_points: 40
   item_category: MyString
-  has_combination: 1
+  level_amount: 2
+  type: Bosscard
+
+goodAgainstBullMonster:
+  id: 33
+  title: antiWater
+  description: MyString
+  image: MyString
+  action: 'flee_success'
+  draw_chance: 4
+  level: 5
+  bad_things: MyString
+  rewards_treasure: 1
+  synergy_type: bull
+  synergy_value: 5
+  atk_points: 5
+  element: water
+  item_category: MyString
   level_amount: 1
-  type: Buffcard
+  animal: boar
+  type: Monstercard
+
+
+bullMonster:
+  id: 34
+  title: bull
+  description: bull
+  image: bull
+  action: 'bull'
+  draw_chance: 4
+  level: 5
+  bad_things: MyString
+  rewards_treasure: 1
+  animal: bull
+  synergy_value: 5
+  atk_points: 5
+  item_category: MyString
+  level_amount: 1
+  type: Monstercard
+
+BrokenMonster:
+  id: 35
+  title: bull
+  description: bull
+  image: bull
+  action: 'bull'
+  draw_chance: 4
+  level: 100
+  atk_points: 100
+  bad_things: MyString
+  rewards_treasure: 1
+  animal: bull
+  synergy_value: 5
+  atk_points: 5
+  item_category: MyString
+  level_amount: 1
+  type: Monstercard
+
+
+goodAgainstBoar:
+  id: 36
+  title: bull
+  description: bull
+  image: bull
+  action: 'bull'
+  draw_chance: 4
+  level: 5
+  bad_things: MyString
+  rewards_treasure: 1
+  animal: bull
+  synergy_type: boar
+  synergy_value: 10
+  bad_against_value: 1
+  atk_points: 5
+  item_category: MyString
+  level_amount: 1
+  type: Monstercard
+
+  
+itemGoodAgainstWater:
+  id: 37
+  title: item
+  description: item
+  image: item
+  draw_chance: 4
+  level: 5
+  good_against: water
+  good_against_value: 20
+  atk_points: 5
+  item_category: feet
+  type: Itemcard
+
+itemBadAgainstWater:
+  id: 38
+  title: item
+  description: item
+  image: item
+  draw_chance: 4
+  level: 5
+  bad_against: water
+  bad_against_value: 10
+  atk_points: 5
+  item_category: head
+  type: Itemcard

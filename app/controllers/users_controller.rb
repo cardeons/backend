@@ -6,7 +6,32 @@ class UsersController < ApplicationController
   # GET /users
   # GET /users.json
   def index
-    @users = User.all
+    # @users = User.all
+  end
+
+  def decoded_token(token)
+    raise JWT::DecodeError 'ENV[ENC_KEY] is not set' unless ENV['ENC_KEY']
+
+    JWT.decode(token, ENV['ENC_KEY'], true, algorithm: 'HS256')
+  rescue JWT::DecodeError
+    nil
+  end
+
+  def find_verified_user
+    token = request.headers['token']
+
+    decoded_token = decoded_token(token)
+
+    # wrong type of JWT
+    return false unless decoded_token
+
+    return false unless User.find(decoded_token[0]['user_id'])
+
+    true
+  end
+
+  def search
+    @users = User.where('name like ?', "%#{params[:search]}%") if find_verified_user
   end
 
   # GET /users/1
@@ -81,6 +106,6 @@ class UsersController < ApplicationController
 
   def user_card_params
     params.require(:user_card).permit(:card_id, :title, :type, :description, :image, :action, :draw_chance, :level, :element, :bad_things, :rewards_treasure, :good_against, :bad_against,
-                                      :good_against_value, :bad_against_value, :element_modifier, :atk_points, :item_category, :has_combination, :level_amount)
+                                      :good_against_value, :bad_against_value, :atk_points, :item_category, :level_amount)
   end
 end
