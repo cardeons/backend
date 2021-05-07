@@ -23,7 +23,7 @@ class Levelcard < Card
         return
       end
       player.update(level: player.level + 1)
-      msg = "⬆ #{player.name} used a level up card! He is now level #{player.reload.level}."
+      msg = "🍄 #{player.name} used a level up card! He is now level #{player.reload.level}."
       Levelcard.broadcast_gamelog(msg, player.gameboard)
     when 'draw_two_cards'
       Handcard.draw_handcards(player.id, player.gameboard, 2)

@@ -25,7 +25,7 @@ class CheckIntercepttimerJob < ApplicationJob
         if result['result']
           gameboard.boss_phase_finished!
           GameChannel.broadcast_to(gameboard, { type: 'BOARD_UPDATE', params: Gameboard.broadcast_game_board(gameboard.reload) })
-          msg = "⚔ You all killed #{gameboard.centercard.card.title}!"
+          msg = "😎 You all defeated #{gameboard.centercard.card.title}!"
           GameChannel.broadcast_to(gameboard, { type: 'GAME_LOG', params: { date: Time.new, message: msg, type: 'success' } })
 
           gameboard.players.each do |player|
