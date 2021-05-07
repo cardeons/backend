@@ -233,7 +233,6 @@ class GameChannel < ApplicationCable::Channel
   def no_interception
     current_user.reload
     current_user.player.update!(intercept: false)
-    msg = "❌ #{current_user.player.name} does not want to intercept this fight."
     @gameboard.reload
 
     if @gameboard.players.where('intercept = ?', false).count == 3
@@ -245,11 +244,11 @@ class GameChannel < ApplicationCable::Channel
         player.update!(intercept: false)
       end
 
+      broadcast_to(@gameboard, { type: GAME_LOG, params: { date: Time.new, message: msg, type: 'info' } })
     end
 
     @gameboard.reload
 
-    broadcast_to(@gameboard, { type: GAME_LOG, params: { date: Time.new, message: msg, type: 'info' } })
     broadcast_to(@gameboard, { type: BOARD_UPDATE, params: Gameboard.broadcast_game_board(@gameboard) })
   end
 
@@ -330,16 +329,16 @@ class GameChannel < ApplicationCable::Channel
         PlayerChannel.broadcast_to(current_user, { type: ERROR, params: { message: '❌ You can not equip an item without a monster' } })
       elsif player.monsterone.cards.count < 1
         ingamedeck.update(cardable: player.monsterone)
-        msg = "💪 #{player.name} has a new monster helping to defeat the enemy!"
-        broadcast_to(@gameboard, { type: GAME_LOG, params: { date: Time.new, message: msg, type: 'info' } })
+        # msg = "💪 #{player.name} has a new monster helping to defeat the enemy!"
+        # broadcast_to(@gameboard, { type: GAME_LOG, params: { date: Time.new, message: msg, type: 'info' } })
       elsif player.monstertwo.cards.count < 1
         ingamedeck.update(cardable: player.monstertwo)
-        msg = "💪 #{player.name} has a new monster helping to defeat the enemy!"
-        broadcast_to(@gameboard, { type: GAME_LOG, params: { date: Time.new, message: msg, type: 'info' } })
+        # msg = "💪 #{player.name} has a new monster helping to defeat the enemy!"
+        # broadcast_to(@gameboard, { type: GAME_LOG, params: { date: Time.new, message: msg, type: 'info' } })
       elsif player.monsterthree.cards.count < 1
         ingamedeck.update(cardable: player.monsterthree)
-        msg = "💪 #{player.name} has a new monster helping to defeat the enemy!"
-        broadcast_to(@gameboard, { type: GAME_LOG, params: { date: Time.new, message: msg, type: 'info' } })
+        # msg = "💪 #{player.name} has a new monster helping to defeat the enemy!"
+        # broadcast_to(@gameboard, { type: GAME_LOG, params: { date: Time.new, message: msg, type: 'info' } })
       else
         broadcast_to(@gameboard, { type: DEBUG, params: { message: 'All monsterslots are full' } })
         PlayerChannel.broadcast_to(current_user, { type: ERROR, params: { message: '❌ All monsterslots are full!' } })
