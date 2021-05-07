@@ -23,7 +23,7 @@ class Levelcard < Card
         return
       end
       player.update(level: player.level + 1)
-      msg = "⬆ #{player.name} used a level up card! He is now level #{player.reload.level}."
+      msg = "🍄 #{player.name} used a level up card! He is now level #{player.reload.level}."
       Levelcard.broadcast_gamelog(msg, player.gameboard)
       ingamedeck.update(cardable: player.gameboard.graveyard)
     when 'draw_two_cards'
