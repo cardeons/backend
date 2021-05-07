@@ -549,6 +549,7 @@ class GameChannel < ApplicationCable::Channel
 
   def send_chat_message(params)
     msg = params['message']
-    msg && broadcast_to(@gameboard, { type: 'CHAT_MESSAGE', params: { date: Time.new, id: current_user.player.id, name: current_user.player.name, message: msg } })
+    broadcast_to(@gameboard, { type: 'CHAT_MESSAGE', params: { date: Time.new, id: current_user.player.id, name: current_user.player.name, message: msg } })
+    # msg && broadcast_to(@gameboard, { type: 'CHAT_MESSAGE', params: { date: Time.new, id: current_user.player.id, name: current_user.player.name, message: msg } })
   end
 end
