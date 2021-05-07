@@ -1338,4 +1338,21 @@ RSpec.describe GameChannel, type: :channel do
 
     expect(gameboards(:gameboardFourPlayers).players.where(intercept: true).size).to eql(4)
   end
+  
+  it 'sends chatmessage' do
+    gameboards(:gameboardFourPlayers).initialize_game_board
+    gameboards(:gameboardFourPlayers).players.each(&:init_player)
+
+    stub_connection current_user: users(:userFour)
+    subscribe
+
+    expect do
+      perform('send_chat_message', {
+        message: "hiii"
+      })
+    end.to have_broadcasted_to("game:#{users(:userFour).player.gameboard.to_gid_param}")
+      .with(
+        hash_including(type: 'CHAT_MESSAGE')
+      ).exactly(:once)
+  end
 end
