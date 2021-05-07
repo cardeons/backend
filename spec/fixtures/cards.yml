@@ -258,6 +258,23 @@ monstercard10:
   level_amount: 2
   type: Monstercard
 
+boaring_fire:
+  title: Boaring Fire
+  description: MyString
+  image: MyString
+  action: 'no_action'
+  draw_chance: 1
+  level: 20
+  element: fire
+  bad_things: MyString
+  rewards_treasure: 3
+  good_against: water
+  good_against_value: 1
+  atk_points: 20
+  item_category: MyString
+  level_amount: 1
+  type: Monstercard
+
 firemonster:
   title: Fury_Monster
   description: MyString
