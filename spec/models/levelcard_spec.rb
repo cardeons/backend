@@ -70,6 +70,22 @@ RSpec.describe Levelcard, type: :model do
     expect(current_player.level).to eql(2)
   end
 
+  it 'move card to graveyard after activation' do
+    gameboards(:gameboardFourPlayers).initialize_game_board
+    gameboards(:gameboardFourPlayers).players.each(&:init_player)
+
+    current_player = gameboards(:gameboardFourPlayers).current_player
+    levelcard = Ingamedeck.create!(gameboard: gameboards(:gameboardFourPlayers), card: subject, cardable: current_player.playercurse)
+
+    expect(current_player.level).to eql(1)
+    params = {
+      'unique_card_id' => levelcard.id
+    }
+    Levelcard.activate(params, current_player.user)
+    expect(levelcard.reload.cardable).to eq current_player.gameboard.graveyard
+    expect(current_player.level).to eql(2)
+  end
+
   it 'gain 0 level if card is activated and level is 4' do
     gameboards(:gameboardFourPlayers).initialize_game_board
     gameboards(:gameboardFourPlayers).players.each(&:init_player)

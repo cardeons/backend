@@ -3,7 +3,7 @@
 require 'swagger_helper'
 
 RSpec.describe 'api/cards', type: :request do
-  pending "add some examples to (or delete) #{__FILE__}"
+  # pending "add some examples to (or delete) #{__FILE__}"
 
   # fixtures :cards
   # before { @user = cards(:one) }
