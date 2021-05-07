@@ -3,7 +3,7 @@
 require 'swagger_helper'
 
 RSpec.describe 'Inventory API', type: :request do
-  pending "add some examples to (or delete) #{__FILE__}"
+  # pending "add some examples to (or delete) #{__FILE__}"
 
   # fixtures :users
   # before { @user = users(:one) }

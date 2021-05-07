@@ -29,7 +29,7 @@ class GameChannel < ApplicationCable::Channel
     @gameboard.ingame!
     updated_board = Gameboard.broadcast_game_board(@gameboard)
     broadcast_to(@gameboard, { type: BOARD_UPDATE, params: updated_board })
-    PlayerChannel.broadcast_to(current_user, { type: 'HANDCARD_UPDATE', params: { handcards: Gameboard.render_cards_array(current_user.player.handcard.ingamedecks.reload) } })
+    PlayerChannel.broadcast_to(current_user, { type: 'HANDCARD_UPDATE', params: { handcards: Gameboard.render_cards_array(current_user.player.handcard.reload.ingamedecks) } })
   end
 
   def play_monster(params)
@@ -75,7 +75,7 @@ class GameChannel < ApplicationCable::Channel
     start_intercept_phase(@gameboard)
 
     broadcast_to(@gameboard, { type: GAME_LOG, params: { date: Time.new, message: msg, type: 'info' } })
-    PlayerChannel.broadcast_to(current_user, { type: 'HANDCARD_UPDATE', params: { handcards: Gameboard.render_cards_array(player.handcard.ingamedecks) } })
+    PlayerChannel.broadcast_to(current_user, { type: 'HANDCARD_UPDATE', params: { handcards: Gameboard.render_cards_array(player.handcard.reload.ingamedecks) } })
   end
 
   def draw_door_card
@@ -116,7 +116,7 @@ class GameChannel < ApplicationCable::Channel
       broadcast_to(@gameboard, { type: BOARD_UPDATE, params: Gameboard.broadcast_game_board(@gameboard.reload) })
     end
 
-    PlayerChannel.broadcast_to(current_user, { type: 'HANDCARD_UPDATE', params: { handcards: Gameboard.render_cards_array(player.handcard.ingamedecks) } })
+    PlayerChannel.broadcast_to(current_user, { type: 'HANDCARD_UPDATE', params: { handcards: Gameboard.render_cards_array(player.handcard.reload.ingamedecks) } })
   end
 
   def attack
@@ -137,30 +137,30 @@ class GameChannel < ApplicationCable::Channel
       #   msg = "⚔ You all killed #{@gameboard.centercard.card.title}!"
       # # normal monster
       # else
-        player = current_user.player
-        player_level = player.level
-        player.update!(level: player_level + @gameboard.reload.centercard.card.level_amount)
+      player = current_user.player
+      player_level = player.level
+      player.update!(level: player_level + @gameboard.reload.centercard.card.level_amount)
 
-        if player.level >= 5
-          monster_id = player.win_game(current_user)
-          @gameboard.game_won!
-          broadcast_to(@gameboard, { type: 'WIN', params: { player: player.id, monster_won: monster_id } })
-          broadcast_to(@gameboard, { type: BOARD_UPDATE, params: Gameboard.broadcast_game_board(@gameboard) })
-          return
-        end
+      if player.level >= 5
+        monster_id = player.win_game(current_user)
+        @gameboard.game_won!
+        broadcast_to(@gameboard, { type: 'WIN', params: { player: player.id, monster_won: monster_id } })
+        broadcast_to(@gameboard, { type: BOARD_UPDATE, params: Gameboard.broadcast_game_board(@gameboard) })
+        return
+      end
 
-        shared_reward = @gameboard.shared_reward
-        current_player_treasure = rewards - shared_reward
-        Handcard.draw_handcards(@gameboard.current_player.id, @gameboard, current_player_treasure)
-        PlayerChannel.broadcast_to(current_user.reload, { type: 'HANDCARD_UPDATE', params: { handcards: Gameboard.render_cards_array(player.handcard.reload.ingamedecks) } })
+      shared_reward = @gameboard.shared_reward
+      current_player_treasure = rewards - shared_reward
+      Handcard.draw_handcards(@gameboard.current_player.id, @gameboard, current_player_treasure)
+      PlayerChannel.broadcast_to(current_user.reload, { type: 'HANDCARD_UPDATE', params: { handcards: Gameboard.render_cards_array(player.handcard.reload.ingamedecks) } })
 
-        if @gameboard.reload.helping_player
-          helping_player = @gameboard.helping_player
-          Handcard.draw_handcards(helping_player.id, @gameboard, shared_reward)
+      if @gameboard.reload.helping_player
+        helping_player = @gameboard.helping_player
+        Handcard.draw_handcards(helping_player.id, @gameboard, shared_reward)
 
-          PlayerChannel.broadcast_to(helping_player.user, { type: 'HANDCARD_UPDATE', params: { handcards: Gameboard.render_cards_array(helping_player.handcard.reload.ingamedecks) } })
-          msg = "⚔ #{current_user.player.name} has killed #{@gameboard.centercard.card.title}"
-        end
+        PlayerChannel.broadcast_to(helping_player.user, { type: 'HANDCARD_UPDATE', params: { handcards: Gameboard.render_cards_array(helping_player.handcard.reload.ingamedecks) } })
+        msg = "⚔ #{current_user.player.name} has killed #{@gameboard.centercard.card.title}"
+      end
       # end
 
       broadcast_to(@gameboard, { type: GAME_LOG, params: { date: Time.new, message: msg, type: 'success' } })
@@ -190,7 +190,7 @@ class GameChannel < ApplicationCable::Channel
     end
 
     # intercept shouldn't be possible if it's not the right phase
-    return PlayerChannel.broadcast_error(current_user, "❌ You can't intercept right now, it's #{@gameboad.current_state} phase") if !@gameboard.intercept_phase? && !@gameboard.boss_phase?
+    return PlayerChannel.broadcast_error(current_user, "❌ You can't intercept right now, it's #{@gameboard.current_state} phase") if !@gameboard.intercept_phase? && !@gameboard.boss_phase?
 
     # if @gameboard.intercept_phase? || @gameboard.boss_phase?
     unique_card_id = params['unique_card_id']
@@ -225,7 +225,7 @@ class GameChannel < ApplicationCable::Channel
     start_intercept_phase(@gameboard) unless @gameboard.boss_phase?
 
     # update this players handcards
-    PlayerChannel.broadcast_to(current_user, { type: 'HANDCARD_UPDATE', params: { handcards: Gameboard.render_cards_array(current_user.player.handcard.ingamedecks.reload) } })
+    PlayerChannel.broadcast_to(current_user, { type: 'HANDCARD_UPDATE', params: { handcards: Gameboard.render_cards_array(current_user.player.handcard.reload.ingamedecks) } })
     # update board
     broadcast_to(@gameboard, { type: BOARD_UPDATE, params: Gameboard.broadcast_game_board(@gameboard) })
   end
@@ -233,7 +233,6 @@ class GameChannel < ApplicationCable::Channel
   def no_interception
     current_user.reload
     current_user.player.update!(intercept: false)
-    msg = "❌ #{current_user.player.name} does not want to intercept this fight."
     @gameboard.reload
 
     if @gameboard.players.where('intercept = ?', false).count == 3
@@ -245,11 +244,11 @@ class GameChannel < ApplicationCable::Channel
         player.update!(intercept: false)
       end
 
+      broadcast_to(@gameboard, { type: GAME_LOG, params: { date: Time.new, message: msg, type: 'info' } })
     end
 
     @gameboard.reload
 
-    broadcast_to(@gameboard, { type: GAME_LOG, params: { date: Time.new, message: msg, type: 'info' } })
     broadcast_to(@gameboard, { type: BOARD_UPDATE, params: Gameboard.broadcast_game_board(@gameboard) })
   end
 
@@ -276,7 +275,7 @@ class GameChannel < ApplicationCable::Channel
       return
     end
 
-    msg = "👀 You asked #{@gameboad.helping_player.name} for help in this fight. Lets see.."
+    msg = "👀 You asked #{helping_player.name} for help in this fight. Lets see.."
     PlayerChannel.broadcast_to(current_user, { type: 'GAME_LOG', params: { date: Time.new, message: msg, type: 'info' } })
 
     @gameboard.update(shared_reward: helping_shared_reward, asked_help: true, helping_player: helping_player)
@@ -301,13 +300,13 @@ class GameChannel < ApplicationCable::Channel
       else
         @gameboard.update(helping_player_atk: helping_player.attack)
       end
-      msg = "✅ #{current_player.name} asked #{@gameboad.helping_player.name} for help in this fight. He agreed!"
+      msg = "✅ #{@gameboard.current_player.name} asked #{helping_player.name} for help in this fight. He agreed!"
       broadcast_to(@gameboard, { type: GAME_LOG, params: { date: Time.new, message: msg, type: 'success' } })
       start_intercept_phase(@gameboard)
     end
 
     @gameboard.update(shared_reward: 0) unless params['help']
-    msg = "❌ #{current_player.name} asked #{@gameboad.helping_player.name} for help in this fight. #{@gameboad.helping_player.name} declined!"
+    msg = "❌ #{@gameboard.current_player.name} asked #{helping_player.name} for help in this fight. #{helping_player.name} declined!"
     broadcast_to(@gameboard, { type: GAME_LOG, params: { date: Time.new, message: msg, type: 'error' } }) unless params['help']
 
     @gameboard.reload
@@ -330,16 +329,16 @@ class GameChannel < ApplicationCable::Channel
         PlayerChannel.broadcast_to(current_user, { type: ERROR, params: { message: '❌ You can not equip an item without a monster' } })
       elsif player.monsterone.cards.count < 1
         ingamedeck.update(cardable: player.monsterone)
-        msg = "💪 #{player.name} has a new monster helping to defeat the enemy!"
-        broadcast_to(@gameboard, { type: GAME_LOG, params: { date: Time.new, message: msg, type: 'info' } })
+        # msg = "💪 #{player.name} has a new monster helping to defeat the enemy!"
+        # broadcast_to(@gameboard, { type: GAME_LOG, params: { date: Time.new, message: msg, type: 'info' } })
       elsif player.monstertwo.cards.count < 1
         ingamedeck.update(cardable: player.monstertwo)
-        msg = "💪 #{player.name} has a new monster helping to defeat the enemy!"
-        broadcast_to(@gameboard, { type: GAME_LOG, params: { date: Time.new, message: msg, type: 'info' } })
+        # msg = "💪 #{player.name} has a new monster helping to defeat the enemy!"
+        # broadcast_to(@gameboard, { type: GAME_LOG, params: { date: Time.new, message: msg, type: 'info' } })
       elsif player.monsterthree.cards.count < 1
         ingamedeck.update(cardable: player.monsterthree)
-        msg = "💪 #{player.name} has a new monster helping to defeat the enemy!"
-        broadcast_to(@gameboard, { type: GAME_LOG, params: { date: Time.new, message: msg, type: 'info' } })
+        # msg = "💪 #{player.name} has a new monster helping to defeat the enemy!"
+        # broadcast_to(@gameboard, { type: GAME_LOG, params: { date: Time.new, message: msg, type: 'info' } })
       else
         broadcast_to(@gameboard, { type: DEBUG, params: { message: 'All monsterslots are full' } })
         PlayerChannel.broadcast_to(current_user, { type: ERROR, params: { message: '❌ All monsterslots are full!' } })
@@ -357,17 +356,17 @@ class GameChannel < ApplicationCable::Channel
   end
 
   def curse_player(params)
-    ingame_card = check_if_player_owns_card(params['unique_card_id']) || return
+    check_if_player_owns_card(params['unique_card_id']) || return
     Cursecard.handlecurse(params, @gameboard, current_user)
-    PlayerChannel.broadcast_to(current_user, { type: 'HANDCARD_UPDATE', params: { handcards: Gameboard.render_cards_array(current_user.player.handcard.ingamedecks) } })
+    PlayerChannel.broadcast_to(current_user, { type: 'HANDCARD_UPDATE', params: { handcards: Gameboard.render_cards_array(current_user.player.handcard.reload.ingamedecks) } })
     broadcast_to(@gameboard, { type: BOARD_UPDATE, params: Gameboard.broadcast_game_board(@gameboard) })
   end
 
   def level_up(params)
-    ingame_card = check_if_player_owns_card(params['unique_card_id']) || return
+    check_if_player_owns_card(params['unique_card_id']) || return
 
     Levelcard.activate(params, current_user)
-    PlayerChannel.broadcast_to(current_user, { type: 'HANDCARD_UPDATE', params: { handcards: Gameboard.render_cards_array(current_user.player.handcard.ingamedecks) } })
+    PlayerChannel.broadcast_to(current_user, { type: 'HANDCARD_UPDATE', params: { handcards: Gameboard.render_cards_array(current_user.player.handcard.reload.ingamedecks) } })
     broadcast_to(@gameboard, { type: BOARD_UPDATE, params: Gameboard.broadcast_game_board(@gameboard) })
   end
 
@@ -419,6 +418,7 @@ class GameChannel < ApplicationCable::Channel
     return unless developer_actions_enabled?
 
     current_user.player.gameboard.update!(current_player: current_user.player)
+    @gameboard.update_recalc_element_synergy_modifer
     broadcast_to(@gameboard, { type: BOARD_UPDATE, params: Gameboard.broadcast_game_board(@gameboard.reload) })
   end
 
@@ -474,8 +474,15 @@ class GameChannel < ApplicationCable::Channel
     return unless developer_actions_enabled?
 
     Gameboard.get_next_player(@gameboard)
+    @gameboard.update_recalc_element_synergy_modifer
     @gameboard.ingame!
     broadcast_to(@gameboard, { type: BOARD_UPDATE, params: Gameboard.broadcast_game_board(@gameboard) })
+  end
+
+  def send_chat_message(params)
+    msg = params['message']
+
+    broadcast_to(@gameboard, { type: 'CHAT_MESSAGE', params: { date: Time.new, id: current_user.player.id, name: current_user.player.name, message: msg } })
   end
 
   def unsubscribed
@@ -545,11 +552,5 @@ class GameChannel < ApplicationCable::Channel
 
     # sets Intercept Timer
     CheckIntercepttimerJob.set(wait: 40.seconds).perform_later(@gameboard, timestamp, 45)
-  end
-
-  def send_chat_message(params)
-    msg = params['message']
-    broadcast_to(@gameboard, { type: 'CHAT_MESSAGE', params: { date: Time.new, id: current_user.player.id, name: current_user.player.name, message: msg } })
-    # msg && broadcast_to(@gameboard, { type: 'CHAT_MESSAGE', params: { date: Time.new, id: current_user.player.id, name: current_user.player.name, message: msg } })
   end
 end
