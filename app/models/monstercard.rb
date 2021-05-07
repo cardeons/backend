@@ -240,6 +240,9 @@ class Monstercard < Card
 
       msg = "💀 #{player.name} died because of #{ingamedeck.card.title}s bad things."
       Monstercard.broadcast_gamelog(msg, gameboard)
+    when 'no_action'
+      msg = "🤷‍♀️ #{player.name} was lucky #{ingamedeck.card.title} is too bored to do anything about him."
+      Monstercard.broadcast_gamelog(msg, gameboard)
     else
       puts '❌ action unknown'
     end
