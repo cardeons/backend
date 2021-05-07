@@ -706,7 +706,7 @@ if ENV['cards']
     draw_chance: 6,
     title: 'Chloroform',
     description: '<p>You severely weaken someone. - 3 attack points.</p>',
-    image: '/icon/Buff.png',
+    image: '/cardeons/cards/icons/buff.png',
     action: 'monster_lose_atk',
     atk_points: -3
   )
