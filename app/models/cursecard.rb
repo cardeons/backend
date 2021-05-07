@@ -15,6 +15,7 @@ class Cursecard < Card
     ingamedeck.update(cardable: player_to.playercurse)
     if ingamedeck.card.action == 'lose_item_head' || ingamedeck.card.action == 'lose_item_hand' || ingamedeck.card.action == 'lose_level'
       activate(ingamedeck, player_to, gameboard)
+      PlayerChannel.broadcast_to(current_user, { type: 'HANDCARD_UPDATE', params: { handcards: Gameboard.render_cards_array(current_user.player.handcard.reload.ingamedecks.reload) } })
     else
       msg = "🔮 #{player_to.name} got cursed! The curse will affect the player in the next fight."
       Cursecard.broadcast_gamelog(msg, gameboard)

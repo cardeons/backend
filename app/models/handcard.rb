@@ -48,6 +48,7 @@ class Handcard < ApplicationRecord
       Ingamedeck.create!(gameboard: gameboard, card_id: allcards[rand(allcards.size)], cardable: handcard)
       x -= 1
     end
+    PlayerChannel.broadcast_to(player.user, { type: 'HANDCARD_UPDATE', params: { handcards: Gameboard.render_cards_array(player.handcard.ingamedecks.reload) } })
   end
 
   def self.draw_one_monster(player_id, gameboard)
@@ -64,5 +65,6 @@ class Handcard < ApplicationRecord
       Ingamedeck.create!(gameboard: gameboard, card_id: allcards[rand(allcards.size)], cardable: handcard)
       x -= 1
     end
+    PlayerChannel.broadcast_to(player.user, { type: 'HANDCARD_UPDATE', params: { handcards: Gameboard.render_cards_array(player.handcard.ingamedecks.reload) } })
   end
 end

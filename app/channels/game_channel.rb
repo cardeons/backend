@@ -29,7 +29,7 @@ class GameChannel < ApplicationCable::Channel
     @gameboard.ingame!
     updated_board = Gameboard.broadcast_game_board(@gameboard)
     broadcast_to(@gameboard, { type: BOARD_UPDATE, params: updated_board })
-    PlayerChannel.broadcast_to(current_user, { type: 'HANDCARD_UPDATE', params: { handcards: Gameboard.render_cards_array(current_user.player.handcard.ingamedecks.reload) } })
+    PlayerChannel.broadcast_to(current_user, { type: 'HANDCARD_UPDATE', params: { handcards: Gameboard.render_cards_array(current_user.player.handcard.reload.ingamedecks) } })
   end
 
   def play_monster(params)
@@ -75,7 +75,7 @@ class GameChannel < ApplicationCable::Channel
     start_intercept_phase(@gameboard)
 
     broadcast_to(@gameboard, { type: GAME_LOG, params: { date: Time.new, message: msg, type: 'info' } })
-    PlayerChannel.broadcast_to(current_user, { type: 'HANDCARD_UPDATE', params: { handcards: Gameboard.render_cards_array(player.handcard.ingamedecks) } })
+    PlayerChannel.broadcast_to(current_user, { type: 'HANDCARD_UPDATE', params: { handcards: Gameboard.render_cards_array(player.handcard.reload.ingamedecks) } })
   end
 
   def draw_door_card
@@ -116,7 +116,7 @@ class GameChannel < ApplicationCable::Channel
       broadcast_to(@gameboard, { type: BOARD_UPDATE, params: Gameboard.broadcast_game_board(@gameboard.reload) })
     end
 
-    PlayerChannel.broadcast_to(current_user, { type: 'HANDCARD_UPDATE', params: { handcards: Gameboard.render_cards_array(player.handcard.ingamedecks) } })
+    PlayerChannel.broadcast_to(current_user, { type: 'HANDCARD_UPDATE', params: { handcards: Gameboard.render_cards_array(player.handcard.reload.ingamedecks) } })
   end
 
   def attack
@@ -225,7 +225,7 @@ class GameChannel < ApplicationCable::Channel
     start_intercept_phase(@gameboard) unless @gameboard.boss_phase?
 
     # update this players handcards
-    PlayerChannel.broadcast_to(current_user, { type: 'HANDCARD_UPDATE', params: { handcards: Gameboard.render_cards_array(current_user.player.handcard.ingamedecks.reload) } })
+    PlayerChannel.broadcast_to(current_user, { type: 'HANDCARD_UPDATE', params: { handcards: Gameboard.render_cards_array(current_user.player.handcard.reload.ingamedecks) } })
     # update board
     broadcast_to(@gameboard, { type: BOARD_UPDATE, params: Gameboard.broadcast_game_board(@gameboard) })
   end
@@ -356,17 +356,17 @@ class GameChannel < ApplicationCable::Channel
   end
 
   def curse_player(params)
-    ingame_card = check_if_player_owns_card(params['unique_card_id']) || return
+    check_if_player_owns_card(params['unique_card_id']) || return
     Cursecard.handlecurse(params, @gameboard, current_user)
-    PlayerChannel.broadcast_to(current_user, { type: 'HANDCARD_UPDATE', params: { handcards: Gameboard.render_cards_array(current_user.player.handcard.ingamedecks) } })
+    PlayerChannel.broadcast_to(current_user, { type: 'HANDCARD_UPDATE', params: { handcards: Gameboard.render_cards_array(current_user.player.handcard.reload.ingamedecks) } })
     broadcast_to(@gameboard, { type: BOARD_UPDATE, params: Gameboard.broadcast_game_board(@gameboard) })
   end
 
   def level_up(params)
-    ingame_card = check_if_player_owns_card(params['unique_card_id']) || return
+    check_if_player_owns_card(params['unique_card_id']) || return
 
     Levelcard.activate(params, current_user)
-    PlayerChannel.broadcast_to(current_user, { type: 'HANDCARD_UPDATE', params: { handcards: Gameboard.render_cards_array(current_user.player.handcard.ingamedecks) } })
+    PlayerChannel.broadcast_to(current_user, { type: 'HANDCARD_UPDATE', params: { handcards: Gameboard.render_cards_array(current_user.player.handcard.reload.ingamedecks) } })
     broadcast_to(@gameboard, { type: BOARD_UPDATE, params: Gameboard.broadcast_game_board(@gameboard) })
   end
 
