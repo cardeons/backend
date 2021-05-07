@@ -23,7 +23,7 @@ class Levelcard < Card
         return
       end
       player.update(level: player.level + 1)
-      msg = "⬆ #{player.name} used a level up card! He is now level #{player.reload.level}."
+      msg = "🍄 #{player.name} used a level up card! He is now level #{player.reload.level}."
       Levelcard.broadcast_gamelog(msg, player.gameboard)
       PlayerChannel.broadcast_to(player.user, { type: 'HANDCARD_UPDATE', params: { handcards: Gameboard.render_cards_array(player.handcard.reload.ingamedecks) } })
       ingamedeck.update(cardable: player.gameboard.graveyard)

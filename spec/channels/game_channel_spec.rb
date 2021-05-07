@@ -1338,7 +1338,27 @@ RSpec.describe GameChannel, type: :channel do
 
     expect(gameboards(:gameboardFourPlayers).players.where(intercept: true).size).to eql(4)
   end
-  
+
+
+  it 'boaring fire does not do anything after he won against the player' do
+    gameboards(:gameboardFourPlayers).initialize_game_board
+    gameboards(:gameboardFourPlayers).players.each(&:init_player)
+
+    # current_player = gameboards(:gameboardFourPlayers).current_player
+
+    stub_connection current_user: users(:userFour)
+    subscribe
+    gameboards(:gameboardFourPlayers).current_player = users(:userFour).player
+    monster = Ingamedeck.create!(gameboard: gameboards(:gameboardFourPlayers), card: cards(:boaring_fire), cardable: gameboards(:gameboardFourPlayers).centercard)
+
+    expect do
+      perform('flee', {})
+    end.to have_broadcasted_to("game:#{gameboards(:gameboardFourPlayers).current_player.gameboard.to_gid_param}")
+      .with(
+        hash_including(type: 'GAME_LOG')
+       ).exactly(:once)
+  end
+
   it 'sends chatmessage' do
     gameboards(:gameboardFourPlayers).initialize_game_board
     gameboards(:gameboardFourPlayers).players.each(&:init_player)

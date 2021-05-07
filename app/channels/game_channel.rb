@@ -159,7 +159,7 @@ class GameChannel < ApplicationCable::Channel
         Handcard.draw_handcards(helping_player.id, @gameboard, shared_reward)
 
         PlayerChannel.broadcast_to(helping_player.user, { type: 'HANDCARD_UPDATE', params: { handcards: Gameboard.render_cards_array(helping_player.handcard.reload.ingamedecks) } })
-        msg = "⚔ #{current_user.player.name} has killed #{@gameboard.centercard.card.title}"
+        msg = "😎 #{current_user.player.name} has defeated #{@gameboard.centercard.card.title}"
       end
       # end
 
