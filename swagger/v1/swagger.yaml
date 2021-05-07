@@ -55,11 +55,47 @@ paths:
               required:
               - email
               - password
-  "/users.json":
+  "/search/{search}.json":
     get:
-      summary: list all the cards
+      summary: list all users with search
       tags:
       - User
+      parameters:
+      - in: header
+        name: token
+      - name: search
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: successful
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: string
+                        name:
+                          type: string
+  "/users/{id}/inventory.json":
+    get:
+      summary: list all cards of user
+      tags:
+      - Inventory
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
       responses:
         '200':
           description: successful
@@ -217,6 +253,7 @@ servers:
     defaultHost:
       default: localhost:3000
 - url: https://cardeon.projects.multimediatechnology.at/
+- url: https://cardeon-develop.projects.multimediatechnology.at/
 - url: https://cardeons-develop.herokuapp.com/
 - url: https://cardeons.herokuapp.com/
 

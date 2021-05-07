@@ -10,7 +10,7 @@ class Gameboard < ApplicationRecord
   has_one :graveyard, dependent: :destroy
   has_one :interceptcard, dependent: :destroy
   has_one :playerinterceptcard, dependent: :destroy
-  enum current_state: %i[lobby ingame intercept_phase intercept_finished game_won]
+  enum current_state: %i[lobby ingame intercept_phase intercept_finished game_won boss_phase boss_phase_finished]
 
   # has_many :cards, through: :ingame_cards
 
@@ -18,16 +18,21 @@ class Gameboard < ApplicationRecord
     current_player = players.last
     gameboard_id = id
     update(current_player: current_player, current_state: 'ingame')
-    Centercard.create!(gameboard_id: gameboard_id)
-    Graveyard.create!(gameboard_id: gameboard_id)
-    Playerinterceptcard.create!(gameboard_id: gameboard_id)
-    Interceptcard.create!(gameboard_id: gameboard_id)
+    Centercard.find_or_create_by!(gameboard_id: gameboard_id)
+    Graveyard.find_or_create_by!(gameboard_id: gameboard_id)
+    Playerinterceptcard.find_or_create_by!(gameboard_id: gameboard_id)
+    Interceptcard.find_or_create_by!(gameboard_id: gameboard_id)
 
     # pp Player.find(current_player).gameboard
     players.each do |player|
+      lobby_card = 0
+      player.user.monsterone.blank? ? nil : lobby_card += 1
+      player.user.monstertwo.blank? ? nil : lobby_card += 1
+      player.user.monsterthree.blank? ? nil : lobby_card += 1
       Handcard.find_or_create_by!(player_id: player.id) # unless player.handcard
-      Handcard.draw_handcards(player.id, self, 4)
-      Handcard.draw_one_monster(player.id, self)
+      Handcard.draw_handcards(player.id, self, 4) unless  lobby_card.positive?
+      Handcard.draw_handcards(player.id, self, 5 - lobby_card) if lobby_card.positive?
+      Handcard.draw_one_monster(player.id, self) unless lobby_card.positive?
     end
   end
 
@@ -106,8 +111,7 @@ class Gameboard < ApplicationRecord
   end
 
   def self.render_gameboard(gameboard)
-    # TODO: check if this selects the right card
-    gameboard = gameboard.reload
+    atk_points = calc_attack_points(gameboard.reload)
 
     centercard = (render_card_from_id(gameboard.centercard.ingamedeck.id) if gameboard.centercard.ingamedeck)
     {
@@ -116,8 +120,8 @@ class Gameboard < ApplicationRecord
       center_card: centercard,
       interceptcards: render_cards_array(gameboard.interceptcard&.ingamedecks),
       player_interceptcards: render_cards_array(gameboard.playerinterceptcard&.ingamedecks),
-      player_atk: gameboard.player_atk + gameboard.helping_player_atk,
-      monster_atk: gameboard.monster_atk,
+      player_atk: atk_points[:playeratk],
+      monster_atk: atk_points[:monsteratk],
       success: gameboard.success,
       can_flee: gameboard.can_flee,
       intercept_timestamp: gameboard.intercept_timestamp,
@@ -125,7 +129,9 @@ class Gameboard < ApplicationRecord
       rewards_treasure: gameboard.rewards_treasure,
       graveyard: render_cards_array(gameboard.graveyard.ingamedecks),
       shared_reward: gameboard.shared_reward,
-      helping_player: gameboard.helping_player&.id
+      helping_player: gameboard.helping_player&.id,
+      player_element_synergy_modifiers: gameboard.player_element_synergy_modifiers,
+      monster_element_synergy_modifiers: gameboard.monster_element_synergy_modifiers
     }
   end
 
@@ -158,15 +164,14 @@ class Gameboard < ApplicationRecord
   end
 
   def self.draw_door_card(gameboard)
-    gameboard.intercept_phase!
     # cursecards = Cursecard.all
     monstercards = Monstercard.all
-    # bosscards = Bosscard.all
+    bosscards = Bosscard.all
 
     allcards = []
     # addCardsToArray(allcards, cursecards)
     add_cards_to_array(allcards, monstercards)
-    # addCardsToArray(allcards, bosscards)
+    add_cards_to_array(allcards, bosscards)
 
     randomcard = allcards[rand(allcards.size)]
 
@@ -186,7 +191,15 @@ class Gameboard < ApplicationRecord
 
     gameboard.update(centercard: new_center, rewards_treasure: new_treasure)
 
-    attack_obj = attack(gameboard.reload, true)
+    # if bosscard is drawn, phase is boss_phase, otherwise always intercept_phase
+    if gameboard.centercard.card.type == 'Bosscard'
+      gameboard.boss_phase!
+    else
+      gameboard.intercept_phase!
+
+    end
+
+    attack_obj = calc_attack_points(gameboard.reload)
 
     gameboard.update(success: attack_obj[:result], player_atk: attack_obj[:playeratk], monster_atk: attack_obj[:monsteratk])
 
@@ -226,76 +239,56 @@ class Gameboard < ApplicationRecord
     output
   end
 
-  def self.attack(gameboard, curse_log = false)
+  def self.calc_attack_points(gameboard)
     gameboard.reload
-    player = gameboard.current_player
-    playeratkpoints = 1
 
-    unless player.nil?
+    boss_phase = gameboard.boss_phase?
 
-      monstercards1 = Monstercard.calculate_monsterslot_atk(player.monsterone)
-      monstercards2 = Monstercard.calculate_monsterslot_atk(player.monstertwo)
-      monstercards3 = Monstercard.calculate_monsterslot_atk(player.monsterthree)
+    return { result: false, playeratk: 0, monsteratk: 0 } unless gameboard.current_player
 
-      playeratkpoints = monstercards1 + monstercards2 + monstercards3 + player.level + gameboard.helping_player_atk
+    players = boss_phase ? gameboard.players : [gameboard.current_player]
 
-      playeratkpoints += gameboard.playerinterceptcard.cards.sum(:atk_points)
+    playeratkpoints = 0
+    monsteratkpts = 0
 
-      ## monsteratk points get set to 0 if cards.first is nil => no centercard
-      monsteratkpts = gameboard.centercard.card&.atk_points || 0
+    ## monsteratk points get set to 0 if cards.first is nil => no centercard
+    monsteratkpts += gameboard.centercard.card&.atk_points || 0
 
-      # #add intercept buffs
-      monsteratkpts += gameboard.interceptcard.cards.sum(:atk_points)
+    players.each do |player|
+      playeratkpoints += player.calculate_player_atk_with_monster_and_items
 
       player.playercurse.ingamedecks.each do |curse|
-        curse_obj = Cursecard.activate(curse, player, gameboard, playeratkpoints, monsteratkpts, curse_log)
+        curse_obj = Cursecard.activate(curse, player, gameboard, playeratkpoints, monsteratkpts)
 
         playeratkpoints = curse_obj[:playeratk]
         monsteratkpts = curse_obj[:monsteratk]
       end
-
-      playerwin = playeratkpoints > monsteratkpts
-
-      if playerwin
-        #   message = "SUCCESS"
-        gameboard.update(success: true, player_atk: playeratkpoints, monster_atk: monsteratkpts)
-      else
-        #   message = "FAIL"
-        gameboard.update(success: false, player_atk: playeratkpoints, monster_atk: monsteratkpts)
-        #   # broadcast: flee or use cards!
-      end
-
     end
 
-    { result: playerwin, playeratk: playeratkpoints, monsteratk: monsteratkpts }
+    # onlcy calc modifiers when bossphase is false
+    unless boss_phase
+      monsteratkpts += gameboard.monster_element_synergy_modifiers
+      playeratkpoints += gameboard.player_element_synergy_modifiers
+    end
+
+    # add helping player atk
+    playeratkpoints += gameboard.helping_player_atk
+
+    # #add intercept buffs
+    monsteratkpts += gameboard.interceptcard.reload.cards.sum(:atk_points) || 0
+
+    # calc intercept bufs
+    playeratkpoints += gameboard.playerinterceptcard.reload.cards.sum(:atk_points) || 0
+
+    result = playeratkpoints > monsteratkpts
+
+    gameboard.update(success: result)
+
+    { result: result, playeratk: playeratkpoints, monsteratk: monsteratkpts }
   end
 
-  def self.reset_all_game_boards
-    Ingamedeck.all.where(cardable_type: 'Centercard').destroy_all
-
-    Gameboard.all.each do |gameboard|
-      current_player = gameboard.current_player
-
-      next unless current_player
-
-      current_player.handcard.ingamedecks.delete_all
-
-      current_player.inventory.ingamedecks.delete_all if current_player.inventory&.ingamedecks
-
-      current_player.monsterone.ingamedecks.delete_all if current_player.monsterone&.ingamedecks
-
-      current_player.monstertwo.ingamedecks.delete_all if current_player.monstertwo&.ingamedecks
-
-      current_player.monsterthree.ingamedecks.delete_all if current_player.monsterthree&.ingamedecks
-
-      gameboard.update_attribute(:player_atk, 1)
-
-      Handcard.draw_handcards(current_player.id, gameboard)
-
-      # updated_board = Gameboard.broadcast_game_board(gameboard)
-      # GameChannel.broadcast_to(gameboard, { type: "BOARD_UPDATE", params: updated_board })
-      # PlayerChannel.broadcast_to(current_player.user, { type: 'HANDCARD_UPDATE', params: { handcards: Gameboard.renderCardId(current_player.handcard.ingamedecks) } })
-    end
+  def set_player_atk
+    update!(player_atk: current_player.attack)
   end
 
   def self.add_cards_to_array(arr, cards)
@@ -318,57 +311,54 @@ class Gameboard < ApplicationRecord
     end
   end
 
-  def calculate_element_modifiers
-    monstercard = centercard.card
-
-    modifier_player = 0
-    modifier_monster = 0
-
-    # modifiers are 0 if there is no centercard
-    return { modifier_player: modifier_player, modifier_monster: modifier_monster } unless monstercard
-
-    monsterone_card = current_player.monsterone.cards.find_by('type=?', 'Monstercard')
-    monstertwo_card = current_player.monstertwo.cards.find_by('type=?', 'Monstercard')
-    monsterthree_card = current_player.monsterthree.cards.find_by('type=?', 'Monstercard')
-
-    if monsterone_card
-      modifier_player += monsterone_card.calculate_self_element_modifiers(monstercard)
-      modifier_monster += monstercard.calculate_self_element_modifiers(monsterone_card)
+  def update_recalc_element_synergy_modifer
+    # set modifiers to zero if there is no centercard
+    if centercard.reload.card.nil?
+      update!(monster_element_synergy_modifiers: 0, player_element_synergy_modifiers: 0)
+      return
     end
+    monster_element_modifier = calculate_monster_element_modifier
+    synergy_item_monsters = calc_synergy_monster_and_items
 
-    if monstertwo_card
-      modifier_player += monstertwo_card&.calculate_self_element_modifiers(monstercard)
+    player_element_synergy_modifiers = monster_element_modifier[:modifier_player] + synergy_item_monsters[:modifier_player]
+    monster_element_synergy_modifiers = monster_element_modifier[:modifier_monster] + synergy_item_monsters[:modifier_monster]
 
-      # modifiers are only applied to monster if they have a diferent element than the other usermonster
-      modifier_monster += monstercard.calculate_self_element_modifiers(monstertwo_card) if monsterone_card&.element != monstertwo_card&.element
-    end
+    update!(monster_element_synergy_modifiers: monster_element_synergy_modifiers, player_element_synergy_modifiers: player_element_synergy_modifiers)
 
-    if monsterthree_card
-      modifier_player += monsterthree_card.calculate_self_element_modifiers(monstercard)
-
-      # modifiers are only applied to monster if they have a diferent element than the other usermonster
-      if monsterone_card&.element != monsterthree_card&.element && monstertwo_card&.element != monsterthree_card&.element
-        modifier_monster += monstercard.calculate_self_element_modifiers(monsterthree_card)
-      end
-    end
-
-    { modifier_player: modifier_player, modifier_monster: modifier_monster }
+    { monster_element_synergy_modifiers: monster_element_synergy_modifiers, player_element_synergy_modifiers: player_element_synergy_modifiers }
   end
 
-  def calculate_all_modifiers
+  private
+
+  def sum_of_cards(player, column, columnvalue, cardtype, sumtype)
+    # eg where(bad_against:fire, type=enemy_monster.element).sum(bad_against_value)
+    monsterone_sum = player.monsterone.cards.where("#{column}=#{columnvalue} AND type='#{cardtype}'").sum(sumtype)
+    monstertwo_sum = player.monstertwo.cards.where("#{column}=#{columnvalue} AND type='#{cardtype}'").sum(sumtype)
+    monsterthree_sum = player.monsterthree.cards.where("#{column}=#{columnvalue} AND type='#{cardtype}'").sum(sumtype)
+
+    monsterone_sum + monstertwo_sum + monsterthree_sum
+  end
+
+  def self.clear_buffcards(gameboard)
+    gameboard&.interceptcard&.ingamedecks&.each do |card|
+      card.update!(cardable: gameboard.graveyard)
+    end
+
+    gameboard&.playerinterceptcard&.ingamedecks&.each do |card|
+      card.update!(cardable: gameboard.graveyard)
+    end
+  end
+
+  def calc_synergy_monster_and_items
     monstercard = centercard.card
 
-    monsterone = current_player.monsterone
-    monstertwo = current_player.monstertwo
-    monsterthree = current_player.monsterthree
+    good_against_sum = sum_of_cards(current_player, 'good_against', monstercard.read_attribute_before_type_cast('element'), 'Itemcard', 'good_against_value')
 
-    good_against_sum = sum_of_cards(monsterone, monstertwo, monsterthree, 'good_against', monstercard.read_attribute_before_type_cast('element'), 'Itemcard', 'good_against_value')
-
-    bad_against_sum = sum_of_cards(monsterone, monstertwo, monsterthree, 'bad_against', monstercard.read_attribute_before_type_cast('element'), 'Itemcard', 'bad_against_value')
+    bad_against_sum = sum_of_cards(current_player, 'bad_against', monstercard.read_attribute_before_type_cast('element'), 'Itemcard', 'bad_against_value')
 
     synergy_player_sum = 0
     # calc synergy Values of Player Monster
-    synergy_player_sum = sum_of_cards(monsterone, monstertwo, monsterthree, 'synergy_type', monstercard.read_attribute_before_type_cast('animal'), 'Monstercard', 'synergy_value') if monstercard.animal
+    synergy_player_sum = sum_of_cards(current_player, 'synergy_type', monstercard.read_attribute_before_type_cast('animal'), 'Monstercard', 'synergy_value') if monstercard.animal
 
     monsterone_card = current_player.monsterone.cards.find_by('type=?', 'Monstercard')
     monstertwo_card = current_player.monstertwo.cards.find_by('type=?', 'Monstercard')
@@ -380,17 +370,40 @@ class Gameboard < ApplicationRecord
       synergy_monster_sum = monstercard.synergy_value
     end
 
-    { bad_against: bad_against_sum, good_against: good_against_sum, synergy_player: synergy_player_sum, synergy_monster: synergy_monster_sum }
+    { modifier_player: good_against_sum + synergy_player_sum - bad_against_sum, modifier_monster: synergy_monster_sum }
   end
 
-  private
+  def calculate_monster_element_modifier
+    monstercard = centercard.card
 
-  def sum_of_cards(monsterone, monstertwo, monsterthree, column, columnvalue, cardtype, sumtype)
-    # eg where(bad_against:fire, type=enemy_monster.element).sum(bad_against_value)
-    monsterone_sum = monsterone.cards.where("#{column}=#{columnvalue} AND type='#{cardtype}'").sum(sumtype)
-    monstertwo_sum = monstertwo.cards.where("#{column}=#{columnvalue} AND type='#{cardtype}'").sum(sumtype)
-    monsterthree_sum = monsterthree.cards.where("#{column}=#{columnvalue} AND type='#{cardtype}'").sum(sumtype)
+    modifier_player = 0
+    modifier_monster = 0
 
-    monsterone_sum + monstertwo_sum + monsterthree_sum
+    # modifiers are 0 if there is no centercard
+    return { modifier_player: modifier_player, modifier_monster: modifier_monster } unless monstercard
+
+    monsterone_card = current_player.monsterone.cards.reload.where('type=?', 'Monstercard').limit(1)
+    monstertwo_card = current_player.monstertwo.cards.reload.where('type=?', 'Monstercard').limit(1)
+    monsterthree_card = current_player.monsterthree.cards.reload.where('type=?', 'Monstercard').limit(1)
+
+    # use the union gem for rails, union_all keeps duplicates that we need for player calculation
+    player_monstercards = monsterone_card.union_all(monstertwo_card).union_all(monsterthree_card)
+
+    # only add if there is a player monster that matches our good_against
+    modifier_monster += monstercard.good_against_value if monstercard.good_against && player_monstercards.find_by('element=?', monstercard.read_attribute_before_type_cast('good_against'))
+
+    # only add if there is a player monster that matches our bad_against
+    modifier_monster += monstercard.bad_against_value if monstercard.bad_against && player_monstercards.find_by('element=?', monstercard.read_attribute_before_type_cast('bad_against'))
+
+    # calc player moonster good_against values
+    player_monster_good_against_value = player_monstercards.where('good_against=?', monstercard.read_attribute_before_type_cast('element')).sum(:good_against_value)
+
+    # calc player moonster bad_against values
+    player_monster_bad_against_value = player_monstercards.where('bad_against=?', monstercard.read_attribute_before_type_cast('element')).sum(:bad_against_value)
+
+    modifier_player += player_monster_good_against_value
+    modifier_player -= player_monster_bad_against_value
+
+    { modifier_player: modifier_player, modifier_monster: modifier_monster }
   end
 end

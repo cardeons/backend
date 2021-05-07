@@ -10,8 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_05_04_100902) do
-
+ActiveRecord::Schema.define(version: 2021_05_06_113608) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -36,9 +35,9 @@ ActiveRecord::Schema.define(version: 2021_05_04_100902) do
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
     t.string "type"
-    t.integer "animal"
     t.integer "synergy_type"
     t.integer "synergy_value", default: 0
+    t.integer "animal"
   end
 
   create_table "cards_users", id: false, force: :cascade do |t|
@@ -78,6 +77,8 @@ ActiveRecord::Schema.define(version: 2021_05_04_100902) do
     t.datetime "intercept_timestamp"
     t.bigint "player_id"
     t.bigint "helping_player_id"
+    t.integer "player_element_synergy_modifiers", default: 0, null: false
+    t.integer "monster_element_synergy_modifiers", default: 0, null: false
     t.index ["player_id"], name: "index_gameboards_on_player_id"
   end
 
@@ -119,6 +120,11 @@ ActiveRecord::Schema.define(version: 2021_05_04_100902) do
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
     t.index ["player_id"], name: "index_inventories_on_player_id"
+  end
+
+  create_table "lobbies", force: :cascade do |t|
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
   end
 
   create_table "monsterones", force: :cascade do |t|
@@ -179,6 +185,12 @@ ActiveRecord::Schema.define(version: 2021_05_04_100902) do
     t.datetime "updated_at", precision: 6, null: false
     t.string "name"
     t.integer "status"
+    t.bigint "lobby_id"
+    t.integer "monsterone"
+    t.integer "monstertwo"
+    t.integer "monsterthree"
+    t.integer "oldlobby"
+    t.index ["lobby_id"], name: "index_users_on_lobby_id"
   end
 
   add_foreign_key "centercards", "gameboards"
@@ -196,4 +208,5 @@ ActiveRecord::Schema.define(version: 2021_05_04_100902) do
   add_foreign_key "playerinterceptcards", "gameboards"
   add_foreign_key "players", "gameboards"
   add_foreign_key "players", "users"
+  add_foreign_key "users", "lobbies"
 end

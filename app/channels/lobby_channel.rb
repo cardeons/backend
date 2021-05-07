@@ -7,61 +7,156 @@ class LobbyChannel < ApplicationCable::Channel
   INGAME = 'ingame'
 
   def subscribed
-    # access current user with current_user
+    if params['initiate']
 
-    # check if there is not a player with this user
-    ## read find or create by for simpler solution
-    # if Player.find_by(user_id: current_user.id)
-    #   # transmit {type: "error", params:{message: "user is already playing in #{player.gameboard_id}"}}
-    #   player = Player.find_by(user_id: current_user.id)
-    #   Gameboard.find(player.gameboard_id).destroy
-    #   createNewTestGame
-    #   # reject
-    # end
+      lobby = Lobby.create!
 
-    # remove player from old gameboard
+      @lobby = lobby
+
+      stream_for @lobby
+
+      current_user.update!(lobby: lobby, oldlobby: lobby.id)
+
+      lobby_users = get_all_users_from_lobby(lobby)
+      broadcast_to(@lobby, { type: 'LOBBY_UPDATE', params: { users: lobby_users } })
+    elsif params['lobby_id']
+
+      lobby = Lobby.find_by('id = ?', params['lobby_id'])
+      @lobby = lobby
+
+      FriendlistChannel.broadcast_to(current_user, { type: 'LOBBY_ERROR', params: { message: 'There is no lobby... please create a new one...' } }) unless lobby
+
+      FriendlistChannel.broadcast_to(current_user, { type: 'LOBBY_ERROR', params: { message: 'Lobby is full...' } }) if lobby.users.count >= 4
+      reject if lobby.users.count >= 4
+
+      stream_for @lobby
+
+      current_user.update!(lobby: lobby, oldlobby: lobby.id) if lobby.users.count < 4
+
+      lobby_users = get_all_users_from_lobby(lobby.reload)
+
+      broadcast_to(@lobby, { type: 'LOBBY_UPDATE', params: { users: lobby_users } })
+    else
+      reject
+    end
+  end
+
+  def get_all_users_from_lobby(lobby)
+    return unless lobby
+
+    lobby.reload
+    lobby.users.reload
+    lobby_users = []
+
+    lobby.users.each do |user|
+      lobby_users.push({ name: user.name, id: user.id })
+    end
+
+    lobby_users
+  end
+
+  def lobby_invite(data)
+    friend = User.find_by('id=?', data['friend'])
+
+    FriendlistChannel.broadcast_to(friend, { type: 'GAME_INVITE', params: { inviter: current_user.id, inviter_name: current_user.name, lobby_id: current_user.lobby.id } })
+  end
+
+  def add_monster(data)
+    current_user.monsterone.blank? && current_user.update!(monsterone: data['monster_id']) && return
+    current_user.monstertwo.blank? && current_user.update!(monstertwo: data['monster_id']) && return
+    current_user.monsterthree.blank? && current_user.update!(monsterthree: data['monster_id']) && return
+  end
+
+  def remove_monster(data)
+    current_user.monsterone == data['monster_id'] && current_user.update!(monsterone: nil) && return
+    current_user.monstertwo == data['monster_id'] && current_user.update!(monstertwo: nil) && return
+    current_user.monsterthree == data['monster_id'] && current_user.update!(monsterthree: nil) && return
+  end
+
+  def start_lobby_queue(data)
+    lobby = current_user.lobby
+
     delete_old_players
 
-    # search for gameboard with open lobby
-    gameboard = Gameboard.find_or_create_by(current_state: LOBBY)
+    gameboard = Gameboard.find_or_create_by!(current_state: :lobby)
 
-    # create new player
-    player = Player.create!(name: current_user.name, gameboard_id: gameboard.id, user: current_user)
-
-    player.init_player(params)
-
-    gameboard.update!(current_player: player)
-
+    gameboard = Gameboard.create!(current_state: :lobby) if lobby.users.reload.count > (4 - gameboard.players.reload.count)
     @gameboard = gameboard
 
-    # Should only be usable if ENV is set
-    ENV['DEV_TOOL_ENABLED'] == 'enabled' && create_dummy_players_for_gameboard(@gameboard, params['testplayers'])
+    broadcast_to(@lobby, { type: 'START_QUEUE', params: { game_id: @gameboard.id } })
 
-    lobbyisfull = @gameboard.players.count > 3
+    lobby.users.each do |user|
+      # TODO: Destroy Player for now we should change this for later
+      Player.find_by(name: user.name)&.destroy
 
-    stream_for @gameboard
+      Player.create!(name: user.name, gameboard_id: gameboard.id, user: user)
 
-    broadcast_to(@gameboard,
-                 { type: 'DEBUG', params: { message: "new Player#{current_user.email} conected to the gameboard id: #{@gameboard.id} players in lobby #{@gameboard.reload.players.count}" } })
+      player = user.player
 
-    if lobbyisfull
+      player.init_player(user)
+
+      # player.init_player(params)
+      # gameboard = current_user.player.gameboard
+
+      # gameboard.update!(current_player: player)
+      # Should only be usable if ENV is set
+      ENV['DEV_TOOL_ENABLED'] == 'enabled' && create_dummy_players_for_gameboard(@gameboard, data['testplayers'])
+
+      lobbyisfull = @gameboard.players.count > 3
+
+      broadcast_to(@gameboard,
+                   { type: 'DEBUG', params: { message: "new Player#{current_user.email} conected to the gameboard id: #{@gameboard.id} players in lobby #{@gameboard.reload.players.count}" } })
+
+      next unless lobbyisfull
+
+      arr = []
+      @gameboard.players.each do |my_player|
+        next if arr.find_index(my_player.user.lobby)
+
+        broadcast_to(my_player.user.lobby,
+                     { type: 'DEBUG', params: { message: "new Player#{current_user.email} conected to the gameboard id: #{@gameboard.id} players in lobby #{@gameboard.reload.players.count}" } })
+        broadcast_to(my_player.user.lobby, { type: 'START_GAME', params: { game_id: @gameboard.id } })
+
+        broadcast_to(my_player.user.lobby, { type: 'DEBUG', params: { message: 'Lobby is full start with game subscribe to Player and GameChannel' } })
+
+        arr.push(my_player.user.lobby)
+      end
+
       # Lobby is full tell players to start the game
-      broadcast_to(@gameboard, { type: 'DEBUG', params: { message: 'Lobby is full start with game subscribe to Player and GameChannel' } })
 
       @gameboard.initialize_game_board
-
-      broadcast_to(@gameboard, { type: 'START_GAME', params: { game_id: @gameboard.id } })
     end
   end
 
   def unsubscribed
     # Any cleanup needed when channel is unsubscribed
+    # kann des probleme machen beim reload? weil man dann keine params mehr hat?? :thinking:
+    # current_user.update(lobby: nil)
+    lobby = current_user.lobby
+    current_user.update!(monsterone: nil, monstertwo: nil, monsterthree: nil, lobby: nil)
+
+    lobby_users = get_all_users_from_lobby(lobby)
+    broadcast_to(@lobby, { type: 'LOBBY_UPDATE', params: { users: lobby_users } })
+    lobby.destroy if lobby && lobby.reload.users.reload.count.zero?
+
+    return unless @gameboard
+
     if @gameboard.reload.lobby?
+
+      # Delete dummy Players
+      dummy_players = @gameboard.players.where('name like ?', '%Dummy420%')
+      dummy_players.each do |player|
+        user = player.user
+        player.destroy!
+        user.destroy!
+      end
       current_user.player.destroy!
+
+      @gameboard.destroy! if @gameboard.players.count.zero?
       # pp current_user.player.id
       # Player.destroy(current_user.player.id)
       # pp current_user.player.reload
-      broadcast_to(@gameboard, { type: 'DEBUG', params: { message: 'User leaved the lobby and got destroyed' } })
+      broadcast_to(@lobby, { type: 'DEBUG', params: { message: 'User left the lobby and got destroyed' } })
     end
   end
 
@@ -79,8 +174,8 @@ class LobbyChannel < ApplicationCable::Channel
 
     (1..number_of_players).each do
       x = rand(1..1_000_000)
-      u1 = User.create!(email: "#{x}2@2.at", password: '2', name: "#{x}2", password_confirmation: '2')
-      player1 = Player.create!(name: "#{x}2", gameboard: gameboard_test, user: u1)
+      u1 = User.create!(email: "#{x}_Dummy420_2@2.at", password: '2', name: "#{x}2", password_confirmation: '2')
+      player1 = Player.create!(name: "#{x}_Dummy420_2", gameboard: gameboard_test, user: u1)
       playercurse1 = Playercurse.create!(player: player1)
       Handcard.create!(player: player1)
       p1i = Inventory.create!(player: player1)
@@ -92,63 +187,10 @@ class LobbyChannel < ApplicationCable::Channel
       p1i1 = Ingamedeck.create!(gameboard: gameboard_test, card: Itemcard.first, cardable: p1i)
       p1i2 = Ingamedeck.create!(gameboard: gameboard_test, card: Itemcard.first, cardable: p1i)
     end
-    # u1 = User.create(email: "#{x}2@2.at", password: '2', name: "#{x}2", password_confirmation: '2')
-    # u2 = User.create(email: "#{x}3@3.at", password: '3', name: "#{x}3", password_confirmation: '3')
-    # u3 = User.create(email: "#{x}4@4.at", password: '4', name: "#{x}4", password_confirmation: '4')
-
-    # player1 = Player.create(name: "#{x}2", gameboard: gameboard_test, user: u1)
-    # player2 = Player.create(name: "#{x}3", gameboard: gameboard_test, user: u2)
-    # player3 = Player.create(name: "#{x}4", gameboard: gameboard_test, user: u3)
-
-    # playercurse1 = Playercurse.create(player: player1)
-    # playercurse2 = Playercurse.create(player: player2)
-    # playercurse3 = Playercurse.create(player: player3)
-
-    # Handcard.create(player: player1)
-    # Handcard.create(player: player2)
-    # Handcard.create(player: player3)
-
-    # p1i = Inventory.create(player: player1)
-    # p2i = Inventory.create(player: player2)
-    # p3i = Inventory.create(player: player3)
-
-    # p1m1 = Monsterone.create(player: player1)
-    # p2m1 = Monsterone.create(player: player2)
-    # p3m1 = Monsterone.create(player: player3)
-
-    # p1m2 = Monstertwo.create(player: player1)
-    # p2m2 = Monstertwo.create(player: player2)
-    # p3m2 = Monstertwo.create(player: player3)
-
-    # p1m3 = Monsterthree.create(player: player1)
-    # p2m3 = Monsterthree.create(player: player2)
-    # p3m3 = Monsterthree.create(player: player3)
-
-    # p1c = Ingamedeck.create(gameboard: gameboard_test, card: Cursecard.first, cardable: playercurse1)
-    # p2c = Ingamedeck.create(gameboard: gameboard_test, card: Cursecard.first, cardable: playercurse2)
-    # p3c = Ingamedeck.create(gameboard: gameboard_test, card: Cursecard.first, cardable: playercurse3)
-
-    # p1i1 = Ingamedeck.create(gameboard: gameboard_test, card: Itemcard.first, cardable: p1i)
-    # p1i2 = Ingamedeck.create(gameboard: gameboard_test, card: Itemcard.first, cardable: p1i)
-    # p2i1 = Ingamedeck.create(gameboard: gameboard_test, card: Itemcard.first, cardable: p2i)
-    # p2i2 = Ingamedeck.create(gameboard: gameboard_test, card: Itemcard.first, cardable: p2i)
-    # p3i1 = Ingamedeck.create(gameboard: gameboard_test, card: Itemcard.first, cardable: p3i)
-
-    # p1m1 = Ingamedeck.create!(gameboard: gameboard_test, card: Monstercard.first, cardable: p1m1)
-    # p1m2 = Ingamedeck.create!(gameboard: gameboard_test, card: Monstercard.first, cardable: p1m2)
-    # p1m3 = Ingamedeck.create!(gameboard: gameboard_test, card: Monstercard.first, cardable: p1m3)
-
-    # p2m1 = Ingamedeck.create!(gameboard: gameboard_test, card: Monstercard.first, cardable: p2m1)
-    # p2m2 = Ingamedeck.create!(gameboard: gameboard_test, card: Monstercard.first, cardable: p2m2)
-    # p2m3 = Ingamedeck.create!(gameboard: gameboard_test, card: Monstercard.first, cardable: p2m3)
-
-    # p3m1 = Ingamedeck.create!(gameboard: gameboard_test, card: Monstercard.first, cardable: p3m1)
-    # p3m2 = Ingamedeck.create!(gameboard: gameboard_test, card: Monstercard.first, cardable: p3m2)
-    # p3m3 = Ingamedeck.create!(gameboard: gameboard_test, card: Monstercard.first, cardable: p3m3)
   end
 
   def deliver_error_message(error)
-    broadcast_to(@gameboard, { type: 'ERROR', params: { message: error } })
+    broadcast_to(@lobby, { type: 'ERROR', params: { message: error } })
   end
 
   def delete_old_players

@@ -2,6 +2,6 @@
 
 class RemoveHasCombinationWith < ActiveRecord::Migration[6.1]
   def change
-    remove_column :cards, :has_combination
+    remove_column :cards, :has_combination, :string
   end
 end

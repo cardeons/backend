@@ -1,12 +1,3 @@
-#lobby_channel
-ANTWORT
-{
-  type: 'START_GAME',
-  params: {
-    game_id: integer
-  }
-}
-
 #playerchannel
 ANTWORT
 {
@@ -51,7 +42,9 @@ ANTWORT
       shared_reward: int,
       helping_player: id | nil,
       intercept_timestamp: timestamp | nil,
-      current_state: lobby | ingame | intercept_phase | intercept_finished
+      current_state: lobby | ingame | intercept_phase | intercept_finished,
+      player_element_synergy_modifiers: gameboard.player_element_synergy_modifiers,
+      monster_element_synergy_modifiers: gameboard.monster_element_synergy_modifiers
     },
     players: [{
       player_id: ,
@@ -98,13 +91,14 @@ PLAYER Channel response
 }
 
 
-Gameboard Channel response
+Gameboard Channel responses
 {
   type: "GAME_LOG",
   params:
   {
     date: ISOSTRING,
-    message: "game log"
+    message: "game log",
+    type: "info | success | warning | error | dark"
   }
 }
 
@@ -164,6 +158,20 @@ Gameboard Channel response
   to: 1,
   unique_card_id: 4
   #to ist die id des anderen Players, der verflucht wird
+}
+
+#ANTWORT
+{
+  #GAMEBOARD WIE IMMER
+}
+
+#ANFRAGE
+{
+  action: "level_up",
+  params: {
+    unique_card_id: 4
+  }
+  #sollte man nur auf sich selbst spielenn können
 }
 
 #ANTWORT
@@ -236,6 +244,26 @@ Gameboard Channel response
     GAMEBOARD WIE OBEN
   }
 
+#ANFRAGE GAME_CHANNEL
+#chatmessage
+{
+  action: "send_chat_message",
+  params:{
+    message: "you are a very nice person :)😁"
+  }
+}
+
+#ANTWORT 
+{
+  type: 'CHAT_MESSAGE', 
+  params: 
+  { 
+    date: Time.new,
+    id: player.id,
+    name: player.name ,
+    message: "you are a very nice person :)😁"
+  }
+}
 
 
 
@@ -324,6 +352,11 @@ Alle im Game-Chanel
    params: { }  
 }
 
+{
+   type: 'develop_draw_boss_card',
+   params: { }  
+}
+
 #set all players intercept to false
 {
    type: 'develop_set_intercept_false',
@@ -403,4 +436,69 @@ Alle im Game-Chanel
 #Antwort
 {
   type: 'FRIEND_LOG', params: { message: string }
+}
+
+# LOBBYCHANNEL
+
+#subscribe to lobby channel
+{
+  params:{
+      #inquirer schickt man mit wenn ma a anfrage griag hat
+      inquirer: user_id #vom Spieler den man anfragen will
+      #initiate ist true wenn ma a neues spiel anfängt und nid eingladen wird
+      initiate: boolean
+    }
+}
+
+{
+  type: 'LOBBY_UPDATE',
+  params: {
+    users: [ {id: , name: '', status: ''}]
+  }
+}
+
+#invite to lobby
+{
+  action: "lobby_invite",
+  params:{
+      friend: user_id #vom Spieler den man anfragen will
+    }
+}
+#Antwort im Friendlistchannel
+{
+  type: 'GAME_INVITE', params: { 
+    inviter: id, 
+    inviter_name: string 
+    }
+}
+
+#select monster
+{
+  action: "add_monster",
+  params:{
+      monster_id: id von karte
+    }
+}
+
+#remove monster from select
+{
+  action: "remove_monster",
+  params:{
+      monster_id: id von karte
+    }
+}
+
+#remove monster from select
+{
+  action: "start_lobby_queue",
+}
+
+#Antwort wenn gameboard voll
+#lobby_channel
+ANTWORT
+{
+  type: 'START_GAME',
+  params: {
+    game_id: integer
+  }
 }

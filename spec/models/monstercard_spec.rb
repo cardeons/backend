@@ -77,17 +77,18 @@ RSpec.describe Monstercard, type: :model do
       atk_points: 2,
       item_category: 'head'
     )
-    u1 = User.create!(email: '1@1.at', password: '1', name: '1', password_confirmation: '1')
-    gameboard_test = Gameboard.create!(current_state: 'lobby', player_atk: 5)
-    player1 = Player.create(name: 'Gustav', gameboard: gameboard_test, user: u1)
-    Handcard.create(player_id: player1.id)
-    Monsterone.create(player: player1)
+    gameboard_test = gameboards(:gameboardFourPlayers)
+    player1 = players(:playerOne)
+    gameboards(:gameboardFourPlayers).initialize_game_board
+    gameboards(:gameboardFourPlayers).players.each(&:init_player)
+    gameboards(:gameboardFourPlayers).update(current_player: player1)
+
     ingamedeck1 = Ingamedeck.create!(gameboard: gameboard_test, card_id: catfish.id, cardable: player1.monsterone)
     ingamedeck2 = Ingamedeck.create!(gameboard: gameboard_test, card_id: item1.id, cardable: player1.handcard)
     params = { 'unique_monster_id' => ingamedeck1.id, 'unique_equip_id' => ingamedeck2.id, 'action' => 'equip_monster' }
 
     result = Monstercard.equip_monster(params, player1)
-    expect(result == { type: 'GAMEBOARD_UPDATE', message: 'Successfully equipped.' }).to be_truthy
+    expect(result == { type: 'GAMEBOARD_UPDATE', message: '✅ Successfully equipped.' }).to be_truthy
   end
 
   it 'does not equip monster with same item category' do
@@ -118,11 +119,12 @@ RSpec.describe Monstercard, type: :model do
       atk_points: 2,
       item_category: 'head'
     )
-    u1 = User.create!(email: '1@1.at', password: '1', name: '1', password_confirmation: '1')
-    gameboard_test = Gameboard.create!(current_state: 'lobby', player_atk: 5)
-    player1 = Player.create(name: 'Gustav', gameboard: gameboard_test, user: u1)
-    Handcard.create(player_id: player1.id)
-    Monsterone.create(player: player1)
+    gameboard_test = gameboards(:gameboardFourPlayers)
+    player1 = players(:playerOne)
+    gameboards(:gameboardFourPlayers).initialize_game_board
+    gameboards(:gameboardFourPlayers).players.each(&:init_player)
+    gameboards(:gameboardFourPlayers).update(current_player: player1)
+
     ingamedeck1 = Ingamedeck.create!(gameboard: gameboard_test, card_id: catfish.id, cardable: player1.monsterone)
     ingamedeck2 = Ingamedeck.create!(gameboard: gameboard_test, card_id: item1.id, cardable: player1.handcard)
     ingamedeck3 = Ingamedeck.create!(gameboard: gameboard_test, card_id: item1.id, cardable: player1.handcard)
@@ -130,7 +132,7 @@ RSpec.describe Monstercard, type: :model do
     params2 = { 'unique_monster_id' => ingamedeck1.id, 'unique_equip_id' => ingamedeck3.id, 'action' => 'equip_monster' }
     result = Monstercard.equip_monster(params, player1)
     result2 = Monstercard.equip_monster(params2, player1)
-    expect(result2 == { type: 'ERROR', message: 'You already have this type of item on your monster! (head)' }).to be_truthy
+    expect(result2 == { type: 'ERROR', message: '❌ You already have this type of item on your monster! (head)' }).to be_truthy
   end
 
   it 'throws error if no card to equip' do
@@ -152,16 +154,17 @@ RSpec.describe Monstercard, type: :model do
       level_amount: 2
     )
 
-    u1 = User.create!(email: '1@1.at', password: '1', name: '1', password_confirmation: '1')
-    gameboard_test = Gameboard.create!(current_state: 'lobby', player_atk: 5)
-    player1 = Player.create(name: 'Gustav', gameboard: gameboard_test, user: u1)
-    Handcard.create(player_id: player1.id)
-    Monsterone.create(player: player1)
+    gameboard_test = gameboards(:gameboardFourPlayers)
+    player1 = players(:playerOne)
+    gameboards(:gameboardFourPlayers).initialize_game_board
+    gameboards(:gameboardFourPlayers).players.each(&:init_player)
+    gameboards(:gameboardFourPlayers).update(current_player: player1)
+
     ingamedeck1 = Ingamedeck.create!(gameboard: gameboard_test, card_id: catfish.id, cardable: player1.monsterone)
 
     params = { 'unique_monster_id' => ingamedeck1.id, 'unique_equip_id' => 303, 'action' => 'equip_monster' }
     result = Monstercard.equip_monster(params, player1)
-    expect(result == { type: 'ERROR', message: 'Card not found. Something went wrong.' }).to be_truthy
+    expect(result == { type: 'ERROR', message: '❌ Card not found. Something went wrong.' }).to be_truthy
   end
 
   it 'does not equip monster with a card thats not an item' do
@@ -191,17 +194,18 @@ RSpec.describe Monstercard, type: :model do
       atk_points: -1
     )
 
-    u1 = User.create!(email: '1@1.at', password: '1', name: '1', password_confirmation: '1')
-    gameboard_test = Gameboard.create!(current_state: 'lobby', player_atk: 5)
-    player1 = Player.create(name: 'Gustav', gameboard: gameboard_test, user: u1)
-    Handcard.create(player_id: player1.id)
-    Monsterone.create(player: player1)
+    gameboard_test = gameboards(:gameboardFourPlayers)
+    player1 = players(:playerOne)
+    gameboards(:gameboardFourPlayers).initialize_game_board
+    gameboards(:gameboardFourPlayers).players.each(&:init_player)
+    gameboards(:gameboardFourPlayers).update(current_player: player1)
+
     ingamedeck1 = Ingamedeck.create!(gameboard: gameboard_test, card_id: catfish.id, cardable: player1.monsterone)
     ingamedeck2 = Ingamedeck.create!(gameboard: gameboard_test, card_id: curse.id, cardable: player1.handcard)
 
     params = { 'unique_monster_id' => ingamedeck1.id, 'unique_equip_id' => ingamedeck2.id, 'action' => 'equip_monster' }
     result = Monstercard.equip_monster(params, player1)
-    expect(result == { type: 'ERROR', message: "Sorry, you can't put anything on your monster that is not an item!" }).to be_truthy
+    expect(result == { type: 'ERROR', message: "❌ Sorry, you can't put anything on your monster that is not an item!" }).to be_truthy
   end
   it 'does not equip monster with more than 5 items' do
     catfish = Monstercard.create!(
@@ -284,11 +288,12 @@ RSpec.describe Monstercard, type: :model do
       item_category: 'back'
     )
 
-    u1 = User.create!(email: '1@1.at', password: '1', name: '1', password_confirmation: '1')
-    gameboard_test = Gameboard.create!(current_state: 'lobby', player_atk: 5)
-    player1 = Player.create(name: 'Gustav', gameboard: gameboard_test, user: u1)
-    Handcard.create(player_id: player1.id)
-    Monsterone.create(player: player1)
+    gameboard_test = gameboards(:gameboardFourPlayers)
+    player1 = players(:playerOne)
+    gameboards(:gameboardFourPlayers).initialize_game_board
+    gameboards(:gameboardFourPlayers).players.each(&:init_player)
+    gameboards(:gameboardFourPlayers).update(current_player: player1)
+
     ingamedeck1 = Ingamedeck.create!(gameboard: gameboard_test, card_id: catfish.id, cardable: player1.monsterone)
     ingamedeck2 = Ingamedeck.create!(gameboard: gameboard_test, card_id: item1.id, cardable: player1.handcard)
     ingamedeck3 = Ingamedeck.create!(gameboard: gameboard_test, card_id: item2.id, cardable: player1.handcard)
@@ -305,7 +310,7 @@ RSpec.describe Monstercard, type: :model do
 
     params = { 'unique_monster_id' => ingamedeck1.id, 'unique_equip_id' => ingamedeck7.id, 'action' => 'equip_monster' }
     result = Monstercard.equip_monster(params, player1)
-    expect(result == { type: 'ERROR', message: "You can't put any more items on this monster." }).to be_truthy
+    expect(result == { type: 'ERROR', message: "❌ You can't put any more items on this monster." }).to be_truthy
   end
 
   it 'lose one level if monster is winning' do
@@ -317,7 +322,8 @@ RSpec.describe Monstercard, type: :model do
     monster = Ingamedeck.create!(gameboard: gameboards(:gameboardFourPlayers), card: cards(:monstercard), cardable: current_player.playercurse)
 
     expect(current_player.level).to eql(3)
-    Monstercard.bad_things(monster, gameboards(:gameboardFourPlayers))
+    gameboards(:gameboardFourPlayers).intercept_finished!
+    Monstercard.bad_things(monster, gameboards(:gameboardFourPlayers).reload)
     expect(current_player.reload.level).to eql(2)
   end
 
@@ -515,21 +521,21 @@ RSpec.describe Monstercard, type: :model do
       item_category: 'hand'
     )
 
-    u1 = User.create!(email: '1@1.at', password: '1', name: '1', password_confirmation: '1')
-    gameboard_test = Gameboard.create!(current_state: 'lobby', player_atk: 5)
-    player1 = Player.create(name: 'Gustav', gameboard: gameboard_test, user: u1)
+    gameboard_test = gameboards(:gameboardFourPlayers)
+    player1 = players(:playerOne)
+    gameboards(:gameboardFourPlayers).initialize_game_board
+    gameboards(:gameboardFourPlayers).players.each(&:init_player)
+    gameboards(:gameboardFourPlayers).update(current_player: player1)
 
-    Handcard.create(player_id: player1.id)
-    Monsterone.create(player: player1)
     ingamedeck1 = Ingamedeck.create!(gameboard: gameboard_test, card_id: catfish.id, cardable: player1.monsterone)
     ingamedeck2 = Ingamedeck.create!(gameboard: gameboard_test, card_id: item1.id, cardable: player1.handcard)
     ingamedeck3 = Ingamedeck.create!(gameboard: gameboard_test, card_id: item1.id, cardable: player1.handcard)
 
     equip_one = Monstercard.equip_monster({ 'unique_monster_id' => ingamedeck1.id, 'unique_equip_id' => ingamedeck2.id, 'action' => 'equip_monster' }, player1)
-    expect(equip_one == { type: 'GAMEBOARD_UPDATE', message: 'Successfully equipped.' }).to be_truthy
+    expect(equip_one == { type: 'GAMEBOARD_UPDATE', message: '✅ Successfully equipped.' }).to be_truthy
 
     equip_two = Monstercard.equip_monster({ 'unique_monster_id' => ingamedeck1.id, 'unique_equip_id' => ingamedeck3.id, 'action' => 'equip_monster' }, player1)
-    expect(equip_two == { type: 'GAMEBOARD_UPDATE', message: 'Successfully equipped.' }).to be_truthy
+    expect(equip_two == { type: 'GAMEBOARD_UPDATE', message: '✅ Successfully equipped.' }).to be_truthy
   end
   it 'attack points are calculated correctly' do
     catfish = Monstercard.create!(
@@ -561,19 +567,19 @@ RSpec.describe Monstercard, type: :model do
       item_category: 'hand'
     )
 
-    u1 = User.create!(email: '1@1.at', password: '1', name: '1', password_confirmation: '1')
-    gameboard_test = Gameboard.create!(current_state: 'lobby', player_atk: 5)
-    player1 = Player.create(name: 'Gustav', gameboard: gameboard_test, user: u1)
+    gameboard_test = gameboards(:gameboardFourPlayers)
+    player1 = players(:playerOne)
+    gameboards(:gameboardFourPlayers).initialize_game_board
+    gameboards(:gameboardFourPlayers).players.each(&:init_player)
+    gameboards(:gameboardFourPlayers).update(current_player: player1)
 
-    Handcard.create(player_id: player1.id)
-    Monsterone.create(player: player1)
     ingamedeck1 = Ingamedeck.create!(gameboard: gameboard_test, card_id: catfish.id, cardable: player1.monsterone)
     ingamedeck2 = Ingamedeck.create!(gameboard: gameboard_test, card_id: item1.id, cardable: player1.handcard)
     ingamedeck3 = Ingamedeck.create!(gameboard: gameboard_test, card_id: item1.id, cardable: player1.handcard)
 
     equip_one = Monstercard.equip_monster({ 'unique_monster_id' => ingamedeck1.id, 'unique_equip_id' => ingamedeck2.id, 'action' => 'equip_monster' }, player1)
     ## attack must be 4 - monster has 14 atk but should be calculated as 1, item 2, player 1
-    expect(player1.attack).to eql(4)
+    expect(player1.reload.attack).to eql(4)
 
     equip_two = Monstercard.equip_monster({ 'unique_monster_id' => ingamedeck1.id, 'unique_equip_id' => ingamedeck3.id, 'action' => 'equip_monster' }, player1)
     ## attack must be 6 - monster has 14 atk but should be calculated as 1, item 2+2, player 1
@@ -613,12 +619,12 @@ RSpec.describe Monstercard, type: :model do
       synergy_value: 5
     )
 
-    u1 = User.create!(email: '1@1.at', password: '1', name: '1', password_confirmation: '1')
-    gameboard_test = Gameboard.create!(current_state: 'lobby', player_atk: 5)
-    player1 = Player.create(name: 'Gustav', gameboard: gameboard_test, user: u1)
+    gameboard_test = gameboards(:gameboardFourPlayers)
+    player1 = players(:playerTwo)
+    gameboards(:gameboardFourPlayers).initialize_game_board
+    gameboards(:gameboardFourPlayers).players.each(&:init_player)
+    gameboards(:gameboardFourPlayers).update(current_player: player1)
 
-    Handcard.create(player_id: player1.id)
-    Monsterone.create(player: player1)
     ingamedeck1 = Ingamedeck.create!(gameboard: gameboard_test, card_id: catfish.id, cardable: player1.monsterone)
     ingamedeck2 = Ingamedeck.create!(gameboard: gameboard_test, card_id: item1.id, cardable: player1.handcard)
 
@@ -645,7 +651,6 @@ RSpec.describe Monstercard, type: :model do
     # Item1 gives 2
     # Monster gives 1
     # Item2 gives 2
-
     # synergy item1 und item2 gives 5
     # synergy monster and item2 gives 3
     expect(player1.attack).to eql(14)

@@ -63,7 +63,26 @@ RSpec.describe Levelcard, type: :model do
     levelcard = Ingamedeck.create!(gameboard: gameboards(:gameboardFourPlayers), card: subject, cardable: current_player.playercurse)
 
     expect(current_player.level).to eql(1)
-    Levelcard.activate(levelcard, current_player)
+    params = {
+      'unique_card_id' => levelcard.id
+    }
+    Levelcard.activate(params, current_player.user)
+    expect(current_player.level).to eql(2)
+  end
+
+  it 'move card to graveyard after activation' do
+    gameboards(:gameboardFourPlayers).initialize_game_board
+    gameboards(:gameboardFourPlayers).players.each(&:init_player)
+
+    current_player = gameboards(:gameboardFourPlayers).current_player
+    levelcard = Ingamedeck.create!(gameboard: gameboards(:gameboardFourPlayers), card: subject, cardable: current_player.playercurse)
+
+    expect(current_player.level).to eql(1)
+    params = {
+      'unique_card_id' => levelcard.id
+    }
+    Levelcard.activate(params, current_player.user)
+    expect(levelcard.reload.cardable).to eq current_player.gameboard.graveyard
     expect(current_player.level).to eql(2)
   end
 
@@ -76,7 +95,10 @@ RSpec.describe Levelcard, type: :model do
     levelcard = Ingamedeck.create!(gameboard: gameboards(:gameboardFourPlayers), card: subject, cardable: current_player.playercurse)
 
     expect(current_player.level).to eql(4)
-    Levelcard.activate(levelcard, current_player)
+    params = {
+      'unique_card_id' => levelcard.id
+    }
+    Levelcard.activate(params, current_player.user)
     expect(current_player.level).to eql(4)
   end
 
@@ -89,7 +111,10 @@ RSpec.describe Levelcard, type: :model do
     levelcard = Ingamedeck.create!(gameboard: gameboards(:gameboardFourPlayers), card: cards(:buffcard4), cardable: current_player.playercurse)
 
     expect(current_player.handcard.ingamedecks.size).to eql(5)
-    Levelcard.activate(levelcard, current_player)
+    params = {
+      'unique_card_id' => levelcard.id
+    }
+    Levelcard.activate(params, current_player.user)
     expect(current_player.handcard.ingamedecks.size).to eql(7)
   end
 end

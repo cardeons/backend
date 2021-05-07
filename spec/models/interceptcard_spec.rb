@@ -56,11 +56,9 @@ RSpec.describe Interceptcard, type: :model do
 
     buff_atk = cards(:buffcard).atk_points
 
-    # checks if monster atk got increased
-    expect { gameboards(:gameboardFourPlayers).interceptcard.add_card_with_ingamedeck_id(ingamedeck_card.id) }
-      .to(change do
-            gameboards(:gameboardFourPlayers).monster_atk
-          end.from(old_atk).to(old_atk + buff_atk))
+    gameboards(:gameboardFourPlayers).interceptcard.add_card_with_ingamedeck_id(ingamedeck_card.id)
+
+    expect(Gameboard.calc_attack_points(gameboards(:gameboardFourPlayers))).to include(monsteratk: old_atk + buff_atk)
   end
   it 'add multiple interceptcard should increase monster dmg' do
     gameboards(:gameboardFourPlayers).initialize_game_board
@@ -79,15 +77,13 @@ RSpec.describe Interceptcard, type: :model do
     buff_atk = cards(:buffcard).atk_points
 
     # checks if monster atk got increased
-    expect do
-      # get first buffcard
-      ingamedeck_card = player.handcard.ingamedecks.find_by!('card_id=?', cards(:buffcard).id)
-      gameboards(:gameboardFourPlayers).interceptcard.add_card_with_ingamedeck_id(ingamedeck_card.id)
-      # get second buffcard
-      ingamedeck_card = player.handcard.ingamedecks.find_by!('card_id=?', cards(:buffcard).id)
-      gameboards(:gameboardFourPlayers).interceptcard.add_card_with_ingamedeck_id(ingamedeck_card.id)
-    end.to(change do
-             gameboards(:gameboardFourPlayers).monster_atk
-           end.from(old_atk).to(old_atk + 2 * buff_atk))
+    # get first buffcard
+    ingamedeck_card = player.handcard.ingamedecks.find_by!('card_id=?', cards(:buffcard).id)
+    gameboards(:gameboardFourPlayers).interceptcard.add_card_with_ingamedeck_id(ingamedeck_card.id)
+    # get second buffcard
+    ingamedeck_card = player.handcard.ingamedecks.find_by!('card_id=?', cards(:buffcard).id)
+    gameboards(:gameboardFourPlayers).interceptcard.add_card_with_ingamedeck_id(ingamedeck_card.id)
+
+    expect(Gameboard.calc_attack_points(gameboards(:gameboardFourPlayers))).to include(monsteratk: old_atk + 2 * buff_atk)
   end
 end

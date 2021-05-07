@@ -258,6 +258,22 @@ monstercard10:
   level_amount: 2
   type: Monstercard
 
+boaring_fire:
+  title: Boaring Fire
+  description: MyString
+  image: MyString
+  action: 'no_action'
+  draw_chance: 1
+  level: 20
+  element: fire
+  bad_things: MyString
+  rewards_treasure: 3
+  good_against: water
+  good_against_value: 1
+  atk_points: 20
+  item_category: MyString
+  level_amount: 1
+  type: Monstercard
 
 firemonster:
   title: Fury_Monster
@@ -271,7 +287,6 @@ firemonster:
   rewards_treasure: 1
   good_against: water
   good_against_value: 3
-  bad_against_value: 1
   atk_points: 1
   item_category: MyString
   level_amount: 2
@@ -301,7 +316,7 @@ watermonster:
 
 
 earthmonster:
-  title: wateryMonster
+  title: earthyMonster
   description: MyString
   image: MyString
   action: 'lose_item_hand'
@@ -312,11 +327,9 @@ earthmonster:
   rewards_treasure: 1
   good_against: fire
   good_against_value: 5
-  bad_against_value: 1
-  
+  bad_against_value: 0
   atk_points: 1
   item_category: MyString
-  
   level_amount: 2
   type: Monstercard
 
@@ -405,6 +418,26 @@ itemcard4:
   atk_points: 1
   item_category: 'hand'
   
+  level_amount: 1
+  type: Itemcard
+
+itemcard5:
+  id: 150
+  title: Overpowered Item
+  description: MyString
+  image: MyString
+  action: MyString
+  draw_chance: 1
+  level: 1
+  element: MyString
+  bad_things: MyString
+  rewards_treasure: MyString
+  good_against: MyString
+  bad_against: MyString
+  good_against_value: 1
+  bad_against_value: 1
+  atk_points: 100
+  item_category: 'hand'
   level_amount: 1
   type: Itemcard
 
@@ -714,7 +747,7 @@ buffcard4:
   item_category: MyString
   
   level_amount: 1
-  type: Buffcard
+  type: Levelcard
 
 buffcard5:
   id: 31
@@ -754,6 +787,26 @@ buffcard6:
   item_category: MyString
   level_amount: 1
   type: Buffcard
+
+bosscard:
+  id: 2000
+  title: MyString
+  description: MyString
+  image: MyString
+  action: 'lose_level'
+  draw_chance: 1
+  level: 40
+  element: MyString
+  bad_things: MyString
+  rewards_treasure: 1
+  good_against: MyString
+  bad_against: MyString
+  good_against_value: 1
+  bad_against_value: 1
+  atk_points: 40
+  item_category: MyString
+  level_amount: 2
+  type: Bosscard
 
 goodAgainstBullMonster:
   id: 33
