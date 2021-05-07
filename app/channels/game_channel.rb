@@ -190,7 +190,7 @@ class GameChannel < ApplicationCable::Channel
     end
 
     # intercept shouldn't be possible if it's not the right phase
-    return PlayerChannel.broadcast_error(current_user, "❌ You can't intercept right now, it's #{@gameboad.current_state} phase") if !@gameboard.intercept_phase? && !@gameboard.boss_phase?
+    return PlayerChannel.broadcast_error(current_user, "❌ You can't intercept right now, it's #{@gameboard.current_state} phase") if !@gameboard.intercept_phase? && !@gameboard.boss_phase?
 
     # if @gameboard.intercept_phase? || @gameboard.boss_phase?
     unique_card_id = params['unique_card_id']
