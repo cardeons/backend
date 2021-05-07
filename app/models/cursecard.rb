@@ -65,9 +65,10 @@ class Cursecard < Card
     when 'double_attack_double_reward'
       monstercard = gameboard.centercard.card
 
-      monsteratk = monstercard.atk_points * 2 if monstercard
+      monsteratk = 0
+      monsteratk = monstercard.atk_points.to_i * 2 if monstercard
 
-      gameboard.update(rewards_treasure: monstercard.rewards_treasure.to_i * 2, monster_atk: monsteratk) if monstercard
+      gameboard.update(rewards_treasure: monstercard.rewards_treasure.to_i * 2) if monstercard
       { playeratk: playeratk, monsteratk: monsteratk }
     else
       puts 'action not found'
