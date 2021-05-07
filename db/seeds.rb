@@ -63,6 +63,7 @@ if ENV['cards']
     atk_points: 10,
     level_amount: 1
   )
+  
 
   bear_earth = Monstercard.create!(
     title: 'Sir Bear',
