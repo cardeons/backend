@@ -190,7 +190,7 @@ class GameChannel < ApplicationCable::Channel
     end
 
     # intercept shouldn't be possible if it's not the right phase
-    return PlayerChannel.broadcast_error(current_user, "❌ You can't intercept right now, it's #{@gameboad.current_state} phase") if !@gameboard.intercept_phase? && !@gameboard.boss_phase?
+    return PlayerChannel.broadcast_error(current_user, "❌ You can't intercept right now, it's #{@gameboard.current_state} phase") if !@gameboard.intercept_phase? && !@gameboard.boss_phase?
 
     # if @gameboard.intercept_phase? || @gameboard.boss_phase?
     unique_card_id = params['unique_card_id']
@@ -275,7 +275,7 @@ class GameChannel < ApplicationCable::Channel
       return
     end
 
-    msg = "👀 You asked #{@gameboad.helping_player.name} for help in this fight. Lets see.."
+    msg = "👀 You asked #{helping_player.name} for help in this fight. Lets see.."
     PlayerChannel.broadcast_to(current_user, { type: 'GAME_LOG', params: { date: Time.new, message: msg, type: 'info' } })
 
     @gameboard.update(shared_reward: helping_shared_reward, asked_help: true, helping_player: helping_player)
@@ -300,13 +300,13 @@ class GameChannel < ApplicationCable::Channel
       else
         @gameboard.update(helping_player_atk: helping_player.attack)
       end
-      msg = "✅ #{current_player.name} asked #{@gameboad.helping_player.name} for help in this fight. He agreed!"
+      msg = "✅ #{@gameboard.current_player.name} asked #{helping_player.name} for help in this fight. He agreed!"
       broadcast_to(@gameboard, { type: GAME_LOG, params: { date: Time.new, message: msg, type: 'success' } })
       start_intercept_phase(@gameboard)
     end
 
     @gameboard.update(shared_reward: 0) unless params['help']
-    msg = "❌ #{current_player.name} asked #{@gameboad.helping_player.name} for help in this fight. #{@gameboad.helping_player.name} declined!"
+    msg = "❌ #{@gameboard.current_player.name} asked #{helping_player.name} for help in this fight. #{helping_player.name} declined!"
     broadcast_to(@gameboard, { type: GAME_LOG, params: { date: Time.new, message: msg, type: 'error' } }) unless params['help']
 
     @gameboard.reload
@@ -418,6 +418,7 @@ class GameChannel < ApplicationCable::Channel
     return unless developer_actions_enabled?
 
     current_user.player.gameboard.update!(current_player: current_user.player)
+    @gameboard.update_recalc_element_synergy_modifer
     broadcast_to(@gameboard, { type: BOARD_UPDATE, params: Gameboard.broadcast_game_board(@gameboard.reload) })
   end
 
@@ -473,6 +474,7 @@ class GameChannel < ApplicationCable::Channel
     return unless developer_actions_enabled?
 
     Gameboard.get_next_player(@gameboard)
+    @gameboard.update_recalc_element_synergy_modifer
     @gameboard.ingame!
     broadcast_to(@gameboard, { type: BOARD_UPDATE, params: Gameboard.broadcast_game_board(@gameboard) })
   end
