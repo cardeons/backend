@@ -259,17 +259,17 @@ monstercard10:
   type: Monstercard
 
 boaring_fire:
-  id: 123
   title: Boaring Fire
   description: MyString
   image: MyString
   action: 'no_action'
   draw_chance: 1
   level: 20
+  element: fire
   bad_things: MyString
   rewards_treasure: 3
+  good_against: water
   good_against_value: 1
-  bad_against_value: 1
   atk_points: 20
   item_category: MyString
   level_amount: 1
