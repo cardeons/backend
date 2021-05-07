@@ -137,30 +137,30 @@ class GameChannel < ApplicationCable::Channel
       #   msg = "⚔ You all killed #{@gameboard.centercard.card.title}!"
       # # normal monster
       # else
-        player = current_user.player
-        player_level = player.level
-        player.update!(level: player_level + @gameboard.reload.centercard.card.level_amount)
+      player = current_user.player
+      player_level = player.level
+      player.update!(level: player_level + @gameboard.reload.centercard.card.level_amount)
 
-        if player.level >= 5
-          monster_id = player.win_game(current_user)
-          @gameboard.game_won!
-          broadcast_to(@gameboard, { type: 'WIN', params: { player: player.id, monster_won: monster_id } })
-          broadcast_to(@gameboard, { type: BOARD_UPDATE, params: Gameboard.broadcast_game_board(@gameboard) })
-          return
-        end
+      if player.level >= 5
+        monster_id = player.win_game(current_user)
+        @gameboard.game_won!
+        broadcast_to(@gameboard, { type: 'WIN', params: { player: player.id, monster_won: monster_id } })
+        broadcast_to(@gameboard, { type: BOARD_UPDATE, params: Gameboard.broadcast_game_board(@gameboard) })
+        return
+      end
 
-        shared_reward = @gameboard.shared_reward
-        current_player_treasure = rewards - shared_reward
-        Handcard.draw_handcards(@gameboard.current_player.id, @gameboard, current_player_treasure)
-        PlayerChannel.broadcast_to(current_user.reload, { type: 'HANDCARD_UPDATE', params: { handcards: Gameboard.render_cards_array(player.handcard.reload.ingamedecks) } })
+      shared_reward = @gameboard.shared_reward
+      current_player_treasure = rewards - shared_reward
+      Handcard.draw_handcards(@gameboard.current_player.id, @gameboard, current_player_treasure)
+      PlayerChannel.broadcast_to(current_user.reload, { type: 'HANDCARD_UPDATE', params: { handcards: Gameboard.render_cards_array(player.handcard.reload.ingamedecks) } })
 
-        if @gameboard.reload.helping_player
-          helping_player = @gameboard.helping_player
-          Handcard.draw_handcards(helping_player.id, @gameboard, shared_reward)
+      if @gameboard.reload.helping_player
+        helping_player = @gameboard.helping_player
+        Handcard.draw_handcards(helping_player.id, @gameboard, shared_reward)
 
-          PlayerChannel.broadcast_to(helping_player.user, { type: 'HANDCARD_UPDATE', params: { handcards: Gameboard.render_cards_array(helping_player.handcard.reload.ingamedecks) } })
-          msg = "⚔ #{current_user.player.name} has killed #{@gameboard.centercard.card.title}"
-        end
+        PlayerChannel.broadcast_to(helping_player.user, { type: 'HANDCARD_UPDATE', params: { handcards: Gameboard.render_cards_array(helping_player.handcard.reload.ingamedecks) } })
+        msg = "⚔ #{current_user.player.name} has killed #{@gameboard.centercard.card.title}"
+      end
       # end
 
       broadcast_to(@gameboard, { type: GAME_LOG, params: { date: Time.new, message: msg, type: 'success' } })
@@ -478,6 +478,12 @@ class GameChannel < ApplicationCable::Channel
     broadcast_to(@gameboard, { type: BOARD_UPDATE, params: Gameboard.broadcast_game_board(@gameboard) })
   end
 
+  def send_chat_message(params)
+    msg = params['message']
+
+    broadcast_to(@gameboard, { type: 'CHAT_MESSAGE', params: { date: Time.new, id: current_user.player.id, name: current_user.player.name, message: msg } })
+  end
+
   def unsubscribed
     current_user.reload.online!
     current_user.player.update!(inactive: true)
@@ -545,11 +551,5 @@ class GameChannel < ApplicationCable::Channel
 
     # sets Intercept Timer
     CheckIntercepttimerJob.set(wait: 40.seconds).perform_later(@gameboard, timestamp, 45)
-  end
-
-  def send_chat_message(params)
-    msg = params['message']
-    broadcast_to(@gameboard, { type: 'CHAT_MESSAGE', params: { date: Time.new, id: current_user.player.id, name: current_user.player.name, message: msg } })
-    # msg && broadcast_to(@gameboard, { type: 'CHAT_MESSAGE', params: { date: Time.new, id: current_user.player.id, name: current_user.player.name, message: msg } })
   end
 end
