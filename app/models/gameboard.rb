@@ -251,6 +251,9 @@ class Gameboard < ApplicationRecord
     playeratkpoints = 0
     monsteratkpts = 0
 
+    ## monsteratk points get set to 0 if cards.first is nil => no centercard
+    monsteratkpts += gameboard.centercard.card&.atk_points || 0
+
     players.each do |player|
       playeratkpoints += player.calculate_player_atk_with_monster_and_items
 
@@ -261,9 +264,6 @@ class Gameboard < ApplicationRecord
         monsteratkpts = curse_obj[:monsteratk]
       end
     end
-
-    ## monsteratk points get set to 0 if cards.first is nil => no centercard
-    monsteratkpts += gameboard.centercard.card&.atk_points || 0
 
     # onlcy calc modifiers when bossphase is false
     unless boss_phase
