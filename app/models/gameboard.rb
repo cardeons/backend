@@ -313,7 +313,7 @@ class Gameboard < ApplicationRecord
 
   def update_recalc_element_synergy_modifer
     # set modifiers to zero if there is no centercard
-    if centercard.card.reload.nil?
+    if centercard.reload.card.nil?
       update!(monster_element_synergy_modifiers: 0, player_element_synergy_modifiers: 0)
       return
     end
