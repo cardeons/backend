@@ -419,6 +419,7 @@ class GameChannel < ApplicationCable::Channel
     return unless developer_actions_enabled?
 
     current_user.player.gameboard.update!(current_player: current_user.player)
+    @gameboard.update_recalc_element_synergy_modifer
     broadcast_to(@gameboard, { type: BOARD_UPDATE, params: Gameboard.broadcast_game_board(@gameboard.reload) })
   end
 
@@ -473,7 +474,9 @@ class GameChannel < ApplicationCable::Channel
   def develop_set_next_player_as_current_player
     return unless developer_actions_enabled?
 
+
     Gameboard.get_next_player(@gameboard)
+    @gameboard.update_recalc_element_synergy_modifer
     @gameboard.ingame!
     broadcast_to(@gameboard, { type: BOARD_UPDATE, params: Gameboard.broadcast_game_board(@gameboard) })
   end
