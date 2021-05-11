@@ -109,6 +109,14 @@ class LobbyChannel < ApplicationCable::Channel
 
       next unless lobbyisfull
 
+      # Lobby is full tell players to start the game
+      ActiveRecord::Base.transaction do
+        @gameboard.initialize_game_board
+      rescue ActiveRecord::RecordNotUnique
+        broadcast_to(current_user.lobby, { type: 'Lobby', params: { message: "Couldn't create the game, please start a new lobby." } })
+        next
+      end
+
       arr = []
       @gameboard.players.each do |my_player|
         next if arr.find_index(my_player.user.lobby)
@@ -121,10 +129,6 @@ class LobbyChannel < ApplicationCable::Channel
 
         arr.push(my_player.user.lobby)
       end
-
-      # Lobby is full tell players to start the game
-
-      @gameboard.initialize_game_board
     end
   end
 
