@@ -20,11 +20,10 @@ class CheckIntercepttimerJob < ApplicationJob
       GameChannel.broadcast_to(gameboard, { type: 'GAME_LOG', params: { date: Time.new, message: '📢 Intercept Phase is finished', type: 'info' } })
 
       if gameboard.boss_phase_finished?
-        result = Gameboard.calc_attack_points(gameboard.reload)
+        result = Gameboard.calc_attack_points(gameboard)
 
         # win
         if result[:result]
-          pp 'WIIIIIIIIINNNNNNNNNNNn'
           gameboard.boss_phase_finished!
           GameChannel.broadcast_to(gameboard, { type: 'BOARD_UPDATE', params: Gameboard.broadcast_game_board(gameboard.reload) })
           msg = "😎 You all defeated #{gameboard.centercard.card.title}!"
