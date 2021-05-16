@@ -217,8 +217,6 @@ RSpec.describe GameChannel, type: :channel do
 
     # game state should change to intercept finished if nobody wanted to intercept
     expect(users(:userFour).player.gameboard.reload.current_state).to eql('intercept_finished')
-
-    # pp users(:userOne).player.reload
   end
 
   it 'test if no_interception does not send board update when only one players has decided not to intercept' do
@@ -293,8 +291,6 @@ RSpec.describe GameChannel, type: :channel do
 
     # game state should change to intercept finished if nobody wanted to intercept
     expect(users(:userFour).player.gameboard.reload.current_state).to eql('intercept_phase')
-
-    # pp users(:userOne).player.reload
   end
 
   it 'test if all players have their default value back after no_interception' do
@@ -340,8 +336,6 @@ RSpec.describe GameChannel, type: :channel do
   it 'all players have default value false in intercept' do
     gameboards(:gameboardFourPlayers).initialize_game_board
     gameboards(:gameboardFourPlayers).players.each(&:init_player)
-
-    # pp gameboards(:gameboardFourPlayers).players
 
     expect(users(:userOne).player.intercept).to be_falsy
     expect(users(:userTwo).player.intercept).to be_falsy
@@ -891,7 +885,7 @@ RSpec.describe GameChannel, type: :channel do
     subscribe
 
     users(:userFour).player.update!(attack: 999)
-    users(:userFour).player.update!(level: 4)
+    users(:userFour).player.update!(level: 420)
 
     Gameboard.draw_door_card(gameboards(:gameboardFourPlayers))
 
@@ -1339,7 +1333,6 @@ RSpec.describe GameChannel, type: :channel do
     expect(gameboards(:gameboardFourPlayers).players.where(intercept: true).size).to eql(4)
   end
 
-
   it 'boaring fire does not do anything after he won against the player' do
     gameboards(:gameboardFourPlayers).initialize_game_board
     gameboards(:gameboardFourPlayers).players.each(&:init_player)
@@ -1356,7 +1349,7 @@ RSpec.describe GameChannel, type: :channel do
     end.to have_broadcasted_to("game:#{gameboards(:gameboardFourPlayers).current_player.gameboard.to_gid_param}")
       .with(
         hash_including(type: 'GAME_LOG')
-       ).exactly(:once)
+      ).exactly(:once)
   end
 
   it 'sends chatmessage' do
@@ -1368,8 +1361,8 @@ RSpec.describe GameChannel, type: :channel do
 
     expect do
       perform('send_chat_message', {
-        message: "hiii"
-      })
+                message: 'hiii'
+              })
     end.to have_broadcasted_to("game:#{users(:userFour).player.gameboard.to_gid_param}")
       .with(
         hash_including(type: 'CHAT_MESSAGE')
