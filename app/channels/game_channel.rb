@@ -22,14 +22,20 @@ class GameChannel < ApplicationCable::Channel
   def flee
     return unless validate_user
 
-    output = Gameboard.flee(@gameboard, current_user)
-    broadcast_to(@gameboard, { type: FLEE, params: output })
+    ## lock gameboard so flee is only executed once if player spams button
+    ActiveRecord::Base.transaction do
+      @gameboard.lock!
 
-    @gameboard.centercard.ingamedeck&.update!(cardable: @gameboard.graveyard)
-    @gameboard.ingame!
-    updated_board = Gameboard.broadcast_game_board(@gameboard)
-    broadcast_to(@gameboard, { type: BOARD_UPDATE, params: updated_board })
-    PlayerChannel.broadcast_to(current_user, { type: 'HANDCARD_UPDATE', params: { handcards: Gameboard.render_cards_array(current_user.player.handcard.reload.ingamedecks) } })
+      output = Gameboard.flee(@gameboard, current_user)
+      broadcast_to(@gameboard, { type: FLEE, params: output })
+
+      @gameboard.centercard.ingamedeck&.update!(cardable: @gameboard.graveyard)
+      @gameboard.ingame!
+      updated_board = Gameboard.broadcast_game_board(@gameboard)
+      broadcast_to(@gameboard, { type: BOARD_UPDATE, params: updated_board })
+      PlayerChannel.broadcast_to(current_user, { type: 'HANDCARD_UPDATE', params: { handcards: Gameboard.render_cards_array(current_user.player.handcard.reload.ingamedecks) } })
+      @gameboard.save!
+    end
   end
 
   def play_monster(params)
@@ -122,21 +128,15 @@ class GameChannel < ApplicationCable::Channel
   def attack
     return unless validate_user
 
+    ## lock gameboard so nobody can spam attack and receive more treasures
+    @gameboard.lock!
+
     result = Gameboard.calc_attack_points(@gameboard.reload)
 
     if result[:result]
 
       rewards = @gameboard.rewards_treasure
 
-      # boss monster, no levels, just rewards
-      # if @gameboard.boss_phase?
-      #   @gameboard.players.each do |player|
-      #     Handcard.draw_handcards(player.id, @gameboard, rewards)
-      #     PlayerChannel.broadcast_to(player.user, { type: 'HANDCARD_UPDATE', params: { handcards: Gameboard.render_cards_array(player.handcard.reload.ingamedecks) } })
-      #   end
-      #   msg = "⚔ You all killed #{@gameboard.centercard.card.title}!"
-      # # normal monster
-      # else
       player = current_user.player
       player_level = player.level
       player.update!(level: player_level + @gameboard.reload.centercard.card.level_amount)
@@ -146,6 +146,7 @@ class GameChannel < ApplicationCable::Channel
         @gameboard.game_won!
         broadcast_to(@gameboard, { type: 'WIN', params: { player: player.id, monster_won: monster_id } })
         broadcast_to(@gameboard, { type: BOARD_UPDATE, params: Gameboard.broadcast_game_board(@gameboard) })
+        @gameboard.save!
         return
       end
 
@@ -169,16 +170,11 @@ class GameChannel < ApplicationCable::Channel
       Gameboard.get_next_player(@gameboard)
       @gameboard.ingame!
       broadcast_to(@gameboard, { type: BOARD_UPDATE, params: Gameboard.broadcast_game_board(@gameboard) })
+      @gameboard.save!
     end
 
     Gameboard.clear_buffcards(@gameboard)
     PlayerChannel.broadcast_to(current_user, { type: 'ERROR', params: { message: '❌ Attack too low' } }) unless result[:result]
-
-    # updated_board = Gameboard.broadcast_game_board(@gameboard)
-    # broadcast_to(@gameboard, { type: BOARD_UPDATE, params: updated_board })
-
-    # msg = "#{Player.find_by('gameboard_id = ?', @gameboard.id).name} has drawn #{name}"
-    # broadcast_to(@gameboard, { type: GAME_LOG, params: { date: Time.new, message: msg } })
   end
 
   def intercept(params)

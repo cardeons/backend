@@ -332,9 +332,9 @@ class Gameboard < ApplicationRecord
 
   def sum_of_cards(player, column, columnvalue, cardtype, sumtype)
     # eg where(bad_against:fire, type=enemy_monster.element).sum(bad_against_value)
-    monsterone_sum = player.monsterone.cards.where("#{column}=#{columnvalue} AND type='#{cardtype}'").sum(sumtype)
-    monstertwo_sum = player.monstertwo.cards.where("#{column}=#{columnvalue} AND type='#{cardtype}'").sum(sumtype)
-    monsterthree_sum = player.monsterthree.cards.where("#{column}=#{columnvalue} AND type='#{cardtype}'").sum(sumtype)
+    monsterone_sum = player.monsterone.reload.cards.where("#{column}=#{columnvalue} AND type='#{cardtype}'").sum(sumtype)
+    monstertwo_sum = player.monstertwo.reload.cards.where("#{column}=#{columnvalue} AND type='#{cardtype}'").sum(sumtype)
+    monsterthree_sum = player.monsterthree.reload.cards.where("#{column}=#{columnvalue} AND type='#{cardtype}'").sum(sumtype)
 
     monsterone_sum + monstertwo_sum + monsterthree_sum
   end
