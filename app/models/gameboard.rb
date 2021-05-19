@@ -18,7 +18,6 @@ class Gameboard < ApplicationRecord
     current_player = players.last
     gameboard_id = id
     update(current_player: current_player, current_state: 'ingame')
-
     Centercard.find_or_create_by!(gameboard_id: gameboard_id)
     Graveyard.find_or_create_by!(gameboard_id: gameboard_id)
     Playerinterceptcard.find_or_create_by!(gameboard_id: gameboard_id)
