@@ -5,7 +5,7 @@ Rails.application.routes.draw do
   mount Rswag::Api::Engine => '/api-docs'
   resources :users
   resources :cards
-  resources :users_cards
+  # resources :users_cards
   get '/users/:id/inventory', to: 'users#show_cards'
   get '/search/:search', to: 'users#search'
   post :inventory, to: 'users_cards#show'
