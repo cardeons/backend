@@ -177,16 +177,16 @@ class LobbyChannel < ApplicationCable::Channel
       x = rand(1..1_000_000)
       u1 = User.create!(email: "#{x}_Dummy420_2@2.at", password: '2', name: "#{x}2", password_confirmation: '2')
       player1 = Player.create!(name: "#{x}_Dummy420_2", gameboard: gameboard_test, user: u1)
-      playercurse1 = Playercurse.create!(player: player1)
+      Playercurse.create!(player: player1)
       Handcard.create!(player: player1)
       p1i = Inventory.create!(player: player1)
-      p1m1 = Monsterone.create!(player: player1)
-      p1m2 = Monstertwo.create!(player: player1)
-      p1m3 = Monsterthree.create!(player: player1)
+      Monsterone.create!(player: player1)
+      Monstertwo.create!(player: player1)
+      Monsterthree.create!(player: player1)
       # pp Cursecard.all
       # p1c = Ingamedeck.create!(gameboard: gameboard_test, card: Cursecard.first, cardable: playercurse1)
-      p1i1 = Ingamedeck.create!(gameboard: gameboard_test, card: Itemcard.first, cardable: p1i)
-      p1i2 = Ingamedeck.create!(gameboard: gameboard_test, card: Itemcard.first, cardable: p1i)
+      Ingamedeck.create!(gameboard: gameboard_test, card: Itemcard.first, cardable: p1i)
+      Ingamedeck.create!(gameboard: gameboard_test, card: Itemcard.first, cardable: p1i)
     end
   end
 

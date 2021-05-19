@@ -28,7 +28,7 @@ class Cursecard < Card
 
   def self.activate(ingamedeck, player, gameboard, playeratk = 0, monsteratk = 0)
     case ingamedeck.card.action # get the action from card
-    when 'lose_atk_points'
+    when 'lose_atk_points', 'minus_atk_next_fight'
       playeratk += ingamedeck.card.atk_points
       { playeratk: playeratk, monsteratk: monsteratk }
     when 'lose_item_hand'
@@ -41,10 +41,6 @@ class Cursecard < Card
       { playeratk: playeratk, monsteratk: monsteratk }
     when 'no_help_next_fight'
       gameboard.update(asked_help: true)
-      { playeratk: playeratk, monsteratk: monsteratk }
-    when 'minus_atk_next_fight'
-      playeratk += ingamedeck.card.atk_points
-
       { playeratk: playeratk, monsteratk: monsteratk }
     when 'lose_item_head'
       Monstercard.lose_item_by_category(player, gameboard, 'head')

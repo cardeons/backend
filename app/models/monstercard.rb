@@ -148,6 +148,60 @@ class Monstercard < Card
     GameChannel.broadcast_to(gameboard, { type: 'GAME_LOG', params: { date: Time.new, message: msg, type: 'error' } })
   end
 
+  def self.random_to_lowest(player, gameboard)
+    all_players = gameboard.players.order(:id)
+    first = true
+    player_lowest_level = [player]
+
+    all_players.each do |player_temp|
+      if player_temp.id != player.id && player_temp.level <= player.level
+        if first
+          player_lowest_level = [player_temp]
+          first = false
+        else
+          player_lowest_level = [player_temp] if player_lowest_level[0].level > player_temp.level
+          player_lowest_level.push(player_temp) if player_lowest_level[0].level == player_temp.level
+        end
+      end
+    end
+
+    offset = rand(player.handcard.ingamedecks.count)
+
+    random_card = player.handcard.ingamedecks.offset(offset).first
+
+    random = rand(0..player_lowest_level.size - 1)
+
+    random_card&.update!(cardable: player_lowest_level[random].handcard)
+  end
+
+  def self.lose_level(player, gameboard, ingamedeck)
+    if gameboard.reload.intercept_finished?
+      player.decrement!(:level, 1) unless player.level == 1
+      msg = "😢 #{player.name} lost one level because of #{ingamedeck.card.title}s bad things."
+      Monstercard.broadcast_gamelog(msg, gameboard)
+    else
+      gameboard.boss_phase_finished!
+      GameChannel.broadcast_to(gameboard, { type: 'BOARD_UPDATE', params: Gameboard.broadcast_game_board(gameboard.reload) })
+
+      msg = "❌ Too bad. Even together you couldn't defeat the monster. You all lost a level."
+      Monstercard.broadcast_gamelog(msg, gameboard)
+
+      gameboard.reload.players.each do |player_individual|
+        player_individual.decrement!(:level, 1) unless player_individual.level == 1
+      end
+
+      gameboard.centercard.ingamedeck&.update!(cardable: gameboard.graveyard)
+
+      # sleep for frontend animation
+      # could maybe be shorter as soon as we know the animation length (kinda)
+      sleep 2
+
+      Gameboard.get_next_player(gameboard)
+      gameboard.ingame!
+      GameChannel.broadcast_to(gameboard, { type: 'BOARD_UPDATE', params: Gameboard.broadcast_game_board(gameboard.reload) })
+    end
+  end
+
   def self.bad_things(ingamedeck, gameboard)
     player = gameboard.current_player
 
@@ -169,29 +223,7 @@ class Monstercard < Card
       msg = "😢 #{player.name} lost one item because of #{ingamedeck.card.title}s bad things."
       Monstercard.broadcast_gamelog(msg, gameboard)
     when 'random_card_lowest_level'
-      all_players = gameboard.players.order(:id)
-      first = true
-      player_lowest_level = [player]
-
-      all_players.each do |player_temp|
-        if player_temp.id != player.id && player_temp.level <= player.level
-          if first
-            player_lowest_level = [player_temp]
-            first = false
-          else
-            player_lowest_level = [player_temp] if player_lowest_level[0].level > player_temp.level
-            player_lowest_level.push(player_temp) if player_lowest_level[0].level == player_temp.level
-          end
-        end
-      end
-
-      offset = rand(player.handcard.ingamedecks.count)
-
-      random_card = player.handcard.ingamedecks.offset(offset).first
-
-      random = rand(0..player_lowest_level.size - 1)
-
-      random_card&.update!(cardable: player_lowest_level[random].handcard)
+      random_to_lowest(player, gameboard)
       msg = "😢 #{player.name} lost one item to the player with the lowest level because of #{ingamedeck.card.title}s bad things."
       Monstercard.broadcast_gamelog(msg, gameboard)
       Player.broadcast_all_playerhandcards(gameboard)
@@ -202,39 +234,13 @@ class Monstercard < Card
       Monstercard.broadcast_gamelog(msg, gameboard)
     when 'lose_one_card'
       offset = rand(player.handcard.ingamedecks.count)
-
       random_card = player.handcard.ingamedecks.offset(offset).first
-
       random_card&.update!(cardable: gameboard.graveyard)
       msg = "😢 #{player.name} lost one handcard because of #{ingamedeck.card.title}s bad things."
       Monstercard.broadcast_gamelog(msg, gameboard)
       Player.broadcast_all_playerhandcards(gameboard)
     when 'lose_level'
-      if gameboard.reload.intercept_finished?
-        player.decrement!(:level, 1) unless player.level == 1
-        msg = "😢 #{player.name} lost one level because of #{ingamedeck.card.title}s bad things."
-        Monstercard.broadcast_gamelog(msg, gameboard)
-      else
-        gameboard.boss_phase_finished!
-        GameChannel.broadcast_to(gameboard, { type: 'BOARD_UPDATE', params: Gameboard.broadcast_game_board(gameboard.reload) })
-
-        msg = "❌ Too bad. Even together you couldn't defeat the monster. You all lost a level."
-        Monstercard.broadcast_gamelog(msg, gameboard)
-
-        gameboard.reload.players.each do |player_individual|
-          player_individual.decrement!(:level, 1) unless player_individual.level == 1
-        end
-
-        gameboard.centercard.ingamedeck&.update!(cardable: gameboard.graveyard)
-
-        # sleep for frontend animation
-        # could maybe be shorter as soon as we know the animation length (kinda)
-        sleep 2
-
-        Gameboard.get_next_player(gameboard)
-        gameboard.ingame!
-        GameChannel.broadcast_to(gameboard, { type: 'BOARD_UPDATE', params: Gameboard.broadcast_game_board(gameboard.reload) })
-      end
+      lose_level(player, gameboard, ingamedeck)
     when 'die'
       player.update(level: 1)
 

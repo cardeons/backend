@@ -20,7 +20,7 @@ module ApplicationCable
 
     def find_verified_user
       reject_unauthorized_connection unless request.headers[:HTTP_SEC_WEBSOCKET_PROTOCOL]
-      token = request.headers[:HTTP_SEC_WEBSOCKET_PROTOCOL].split(' ').last
+      token = request.headers[:HTTP_SEC_WEBSOCKET_PROTOCOL].split.last
       decoded_token = decoded_token(token)
 
       # wrong type of JWT

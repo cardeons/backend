@@ -114,19 +114,6 @@ RSpec.describe Gameboard, type: :model do
     expect(Gameboard.render_gameboard(gameboards(:gameboardFourPlayers))).to eql(gameboard_obj)
   end
 
-  # only measure times
-  it 'runs broadcast gameboard ' do
-    gameboards(:gameboardFourPlayers).initialize_game_board
-    gameboards(:gameboardFourPlayers).players.each(&:init_player)
-
-    starting = Process.clock_gettime(Process::CLOCK_MONOTONIC)
-
-    Gameboard.broadcast_game_board(gameboards(:gameboardFourPlayers))
-
-    ending = Process.clock_gettime(Process::CLOCK_MONOTONIC)
-    # puts ending - starting
-  end
-
   it 'renders the right card from id' do
     gameboards(:gameboardFourPlayers).initialize_game_board
     gameboards(:gameboardFourPlayers).players.each(&:init_player)
