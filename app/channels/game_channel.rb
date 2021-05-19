@@ -41,7 +41,7 @@ class GameChannel < ApplicationCable::Channel
   def play_monster(params)
     # move all centercard to graveyard
     if @gameboard.reload.current_player != current_user.player
-      PlayerChannel.broadcast_error(current_user, 'Only the the Player whos turn it is can play a Monster')
+      PlayerChannel.broadcast_error(current_user, 'Only the Player whos turn it is can play a Monster')
       return
     end
 
@@ -296,14 +296,14 @@ class GameChannel < ApplicationCable::Channel
       else
         @gameboard.update(helping_player_atk: helping_player.attack)
       end
-      msg = "✅ #{@gameboard.current_player.name} asked #{helping_player.name} for help in this fight. He agreed!"
+      msg = "✅ #{@gameboard.current_player.name} asked #{helping_player.name} for help in this fight. #{helping_player.name} agreed!"
       broadcast_to(@gameboard, { type: GAME_LOG, params: { date: Time.new, message: msg, type: 'success' } })
       start_intercept_phase(@gameboard)
     end
 
     @gameboard.update(shared_reward: 0) unless params['help']
-    msg = "❌ #{@gameboard.current_player.name} asked #{helping_player.name} for help in this fight. #{helping_player.name} declined!"
-    broadcast_to(@gameboard, { type: GAME_LOG, params: { date: Time.new, message: msg, type: 'error' } }) unless params['help']
+    msg = "❌ #{@gameboard.current_player.name} asked #{@gameboard.reload.helping_player.name} for help in this fight. #{@gameboard.reload.helping_player.name} declined!"
+    broadcast_to(@gameboard, { type: 'ERROR', params: { date: Time.new, message: msg, type: 'error' } }) unless params['help']
 
     @gameboard.reload
 
