@@ -3,9 +3,6 @@
 class LobbyChannel < ApplicationCable::Channel
   # rescue_from Exception, with: :deliver_error_message
 
-  LOBBY = 'lobby'
-  INGAME = 'ingame'
-
   def subscribed
     if params['initiate']
 

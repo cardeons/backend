@@ -733,7 +733,7 @@ if ENV['cards']
   buffcard9 = Buffcard.create!(
     draw_chance: 6,
     title: 'Lick',
-    description: '<p>You can now paralyze someone, they will probably hurt themselves out of confusion. Plus 3 attack points.</p>',
+    description: '<p>Somebody got licked for good luck! Plus 3 attack points.</p>',
     image: '/cardeons/cards/icons/buff.png',
     action: 'monster_lose_atk',
     atk_points: 3
