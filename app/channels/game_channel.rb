@@ -1,7 +1,6 @@
 # frozen_string_literal: true
 
 class GameChannel < ApplicationCable::Channel
-  # rescue_from Exception, with: :deliver_error_message
   BOARD_UPDATE = 'BOARD_UPDATE'
   DEBUG = 'DEBUG'
   ERROR = 'ERROR'
@@ -111,11 +110,6 @@ class GameChannel < ApplicationCable::Channel
 
     PlayerChannel.broadcast_to(current_user, { type: 'ERROR', params: { message: result[:message] } }) if result[:type] == 'ERROR'
     broadcast_to(@gameboard, { type: 'BOARD_UPDATE', params: updated_board })
-
-    # if result[:type] != 'ERROR'
-    #   msg = "#{player.name} has equiped a monster!"
-    #   broadcast_to(@gameboard, { type: GAME_LOG, params: { date: Time.new, message: msg } })
-    # end
 
     if @gameboard.current_player == player
       @gameboard.update_recalc_element_synergy_modifer
@@ -486,32 +480,9 @@ class GameChannel < ApplicationCable::Channel
     current_user.player.update!(inactive: true)
 
     @gameboard.destroy! if @gameboard.players.where(inactive: true).size > 3
-
-    # Any cleanup needed when channel is unsubscribed
-    # pp current_user.playerpp
-    # pp current_user.player
-    # id = current_user.player.reload.id
-    # pp id
-    # player = Player.find_by('id=?', id)
-
-    # pp player
-
-    # @gameboard.update!(current_player: 0) if @gameboard.current_player == id
-    # pp "destroy player #{player}"
-
-    # pp @gameboard
-    # @gameboard.destroy!
-
-    # player.destroy!
-
-    # pp @gameboard.reload.players
   end
 
   private
-
-  def deliver_error_message(_e)
-    # broadcast_to(@gameboard, _e)
-  end
 
   def developer_actions_enabled?
     # returns true if ENV['DEV_TOOL_ENABLED'] is set

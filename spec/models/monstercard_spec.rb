@@ -130,7 +130,7 @@ RSpec.describe Monstercard, type: :model do
     ingamedeck3 = Ingamedeck.create!(gameboard: gameboard_test, card_id: item1.id, cardable: player1.handcard)
     params = { 'unique_monster_id' => ingamedeck1.id, 'unique_equip_id' => ingamedeck2.id, 'action' => 'equip_monster' }
     params2 = { 'unique_monster_id' => ingamedeck1.id, 'unique_equip_id' => ingamedeck3.id, 'action' => 'equip_monster' }
-    result = Monstercard.equip_monster(params, player1)
+    Monstercard.equip_monster(params, player1)
     result2 = Monstercard.equip_monster(params2, player1)
     expect(result2 == { type: 'ERROR', message: '❌ You already have this type of item on your monster! (head)' }).to be_truthy
   end
@@ -577,11 +577,11 @@ RSpec.describe Monstercard, type: :model do
     ingamedeck2 = Ingamedeck.create!(gameboard: gameboard_test, card_id: item1.id, cardable: player1.handcard)
     ingamedeck3 = Ingamedeck.create!(gameboard: gameboard_test, card_id: item1.id, cardable: player1.handcard)
 
-    equip_one = Monstercard.equip_monster({ 'unique_monster_id' => ingamedeck1.id, 'unique_equip_id' => ingamedeck2.id, 'action' => 'equip_monster' }, player1)
+    Monstercard.equip_monster({ 'unique_monster_id' => ingamedeck1.id, 'unique_equip_id' => ingamedeck2.id, 'action' => 'equip_monster' }, player1)
     ## attack must be 4 - monster has 14 atk but should be calculated as 1, item 2, player 1
     expect(player1.reload.attack).to eql(4)
 
-    equip_two = Monstercard.equip_monster({ 'unique_monster_id' => ingamedeck1.id, 'unique_equip_id' => ingamedeck3.id, 'action' => 'equip_monster' }, player1)
+    Monstercard.equip_monster({ 'unique_monster_id' => ingamedeck1.id, 'unique_equip_id' => ingamedeck3.id, 'action' => 'equip_monster' }, player1)
     ## attack must be 6 - monster has 14 atk but should be calculated as 1, item 2+2, player 1
     expect(player1.attack).to eql(6)
   end

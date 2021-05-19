@@ -22,7 +22,7 @@ RSpec.describe Handcard, type: :model do
   it 'is not valid without a unique id' do
     player = Player.create(name: 'Alberto', gameboard: Gameboard.create!(current_state: 'lobby', player_atk: 5),
                            user: User.create!(email: '1@1.at', password: '1', name: '1', password_confirmation: '1'))
-    handcard = described_class.create(
+    described_class.create(
       player: player
     )
     handcard2 = described_class.create(
@@ -33,7 +33,7 @@ RSpec.describe Handcard, type: :model do
   end
 
   it 'draws five random handcards' do
-    catfish = Monstercard.create!(
+    Monstercard.create!(
       title: 'Catfish',
       description: '<p>HA! You got catfished.</p>',
       image: '/monster/catfish.png',
@@ -51,7 +51,7 @@ RSpec.describe Handcard, type: :model do
       level_amount: 2
     )
 
-    curse = Cursecard.create!(
+    Cursecard.create!(
       title: 'very bad curse',
       description: '<p>This curse is very bad.</p><p> Actually, it is so bad that this curse will stick to you and weaken your fighting ability as long as you do not find a way to remove it</p>',
       image: '/',
@@ -61,7 +61,7 @@ RSpec.describe Handcard, type: :model do
       atk_points: -1
     )
 
-    item1 = Itemcard.create!(
+    Itemcard.create!(
       title: 'Helmet of Doom',
       description: '<p>This is the helmet of doom</p>',
       image: '/item/helmet.png',
@@ -69,7 +69,7 @@ RSpec.describe Handcard, type: :model do
       draw_chance: 13,
       element: 'fire',
       atk_points: 2,
-      item_category: 'head',
+      item_category: 'head'
     )
 
     Handcard.draw_handcards(subject.player.id, subject.player.gameboard)

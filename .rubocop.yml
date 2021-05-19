@@ -12,8 +12,11 @@ Style/Documentation:
 Style/ClassAndModuleChildren:
   Enabled: false
 
+Style/AsciiComments:
+  Enabled: false
+
 Layout/EndOfLine:
-  EnforcedStyle: lf
+  Enabled: false
 
 AllCops:
   NewCops: enable
@@ -29,20 +32,26 @@ Metrics/BlockNesting:
 
 Metrics/BlockLength:
   Max: 140
+  Exclude:
+  - '**/*_spec.rb'
 
 Metrics/ClassLength:
-  Max: 200
+  Max: 400
 
 Metrics/CyclomaticComplexity:
-  Max: 10
+  Max: 15
 
 Metrics/PerceivedComplexity:
-  Max: 10
+  Max: 15
 
 Style/GuardClause:
   Enabled: false
 
 AllCops:
+  NewCops: enable
   SuggestExtensions: false
-  Excludes:
+  Exclude:
     - db/**
+    - node_modules/**/*
+    - config/initializers/rswag-ui.rb
+    - config/initializers/session_store.rb

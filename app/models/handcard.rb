@@ -9,7 +9,7 @@ class Handcard < ApplicationRecord
   validates_uniqueness_of :player_id
   validates_presence_of :player_id
 
-  def self.addCardsToArray(arr, cards)
+  def self.add_cards_to_array(arr, cards)
     cards.each do |card|
       x = card.draw_chance
       while x.positive?
@@ -27,11 +27,11 @@ class Handcard < ApplicationRecord
     levelcards = Levelcard.all
 
     allcards = []
-    addCardsToArray(allcards, cursecards)
-    addCardsToArray(allcards, monstercards)
-    addCardsToArray(allcards, buffcards)
-    addCardsToArray(allcards, itemcards)
-    addCardsToArray(allcards, levelcards)
+    add_cards_to_array(allcards, cursecards)
+    add_cards_to_array(allcards, monstercards)
+    add_cards_to_array(allcards, buffcards)
+    add_cards_to_array(allcards, itemcards)
+    add_cards_to_array(allcards, levelcards)
 
     player = Player.find(player_id)
     handcard = player.handcard
@@ -55,7 +55,7 @@ class Handcard < ApplicationRecord
     monstercards = Monstercard.all
 
     allcards = []
-    addCardsToArray(allcards, monstercards)
+    add_cards_to_array(allcards, monstercards)
 
     player = Player.find(player_id)
     handcard = player.handcard

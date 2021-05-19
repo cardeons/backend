@@ -339,16 +339,6 @@ class Gameboard < ApplicationRecord
     monsterone_sum + monstertwo_sum + monsterthree_sum
   end
 
-  def self.clear_buffcards(gameboard)
-    gameboard&.interceptcard&.ingamedecks&.each do |card|
-      card.update!(cardable: gameboard.graveyard)
-    end
-
-    gameboard&.playerinterceptcard&.ingamedecks&.each do |card|
-      card.update!(cardable: gameboard.graveyard)
-    end
-  end
-
   def calc_synergy_monster_and_items
     monstercard = centercard.card
 

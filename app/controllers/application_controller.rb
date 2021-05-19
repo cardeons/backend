@@ -42,7 +42,7 @@ class ApplicationController < ActionController::Base
 
   def authorized
     render json: { message: 'Please log in' }, status: :unauthorized unless logged_in?
-    user_frontend = { "id": @current_user.id, "email": @current_user.email, "name": @current_user.name }
+    user_frontend = { id: @current_user.id, email: @current_user.email, name: @current_user.name }
     render json: { user: user_frontend } if logged_in?
   end
 end

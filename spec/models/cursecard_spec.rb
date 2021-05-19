@@ -116,7 +116,7 @@ RSpec.describe Monstercard, type: :model do
     gameboards(:gameboardFourPlayers).players.each(&:init_player)
     current_player = gameboards(:gameboardFourPlayers).current_player
     curse = Ingamedeck.create!(gameboard: gameboards(:gameboardFourPlayers), card: cards(:cursecard7), cardable: current_player.playercurse)
-    ingamedeck1 = Ingamedeck.create!(gameboard: gameboards(:gameboardFourPlayers), card: cards(:monstercard), cardable: gameboards(:gameboardFourPlayers).centercard)
+    Ingamedeck.create!(gameboard: gameboards(:gameboardFourPlayers), card: cards(:monstercard), cardable: gameboards(:gameboardFourPlayers).centercard)
     # gameboards(:gameboardFourPlayers).update(centercard: ingamedeck1)
 
     curse_obj = Cursecard.activate(curse, current_player, gameboards(:gameboardFourPlayers), 1, 1)

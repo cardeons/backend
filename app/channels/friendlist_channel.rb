@@ -49,41 +49,6 @@ class FriendlistChannel < ApplicationCable::Channel
     broadcast_to(current_user, { type: 'FRIEND_LOG', params: { message: "❌ You declined a friendrequest from #{inquirer.name}" } })
   end
 
-  # def initiate_lobby
-  #   lobby = Lobby.create!
-
-  #   current_user.update!(lobby: lobby)
-  # end
-
-  # def lobby_invite(data)
-  #   friend = User.find_by('id=?', data['friend'])
-
-  #   broadcast_to(friend, { type: 'GAME_INVITE', params: { inviter: current_user.id, inviter_name: current_user.name } })
-  # end
-
-  # def accept_lobby_invite(data)
-  #   inquirer = User.find_by('id=?', data['inquirer'])
-
-  #   broadcast_to(current_user, { type: 'LOBBY_ERROR', params: { message: 'Lobby is full...' } }) if inquirer.lobby.users.count == 4
-  #   current_user.update!(lobby: inquirer.lobby) if inquirer.lobby.users.count < 4
-  # end
-
-  # def start_lobby_queue
-  #   lobby = current_user.lobby
-
-  #   delete_old_players
-
-  #   gameboard = Gameboard.find_or_create_by!(current_state: :lobby)
-
-  #   gameboard = Gameboard.create!(current_state: :lobby) if lobby.users.reload.count > (4 - gameboard.players.reload.count)
-
-  #   lobby.users.each do |user|
-  #     Player.create!(name: user.name, gameboard_id: gameboard.id, user: user)
-
-  #     broadcast_to(user, { type: 'SUBSCRIBE_LOBBY', params: { game_id: gameboard.id } })
-  #   end
-  # end
-
   def broadcast_status_to_friends
     current_user.friends.each do |friend|
       Friendship.broadcast_friends(friend)

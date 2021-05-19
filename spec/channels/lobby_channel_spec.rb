@@ -5,8 +5,6 @@ require 'rails_helper'
 RSpec.describe LobbyChannel, type: :channel do
   fixtures :users, :cards
 
-  LOBBY = 'lobby'
-
   before do
     # initialize connection with identifiers
     # gameboard = Gameboard.create(current_state: LOBBY)
@@ -302,8 +300,6 @@ RSpec.describe LobbyChannel, type: :channel do
   it '4 players get assigned to the game' do
     stub_connection current_user: users(:one)
     subscribe initiate: true
-
-    lobby_id = users(:one).lobby.id
 
     stub_connection current_user: users(:two)
     subscribe lobby_id: users(:one).lobby.id

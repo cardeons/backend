@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class ChangeColumnCard < ActiveRecord::Migration[6.1]
   def up
     change_column :cards, :good_against, 'numeric USING CAST(good_against AS numeric)'
