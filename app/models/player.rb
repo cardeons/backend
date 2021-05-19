@@ -27,30 +27,7 @@ class Player < ApplicationRecord
     Ingamedeck.create(card_id: user.monsterthree, gameboard: gameboard, cardable: handcard) unless user.monsterthree.blank?
   end
 
-  def self.draw_five_cards(player)
-    # handcard = Handcard.create(player_id: player.id)
-    # TODO: make it random
-    # Ingamedeck.new(gameboard_id: player.gameboard_id, card_id: 1, cardable_id: 1, cardable_type: 'Handcard').save!
-    # Ingamedeck.new(gameboard_id: player.gameboard_id, card_id: 2, cardable_id: 1, cardable_type: 'Handcard').save!
-    # Ingamedeck.new(gameboard_id: player.gameboard_id, card_id: 1, cardable_id: 1, cardable_type: 'Handcard').save!
-    # Ingamedeck.new(gameboard_id: player.gameboard_id, card_id: 2, cardable_id: 1, cardable_type: 'Handcard').save!
-    # Ingamedeck.new(gameboard_id: player.gameboard_id, card_id: 1, cardable_id: 1, cardable_type: 'Handcard').save!
-    # Ingamedeck.new(gameboard_id: player.gameboard_id, card_id: 2, cardable_id: 1, cardable_type: 'Handcard').save!
-  end
-
   def render_player
-    # Inventory.find_or_create_by!(player: self) # unless player.inventory
-
-    # Handcard.find_or_create_by!(player: self) # unless player.handcard
-
-    # Monsterone.find_or_create_by!(player: self) # unless player.monsterone
-
-    # Monstertwo.find_or_create_by!(player: self) # unless player.monstertwo
-
-    # Monsterthree.find_or_create_by!(player: self) # unless player.monsterthree
-
-    # Playercurse.find_or_create_by!(player: self) # unless player.playercurse
-
     monsters = []
 
     if monsterone.ingamedecks&.first

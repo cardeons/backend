@@ -912,7 +912,7 @@ RSpec.describe GameChannel, type: :channel do
       perform('play_monster', { unique_card_id: ingamedeck.id })
     end.to have_broadcasted_to(PlayerChannel.broadcasting_for(connection.current_user))
       .with(
-        hash_including(type: 'ERROR', params: { message: 'Only the the Player whos turn it is can play a Monster' })
+        hash_including(type: 'ERROR', params: { message: 'Only the Player whos turn it is can play a Monster' })
       ).exactly(:once)
   end
 
