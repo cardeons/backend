@@ -6,9 +6,6 @@ class Friendship < ApplicationRecord
   belongs_to :inquirer, class_name: 'User'
 
   def self.add_friend(user1, user2)
-    # user2.friends << user1
-    # user1.friends << user2
-
     Friendship.create(user: user1, friend: user2, inquirer: user1)
     Friendship.create(user: user2, friend: user1, inquirer: user1)
   end

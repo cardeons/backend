@@ -1,125 +1,21 @@
 // Place all the styles related to the Home controller here.
 // They will automatically be included in application.css.
 // You can use Sass (SCSS) here: https://sass-lang.com/
-#main {
+html {
   height: 100vh;
-  background-color: bisque;
-  overflow: auto;
-
-  h2 {
-    text-align: center;
-    margin-top: 20px;
-    margin-bottom: 20px;
-  }
-
-  > div#chat_body {
-    height: 90vh;
-    background-color: black;
-    width: 80%;
-    margin: auto;
-    border-radius: 5px;
-    overflow: auto;
-    position: relative;
-
-    div#messages {
-      height: 90%;
-      width: 95%;
-      color: white;
-      margin: 14px auto;
-      overflow: auto;
-      display: flex;
-      flex-direction: column;
-
-      p {
-        display: inline-block;
-        padding: 10px;
-        border-top-left-radius: 10px;
-        border-top-right-radius: 10px;
-        margin-bottom: 5px;
-        margin-top: 5px;
-        max-width: 70%;
-        width: max-content;
-
-        &.received {
-          background-color: chocolate;
-          border-bottom-right-radius: 10px;
-        }
-
-        &.sent {
-          border-bottom-left-radius: 10px;
-          background-color: darkred;
-          align-self: flex-end;
-        }
-
-        &.announce {
-          align-self: center;
-          font-style: italic;
-          color: cyan;
-
-          em {
-            font-weight: 700;
-            color: mediumorchid;
-          }
-        }
-      }
-    }
-
-    form#send_message {
-      width: 95%;
-      margin: auto;
-
-      input {
-        height: 30px;
-        width: 90%;
-        border-radius: 10px;
-        border: 0;
-      }
-
-      button {
-        height: 35px;
-        width: 8.8%;
-        border-radius: 20px;
-        border: 0;
-        background-color: tomato;
-        color: white;
-      }
-    }
-  }
-  div#modal {
-    height: 100vh;
-    position: absolute;
-    top: 0;
-    background-color: #000000bf;
+  width: 100vw;
+  background-color: rgb(73, 84, 128);
+  body {
+    height: 100%;
     width: 100%;
-    z-index: 2;
+    background-color: rgb(73, 84, 128);
     display: flex;
-    display: none;
-
-    > div {
-      width: 300px;
-      background: white;
-      margin: auto;
-      padding: 30px;
-      text-align: center;
-      height: 150px;
-      border-radius: 10px;
-
-      input {
-        height: 30px;
-        border-radius: 10px;
-        border: 2px dotted rebeccapurple;
-        width: 100%;
-        margin-bottom: 10px;
-      }
-
-      button {
-        height: 35px;
-        border-radius: 20px;
-        border: 0;
-        background-color: #673ab7;
-        color: white;
-        width: 80px;
-      }
-    }
+    justify-content: center;
+  }
+  h2 {
+    color: white;
+  }
+  img {
+    height: 300px;
   }
 }
