@@ -306,8 +306,8 @@ class GameChannel < ApplicationCable::Channel
     end
 
     @gameboard.update(shared_reward: 0) unless params['help']
-    msg = "❌ #{@gameboard.current_player.name} asked #{helping_player.name} for help in this fight. #{helping_player.name} declined!"
-    broadcast_to(@gameboard, { type: GAME_LOG, params: { date: Time.new, message: msg, type: 'error' } }) unless params['help']
+    msg = "❌ #{@gameboard.current_player.name} asked #{@gameboard.reload.helping_player.name} for help in this fight. #{@gameboard.reload.helping_player.name} declined!"
+    broadcast_to(@gameboard, { type: 'ERROR', params: { date: Time.new, message: msg, type: 'error' } }) unless params['help']
 
     @gameboard.reload
 

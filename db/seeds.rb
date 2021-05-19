@@ -670,10 +670,10 @@ if ENV['cards']
   buffcard2 = Buffcard.create!(
     draw_chance: 6,
     title: 'Slippery slope',
-    description: '<p>Someone slipped. - 5 attack points.</p>',
+    description: '<p>Someone slipped. Plus 5 attack points for any side.</p>',
     image: '/cardeons/cards/icons/buff.png',
     action: 'monster_lose_atk',
-    atk_points: -5
+    atk_points: 5
   )
 
   buffcard3 = Buffcard.create!(
@@ -688,10 +688,10 @@ if ENV['cards']
   buffcard4 = Buffcard.create!(
     draw_chance: 6,
     title: 'Yeet',
-    description: '<p>Someone is sent to the shadow realm. - 5 attack points!</p>',
+    description: '<p>Someone is sent to the shadow realm. Plus 5 attack points!</p>',
     image: '/cardeons/cards/icons/buff.png',
     action: 'dodge_monster',
-    atk_points: -5
+    atk_points: 5
   )
   
   levelcard2 = Levelcard.create!(
@@ -706,10 +706,10 @@ if ENV['cards']
   buffcard6 = Buffcard.create!(
     draw_chance: 6,
     title: 'Chloroform',
-    description: '<p>You severely weaken someone. - 3 attack points.</p>',
+    description: '<p>You give someone a powerful weapon. Plus 3 attack points.</p>',
     image: '/cardeons/cards/icons/buff.png',
     action: 'monster_lose_atk',
-    atk_points: -3
+    atk_points: 3
   )
 
   buffcard7 = Buffcard.create!(
@@ -724,19 +724,19 @@ if ENV['cards']
   buffcard8 = Buffcard.create!(
     draw_chance: 6,
     title: 'Invisibility potion',
-    description: '<p>Someone gets stabbed in the back. - 3 attack points!</p>',
+    description: '<p>Someone gets the power of being invisible. Plus 3 attack points!</p>',
     image: '/cardeons/cards/icons/buff.png',
     action: 'flee_success',
-    atk_points: -3
+    atk_points: 3
   )
 
   buffcard9 = Buffcard.create!(
     draw_chance: 6,
     title: 'Lick',
-    description: '<p>Someone got paralyzed and hurt itself out of confusion. - 3 attack points.</p>',
+    description: '<p>You can now paralyze someone, they will probably hurt themselves out of confusion. Plus 3 attack points.</p>',
     image: '/cardeons/cards/icons/buff.png',
     action: 'monster_lose_atk',
-    atk_points: -3
+    atk_points: 3
   )
 
   buffcard10 = Buffcard.create!(
@@ -1151,7 +1151,7 @@ if ENV['cards']
     
   )
 
-  levelcard = Levelcard.create!(title: 'Level up!', draw_chance: 5, description: 'Get one level', image: '/cardeons/cards/icons/level.png', action: 'level_up', level_amount: 1)
+  levelcard = Levelcard.create!(title: 'Level up!', draw_chance: 5, description: '<p>Get one level</p>', image: '/cardeons/cards/icons/level.png', action: 'level_up', level_amount: 1)
 
   ## Bosscard
 
